@@ -12,13 +12,13 @@ At AMD, our mission is to build great products that accelerate next-generation c
 
 **THE ROLE:**     职位描述：
 
-As a core member of the team, you will play a pivotal role in optimizing and developing deep learning frameworks for AMD GPUs. Your experience will be critical in enhancing GPU kernels, deep learning models, and training/inference performance across multi-GPU and multi-node systems. You will engage with both internal GPU library teams and open-source maintainers to ensure seamless integration of optimizations, utilizing cutting-edge compiler technologies and advanced engineering principles to drive continuous improvement.   
-作为团队的核心成员，你将在优化和开发 AMD GPU 的深度学习框架方面发挥关键作用。你的经验对于提升 GPU 内核、深度学习模型以及多 GPU 和多节点系统的训练/推理性能至关重要。你将与内部 GPU 库团队和开源维护者紧密合作，确保优化的无缝集成，利用最前沿的编译器技术和先进的工程原理推动持续改进。
+As a core member of the team, you will play a pivotal role in optimizing and developing deep learning frameworks for AMD GPUs. Your strong experience will be critical in enhancing GPU kernels, deep learning models, and training/inference performance across multi-GPU and multi-node systems. You will engage with both internal GPU library teams and open-source maintainers to ensure seamless integration of optimizations, utilizing cutting-edge compiler technologies and advanced engineering principles to drive continuous improvement.   
+作为团队的核心成员，你将在优化和开发 AMD GPU 的深度学习框架中发挥关键作用。你丰富的经验对于提升 GPU 内核、深度学习模型以及多 GPU 和多节点系统的训练/推理性能至关重要。你将与内部 GPU 库团队和开源维护者合作，确保优化的无缝集成，利用最前沿的编译器技术和先进的工程原理，推动持续改进。
 
-**THE PERSON:**    该职位：
+**THE PERSON:**     该职位要求：
 
-Skilled engineer with strong technical and analytical expertise in C++ development within Linux environments. The ideal candidate will thrive in both collaborative team settings and independent work, with the ability to define goals, manage development efforts, and deliver high-quality solutions. Strong problem-solving skills, a proactive approach, and a keen understanding of software engineering best practices are essential.   
-具备 Linux 环境下 C++开发的专业技能和分析能力，理想的候选人能够在团队协作和独立工作中都表现出色，能够明确目标、管理开发工作并交付高质量的解决方案。强大的问题解决能力、积极主动的态度以及对软件工程最佳实践的深刻理解是必不可少的。
+Highly skilled engineer with strong technical and analytical expertise in C++ development within Linux environments. The ideal candidate will thrive in both collaborative team settings and independent work, with the ability to define goals, manage development efforts, and deliver high-quality solutions. Strong problem-solving skills, a proactive approach, and a keen understanding of software engineering best practices are essential.   
+一位技术精湛的工程师，在 Linux 环境下具备深厚的 C++开发技术和分析能力。理想的候选人能够在团队协作和独立工作中都表现出色，具备设定目标、管理开发工作并交付高质量解决方案的能力。需要具备强大的问题解决能力、积极主动的态度以及对软件工程最佳实践的深刻理解。
 
 **KEY RESPONSIBILITIES:**    主要职责：
 
@@ -49,30 +49,33 @@ Skilled engineer with strong technical and analytical expertise in C++ develop
 - **Software Engineering Best Practices:** Apply sound engineering principles to ensure robust, maintainable solutions.   
     软件工程最佳实践：应用稳健的工程原则，确保解决方案的可靠性和可维护性。
 
+- **Mentor and Guide:** Provide mentorship to junior team members, fostering growth and collaboration through code reviews, knowledge sharing, and technical guidance.     
+    导师与指导：为团队中的初级成员提供指导，通过代码审查、知识共享和技术指导来促进成长和合作。
+
 **PREFERRED EXPERIENCE:**    优先经验：
 
-- **GPU Kernel Development & Optimization:** Experienced in designing and optimizing GPU kernels for deep learning on AMD GPUs using HIP, CUDA, and assembly (ASM). Strong knowledge of AMD architectures (GCN, RDNA) and low-level programming to maximize performance for AI operations, leveraging tools like Compute Kernel (CK), CUTLASS, and Triton for multi-GPU and multi-platform performance.   
-    GPU 内核开发与优化：在 AMD GPU 上使用 HIP、CUDA 和汇编（ASM）设计和优化深度学习 GPU 内核的经验。对 AMD 架构（GCN、RDNA）有深入理解，以及低级编程知识，以最大化 AI 操作的性能，利用 Compute Kernel (CK)、CUTLASS 和 Triton 等工具实现多 GPU 和多平台性能。
+- **GPU Kernel Development & Optimization:** Strong experience in designing and optimizing GPU kernels for deep learning on AMD GPUs using HIP, CUDA, and assembly (ASM). Strong knowledge of AMD architectures (GCN, RDNA) and low-level programming to maximize performance for AI operations, leveraging tools like Compute Kernel (CK), CUTLASS, and Triton for multi-GPU and multi-platform performance.   
+    GPU 内核开发与优化：在 AMD GPU 上使用 HIP、CUDA 和汇编（ASM）设计和优化深度学习 GPU 内核方面有丰富经验。对 AMD 架构（GCN、RDNA）有深入理解，以及低级编程知识，以最大化 AI 操作的性能，利用 Compute Kernel (CK)、CUTLASS 和 Triton 等工具实现多 GPU 和多平台性能。
 
-- **Deep Learning Integration:** Experienced in integrating optimized GPU performance into machine learning frameworks (e.g., TensorFlow, PyTorch) to accelerate model training and inference, with a focus on scaling and throughput.   
-    深度学习集成：擅长将优化的 GPU 性能集成到机器学习框架（例如 TensorFlow、PyTorch）中，以加速模型训练和推理，重点关注扩展性和吞吐量。
+- **Deep Learning Integration:** Strong experience in integrating optimized GPU performance into machine learning frameworks (e.g., TensorFlow, PyTorch) to accelerate model training and inference, with a focus on scaling and throughput.   
+    深度学习集成：在将优化的 GPU 性能集成到机器学习框架（例如 TensorFlow、PyTorch）以加速模型训练和推理方面具有丰富经验，重点关注扩展性和吞吐量。
 
-- **Software Engineering:** Skilled in Python and C++, with experience in debugging, performance tuning, and test design to ensure high-quality, maintainable software solutions.   
-    软件工程：精通 Python 和 C++，具备调试、性能调优和测试设计方面的经验，以确保高质量、可维护的软件解决方案。
+- **Software Engineering:** Expert skills in Python and C++, with experience in debugging, performance tuning, and test design to ensure high-quality, maintainable software solutions.   
+    软件工程：精通 Python 和 C++，具备调试、性能调优和测试设计方面的专业技能，以确保高质量、可维护的软件解决方案。
 
-- **High-Performance Computing:** Solid experienced in running large-scale workloads on heterogeneous compute clusters, optimizing for efficiency and scalability.   
-    高性能计算：在异构计算集群上运行大规模工作负载方面拥有丰富的经验，专注于优化效率和可扩展性。
+- **High-Performance Computing:** Strong experience in running large-scale workloads on heterogeneous compute clusters, optimizing for efficiency and scalability.   
+    高性能计算：在异构计算集群上运行大规模工作负载方面具有丰富经验，专注于优化效率和可扩展性。
 
-- **Compiler Optimization:** Foundational understanding of compiler theory and tools like LLVM and ROCm for kernel and system performance optimization.   
-    编译器优化：对编译器理论及 LLVM 和 ROCm 等工具有基础理解，用于内核和系统性能优化。
+- **Compiler Optimization:** Sound understanding of compiler theory and tools like LLVM and ROCm for kernel and system performance optimization.   
+    编译器优化：对编译器理论以及 LLVM 和 ROCm 等工具有深入理解，用于内核和系统性能优化。
 
 **ACADEMIC CREDENTIALS:**    学术资格：
 
-- **Bachelor’s and/or Master’s Degree** in Computer Science, Computer Engineering, Electrical Engineering, or a related field.   
-    计算机科学、计算机工程、电气工程或相关专业学士和/或硕士学位。
+- **Master’s degree** in Computer Science, Computer Engineering, Electrical Engineering, or a related field.   
+    计算机科学、计算机工程、电气工程或相关领域的硕士学位。
 
-- **3+ years of professional experience** in technical software development, with a focus on GPU optimization, performance engineering, and framework development.   
-    3 年以上技术软件开发专业经验，专注于 GPU 优化、性能工程和框架开发。
+- **5+ years of professional experience** in technical software development, with a focus on GPU optimization, performance engineering, and framework development.   
+    5 年以上专业技术软件开发经验，专注于 GPU 优化、性能工程和框架开发。
 
 #LI-FL1
 
