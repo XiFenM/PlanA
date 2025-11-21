@@ -20,7 +20,8 @@ The position is in NVIDIA AI Software Quality Assurance team that defines, devel
     
 - In-house repro and verify customer issues/fixes.  
     内部复现和验证客户问题/修复。
-    
+- Utilize AI-powered tools to improve efficiency and quality, including test case/plan/script generation, defect detection, CBTP, bug fixing and day to day assistance.    
+    利用 AI 工具提高效率和品质，包括测试用例/计划/脚本生成、缺陷检测、CBTP、错误修复以及日常协助。    
 
 **What we need to see:  
 我们需要看到：**
