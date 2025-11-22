@@ -5,7 +5,6 @@
 We are expanding our research and development for Inference. We seek excellent Software Engineers and Senior Software Engineers to join our team.
 
 我们正在扩展推理领域的研究与开发，寻求优秀的软件工程师和高级软件工程师加入我们的团队。
-111
   
 
 We specialize in developing GPU-accelerated Deep learning software. Researchers around the world are using NVIDIA GPUs to power a revolution in deep learning, enabling breakthroughs in numerous areas. Join the team that builds software to enable new solutions. Collaborate with the deep learning community to implement the latest algorithms for public release in Tensor-RT. Your ability to work in a fast-paced customer-oriented team is required and excellent communication skills are necessary.
