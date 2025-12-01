@@ -14,11 +14,11 @@ At AMD, our mission is to build great products that accelerate next-generation c
 We are seeking a highly experienced engineer specializing in large language model (LLM) inference performance optimization. You will be a core member of our team, responsible for building and optimizing the LLM inference performance with high-throughput, low-latency on AMD Instinct GPUs. If you are passionate about pushing performance boundaries and have deep, hands-on expertise with cutting-edge technologies like vLLM or SGLang, we invite you to join us.  
 我们正在寻找一位在大型语言模型（LLM）推理性能优化方面经验丰富的工程师。您将成为我们团队的核心成员，负责在 AMD Instinct GPU 上构建和优化具有高吞吐量、低延迟的 LLM 推理性能。如果您热衷于突破性能极限，并且对 vLLM 或 SGLang 等尖端技术拥有深厚的实践经验，我们诚邀您加入我们。  
 **Key Responsibilities  主要职责**  
-1. Core System Optimization: Lead the development, tuning, and customization of LLM performance optimization on AMD GPUs, leveraging and extending frameworks like vLLM or SGLang to address performance bottlenecks in production environments.  
+1. Core System Optimization: Lead the development, tuning, and customization of LLM performance optimization on AMD GPUs, leveraging and extending **==frameworks like vLLM or SGLang==** to address performance bottlenecks in production environments.  
 2. 核心系统优化：领导在 AMD GPU 上开发、调优和定制 LLM 性能优化，利用并扩展 vLLM 或 SGLang 等框架来解决生产环境中的性能瓶颈。  
-3. Performance Analysis & Tuning: Conduct end-to-end performance profiling using specialized tools. Perform deep optimization of compute-bound operators (e.g., Attention), memory I/O, and communication to significantly increase throughput and reduce latency.  
+3. Performance Analysis & Tuning: Conduct end-to-end **==performance profiling==** using specialized tools. Perform deep optimization of compute-bound operators (e.g., Attention), memory I/O, and communication to significantly increase throughput and reduce latency.  
 4. 性能分析与调优：使用专业工具进行端到端性能分析。对计算密集型算子（例如 Attention）进行深度优化，优化内存 I/O 和通信，显著提高吞吐量并降低延迟。  
-5. Model Architecture Adaptation: Demonstrate expertise in mainstream LLM architectures (e.g., DeepSeek, Qwen, Llama, ChatGLM) and optimize inference for their specific characteristics (e.g., RoPE, SWA, MoE, GQA).  
+5. **==Model Architecture Adaptation==**: Demonstrate expertise in mainstream LLM architectures (e.g., DeepSeek, Qwen, Llama, ChatGLM) and optimize inference for their specific characteristics (e.g., RoPE, SWA, MoE, GQA).  
 6. 模型架构适配：展示在主流 LLM 架构（例如 DeepSeek、Qwen、Llama、ChatGLM）方面的专业知识，并针对其特定特性（例如 RoPE、SWA、MoE、GQA）优化推理。  
 7. Algorithm & Principle Application: Leverage your deep understanding of core algorithms (Transformer, Attention, MoE) to implement advanced optimization techniques such as PagedAttention, FlashAttention, continuous batching, quantization, and model compression.  
 8. 算法与原理应用：利用对核心算法（Transformer、Attention、MoE）的深入理解，实现高级优化技术，如 PagedAttention、FlashAttention、连续批处理、量化和模型压缩。  
