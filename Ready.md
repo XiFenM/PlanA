@@ -21,6 +21,7 @@ mask数据控制流
 
 ## 判断优化空间
 ## 针对不同shape进行优化kernel
+64合并/128转
 
 # flash attention系列优化
 
