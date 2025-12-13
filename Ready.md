@@ -13,6 +13,11 @@ vreg 也必须要128 padding（32bit）8（sub core） * 128
 
 算子融合（可以重构算法逻辑）
 pingpong（传输与计算并行）
+软件流水线，超长指令字，分为两阶段，序言（连续发送多个matmul指令）和稳态（边获取matmul结果，一边发送后面的matmul）
+
+mask数据控制流
+
+模板化kernel预处理分支，分支判断提到cpu，借助cpu的控制器能力分支预测
 
 ## 判断优化空间
 ## 针对不同shape进行优化kernel
