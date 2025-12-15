@@ -4,7 +4,7 @@
 我硕士毕业于复旦大学大数据学院，本科毕业于上海大学数学系。
 我目前担任AI框架开发工程师。我过去的工作主要是在非 NV 架构的自研芯片上，适配并优化 vLLM 和 Pytorch  等主流框架。
 
-第一，对 Transformer 推理全栈的深度掌控。 为了在受限硬件上跑通 Qwen2.5-VL 和 Llama-3，我深入修改了 vLLM 源码。我不仅实现了 Chunked Prefill，还针对硬件访存特性，设计了 “列优先矩阵乘” 和 Duo-Attention 机制（并申请了专利）。这证明我不止是“调包”，我有架构级的改造能力。
+第一，对 Transformer 推理全栈的深度掌控。 为了在受限硬件上跑通 Qwen2.5-VL 和 Llama-3，我深入修改了 vLLM 源码。我不仅实现了 Chunked Prefill，还针对硬件访存特性，设计了 “列优先矩阵乘” 和 Duo-Attention 机制。这证明我不止是“调包”，我有架构级的改造能力。
 
 第二，底层算子开发与性能压榨能力。 我非常熟悉 GPU 体系结构。在工作中，我需要手写 Kernel 来解决性能瓶颈。例如，针对多模态模型中的 Conv3d 和 3D-RoPE，我通过 流水线并行 和 算子融合，将推理延时降低了 50%。 此外，我也有在 V100 上使用 CUDA 开发 的经验，曾手动实现 Softmax 和 Reduce 算子，通过 Shared Memory 优化和解决 Bank Conflict，实现了比 cuDNN 更高的特定场景性能。
 
