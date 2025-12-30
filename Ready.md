@@ -53,4 +53,15 @@ mask数据控制流
 ## 什么时候适合动态量化，什么时候适合静态量化
 
 写kernel时的难点
+内存碎片
+连续内存内存碎片
+精度下降精度问题
+mfu计算
+tp Megatron实现
+triton
+cuda kernel
+moe
+top k 堆排序
+线段树
+推理框架未来发展痛点
 
