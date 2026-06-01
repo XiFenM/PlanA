@@ -6,6 +6,7 @@ This repository is an Obsidian-backed Markdown knowledge vault for AI Infra inte
 
 - `计划/` is the planning hub: `主计划.md`, `进度总表.md`, `周更流程.md`, `月底晋级评审.md`, and weekly reports in `计划/周报/YYYY-Wxx.md`.
 - Core study modules live at the top level: `推理框架/`, `训练框架与分布式/`, `并行计算编程/`, `Pytorch/`, `模型理论/`, `Leetcode/`, `编译器/`, and `TPUs/`.
+- `英语/` is a parallel listening/speaking sub-track (22 weeks, like `Leetcode/`); it keeps the same two anchor files plus `review-workflow.md`, `ai-chat-prompt.md`, and `log/ cards/ references/`. Its audio material is produced by the sibling tool repo `../blog-voice`.
 - Each module should keep two anchor files: `学习指引.md` for stable curriculum and `进度.md` for progress tracking.
 - `面试准备/` holds interview materials. `Job Description/` stores role descriptions by direction. Assets should stay near the notes that reference them, for example `TPUs/pointwise-product.gif`.
 

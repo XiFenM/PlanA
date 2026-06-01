@@ -32,7 +32,11 @@ PlanA/
 ├── 并行计算编程/                   ← Track A 第三优先级（GPU 算子）
 ├── Pytorch/                        ← PyTorch Internals
 ├── 模型理论/                       ← Attention / MoE / 量化 / RL 后训练
-├── Leetcode/                       ← 250 题，贯穿全程
+├── Leetcode/                       ← 250 题，贯穿全程（并行子轨道）
+├── 英语/                           ← 听力/口语训练，22 周贯穿全程（并行子轨道）
+│   学习指引.md + 进度.md（同样的"稳定版/进度"双锚文件）
+│   外加 review-workflow.md（墨墨复习流程）、ai-chat-prompt.md、log/ cards/ references/
+│   音频教材由同级工具仓库 ../blog-voice 生产
 ├── 编译器/                         ← Track B（offer 后或 Track A 余力推进）
 ├── TPUs/                           ← Track B
 │   每个板块目录恒定包含两份核心文件：
@@ -63,6 +67,8 @@ PlanA/
 | [计划/进度总表.md](计划/进度总表.md) | 全局 dashboard，20 周甘特 + 8 个模块汇总 + checkpoint 自测 | 每周 |
 
 **周报独立成线**：[计划/周更流程.md](计划/周更流程.md) 规定每周日新开会话扫订阅源 → 写 [计划/周报/](计划/周报/) → 月底人工"晋级"高分条目到稳定版 `学习指引.md`。
+
+**两条全程并行子轨道**：[Leetcode/](Leetcode/) 和 [英语/](英语/) 都不占主线板块周次，而是每天用独立时间块推进、贯穿全程，各自同样用 `学习指引.md` + `进度.md` 双锚文件管理。英语轨 22 周（比冲刺多 2 周到 W22），其每日 60–75 min **不计入** 650h 主预算；音频教材由同级工具仓库 `../blog-voice` 生产。
 
 ---
 
@@ -219,6 +225,20 @@ PlanA/
 - **GitHub Trending（Python + C++）**：每周扫一遍
 - **各类网页博客**：通过 RSS / 邮件订阅汇总到一处
 
+### 5.11 英语听说训练源（并行子轨道）
+
+> 完整清单 + 10 集入门路线见 [英语/references/AI-infra-podcast.md](英语/references/AI-infra-podcast.md)；如何映射到 5 阶段听力升级见 [英语/学习指引.md §3.3](英语/学习指引.md)。**这些源按"配 transcript + 重复 + shadowing"的方式用，被动听不算训练。**
+
+| 阶段 | 主推材料 | 类型 |
+|---|---|---|
+| 1（恢复手感）| BBC 6 Minute English | 听力恢复，带 transcript |
+| 2（技术桥接）| Practical AI | AI 入门播客 |
+| 3（上量）| Latent Space、a16z《Building Real-World Infra for AI》 | AI 工程访谈 |
+| 4（工程师语速）| TWIML、Kubernetes Podcast（LLM-D）、Software Engineering Daily | 硬核 infra |
+| 5（产出）| Dwarkesh（Dylan Patel）、No Priors（Jensen Huang）| 难集 |
+
+**工具栈**（固定不换）：Anki / 墨墨记忆卡（间隔重复）、Language Reactor（双语字幕）、YouGlish（真实发音）、Cambridge Dictionary（查词）、多邻国（streak）。**自产教材**：同级 `../blog-voice` 把 AI Infra 博客转成"喜欢音色 + 双语 LRC"的音频，每 2–3 周 1 篇。
+
 ---
 
 ## 6. 阅读路径建议
@@ -230,6 +250,7 @@ PlanA/
 | 想看某板块要读什么资料 | [{板块}/学习指引.md](推理框架/学习指引.md) |
 | 想看我学到哪了 | [计划/进度总表.md](计划/进度总表.md) |
 | 想看本周新出的资料 | [计划/周报/](计划/周报/) 最新一份 |
+| 想看我的英语听说训练计划 | [英语/学习指引.md](英语/学习指引.md)（进度见 [英语/进度.md](英语/进度.md)）|
 | 想看面试故事素材 | [面试准备/](面试准备/) |
 | 想看具体的论文笔记 / 实战复盘 | 各板块目录下后续会陆续追加的 `.md` 文件 |
 

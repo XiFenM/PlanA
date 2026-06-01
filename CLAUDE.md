@@ -17,6 +17,18 @@ Each lives in its own top-level dir (Chinese names) and **always contains exactl
 
 Modules: `推理框架/` `Pytorch/` `训练框架与分布式/` `并行计算编程/` `模型理论/` `Leetcode/` `编译器/` `TPUs/`. Module dirs may also accumulate ad-hoc `.md` files (paper notes, retros, kernel demos) over time — that's expected; only the two anchor files are mandatory.
 
+## The 英语/ parallel track (listening + speaking)
+
+`英语/` is a **22-week parallel sub-track** (like `Leetcode/`, it doesn't occupy mainline weeks — it's a daily 60–75 min block running the whole sprint, extending 2 weeks past it to W22). It uses the same two anchor files (`学习指引.md` stable plan + `进度.md` tracker), plus extra files specific to language practice:
+
+- `学习指引.md` — the 5-phase plan: baseline-test SOP, daily time blocks, 4 practice SOPs (美剧 / 口语课 / AI Infra listening / mini-talk recording), Anki/Markji card templates, phase-by-phase detail, subscriptions.
+- `进度.md` — weekly 打卡 table, monthly comparison, phase checkpoints, 偷懒红线, daily log.
+- `review-workflow.md` — the 4-step spaced-repetition flow (踩坑 → daily log → 墨墨记忆卡 TSV). `ai-chat-prompt.md` — the AI-coach system prompt. `log/` (daily logs), `cards/` (Markji TSV cards), `references/` (podcast list, advice docs, Markji syntax).
+
+**The daily-card task you'll be asked to run**: "读 `英语/log/day-NN.md`，按 review-workflow Step 3 整理成墨墨表格，写到 `英语/cards/day-NN.md`。" Read `review-workflow.md` and `cards/_templates.md` first; emit Markji table-import TSV per the templates. Styling lives in the template — data rows stay plain text. `day-NN` = study-day sequence (skipped days don't take a number); the date is in the file's H1.
+
+**Audio teaching material is produced by the sibling tool repo `../blog-voice`** (a TTS CLI), not by this vault. The English plan is its downstream consumer. When the user mentions article cadence / topic selection / generating listening audio, that work happens in `../blog-voice` (`uv run blog-voice article ...`); anchor on "one new AI Infra article per 2–3 weeks".
+
 ## The 计划/ control plane
 
 `计划/` is the planning hub and contains files you should treat as load-bearing:
