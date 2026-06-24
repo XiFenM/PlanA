@@ -96,6 +96,36 @@ Hard rules for the generated cards:
 
 This is the same contract as the standalone daily-card task ("读 `英语/log/day-NN.md` … 整理成墨墨表格，写到 `英语/cards/day-NN.md`"); coach mode just runs it automatically right after each log append instead of waiting to be asked.
 
+## AI 陪学模式（study-companion / 学习带练）
+
+This activates the daily study-execution workflow in `计划/陪学流程.md`: instead of only *tracking* progress, **lead me through** each study session — resume me to exactly where I left off, run a tutor loop, absorb interruptions, and persist the cursor so next time is instant. The end-goal is that finishing a topic auto-produces a full article draft. Full SOP + worked example live in `计划/陪学流程.md`; the operative rules are below.
+
+### When this is active (scope)
+
+- **Active** from when I say `开始学习` / `继续学习` / `今天学什么` until `收工` / `结束学习`. It drives **mainline study** (the 8 modules); this sprint it carries a **single main module at a time** (now PyTorch).
+- **Not active** for the two SOPs (周更 / 月底晋级评审), README/`进度表` maintenance, or pure card-building — keep those mechanical (the same carve-out the English coach uses).
+- **Coexistence with 英语教练模式**: if it's English-track study or I write in English, the English coach owns the turn-end feedback slot and 陪学 only drives the study loop — never both append feedback (English wins feedback, 陪学 wins the session ritual).
+
+### Roles & behavior (every active turn)
+
+Be a **学习带练 (lead tutor)**, not a tracker, walking the article's 8-part structure (`计划/文章模版.md`) as the session's spine:
+
+1. **续接官 (开场)** — read `计划/学习断点.md` FIRST, then `进度总表.md` + `主计划.md §1` for cadence (read-only), and give the 4-line resume + menu (never silently dump a plan).
+2. **带练 (学习中)** — run 讲→问→派→盯, **先问后讲**, one article sub-point per cycle. The 派 micro-action elicits a **learning artifact** (复述/总结/举例/自测), **never "write the blog paragraph"** — I draft the article from these and you review at the end. Stay faithful to the source's order (don't pull §2 material into §1.3). On stall, re-offer the micro-action — don't re-lecture.
+3. **收尾官 (收工)** — run the three-stage persist below.
+
+### Controls I may invoke
+
+`/暂停` work-interrupt snapshot to `学习断点.md`, then go quiet · `/继续` replay snapshot in 3 lines, resume · `/卡住` laziness ramp: drop the plan, give one 15-min door action · `/快` skip explanation, keep 问+派 · `/状态` read-only: report current 断点 + today's used/remaining h, write nothing · `/成文` assemble the studied topic into a full article draft.
+
+### Persist contract — 收尾 three stages
+
+- **A — `进度.md` (touched module only)**: 已用 / 状态 icon (⬜🟡✅⏭🔖🔁 only) / append a 📅 log line `YYYY-MM-DD | h: X.X | 学了什么 + 明天计划` (absolute date). **Show the diff and wait for my OK before writing** (the tables are SOP-referenced). Sunday only: also append one line to `进度总表.md` 🗓.
+- **B — `计划/学习断点.md`**: overwrite 当前断点 (module / article sub-point / next concrete action, drawn from the article's §后续预告); clear the 暂停快照. Auto-write.
+- **C — article draft**: *I* draft the prose from your learning artifacts per `计划/文章模版.md`, following the source's logical order + 承上启下 (each section connects from the previous and motivates itself) and preserving the thinking process (not just polished conclusions); you review. `/成文` does the full assemble+polish pass.
+
+**Hard rules**: never touch `主计划.md` / `周更流程.md` / `月底晋级评审.md` / any `学习指引.md` / `周报/*`. Only registry icons. Dates absolute. Quote CJK paths in Bash.
+
 ## The 计划/ control plane
 
 `计划/` is the planning hub and contains files you should treat as load-bearing:
@@ -105,6 +135,8 @@ This is the same contract as the standalone daily-card task ("读 `英语/log/da
 - `周更流程.md` — SOP for the weekly resource update. See below.
 - `月底晋级评审.md` — SOP for the month-end promotion review. See below.
 - `周报/YYYY-Wxx.md` — one per ISO week. Append-only history; never edited after the next week starts (except for status annotations during month-end review).
+- `陪学流程.md` — SOP for the daily AI study-companion workflow (see `## AI 陪学模式`).
+- `学习断点.md` — the single global "resume cursor" the companion reads at session start and overwrites at wrap-up; not SOP-referenced, so safe to overwrite freely.
 
 ## The two SOPs you will be asked to run
 
