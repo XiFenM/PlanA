@@ -1,0 +1,64 @@
+<mxfile host="65bd71144e">
+    <diagram id="LtGemxaRTXZqDHaf4ECl" name="第 1 页">
+        <mxGraphModel dx="579" dy="569" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="3" value="&lt;font style=&quot;font-size: 36px;&quot;&gt;a&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;align=center;container=0;" vertex="1" parent="1">
+                    <mxGeometry x="70" y="180" width="120" height="90" as="geometry"/>
+                </mxCell>
+                <mxCell id="4" value="grad_fn=&lt;div&gt;None&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;container=0;" vertex="1" parent="1">
+                    <mxGeometry x="90" y="240" width="80" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="5" value="&lt;font style=&quot;font-size: 36px;&quot;&gt;b&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;align=center;container=0;" vertex="1" parent="1">
+                    <mxGeometry x="370" y="170" width="120" height="90" as="geometry"/>
+                </mxCell>
+                <mxCell id="6" value="grad_fn=&lt;div&gt;None&lt;/div&gt;" style="rounded=1;whiteSpace=wrap;html=1;container=0;" vertex="1" parent="1">
+                    <mxGeometry x="390" y="230" width="80" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="20" value="AccumulateGrad" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+                    <mxGeometry x="50" y="300" width="130" height="35" as="geometry"/>
+                </mxCell>
+                <mxCell id="21" value="AccumulateGrad" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+                    <mxGeometry x="380" y="300" width="130" height="35" as="geometry"/>
+                </mxCell>
+                <mxCell id="8" value="&lt;font style=&quot;font-size: 36px;&quot;&gt;tmp&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;align=center;labelPosition=center;verticalLabelPosition=middle;verticalAlign=middle;" vertex="1" parent="1">
+                    <mxGeometry x="220" y="370" width="120" height="90" as="geometry"/>
+                </mxCell>
+                <mxCell id="16" style="edgeStyle=none;html=1;" edge="1" parent="1" source="9" target="20">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="17" style="edgeStyle=none;html=1;" edge="1" parent="1" source="9" target="21">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="9" value="grad_fn=&lt;div&gt;MulBackward&lt;/div&gt;" style="rounded=1;html=1;whiteSpace=wrap;" vertex="1" parent="1">
+                    <mxGeometry x="230" y="370" width="100" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="12" value="&lt;font style=&quot;font-size: 36px;&quot;&gt;y&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;align=center;labelPosition=center;verticalLabelPosition=middle;verticalAlign=middle;" vertex="1" parent="1">
+                    <mxGeometry x="220" y="520" width="120" height="90" as="geometry"/>
+                </mxCell>
+                <mxCell id="15" style="edgeStyle=none;html=1;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" edge="1" parent="1" source="13" target="9">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="13" value="grad_fn=&lt;div&gt;ReluBackward&lt;/div&gt;" style="rounded=1;html=1;whiteSpace=wrap;" vertex="1" parent="1">
+                    <mxGeometry x="230" y="520" width="100" height="30" as="geometry"/>
+                </mxCell>
+                <mxCell id="22" value="累加→ a.grad" style="edgeStyle=none;html=1;fontSize=11;" edge="1" parent="1" source="20" target="3">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="23" value="累加→ b.grad" style="edgeStyle=none;html=1;fontSize=11;" edge="1" parent="1" source="21" target="5">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="24" value="saved_tensors: a, b" style="text;html=1;align=left;verticalAlign=middle;fontColor=#B85450;fontSize=12;" vertex="1" parent="1">
+                    <mxGeometry x="360" y="378" width="200" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="25" value="saved_tensors: 输出 y（非输入 tmp）" style="text;html=1;align=left;verticalAlign=middle;fontColor=#B85450;fontSize=12;" vertex="1" parent="1">
+                    <mxGeometry x="360" y="528" width="240" height="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="26" value="反向图：箭头 = 梯度流向（输出 → 叶子）" style="text;html=1;align=left;verticalAlign=middle;fontColor=#666666;fontSize=11;" vertex="1" parent="1">
+                    <mxGeometry x="50" y="630" width="320" height="20" as="geometry"/>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+</mxfile>
