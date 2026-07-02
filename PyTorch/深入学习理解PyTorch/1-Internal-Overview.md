@@ -436,7 +436,7 @@ $$
 
 在「先猜再学」里，我对这件事的直觉其实只对了一半：我猜"每个开启微分的 tensor 会记录上一次的操作，然后沿链一直往上传，直到没有记录的 tensor 为止"。"记录上一次操作"、"往上传到叶子为止"这两点都对，但我漏了关键的另一半——光知道"做了什么操作"还不足以算出反向，**还得把"反向时要用到的前向中间值"一并存下来**。所以 variable 层记录的是两件事：
 
-1. **grad_fn（反向函数句柄）**：标记这个张量是被哪个算子算出来的，从而知道反向该调哪段代码。比如 `c` 由加法得到，`c.grad_fn` 就是 `AddBackward`。
+1. **grad_fn（反向函数句柄）**：标记这个张量是被哪个算子算出来的，从而知道反向该调哪段代码。比如 `c` 由加法得到，`c.grad_fn` 就是 `AddBackward`。这个最简情形我画在同目录 `backward_graph.drawio`：`c = a + b` 的 `c` 挂着 `AddBackward`，而叶子 `a`、`b` 的 `grad_fn` 是 `None`。
 2. **saved tensors（反向要用的前向张量）**：因为绝大多数算子的反向都要用到前向的某些值。$z = x \cdot y$ 的反向 $\partial z/\partial x = y$、$\partial z/\partial y = x$，要用到输入 $x$、$y$；$y = \exp(x)$（即 `x.exp()`）的反向 $\partial y/\partial x = \exp(x) = y$，要用到输出 $y$。这些值在前向时就被对应的 grad_fn 节点"存档"，一直留到反向才取用。
 
 这里我自己踩过一个小坑，正好记下来：一开始我以为 `relu` 的反向要存"输入"（毕竟 relu 的导数看输入的符号），后来发现 PyTorch 实际存的是"输出 `y`"——因为对 relu 而言输出和输入同号，存输出一样能判断该不该让梯度通过，还能让输入缓冲早点释放。这说明"存输入还是存输出"是按"哪个够用且更省"来定的，并不是死板地存输入。
@@ -664,9 +664,425 @@ $$ \text{每层} \approx s\,b\,h\left(34 + 5\,\frac{a\,s}{h}\right) \text{字节
 
 ### 3. 基本代码结构
 
+进入原文的「机制」部分。这一章把前两章抽象的 dispatch 与 autograd 落到真实的代码组织上：先看 PyTorch 的目录分层各管什么（§3.1），再跟着一次 `torch.add` 调用走一遍从 Python 到 kernel 的代码旅程（§3.2）。
+
+#### 3.1 四大目录分层：c10 / ATen / torch/csrc / torch
+
+前两章一直在讲抽象——§1.3 的 dispatch 怎么按属性分流、§2 的 autograd 怎么记录反向图。从这章起进入原文的「机制」部分，把这些抽象落到真实的代码组织上。第一步先摊开目录地图：PyTorch 源码文件夹极多，但撑起骨架的是四个，而且它们之间有严格分层。
+
+我先凭工作印象给这四层排了个序，对了大半、错了两处，正好记下来。熟悉的两个落点是准的：魔改 ProcessGroup 在 `torch/csrc/distributed/c10d`，加自定义算子的 kernel 实现在 `aten/src/ATen/native/`。但「c10 和 ATen 谁在下」我答成了平级——这是错的。
+
+按 Ezyang 的划分，四个目录自底向上分工如下：
+
+- **`c10/`**（名字来自 Caffe2 + ATen 的合并）——**设备无关的核心底座**。最核心、要被所有后端共用的数据结构都在这：`TensorImpl`、`StorageImpl`、`DispatchKey` / `DispatchKeySet`、`Device`、`ScalarType`、`Allocator`，以及 **Dispatcher 本体**。
+- **`ATen/`**（A Tensor library，目录 `aten/`）——**算子库**。内置算子 kernel 实现落在 `aten/src/ATen/native/`（CPU 在本层、CUDA 在 `native/cuda/`），schema 声明文件 `native_functions.yaml` 也在这。
+- **`torch/csrc/`**——**C++ 前端**。autograd 引擎、生成的 `VariableType`、C++ API（`api/`）、ProcessGroup（`distributed/c10d`）、JIT（`jit/`）都在这。
+- **`torch/`**——**Python 包**。`import torch` 摸到的 `.py`，加上生成的 `_C` 绑定。
+
+我之前的错误这里就能纠正：**c10 严格在 ATen 之下，不是平级**——ATen 依赖 c10，反过来不行。整条依赖链严格单向：
+
+```text
+c10/        ← 最底座：核心抽象，设备无关，不许反向依赖任何上层
+  ↑
+ATen/       ← 算子库：native/ 里的真实 kernel、native_functions.yaml
+  ↑
+torch/csrc/ ← C++ 前端：autograd 引擎 + 生成的 VariableType、distributed/c10d、jit
+  ↑
+torch/      ← Python 包：.py + 生成的 _C 绑定
+```
+
+记法是「**核心 → 算子 → 前端/autograd → Python**」，箭头只能从下往上 `#include`，c10 绝不许反过来依赖 ATen。
+
+那为什么偏偏这几样东西放进 c10？我起初理解成「方便别处取用」，但真正的理由更硬：**c10 是设备无关的最小公共底座**。CPU 构建、CUDA 构建、移动端、还有我做的 PrivateUse1 后端，全都链接同一份 c10。既然谁都得用、又不能绑死任何一种后端，它就只能装最纯的核心抽象——`TensorImpl`、`DispatchKey`、`Dispatcher` 这些与具体硬件无关的东西。把它做轻、做纯，正是为了让所有后端共享。
+
+这套分层也解释了我的工作为什么横跨四层：PrivateUse1 这个 `DispatchKey` 定义在 `c10/core/DispatchKey.h`、算子 kernel 注册进 ATen 的 dispatcher、自定义 ProcessGroup 落在 `torch/csrc/distributed/c10d`。平时随手魔改的几个点，恰好把整条依赖链串了起来。
+
+这里有一个把我绕过弯的认知点，值得单独点破：**「注册算子」注册的是 c10 的 Dispatcher，而不是「把代码放进 aten 就算注册」**。我日常总在 `aten/native/` 和 `native_functions.yaml` 里写算子，于是默认「算子就属于 ATen」。但「kernel 实现放哪」和「注册动作落在哪」是两件事：实现的函数体确实在 `aten/native/`，可真正让一个算子「生效」的，是它在 **c10 Dispatcher 那张 `(算子, DispatchKey) → 函数指针` 表**里有没有对应表项——判定注册是否完成，唯一标准就是这张表。至于这张表怎么被填进去（codegen 还是手写 `TORCH_LIBRARY_IMPL`），留到 §4.1 细讲，这里先把「实现在 ATen、注册表在 c10」这层关系理清。
+
+最后补一个和本职密切相关、又极易混的点：**通信和普通算子走的是两套并行机制**。我一度以为 ProcessGroup 搭好后调的「通信算子」也走 §1.3 那套 dispatch，其实不是。经典 collective（`allreduce` 这类）是**直接调 `ProcessGroup` 对象的 C++ 方法 → 进 NCCL / 自研 CCL**，根本不经过 dispatcher；只有较新的 functional collectives（`torch.ops._c10d_functional`）才被注册成 dispatcher 算子、能进计算图。所以我魔改自定义 ProcessGroup 时动的那套，和我加自定义算子动的 dispatch 那套，是**两条不同的路**。
+
+目录地图到这里就清楚了。下一节我们挑一个最普通的 `torch.add`，跟着它从 Python 一路走到 CPU kernel，看这几层在一次真实调用里怎么依次登场。
+
+#### 3.2 一次调用的代码旅程：torch.add 从 Python 到 kernel 的调用栈
+
+上一节摊开的是静态地图，这一节让它动起来——挑一个最普通的 `torch.add(a, b)`（设 `a` 是 CPU 上、`requires_grad=True` 的 float32），跟着它从 Python 那行走到最终的 CPU kernel，看 §1.3 概念上的「variable → backend → dtype」三层在代码里分别是哪一跳。我先凭印象猜了两处，都只对一半，正好拿来对照。
+
+完整调用栈大致四跳：
+
+```text
+torch.add(a, b)                          # Python
+  └─ THPVariable_add                     # ① 生成，python_torch_functions.cpp，PythonArgParser 解析+解包
+       └─ at::add → c10::Dispatcher::call    # 进调度器，算 DispatchKeySet（grad → Autograd 最高）
+            └─ VariableType::add         # ② autograd 那跳，注册在 Autograd key
+                 │  造 AddBackward0、连 next_edges、save 输入
+                 └─ at::redispatch::add  # 排除 Autograd key 后【重新派发】（§2.3「剥开 variable」）
+                      └─ at::native::add     # ③ 落到 CPU backend kernel，经生成的 RegisterCPU.cpp
+                           └─ TensorIterator + AT_DISPATCH(float32)   # ④ kernel 内 dtype switch
+```
+
+第一处我猜错的是 Python 到 C++ 的第一跳。我以为是 pybind11 的绑定函数——「生成的」这点猜对了（我确实从没手写过它），但**它不是 pybind11**。torch.* 这些算子的 Python 绑定出于性能考虑，走的是 codegen 生成的**裸 CPython C-API 加 `PythonArgParser`**（pybind11 对热路径太重）。那个函数叫 `THPVariable_add`，在生成文件 `python_torch_functions.cpp` 里，负责解析 Python 参数、把 `PyObject` 解包成 `at::Tensor`。
+
+进入 C++ 后，`at::add` 调到 `c10::Dispatcher::call`，按输入张量算出一个 `DispatchKeySet`。因为 `a` 带 `requires_grad`，**Autograd key 优先级最高**，于是第一个被选中的不是计算 kernel，而是 autograd 那层。
+
+第二处我猜错的是 autograd 在代码里的形态。我以为它是「某个图数据结构」，其实**反向图是它的产物，不是它本身**。autograd 在调用栈里的真身，是一个**注册在 Autograd key 上的生成函数 `VariableType::add`**（在 `torch/csrc/autograd/generated/VariableType_N.cpp`）。它干的正是 §2.1 讲的那套记录：造一个 `AddBackward0` 节点、连好指向输入的 `next_edges`、把反向要用的输入 save 下来。换句话说——这是我学这节最大的顿悟——**`VariableType::算子` 就是 autograd「做记录」的那个 kernel**。我以前一直疑惑这个 `VariableType::` 开头的东西到底干嘛，现在它在调用栈里的位置、由谁生成、负责什么，全锁定了。
+
+记录做完，它并不自己算加法，而是调 `at::redispatch::add` **把 Autograd key 排除掉、重新派发一次**——这正是 §2.3 说的「剥开 variable」在代码里的样子。这次 dispatch 落到 backend：CPU key 对应的 `at::native::add`（经生成的 `RegisterCPU.cpp` 注册进来），才是真正算加法的 kernel。在 kernel 内部，`TensorIterator` 按 stride 遍历元素，`AT_DISPATCH` 宏按 float32 选到具体那份循环。
+
+把这四跳对回 §1.3 的概念三层，严丝合缝：**variable 层 = `VariableType::add`，backend 层 = `at::native::add`，dtype 层 = kernel 内的 `AT_DISPATCH` switch**。§1.3 抽象画的那张「拦截层」图，到这里有了真实的文件名和函数名。
+
+这一趟也顺手还清了 §2.3 欠下的债：`VariableType` 从哪来？它由 codegen 读 **`tools/autograd/derivatives.yaml`** 生成。于是两张表的分工浮出来了——`native_functions.yaml` 生成 backend kernel 的注册，`derivatives.yaml` 生成 `VariableType`（即 Autograd key 上）的注册。这两张表正是下一章 §4.1 的主角。
+
+这条调用栈我画成了一张图（同目录 `codegen_callstack.drawio`）：竖脊就是上面这四跳，而每个框还标注了它的 codegen 生成来源——那正是下一章 §4.1 的话题，同一张图两节共用。
+
+##### 扩展：autograd 为什么对后端「免费」
+
+`at::redispatch` 这一跳——autograd 记录完就把活儿重新派发给 backend——表面是实现细节，背后却藏着一条对后端开发者极重要的性质：**autograd 对一个新后端几乎是免费的，你只需实现前向 kernel，反向会自动工作。** 这结论初听反直觉，拆成两条机制就清楚了。
+
+**其一，autograd kernel 按「算子」注册，不按「后端」注册。** `VariableType::mul` 只有一份，键挂在 `aten::mul` 上，和 CPU / CUDA / PrivateUse1 无关。无论 mul 最终在哪种设备上算，它「反向该怎么建图」都是同一套逻辑——因为乘法的求导规则是数学，不随硬件变。所以这一份生成代码服务所有后端。
+
+**其二，反向公式是设备无关的数学，执行时会 redispatch 回你的前向 kernel。** 拿 mul 走一遍：数学上 $z = x \cdot y$，反向是 $\text{grad}_x = \text{grad}_z \cdot y$、$\text{grad}_y = \text{grad}_z \cdot x$，这份公式写死在 `derivatives.yaml` 里、与硬件无关。假设我只为 PrivateUse1 实现了**前向 mul kernel**，用户在我的设备上跑 `z = x*y; z.backward()`：前向时调度到 `AutogradPrivateUse1`，通用的 `MulBackward` 建好图、redispatch 到我的前向 mul kernel 算出 `z`；反向时 `MulBackward::apply` 执行公式 `grad_x = grad_z * y`，而**这里的乘法又是一次 `at::mul` 调度**——它再次落到我的前向 mul kernel。关键就在这：**反向无非是「再调用几次前向类算子」，而这些调用自动 redispatch 到我的 kernel**。于是我明明只写了前向 mul，反向却凭空有了。
+
+摆到三层来看，没有一层需要后端开发者重写：autograd 引擎（建图、反向遍历、`AccumulateGrad`）是后端无关的通用代码；反向公式（`derivatives.yaml`）是后端无关的数学；公式落地执行时靠 redispatch 借用我的前向 kernel。我欠的只剩**前向 kernel 这一列**——正好接上 §1.4 那个说法：扩展一个 device，就是欠下整张笛卡尔积的一整列；而 autograd 能自动从这一列里把全部反向「组装」出来。这就是为什么 PyTorch 上换个后端，模型照样能训。
+
+当然有边界，而且这条边界正好划开了我工作里两类活：**新算子若能分解成已有 aten 算子的组合**（即 CompositeImplicitAutograd），autograd 仍然免费，因为每个子算子各自有反向、计算图自动穿过它们；**新算子若是一整块单体融合 kernel**（如为性能手写的融合 attention 或通信 kernel），就没有子算子可借，必须自己提供 backward，而那个 backward 里往往还得再手写一个反向 kernel。一句话钉死实践：适配模型时能用现有算子拼出来的，训练能白嫖反向；为性能手写的融合大 kernel，必须配套手写 backward——某个自定义算子能不能 `.backward()`，全看它落在这条边界的哪一边。
+
+到此 §3 两节——静态目录地图与一次调用的动态旅程——走完了。沿途反复冒头的那两张表（`native_functions.yaml` 与 `derivatives.yaml`），正是下一章「编写算子」要逐行拆解的主角。
+
 ### 4. 编写算子
 
+有了代码地图，这一章按原文的「写一个 kernel」走查：算子怎么注册、kernel 骨架怎么搭、计算核与并行怎么写。这一章最贴工程实践，也兑现「先猜」里关于 native_functions.yaml 语法与新算子流程的疑问。
+
+#### 4.1 注册总览：声明表 native_functions.yaml × 求导表 derivatives.yaml
+
+§3.2 那条调用栈里，有两张表反复冒头：`native_functions.yaml` 和 `derivatives.yaml`，它们正是「编写算子」这章的主角。这一节先不抠语法，而是把总览立起来——两张表各生成什么、我到底要亲手写什么。抓住这个总览，下一节再逐行拆 yaml 时，就不会像我过去那样「照葫芦画瓢」。
+
+先把分工一句话钉死：
+
+- **`native_functions.yaml` 是前向的「接口声明」**：我声明「有个算子叫 add、签名长这样」，codegen 据此生成一整套「接线」——Python 绑定、C++ API、schema 注册、把 kernel 挂到后端 key 的注册代码。**它不含任何 kernel 逻辑。**
+- **`derivatives.yaml` 是反向公式**：我给出每个输入的梯度式（add 的 `self: grad`、`other: grad`），codegen 据此生成 `VariableType`——就是 §3.2 那个「autograd 记录 kernel」。
+- **我亲手写的，永远只有 kernel 函数体**：前向必写，反向按需。
+
+那么，一条 `native_functions.yaml` entry 到底生成了哪些东西？我起初把这份清单当「知识点」硬记，记着像背课文——直到换个角度才发现：它根本不用背，是能一步步推出来的。
+
+推导的钥匙是那条原理：**一条 yaml = 一次「接口声明」，codegen 要做的只是把这个接口从 Python 调用一路「接线」到我的 kernel、再穿过 autograd。** 于是我只要站在 §3.2 的调用链上，每一环问一句「下一步要成立，必须先有什么」，答案就是一个生成物：
+
+1. 用户在 Python 写 `torch.add(a, b)` → 得有东西接住 Python 调用、把 `PyObject` 解包成 `Tensor` → **Python 绑定 `THPVariable_add`**。
+2. 绑定总得调一个 C++ 函数 → **C++ API `at::add()`**。
+3. `at::add` 不知道该跑哪份 kernel，交给 dispatcher；但 dispatcher 只派发它「认识」的算子 → **schema 得先注册进调度表**。
+4. dispatcher 见 `requires_grad`、Autograd key 最高，要先走 autograd → 得有个**记录 kernel `VariableType::add`**（这一样是例外——它的内容是反向逻辑，所以来自 `derivatives.yaml`）。
+5. 记录完得继续算真值、且不能再被 autograd 拦一次 → **`at::redispatch::add()`**。
+6. 要落到后端 kernel，可函数体是散装的，得先挂到 CPU key 上 → **注册挂钩 `RegisterCPU.cpp`**（`TORCH_LIBRARY_IMPL`）。
+7. 终于跑到 kernel——链上唯一「真正算数值」的一环 → **我手写的函数体**（+ 内部 dtype switch）。
+
+走完 1→7，我没背任何东西，生成清单却一字不差地推了出来。而且界线自明：**1、2、3、5、6 全是「连接件」，由 `native_functions.yaml` 从签名机械生成；第 4 步是 autograd 记录、来自 `derivatives.yaml`；只有第 7 步（和第 4 步背后的公式）是「计算逻辑」，必须我写。**
+
+§3.2 末尾那张图（`codegen_callstack.drawio`）在这里正好读第二遍：竖脊是调用栈（运行时怎么一跳跳走），每个框的颜色是生成来源（这一环谁铺的线）。这图最想说的是——**「调用栈」和「yaml 生成了什么」不是两个知识点，而是同一条链：一个讲「怎么走」、一个讲「谁铺的路」。** 我过去觉得像背诵，正因把「铺路清单」单拎出来记了；贴回「走路的链」上，逻辑就自洽了。
+
+这里还有一刀我原先切错，值得点出：「注册 vs 实现」的分界，不在 autograd 跳和 backend 跳之间，而在「**注册挂钩**」和「**kernel 逻辑**」之间。backend 那跳其实被劈成两半——`at::native::add` 的**函数体是我手写的**，但把它绑到 CPU key 的那段 `TORCH_LIBRARY_IMPL` **是 codegen 生成的**（正是 §3.1「实现在 ATen、注册在 c10」的具体化）。
+
+一句话锚点，存脑子里替代那张清单：**yaml 声明接口 → codegen 把接口沿调用链接成线 → 我只填两个洞：前向 kernel 体、反向公式。**
+
+##### 扩展：三种注册姿势
+
+上面默认了「前向写 backend kernel、反向写 derivatives.yaml」这一种姿势，但 PyTorch 其实提供三种，成本差别很大。搞清它们，正好照亮我工作里「什么时候能偷懒、什么时候必须硬写」的判断。
+
+**姿势一：backend kernel + `derivatives.yaml`。** 逐后端手写前向（可以是融合大 kernel）、手写反向公式。最快，但活最多。
+
+**姿势二：`CompositeImplicitAutograd`（反向免费、后端免费）。** 做法出奇简单：在 `native_functions.yaml` 里**不写 `dispatch:` 段**，算子就默认注册到 `CompositeImplicitAutograd` 这个 alias key 上；而我写的函数体**必须完全由已有的 aten 算子拼成**：
+
+```yaml
+- func: my_gelu(Tensor self) -> Tensor
+  variants: function, method
+  # 无 dispatch: 段 → 默认 CompositeImplicitAutograd
+```
+
+```cpp
+Tensor my_gelu(const Tensor& self) {
+  return self * 0.5 * (1.0 + (self / std::sqrt(2.0)).erf());  // 全是 mul/add/div/erf
+}
+```
+
+它注册的位置在 backend dispatch **之上**，一次调用走到这层时不算数值，而是把自己「摊开」成 `mul`、`add`、`erf` 这些子算子，再各自往下 dispatch。于是两样东西凭空白来：**反向免费**——反向图自动穿过这些子算子，它们各自的 `VariableType` 早就有了，`my_gelu` 不需要任何 `derivatives.yaml` 条目；**后端免费**——摊开后的子算子落到哪个后端就在哪跑，我的 PrivateUse1 只要实现了 `mul`/`add`/`erf`，`my_gelu` 一行后端代码都不用写。代价是**没法融合**：一个算子被摊成好几次 dispatch、好几趟访存，对加速芯片往往远慢于一个融合 kernel。
+
+**姿势三：`CompositeExplicitAutograd`。** 也是一份实现管所有后端，但注册在 autograd **之下**，autograd **不是**隐式的——它**仍要我写 `derivatives.yaml`**。记法很好背：名字里 **Implicit = 反向隐式白给，Explicit = 反向要显式提供。**
+
+三者摆一起：
+
+| 姿势 | 前向 | 反向 | 后端覆盖 | 速度 |
+| --- | --- | --- | --- | --- |
+| backend kernel + derivatives.yaml | 每后端手写（可融合） | 手写公式 | 逐后端写 | 快 |
+| CompositeImplicitAutograd | 一份 aten 组合 | 免费 | 全后端免费 | 慢（无融合） |
+| CompositeExplicitAutograd | 一份实现 | 手写公式 | 全后端一份 | 中 |
+
+这张表正是 §3.2 扩展那条边界的两端具体化：CompositeImplicitAutograd 是「可分解 → autograd 免费」那端，融合 backend kernel 是「单体 → 必须自己写反向」那端。
+
+对「推理为主、性能按需上」的场景，这引出一个很实用的策略：**先用 CompositeImplicitAutograd 写个「参考实现」保证正确性与全后端可用，再挑真正的热点算子替换成融合 backend kernel + derivatives.yaml。** correctness-first、性能按需上，不必一上来就为每个新算子手写前向＋反向＋逐后端。
+
+到这里，两张表的总览、一条 entry 的生成逻辑、三种注册姿势都理清了。下一节 §4.2 正式钻进「接口声明」这张 yaml 的内部——把 `_`、`!`、`dispatch:` 段、out/inplace/functional 三变体这些一直让我「照葫芦画瓢」的语法逐行拆开，还清 §先猜 Q9 那笔正债。
+
+#### 4.2 native_functions.yaml 语法精讲
+
+§4.1 把 `native_functions.yaml` 定性为前向的「接口声明」，但没说这张 yaml 到底怎么写。这节钻进它内部——正是我 §先猜 Q9 抱怨的地方：`_`、`!`、`dispatch:` 段那些语法一直让我"照葫芦画瓢"，看懂别人的、自己写就发怵。拿 `add` 三变体当解码样本逐符号拆一遍，债就清了。
+
+三条签名：
+
+```yaml
+add.Tensor(Tensor self, Tensor other, *, Scalar alpha=1) -> Tensor
+add_.Tensor(Tensor(a!) self, Tensor other, *, Scalar alpha=1) -> Tensor(a!)
+add.out(Tensor self, Tensor other, *, Scalar alpha=1, Tensor(a!) out) -> Tensor(a!)
+```
+
+它们是同一算子的三种内存姿势——**functional / in-place / out**：
+
+- **functional**（`add`）：不碰输入，**新分配**一个张量装结果返回。最干净。
+- **in-place**（`add_`）：结尾 **`_` 是命名约定**，把结果**写回 `self`、返回 `self`**，省一次分配。
+- **out**（`add.out`）：**`.out`** 表示调用方**预分配一个输出张量、作 `out` 关键字参数传入**，结果写进它——常用于复用 buffer。
+
+先扫掉一个和内存无关、却容易看歪的符号：参数中间那个 **`*`**。它不是 `*args`（可变数量），而是**「关键字参数分隔符」**——**`*` 之后的参数必须具名传**（`torch.add(a, b, alpha=2)`，不能 `torch.add(a, b, 2)`）。ATen 用它换 API 稳定：强制具名既防误传，也方便日后加 kwarg 不破坏按位置的老调用。
+
+真正的核心是 **`Tensor(a!)`** 这个注解，它把我 Q9 混了很久的东西一次讲清。两个符号：
+
+- **`!`**：标记**这一个参数会被算子 mutate（写入）**。注意它精确到**具体某个参数**，而**不是**我从前以为的"这个算子是原地的"。
+- **`a`**：一个 **alias-set 标签（别名集标识）**，标"谁与谁**共享同一块存储**"，**同名标签 = 共享内存**。它**不是**"一个叫 a 的张量"。
+
+合起来看 `add_`：`self` 和**返回值**都标 `(a!)` → codegen 据此得知「**返回的张量就是 `self` 本身（同一块存储）、且被改写**」。所以"`add_` 返回 self"，机器不是从名字 `_` 猜的，而是从这对 `a` 标签**读**出来的。
+
+拆成三态，整个别名系统就解码了：
+
+| 注解 | 含义 | 算子类型 |
+| --- | --- | --- |
+| `Tensor`（无注解） | 全新张量，不与谁共享 | functional |
+| `Tensor(a)` | 与同标签者共享存储、**不改** | view（如 `transpose(Tensor(a) self,...) -> Tensor(a)`） |
+| `Tensor(a!)` | 与同标签者共享存储、**且改写** | in-place / out |
+
+到这里，我 Q9 一直混的 `_` 和 `!` 彻底分家了——它们**都在说"原地"，但在两个层**：
+
+- **`_`（名字后缀）= 给人看的命名约定**：一眼知道"这是原地变体"。
+- **`(a!)`（签名注解）= 给编译器看的机器可读事实**：精确到"哪个参数被改、返回值和谁共享存储"。
+
+同一个"原地"，`_` 讲给人、`(a!)` 讲给 codegen，不是重复而是**分工**，缺一不可：注册自定义 in-place 算子光起 `_` 名没用，**必须把 `(a!)` 写对**，否则 codegen 和 autograd 不知道 self 被改了。
+
+这个 `!` 正好接回 §2.4 的 **version counter**：`(a!)` 一标，dispatcher 就知道该参数被 mutate、要给版本号 +1，反向时 autograd 才能检测"某个 saved tensor 被原地改脏"。更进一步，`a` 标签还织出一张更大的网——**view 与它的 base 共享同一个 version counter**，所以 `y = x.transpose(0,1); x.add_(1)` 里改 `x` 会让 `y` 的版本号也跳，若 `y` 被 save 给反向，这次原地写**也会被判成"saved tensor 变脏"**。可见 `!` 只说"这一个参数被改"，而 `a` 追踪的是"**一次原地写波及哪一串共享存储的张量**"——§2.4 版本计数器的信息，源头就是这两个符号。
+
+最后是 **`dispatch:` 段**，它决定算子"落到哪份 kernel"：
+
+```yaml
+dispatch:
+  CPU: add_cpu
+  CUDA: add_cuda
+  PrivateUse1: add_privateuse1
+```
+
+每行是一条 `(后端 key → kernel 函数名)` 映射，codegen 据此生成 `RegisterCPU.cpp` / `RegisterPrivateUse1.cpp` 里的 `TORCH_LIBRARY_IMPL`——就是 §3.2 的 **③ 注册挂钩**（生成的是**注册**、非 kernel 本体，函数体仍我手写）。这落到语法上更直观地印证了 §4.1 的一点：**写不写 `dispatch:`，是在两种注册姿势间切换**——有它，走完整的逐后端 dispatch（§3.2 那条栈）；没有它，默认注册成 `CompositeImplicitAutograd`、靠摊开成子算子来跑。所以删掉 `dispatch:` 段**不报错**，只是换了条路。
+
+**但这里有一个必须盯死的坑，尤其对我这种成天调外部库的人。** 当我删掉 `dispatch:`（走 composite）、而函数体做的是**裸指针操作或调用外部加速库**时，会撞上最难查的一类 bug：**前向完全正常、数值全对，反向却静默出错。** 因为 composite 指望反向图由内部的 aten 子算子自动织出，可裸指针和外部库**绕开了 dispatcher、autograd 根本看不见**，于是没有任何 grad_fn 边把"输出→输入"连起来。结果：梯度流不到这个算子的输入（拿到 `None` 或错值），**而且往往不抛异常**——在 autograd 看来"没有可微操作被记录"并不违法，它只是没建那条边。唯一可能救场的是输出最终 `requires_grad=False`、且它是 loss 唯一路径时 `backward()` 报 `does not require grad`；但只要有别的路径混着这层保护就失效，退回静默错误，不能指望它兜底。
+
+这条坑正好把 §3.2 那条边界收死：**凡是计算发生在 dispatcher 之外（外部库 / 裸内存）的算子，autograd 一定看不穿它，绝不能靠 CompositeImplicitAutograd 白嫖反向**——必须走 §4.1 姿势一：显式 `dispatch:` 注册 backend kernel + 显式提供反向（`derivatives.yaml` 或 `torch.autograd.Function`）。我们的芯片算子清一色是"调外部库"这种黑盒，所以工作里"只写前向、一训练就断梯度"的现象，根源就在此。
+
+到这里，「接口声明」这张 yaml 拆透了：`_` / `.out` / `*` 三个语法糖、`Tensor(a!)` 别名系统、`dispatch:` 段的姿势切换，以及 composite 那条静默反向红线。下一节 §4.3 从"声明"转向"实现"，钻进 kernel 函数体本身——错误检查、分配输出、dtype 派发这三件事怎么搭。
+
+#### 4.3 kernel 骨架：错误检查 → 分配输出 → dtype 派发
+
+§4.1、§4.2 讲完了「声明」——yaml 怎么写、codegen 替我生成什么。这节转向「实现」：那个唯一必须我亲手写的 kernel 函数体，内部的标准骨架长什么样。
+
+先对照一下我自己的产线经验。写自研芯片算子这么久，我的流程一直是三步：检查输入 → dtype 分支调用外部库计算 → 对比结果。拿它对齐 Ezyang 的标准骨架（错误检查 → 分配输出 → dtype 派发 → 真正计算）时，暴露出一个被我"折叠"掉的步骤——**分配输出**。我没单独感知它，是因为外部库的 kernel 多半接收预分配好的输出指针，分配这个动作被我归进"调库前的准备"里了。摊开来，我的骨架其实也是四步：**检查输入 → 分配输出 → dtype 派发调库 → 对比结果**——前三步和标准骨架一一对应（标准的三、四步在我这合成一步），第四步对拍是我们为排查精度问题自加的（那套环境变量触发的 CPU 对拍宏，详述留到文末〔下游透镜〕）。下面按标准骨架逐步拆。
+
+**第一步：错误检查。** 工具箱分三层，按检查的性质选：
+
+| 工具 | 场景 |
+| --- | --- |
+| `TORCH_CHECK(cond, msg...)` | 任意条件：整除约束、维度大小关系、业务规则 |
+| `TensorArg` + `checkAllSameType` 等 | 多张量一致性（同 dtype / 同卡 / 同 shape） |
+| `AT_DISPATCH_*` 的 default 分支 | 未支持 dtype 的兜底报错（见第三步） |
+
+`TORCH_CHECK` 是主力，任何谓词都能写。真正值得练的是报错信息的写法——把实际值打进消息、说出为什么、带上算子名：
+
+```cpp
+TORCH_CHECK(self.size(1) % 128 == 0,
+    "my_op: expected dim 1 of 'self' to be divisible by 128 (hardware tile size), "
+    "but got self.sizes() = ", self.sizes());
+```
+
+三个细节各有理由：`self.sizes()` 直接流式拼进消息（用户拿到报错第一个问题就是"实际是多少"）；`(hardware tile size)` 这句"为什么"能让用户直接知道该怎么改（pad 到 128 的倍数），不必回头翻文档；`my_op:` 前缀是因为 `TORCH_CHECK` 不自动带上下文、Python 层堆栈又常被截断。
+
+`TensorArg` 则服务另一类高频检查——多个张量之间的一致性。把张量包上「名字 + 参数位置」：
+
+```cpp
+TensorArg self_arg{self, "self", 1}, other_arg{other, "other", 2};
+CheckedFrom c = "my_op";
+checkAllSameType(c, {self_arg, other_arg});
+checkAllSameGPU(c, {self_arg, other_arg});
+```
+
+价值全在报错上，它会自动生成 `Expected tensor for argument #2 'other' to have the same type as tensor for argument #1 'self'; but type CUDABFloat16Type does not equal CUDAFloatType (while checking arguments for my_op)` 这种带全上下文的消息——哪个算子、第几个参数、期望什么、实际什么，用户不用翻源码就能定位。分工一句话：**单条件用 `TORCH_CHECK`，多张量一致性用 `TensorArg` 系列**（`checkSameSize` / `checkDim` / `checkContiguous` 等都在 `aten/src/ATen/TensorUtils.h`）。
+
+检查放 kernel 体最前面——形状不合法时一分内存都别浪费；开销不用担心，几个整数比较相对 kernel launch 完全可忽略。
+
+**第二步：分配输出。** §4.2 的三变体，在 schema 上是三条签名，落到 kernel 体里就是这一步的三种姿势：
+
+| 变体 | 输出内存从哪来 |
+| --- | --- |
+| functional | kernel 内 `at::empty(...)` **新分配** |
+| out | 用传入的 `out`（不分配，至多 resize） |
+| in-place | 输出就是 `self`，不分配、直接写回 |
+
+也就是说，「functional / in-place / out 的区别」这件事贯穿三层：§4.2 的签名注解（`Tensor` / `Tensor(a!)`）告诉 codegen 和 autograd，这一步的分配策略落实到内存，两边说的是同一件事。顺带一提，现代 ATen 的 `structured:` kernel（§4.1 提过）把这步做了更彻底的拆分：「算输出形状 + 分配」抽成 `meta` 函数、「填数值」留在 `impl` 函数——分配逻辑从此三变体共享一份。
+
+**第三步：dtype 派发。** 就是 §3.2 调用栈最内层那个"dtype switch"、§1.3 说的"dtype 不是 dispatcher 级的 key"。in-tree 的标准工具是 `AT_DISPATCH_*` 宏家族：
+
+```cpp
+AT_DISPATCH_FLOATING_TYPES(self.scalar_type(), "my_op", [&] {
+    // 这里 scalar_t 已是当前 dtype 对应的 C++ 类型（float / double...）
+    my_op_impl<scalar_t>(self, other, out);
+});
+```
+
+它展开成一个对 `scalar_type()` 的 switch，每个 case 把 `scalar_t` typedef 成对应 C++ 类型再跑 lambda——**一份模板化的 kernel 源码覆盖所有 dtype**。宏家族的命名规律一条就够：「类型家族 + `_AND{N}`（额外补 N 个类型）」——`AT_DISPATCH_FLOATING_TYPES`（float/double）、`..._AND2(kHalf, kBFloat16, ...)`（再补两个）、`AT_DISPATCH_INTEGRAL_TYPES`、`AT_DISPATCH_ALL_TYPES_AND{N}`、复数系 `..._COMPLEX_TYPES`，如此类推。不在覆盖列表里的 dtype 走 default 分支，自动抛 `"my_op" not implemented for 'ComplexDouble'`——所以**选哪个宏，就是在声明这个 kernel 支持哪些 dtype**。§1.3 末尾那道面试题（PrivateUse1 只实现 float32、用户传 bfloat16）的修法正在于此：把 `FLOATING_TYPES` 换成 `FLOATING_TYPES_AND2(Half, BFloat16, ...)`，扩的就是这张 switch 的 case 列表。
+
+**第四步：真正计算**——访问数据与并行，留给 §4.4。
+
+最后补一个我的场景与内置 kernel 的真实差异：连续性处理。PyTorch 自家 element-wise kernel 通常不检查连续性——TensorIterator 直接按 stride 读非连续数据（§1.3 讲过）；而调外部库、库要求连续时，先 `.contiguous()` 或直接 check 报错都是合理做法。这不是我做错了，是"自己算"和"调库"两种 kernel 形态的天然差别。
+
+##### 扩展：当 kernel 靠字符串路由——AT_DISPATCH 之外的 dtype 派发
+
+上面的 `AT_DISPATCH` 有个隐含前提，值得挑明：**它服务的是「一份模板源码、多种类型实例化」的 kernel**——它的本质价值是把运行时的 `ScalarType` 枚举物化成编译期的 C++ 类型 `scalar_t`，好让模板实例化。但我的工作场景不是这样：外部库按**字符串名**启动 kernel（`kernel.launch("add_bf16_tensor")` 这种），不同 dtype 对应的是**不同名字的现成 kernel**，整条链路里没有任何地方需要编译期类型。这时绕道 `AT_DISPATCH` 拿 `scalar_t` 再判回字符串，是弯路；对症的工具是一个**集中式的 `ScalarType → 命名后缀` 映射**：
+
+```cpp
+const char* dtypeSuffix(at::ScalarType t) {
+  switch (t) {
+    case at::kBFloat16: return "bf16";
+    case at::kHalf:     return "fp16";
+    case at::kFloat:    return "fp32";
+    default: TORCH_CHECK(false, "mylib: unsupported dtype ", t);
+  }
+}
+kernel.launch(std::string("add_") + dtypeSuffix(self.scalar_type()) + "_tensor");
+```
+
+好处正是 `AT_DISPATCH` 给模板世界的那三样，原样搬进字符串世界：命名规则只写一处、default 统一抛 unsupported（手搓 if-else 最容易忘的那个兜底）、支持哪些 dtype 一目了然。
+
+不过现实还要再泼一盆冷水：这个映射函数假设命名有规律，而外部库是另一个组维护的，命名规范执行得并不严——有的 kernel 后缀写 `bf16`、有的写 `bfloat16`、有的干脆没有后缀。规则函数写不出来，历史上就积累成了各算子里的 if-else 特判。但这里有个值得记下的辨析：**命名无规律杀死的是「按规则生成名字」，杀不死「集中登记」**。规则函数和散装 if-else 之间还有一档——数据表：
+
+```cpp
+// 显式登记表：无规律没关系，逐条登记
+static const std::map<std::pair<std::string, at::ScalarType>, const char*> kKernelNames = {
+  {{"add",    at::kBFloat16}, "add_bf16_tensor"},   // 规范的
+  {{"matmul", at::kFloat},    "matmul_float"},       // 不规范的，照登
+  {{"softmax",at::kHalf},     "softmax"},            // 没后缀的，也照登
+};
+```
+
+if-else 与这张表表达能力完全等价——特例在 if-else 里是一个分支，在表里是一行；区别只在**同样的混乱是摊在几百个算子文件里，还是收在一处**。收在一处，就换回了"改一处、统一兜底、支持矩阵可审计"三样好处，而且登记动作全在我这边，不需要外部组配合改名。当然，历史 if-else 已经能跑、没人有空迁移，也是合理的工程取舍——这张表是"下次重构该长的样子"，不是"明天必须还的债"。
+
+一句话收束：**dtype 派发的工具跟着 kernel 的选择机制走**——模板实例化的 kernel 用 `AT_DISPATCH`，字符串路由的 kernel 用集中映射表；照抄"官方怎么写"而不看自己的 kernel 怎么被选中，就会拿着宏绕弯路。
+
+骨架四步齐了：检查、分配、派发，以及留给下一节的"真正计算"——数据到底怎么访问（TensorAccessor / TensorIterator）、循环怎么并行（`parallel_for`），§4.4 见。
+
+#### 4.4 计算核与并行：TensorAccessor / TensorIterator 与 parallel_for
+
+§4.3 的骨架走完了前三步，输入合法、输出分好、dtype 选定，就剩最后一件事——真正把数放进去算。这一节讲两个问题：**数据怎么读写**（别读错位）、**循环怎么并行**（别浪费核）。
+
+先从最裸的方式说起。拿到一个 2 维 float Tensor，最直接的访问是 `float* p = t.data_ptr<float>();` 然后 `p[i * ncols + j]` 读 `[i][j]`——这个写法藏着一个 §1.2 就能看穿的隐患：它隐含假设了 stride 就是 `(ncols, 1)`，即张量是连续的。一旦 `t` 是转置、切片出来的 view，`p[i*ncols+j]` 读到的就不是 `t[i][j]`，而且**不报错、静默读错数**——比上一节那个静默反向还阴险，这是正向就悄悄算错。所以裸 `data_ptr` 只有两种合法用法：要么先 `.contiguous()` 把假设变成事实，要么老老实实按 `t.stride(0)*i + t.stride(1)*j` 算偏移。
+
+而"老老实实按 stride 算"这件事，ATen 给了个零开销的安全封装——**TensorAccessor**：
+
+```cpp
+auto a = t.accessor<float, 2>();   // <元素类型, 维数>，维数不符直接报错
+float v = a[i][j];                  // 内部自动按 stride 算偏移，怎么写都不会错位
+```
+
+它就是"带 stride 的多维下标"：`a[i][j]` 展开成 `data + i*stride0 + j*stride1`，不拷贝数据、编译后和手写偏移一样快。CUDA kernel 里用它的孪生兄弟 `PackedTensorAccessor`（把指针 + sizes + strides 打包按值传进 device）。适用场景：自己写循环、但想免疫 stride 错位。
+
+不过看 ATen 自己的 element-wise 算子源码，会发现它们连循环都不写。我第一次看到 CPU kernel 长这样时是困惑的——一个算子怎么就这么几行：
+
+```cpp
+auto iter = TensorIteratorConfig().add_output(out).add_input(a).add_input(b).build();
+cpu_kernel(iter, [](float x, float y) { return x + y; });   // 只写"一对元素怎么算"
+```
+
+谜底是 **TensorIterator** 把所有脏活都包掉了。写一个 element-wise 二元算子，除了寻址其实还有一堆事，每一件它都替你干了：
+
+1. **广播**：`(3,1,5) + (4,5)` 的形状对齐、扩维；
+2. **类型提升**：`float + int` 该出什么 dtype；
+3. **输出分配**：形状/dtype 算好后 empty 出来（§4.3 的第二步它顺手做了）；
+4. **维度折叠**：检测到内存实际连续时，把 N 维循环**塌成一维**——§1.3 说"连续性在 kernel 内部处理、element-wise 有 contiguous 快路径"，那条快路径的出生地就是这里；
+5. **并行切分**：数据量大时自动切块撒到多线程；
+6. **向量化**：内层循环用 SIMD（`Vectorized<T>`）一次算 8/16 个数。
+
+于是 kernel 作者只剩一个标量 lambda：「一对元素怎么算」。怎么遍历、怎么广播、怎么并行，全部与算子逻辑解耦——这就是 ATen 里几百个 element-wise 算子每个只有几行的原因。
+
+第 5 件脏活值得单独展开，因为它是这节的第二个主角。CPU 上的线程级并行，传统手段是 OpenMP——Ezyang 原文说的正是 TH 时代满地的 `#pragma omp parallel for`。现代 ATen 把它收拢成统一入口 **`at::parallel_for`**：
+
+```cpp
+at::parallel_for(0, n, GRAIN_SIZE, [&](int64_t begin, int64_t end) {
+    for (int64_t i = begin; i < end; i++) { /* 处理第 i 个 */ }
+});
+```
+
+本质是数据并行：把 `[0, n)` 切成若干块，每个线程拿一块、跑同一个 lambda（`begin/end` 是这块的边界）。三个细节让它比裸 pragma 好用：**线程不现起**——用进程里预建的 intra-op 线程池（`torch.set_num_threads` 控制的那个），主调线程自己也分一块干活；**GRAIN_SIZE 兜底**——每块不小于这个粒度，`n` 太小干脆不并行，避免"起线程的开销比活儿还大"；**无锁**——块与块的索引区间不相交，每个线程只写输出的自己那段，天然无竞争。
+
+这里顺手把三条容易混的"并行轴"分清——我起初就把它们搅在一起：**线程级**（OpenMP → `parallel_for`，多核分块）、**指令级**（SIMD / `Vectorized<T>`，一条指令算多个数，TensorIterator 的第 6 件事）、**调库**（BLAS / Eigen，matmul 这类计算密集型直接交给专业库，element-wise PyTorch 自己写）。三条轴正交，一个 kernel 可以同时占全——多线程分块、块内 SIMD、矩阵乘调 BLAS。另外术语上，算子**内部**的多线程叫 intra-op 并行；与之相对的 inter-op（多个算子并发执行）是另一套开关，平时说"CPU kernel 并行"默认指前者。
+
+把这节收成一张梯子，从裸到高三层：
+
+| 层 | 工具 | 你写什么 | 适用 |
+| --- | --- | --- | --- |
+| 裸 | `data_ptr` | 一切自己来 | 已确保 contiguous、调外部库传裸指针 |
+| 中 | `TensorAccessor` + `parallel_for` | 自己写循环，寻址/并行有护栏 | 循环结构特殊、TensorIterator 套不上 |
+| 高 | `TensorIterator` + `cpu_kernel` | 只写标量 lambda | element-wise / reduction（内置算子主力） |
+
+我的日常工作其实一直在"裸"层——真正的循环在芯片上，外部库只要一个指针，这完全正当（又一次"自己算 vs 调库"的形态差异，§4.3 连续性那段的续集）。但中、高两层也不是与我无关：我们对拍宏里的 CPU 参考实现，就是要亲手写 CPU kernel 的地方。用这张梯子对一遍，选层的判据很清晰——**首选甚至不在梯子上：能用现成 aten 算子拼，就别亲手写**，`at::add(a, b)` 本身就是最好的参考实现（久经测试，stride、广播、类型提升全对）；没有对应算子的自定义融合 op 才落到梯子上，element-wise 用 TensorIterator、复杂循环用 TensorAccessor；**唯独永远不选裸 `data_ptr`**——对拍工具里的参考实现如果自己静默算错，是最坏的情况：校尺在撒谎，你要么追着幻影精度 bug 跑，要么把真 bug 放过去。校尺必须比工件直，所以参考实现恰恰是最不能容忍错位风险的地方。也因此它只求对、不求快，连 `parallel_for` 都可以省。
+
+到这里，§4 编写算子整章走完了：两张表怎么声明（§4.1–4.2）、kernel 体怎么搭（§4.3）、数据怎么访问怎么并行（§4.4）。剩下的问题很实际——在这么庞大的一套 C++/CUDA 代码上改一行要编多久？§5 讲 Ezyang 传授的高效工作流。
+
 ### 5. Pytorch中高效的工作流
+
+最后一章是原文的「workflow efficiency」：在这套庞大的 C++/CUDA 代码上高效迭代的实践经验。
+
+#### 5.1 编译效率：不改头文件、ccache、避免全量重编
+
+会写 kernel 之后，现实的问题立刻跟上：PyTorch 这个量级的 C++ 代码库，改一行要编多久？这一章是 Ezyang 传授的生存经验，也恰好是我天天维护 patch 版 PyTorch 的日常——正好逐条对照自家实践。
+
+先报我的真实基线：我们全量编译一次 patch 版 PyTorch 大约 20–30 分钟，常用命令是 `USE_CUDA=0 DEBUG=0 python setup.py develop`。对照原文才发现，这条命令已经不知不觉吃下了三条建议：`USE_CUDA=0`（CUDA 编译极慢，能关就关——我们不用 NV 卡，天然白嫖）、`DEBUG=0`（调试构建更慢、产物更大，留给真要 gdb 的时候）、`setup.py develop`（增量编译 + 软链安装——改一个 .cpp 只重编一个文件，改 Python 文件干脆零重编）。
+
+真正的头号建议是那句朴素的「**改 .cpp，别改头文件**」。我原以为改头文件贵是因为"接口变了要重新 codegen"——错了，codegen 只认 `native_functions.yaml` 那几个输入，跟普通 .h 无关。真正的机制是 C++ 编译模型本身：`#include` 是**文本复制**，头文件的内容物理上存在于每一个包含它的翻译单元里；而构建系统（ninja）判断"要不要重编"只看文件变没变（时间戳/哈希），**不理解语义**。于是一个被上千个 .cpp 包含的头文件，**哪怕只改一行注释**，也会触发上千次重编；改一个 .cpp 则只重编它自己、再重链接，几秒到几十秒。
+
+再叠上 §3.1 的分层，就得到"贵"的梯度：**头文件越靠依赖链底部，被传递包含得越广，改起来越贵**。改 `c10/core/TensorImpl.h` 约等于全库重编——c10 是所有人的地基；改 `aten/native/` 里某个 .cpp 只是几秒的事。落到我的 patch 工程上就是两条纪律：后端补丁尽量落在 .cpp 和自己的插件库里；万不得已要动 c10/ATen 的头文件时，**攒一批一起改**，一次付清全量重编的代价。
+
+ccache 则是给上面这套机制装的"细粒度补救"。它的哈希对象是**预处理后**的代码——注释在预处理时就被剥掉了。于是"只改了头文件注释"那一幕有了新结局：ninja 照样触发上千个翻译单元重编，但每个都命中 ccache 缓存、直接取出旧产物，几十秒了事。它最值的场景是切分支和删 build 目录重来——同样的翻译单元不再重编。验证自己有没有用上它也简单：`which ccache` 看装没装，编译前后 `ccache -s` 看命中数涨没涨（PyTorch 的 cmake 会自动探测，装了一般就在用）。
+
+把这些收成一份给团队的 checklist，每条带上"为什么"：
+
+1. **少动 .h**——include 文本复制，一改全员重编；越靠 c10 越贵，必须动就攒批改。
+2. **装并验证 ccache**——预处理级缓存，切分支/重建 build 时把重编变取缓存。
+3. **`USE_CUDA=0` + `DEBUG=0`**——用不上的设备代码不编，调试信息按需。
+4. **坚持 `setup.py develop`**——增量 + 软链，防止哪天退化成 `install` 全量重装。
+
+#### 5.2 开发环境：本地内环与 CI 外环的分工
+
+第二组经验关于环境怎么摆。Ezyang 的建议有两层，我们的实践恰好还能补出第三层。
+
+**其一，编译用强机。** CUDA 构建慢到什么程度——Facebook 内部给开发者配专用 build server。我们的对应物是团队的编译机；原则一致：迭代者的时间比机器贵，编译这种令人尴尬的并行任务就该扔给核多的机器。
+
+**其二，测试分内外环。** 本地是**内环**：`python test/test_ops.py -k test_my_op` 只跑改动相关的几个测试点，秒级到分钟级，配合 develop 增量编译形成"改一行→验一次"的快循环。CI 是**外环**：全量测试矩阵——不同 CUDA 版本、平台、ASAN 构建这些**本地根本没有的配置**，开个 PR 让 CI 农场去跑。关键是中间不要有"本地跑全量"这种两头不占的姿势：既慢过内环、又盖不住外环的配置面。我们组的分工已经天然如此——本地只跑相关测试、CI 跑完整套。
+
+**其三（我们自己补的一层）：对芯片厂，CI 还是硬件采样器。** 我们有大量"本地复现不了、只在 CI 上挂"的案例，但细看多数**不是配置差异，而是芯片体质差异和驱动不稳定**——同一份代码同一配置，这颗芯片过、那颗挂。这类问题里 CI 的角色变了：不是"补配置矩阵"，而是**在几十颗体质各异的芯片上抽样**，暴露单机永远看不见的边界体质。应对手段也完全不同：配置差异靠 CI 补矩阵就能复现追查；硬件飘忽要靠重试策略、known-issue 清单、芯片分档。把这两类"只有 CI 能发现的错"分开对待，排查时才不会拿着配置思路去追体质问题。
+
+#### 5.3 测试工具：expecttest
+
+最后是一个 Ezyang 自己写的小工具，解决一类很具体的麻烦：**expected-output 测试的预期值维护**。
+
+"断言输出符合预期"谁都会写，麻烦在预期值本身。当被测的输出又长又常变——报错信息、生成代码、计算图 dump——每次有意变更行为，都得手工去改几十处 expected 字符串。expecttest 的做法是把预期**内联在测试源码里**：
+
+```python
+self.assertExpectedInline(str(result), """tensor([1., 2., 3.])""")
+```
+
+平时它就是普通断言；而当行为有意变更时，跑一次 `EXPECTTEST_ACCEPT=1 python test_foo.py`，**框架自动把测试文件里的预期字符串重写成新输出**，人只需要 `git diff` 审一遍这些新预期对不对。一句话：**自动更新、人工审查**——省的是抄写的手，不省判断的脑。
+
+这对我们的对拍体系是个现成可抄的模式：对拍脚本里若有大段 expected 输出，与其手工维护，不如引入"ACCEPT 重写 + 审 diff"的流程。
+
+至此，「学习过程」五章——张量、自动微分、基本代码结构、编写算子、高效工作流——全部走完，Ezyang 这篇《PyTorch Internals》读毕。接下来是文末的收口：回答「先猜再学」埋下的问题、把工作经验接进「下游透镜」、凝练思维导图，以及给下一篇挖坑。
 
 ## 读后回顾
 

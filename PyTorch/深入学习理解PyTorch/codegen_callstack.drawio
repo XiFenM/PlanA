@@ -1,0 +1,80 @@
+<mxfile host="app.diagrams.net" agent="claude-code">
+  <diagram name="callstack-codegen" id="callstack-codegen-1">
+    <mxGraphModel dx="1000" dy="800" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1000" pageHeight="920" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+
+        <mxCell id="title" value="torch.add(a, b) 一次调用：调用栈（§3.2）× codegen 生成来源（§4.1）" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;fontSize=15;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="200" y="24" width="600" height="30" as="geometry" />
+        </mxCell>
+
+        <mxCell id="legend" value="图例&#10;🟩 绿 = 你手写的『计算逻辑』（不可生成）&#10;🟦 蓝 = native_functions.yaml 生成的『接线』&#10;🟪 紫 = derivatives.yaml 生成的『接线』&#10;🟨 黄 = c10 既有框架（非本算子生成）" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#ffffff;strokeColor=#666666;align=left;verticalAlign=top;spacing=6;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="30" y="90" width="270" height="110" as="geometry" />
+        </mxCell>
+
+        <mxCell id="t1" value="native_functions.yaml&#10;（一条 func: entry）&#10;= 前向的『接口声明』" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontStyle=1;fontSize=11;align=center;" vertex="1" parent="1">
+          <mxGeometry x="30" y="300" width="210" height="72" as="geometry" />
+        </mxCell>
+        <mxCell id="t1note" value="↑ 所有蓝框都由它生成" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;fontSize=10;fontColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="30" y="374" width="210" height="18" as="geometry" />
+        </mxCell>
+
+        <mxCell id="t2" value="derivatives.yaml&#10;（一条 name: entry）&#10;= 反向公式（你写的那行）" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontStyle=1;fontSize=11;align=center;" vertex="1" parent="1">
+          <mxGeometry x="30" y="470" width="210" height="72" as="geometry" />
+        </mxCell>
+
+        <mxCell id="s1" value="torch.add(a, b)&#10;〔Python 用户代码〕" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="380" y="90" width="280" height="46" as="geometry" />
+        </mxCell>
+        <mxCell id="s2" value="① THPVariable_add&#10;Python↔C++ 绑定・解析参数・解包 PyObject→Tensor" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="380" y="166" width="280" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="s3" value="at::add()&#10;C++ 前端 API・进入调度器" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="380" y="246" width="280" height="46" as="geometry" />
+        </mxCell>
+        <mxCell id="s4" value="c10::Dispatcher::call&#10;算 DispatchKeySet（grad→Autograd 最高）" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="380" y="322" width="280" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="s5" value="② VariableType::add&#10;autograd 记录：建 AddBackward0 / 连 next_edges / save 输入" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="380" y="402" width="280" height="54" as="geometry" />
+        </mxCell>
+        <mxCell id="s6" value="at::redispatch::add()&#10;排除 Autograd key（剥开 variable）" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="380" y="486" width="280" height="46" as="geometry" />
+        </mxCell>
+        <mxCell id="s7" value="③ at::native::add —— kernel 函数体&#10;〔真正算加法・放 aten/native/〕" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="380" y="562" width="280" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="s8" value="④ AT_DISPATCH(float32) switch&#10;〔在③函数体内・你手写〕" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;fontSize=11;" vertex="1" parent="1">
+          <mxGeometry x="410" y="642" width="220" height="44" as="geometry" />
+        </mxCell>
+
+        <mxCell id="n1" value="算子 schema 注册进 dispatch 表&#10;（op 符号得先『存在』才能被派发）" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=10;dashed=1;" vertex="1" parent="1">
+          <mxGeometry x="700" y="320" width="250" height="54" as="geometry" />
+        </mxCell>
+        <mxCell id="n2" value="RegisterCPU.cpp：TORCH_LIBRARY_IMPL&#10;把 kernel 绑到 CPU key&#10;〔注册挂钩=生成；函数体=手写〕" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;fontSize=10;dashed=1;" vertex="1" parent="1">
+          <mxGeometry x="700" y="556" width="250" height="62" as="geometry" />
+        </mxCell>
+
+        <mxCell id="cb" value="逻辑推导（替代背诵）：一条 yaml = 一次『接口声明』。要让这个接口从 Python 调用一路抵达 kernel、再穿过 autograd —— 沿途每个『连接件』都是机械的、可由接口签名生成的（蓝／紫）；唯独两处是真正的『计算逻辑』、无法生成、必须你写（绿）：前向 kernel 函数体、反向公式（写在 derivatives.yaml 的那一行）。所以『生成了哪些东西』不是要背的清单，而是『调用链上除计算本身外的每一环』——把链走一遍，清单自己就长出来了。" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8cecc;strokeColor=#b85450;align=left;verticalAlign=top;spacing=10;fontSize=12;" vertex="1" parent="1">
+          <mxGeometry x="30" y="720" width="920" height="140" as="geometry" />
+        </mxCell>
+
+        <mxCell id="e12" style="endArrow=classic;html=1;strokeColor=#333333;" edge="1" parent="1" source="s1" target="s2"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e23" style="endArrow=classic;html=1;strokeColor=#333333;" edge="1" parent="1" source="s2" target="s3"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e34" style="endArrow=classic;html=1;strokeColor=#333333;" edge="1" parent="1" source="s3" target="s4"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e45" style="endArrow=classic;html=1;strokeColor=#333333;" edge="1" parent="1" source="s4" target="s5"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e56" style="endArrow=classic;html=1;strokeColor=#333333;" edge="1" parent="1" source="s5" target="s6"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e67" style="endArrow=classic;html=1;strokeColor=#333333;" edge="1" parent="1" source="s6" target="s7"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e78" value="函数体内部" style="endArrow=classic;html=1;strokeColor=#82b366;dashed=1;fontSize=10;fontColor=#82b366;" edge="1" parent="1" source="s7" target="s8"><mxGeometry relative="1" as="geometry" /></mxCell>
+
+        <mxCell id="et1s2" value="生成" style="endArrow=classic;html=1;dashed=1;strokeColor=#6c8ebf;fontSize=10;fontColor=#6c8ebf;" edge="1" parent="1" source="t1" target="s2"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="et1n2" value="生成" style="endArrow=classic;html=1;dashed=1;strokeColor=#6c8ebf;fontSize=10;fontColor=#6c8ebf;" edge="1" parent="1" source="t1" target="n2"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="et2s5" value="生成" style="endArrow=classic;html=1;dashed=1;strokeColor=#9673a6;fontSize=10;fontColor=#9673a6;" edge="1" parent="1" source="t2" target="s5"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="en1s4" style="endArrow=none;html=1;dashed=1;strokeColor=#6c8ebf;" edge="1" parent="1" source="n1" target="s4"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="en2s7" style="endArrow=none;html=1;dashed=1;strokeColor=#6c8ebf;" edge="1" parent="1" source="n2" target="s7"><mxGeometry relative="1" as="geometry" /></mxCell>
+
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
