@@ -39,78 +39,27 @@ Quote CJK paths in shell commands, for example `"训练框架与分布式/进度
 
 - `计划/主计划.md` is the 20-week schedule and weekly cadence. Do not modify it during routine work.
 - `计划/进度总表.md` is the global dashboard. It is normally updated on Sunday or during approved SOP flows.
-- `计划/周更流程.md` is the weekly resource update SOP.
-- `计划/月底晋级评审.md` is the month-end promotion review SOP.
+- `计划/周更流程.md` is the weekly resource update SOP, run via `.claude/skills/resource-planning/SKILL.md`.
+- `计划/月底晋级评审.md` is the month-end promotion review SOP, run via the same skill.
 - `计划/周报/YYYY-Wxx.md` files are append-only history. Do not edit a past weekly report after the next week starts, except for status annotations during month-end review.
-- `计划/陪学流程.md` defines the daily study-companion workflow.
+- `计划/陪学流程.md` defines the daily study-companion workflow, run via `.claude/skills/study-companion/SKILL.md`.
 - `计划/学习断点.md` is the global resume cursor. It is safe to overwrite only inside the study-companion workflow.
 
-## Weekly Resource Update SOP
+## Recurring Workflows Are Skills
 
-Trigger phrase: `请严格按 计划/周更流程.md 的规范，为本周执行一次全板块资料周更。`
+The four recurring workflows are defined as skills under `.claude/skills/`. Each `SKILL.md` is plain Markdown holding the operative rules (trigger, roles, persist contract, hard rules) and pointing to the vault SOP doc for full detail. If your tool does not auto-discover skills, read the relevant `SKILL.md` before acting:
 
-When this is requested:
+- `.claude/skills/study-companion/SKILL.md` — daily study-execution loop. Active from `开始学习` / `继续学习` / `今天学什么` until `收工` / `结束学习`. Full SOP: `计划/陪学流程.md`.
+- `.claude/skills/english-coach/SKILL.md` — two modes: the primary 英语回顾 post-study mock dialogue over the day's `{module}/log/` study record, and ambient turn-end English feedback during English or technical discussion; both persist to `英语/log/` and that day's cards. Full prompt: `英语/ai-chat-prompt.md`; flow: `英语/review-workflow.md`.
+- `.claude/skills/memo-cards/SKILL.md` — Markji table-import TSV card building; accepts English daily logs (`英语/log/day-NN.md` → `英语/cards/day-NN.md`) and technical Q&A material (article 〔面试问题Q&A〕 or `{module}/log/` study records → `{module}/cards/`).
+- `.claude/skills/study-log/SKILL.md` — extract Claude Code session transcripts via the bundled script, filter the technical-learning turns, and write a structured study record to `{module}/log/`.
+- `.claude/skills/resource-planning/SKILL.md` — dual mode: weekly resource update (`计划/周更流程.md`) and month-end promotion review (`计划/月底晋级评审.md`).
 
-- Read `计划/周更流程.md` before acting.
-- Create exactly one new weekly report: `计划/周报/YYYY-Wxx.md`, using `date +"%G-W%V"` for the ISO week.
-- Research the trailing 7 days from subscription sources and arXiv keywords, then dedupe against existing `学习指引.md` files and historical weekly reports.
-- End the report with 3-5 `晋级候选` entries.
-- Do not touch any `学习指引.md` or `进度.md`. Weekly update only collects candidates; promotion happens at month end.
+Cross-skill rules: english-coach is scope-triggered (English or engineer-to-engineer content), and stays off for pure-Chinese mechanical vault maintenance; during study sessions in English, english-coach owns turn-end feedback while study-companion owns the session ritual — never both.
 
-## Month-End Promotion Review SOP
-
-Trigger phrase: `请严格按 计划/月底晋级评审.md 的规范，对本月（YYYY-MM）做一次晋级评审。`
-
-When this is requested:
-
-- Read `计划/月底晋级评审.md` before acting.
-- Use only the `晋级候选` sections of that month's weekly reports. Do not re-search the web.
-- Score each candidate with the SOP's 5-question rubric. Promote only items with at least 3 yes answers.
-- For each promoted item, update the target `{module}/学习指引.md`, its top `## Changelog`, `{module}/进度.md` if the promoted item is `🟥`, the source weekly report status annotation, and one monthly summary line in `计划/进度总表.md`.
-- Use letter-suffix IDs such as `19a`; never renumber existing rows.
-- For replacements such as `EAGLE-2 -> EAGLE-3`, keep the old ID position and annotate it with `（替代自 ...，YYYY-MM-DD）`; never delete the old entry.
-- Never edit `计划/主计划.md`, `计划/周更流程.md`, `计划/月底晋级评审.md`, or non-current weekly reports in this flow.
-
-## English Track And Coach Mode
+## English Track Notes
 
 `英语/` is a daily 60-75 minute parallel track that extends to W22. Its audio material is produced by the sibling tool repo `../blog-voice`, not this vault. When work involves article cadence, topic selection, or generating listening audio, use `../blog-voice` and anchor on one new AI Infra article every 2-3 weeks.
-
-For the standalone daily-card task, when asked to read `英语/log/day-NN.md` and build Markji cards:
-
-- Read `英语/review-workflow.md` and `英语/cards/_templates.md` first.
-- Follow `review-workflow.md` Step 3.
-- Write the Markji table-import TSV to `英语/cards/day-NN.md`.
-- Data rows stay plain text; styling lives in the templates.
-
-English coach mode is active when the user writes in English or when the interaction is technical learning/discussion. It is not active for pure Chinese vault-maintenance or mechanical SOP commands unless the user explicitly asks for feedback.
-
-When active:
-
-- Answer first as a senior AI Infra technical peer.
-- End with concise English feedback in the format defined by `英语/ai-chat-prompt.md`.
-- If feedback is produced, also append it to today's `英语/log/day-NN.md`, then regenerate that day's `英语/cards/day-NN.md` from the full log.
-- Read and follow `英语/review-workflow.md`, `英语/cards/_templates.md`, `英语/references/markji-content-syntax.md`, and `英语/references/markji-table-import.md` before generating cards.
-- Skip persistence for `/skip`, `/shadow`, and `/quiz` ephemeral interactions.
-
-## Study-Companion Mode
-
-Study-companion mode is active from `开始学习` / `继续学习` / `今天学什么` until `收工` / `结束学习`. It is for mainline study modules, not weekly updates, month-end review, README maintenance, or pure card-building.
-
-When active:
-
-- Read `计划/陪学流程.md` and `计划/学习断点.md` first.
-- Also read `计划/进度总表.md` and `计划/主计划.md §1` for cadence, read-only.
-- Lead the user through the current article/topic with the loop `讲 -> 问 -> 派 -> 盯`, asking before explaining and producing learning artifacts such as restatements, examples, summaries, or self-tests.
-- Stay faithful to the source order. Do not jump ahead or ask the user to draft the final article paragraph during micro-actions.
-- Respect controls: `/暂停`, `/继续`, `/卡住`, `/快`, `/状态`, `/成文`.
-
-On `收工`, follow the three-stage persistence contract:
-
-- Stage A: update only the touched module's `进度.md` with used hours, allowed status icon, and an absolute-date log line. Show the diff and wait for user approval before writing. Sunday only, also append one line to `计划/进度总表.md`.
-- Stage B: overwrite `计划/学习断点.md` with the current resume cursor and clear the pause snapshot.
-- Stage C: the user drafts article prose from the learning artifacts; review it. `/成文` can run the full assemble-and-polish pass.
-
-Hard boundaries in study-companion mode: never touch `计划/主计划.md`, `计划/周更流程.md`, `计划/月底晋级评审.md`, any `学习指引.md`, or `计划/周报/*`.
 
 ## Validation
 
