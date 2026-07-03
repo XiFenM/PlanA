@@ -1086,10 +1086,29 @@ self.assertExpectedInline(str(result), """tensor([1., 2., 3.])""")
 
 ## 读后回顾
 
-> 完整学完一遍后回头收口。
+> 完整学完一遍后回头收口：把 §先猜再学 的 13 个问题逐条对照。按对照结果分三档——直觉成立的、只对了一半的、实打实错位的。
 
-- 回答先前提出的疑问：
-- 对比我的直觉与资料给出的思路办法（看看读之前的我有多天真）：
+### 直觉成立的
+
+- **Q10（什么是张量）**：阶数推广 + 图像 `[N,H,W,3]` 的例子，读完无需修改。
+- **Q6（贡献流程）**：fork → 测试 → PR 的猜测未被推翻。原文这部分讲的其实是工作流效率（本地环境与 CI 的分工、expecttest），流程本身一句带过。
+- **Q1 前半（元数据/数据分离）与 Q12 前半（链式法则）**：大方向都对，但各缺了关键的另一半，见下档。
+
+### 对了一半的
+
+- **Q1 后半**：我猜到了分离，没猜到分离的最大红利——多个 TensorImpl 可以共享同一个 Storage，view/transpose/切片只需新建一份 sizes/strides/offset 元数据，零拷贝。一句话：**view = 新元数据 + 旧 Storage**。
+- **Q3（autograd 工程实现）**：「记录上一次操作、沿链传到叶子为止」这一半对；缺的三件是——①记录的不只是操作，还有 **saved tensors**（反向要用的前向值，可能是输入也可能是输出）；②记录发生在 dispatch 的**第一跳**（Autograd key 在 keyset 高位就先落 autograd kernel，requires_grad 只是 kernel 内部"记录还是白过"的开关）；③反向公式由普通 aten 算子组合而成，执行时 **redispatch 回后端的前向 kernel**——这正是 autograd 对后端"免费"的原因。
+- **Q4（调用链）**：「binding → 按 device 分流 → 按属性到目标算子」的骨架对，但有两处错位：autograd 这一整层在我猜的链里缺席（实际它是 binding 之后的第一跳调度，排在 backend 之前）；第一跳 binding 我以为是 pybind11，实际是 codegen 生成的 CPython 原生绑定 `THPVariable_add`（性能考虑不走 pybind11）。完整七步链见 §3.2。
+- **Q12 后半**：当初把雅可比"挖坑以后再说"，坑已在 §2.0/§2.2 填平——工程上**从不显式构造雅可比**，靠 matrix-free 的 vJp：每个算子只提供"给我上游梯度、我直接返回乘积"的反向函数，反向图把它们串起来。选反向模式是因为 loss 是标量，从输出端往回走，中间结果始终保持"行向量"尺寸。
+- **Q13（为什么多条调用链）**：我只答出了硬件差异这一个维度。同一设备内还有至少四个分叉：requires_grad 开关（走不走记录层）、layout（strided/sparse 不同 kernel）、dtype（kernel 内 switch）、以及 composite 分解（没有专用 kernel 的算子直接拆成已有 aten 算子的组合，链的深度都不一样）。
+
+### 实打实错位的
+
+- **Q2+Q11（数据布局）**：我把「连续/非连续」当成了布局的一种。实际上内置布局是 strided / sparse / mkldnn 三种，而连续性是 **strided 布局内部的性质**（stride 排列是否恰好行优先紧密）——两码事，dispatch 按 Layout 枚举分流，不看连续性。
+- **Q9（yaml 语法）**：我原来的记法「`!` 表示原地、`_` 表示修改输入」是把一层含义拆给了两个记号。真相是两个记号各司一层：**`_` 是纯命名习惯，只给人看**（提示 in-place 变体，机器不读）；**`(a!)` 注解才是机器读的真值**（`a` 是别名集标签，`!` 表示此参数被就地修改，并喂 version counter +1）。另外 `dispatch:` 节删掉不会报错——会被视作 CompositeImplicitAutograd：函数体若由 aten 算子组合而成，前向反向都白给；若是裸指针/外部库调用，**前向照常、反向静默错误**——这正是我们「只写前向、训练断梯度」现象的根。
+- **Q7（自定义布局）**：我以为没有正规办法。实际上布局是 §1.4 扩展三轴之一，标准路存在——但属于"真扩展"档：新 TensorImpl 子类 + 新 dispatch key + 给所有相关算子注册 kernel，成本极高。我们补丁版的"提醒 + 手动转换"对应的是约定层做法，不进入 dispatch 体系，代价是布局状态全靠人肉维护。
+- **Q5（标准流程）**：我把 yaml 注册当成流程"最后一步的一个动作"，实际它是**起点**——接口声明驱动 codegen 生成整条接线（Python 绑定、C++ API、schema 注册、后端挂钩），我只需要手填两个洞：kernel 函数体和 derivatives.yaml 里的反向公式。后者是我当初完全不知道存在的第二张表。我们 fork 整仓属于 in-tree 玩法，享受 codegen；真 out-of-tree 插件才需要手写 `TORCH_LIBRARY_IMPL`。
+- **Q8（自动对拍）**：我不确定有没有自动机制——答案是**没有现成开关**，我们环境变量触发 CPU 对拍宏这套本来就是自建的（经验细节见〔下游透镜·过往经验〕）。展望：现代的 `__torch_dispatch__` 提供了实现这种"影子执行"的标准挂点，留到后续验证。
 
 ## 实践（纯理论板块改成手算 / 反例构造 / 数值验证）
 
@@ -1102,6 +1121,17 @@ self.assertExpectedInline(str(result), """tensor([1., 2., 3.])""")
 ### 过往经验
 
 > 与过去工作相关时，分享处理经验（向后接：用新知识回看旧经验）。不一定普适，仅供参考。
+
+**自建对拍宏：没有现成机制时的精度回归手段。** 我们的自定义算子走的是外部高性能算子库（§4.3 的字符串路由那套），精度问题没法靠 PyTorch 自动发现——如「读后回顾 Q8」所说，PyTorch 并没有"同时跑两条链自动比对"的现成开关。我们的做法是自建一个环境变量触发的对拍宏：开启后，算子执行时把输入同步搬到 CPU，用参考实现重算一遍，与自研芯片 kernel 的输出比较，超出容差就报。学完 §4.4 之后回看，这套机制有一条当时靠直觉、现在能说清依据的原则——**校尺必须比工件直**：参考实现要用已有 aten 算子组合出来，绝不能拿裸 `data_ptr` 手写。裸指针带着连续性假设，遇到非连续输入会静默读错数据；校尺自己先弯了，对拍就变成了两个错误实现互相认证。
+
+**容差阈值不是常数，而是硬件精度特性的函数。** 对拍宏真正难的不是搭机制，而是定容差——我们在两个方向上都吃过误报：
+
+- **参考端反而更差的假阳性**：我们芯片的向量计算单元只支持 fp32，bf16 tensor 会被升到 fp32 计算、结束再降回 bf16。于是常规算子的 bf16 结果本质上是 fp32 精度，**比 CPU 的原生 bf16 计算更准**——对拍宏却因为"和 CPU 不一致"报警。这类假阳性只能按算子实际情况放宽容差。
+- **硬件本底误差**：反过来，矩阵乘单元只支持 bf16，fp32 矩阵乘的精度天然比 CPU 差。这是硬件决定的系统性误差，要消除就得用多次 bf16 矩阵乘拼出高精度（拿计算时间换精度），常规场景下不划算，同样只能扩大容差阈值。
+
+两条合起来的教训：**对拍的"正确答案"不存在绝对基准**——CPU 参考实现和自研芯片各有自己的精度轮廓，容差是对两条链精度轮廓差异的建模，得逐算子、逐 dtype 地校。
+
+（展望：`__torch_dispatch__` 提供了在 Python 层拦截所有算子调用的标准挂点，理论上可以把这套对拍做成通用的"影子执行"模式而不必逐算子埋宏——留到后续学习验证。）
 
 ### 面试问题Q&A
 
@@ -1117,13 +1147,51 @@ self.assertExpectedInline(str(result), """tensor([1., 2., 3.])""")
   A：dispatcher 会成功把调用送到该 kernel（device + layout 匹配上了），随后在 kernel 内部的 `AT_DISPATCH_*` 默认分支抛错 `not implemented for 'BFloat16'`——并非 dispatcher 级的 backend 报错。修法是把 `AT_DISPATCH_FLOATING_TYPES` 换成 `AT_DISPATCH_FLOATING_TYPES_AND2(Half, BFloat16, ...)`，而不是注册新的 dispatch key。
 - **Q：反向传播为什么不直接构造雅可比矩阵？它的替代方案是什么？**
   A：不构造，是因为完整雅可比的规模 =「输出数 × 输入数」，往往大到不可行——一个 $1024\times1024$ 的线性层，其雅可比约 $10^{12}$ 个元素、fp32 约 4 TB，而它真正的 backward 只是几 MB 的矩阵乘；何况训练只要标量 loss 对参数的梯度，并不需要整个 $J$。替代方案是 **matrix-free（无矩阵）的 vJp（向量-雅可比积）**，分三层：① **算子级**——每个算子配一个 backward 规则，直接算出 $\text{grad\_input} = \text{grad\_output}\cdot J_\text{local}$ 这个乘积的闭式结果（用矩阵求导离线推好、利用 $J_\text{local}$ 的结构塌缩成逐元素乘或矩阵乘），只返回"作用在向量上的结果"、从不返回 $J$，并 save 必要的前向张量；② **记录级**——前向时给输出张量挂 `grad_fn`（封装这个 vJp 函数 + saved tensors + 指向上游的边），即时建出反向图；③ **装配级**——`backward()` 从输出端种子 $u=1$ 起，沿反向图把各算子的 vJp 左结合地串起来（即链式法则连乘），节点间只流动梯度向量。一句话：不求 $J$、只求 $J^\top$ 对向量的作用，逐算子实现、整图串联——这就是 reverse-mode 自动微分，代价与前向同阶。
+- **Q：给 PyTorch 新增一个算子，`native_functions.yaml` 里一个条目到底生成了什么？哪些还得你自己写？**
+  A：yaml 条目是接口声明，codegen 沿调用链把"接线"全部生成：Python 绑定（`THPVariable_*`）、C++ API（`at::*` / `at::redispatch::*`）、schema 注册进 dispatcher、后端注册挂钩（`RegisterCPU.cpp` 里的 `TORCH_LIBRARY_IMPL`）。它不生成的只有两个"洞"：kernel 函数体（真正算数值的代码）和反向规则（`derivatives.yaml` 里的公式，供生成 autograd 记录 kernel）。一句话：yaml 声明接口 → codegen 接线 → 人只填两个洞。
+- **Q：一个算子在 yaml 里不写 `dispatch:` 节会怎样？什么情况下这是陷阱？**
+  A：不报错——它被视作 CompositeImplicitAutograd：默认实现对所有后端生效，且只要函数体由 aten 算子组合而成，反向图会在这些子算子上自动建好，backward 免费。陷阱在于：如果函数体里混了裸指针运算或外部库调用，这些计算对 autograd 不可见，**前向结果正确、反向静默错误**（不抛异常、梯度就是错的/断的）——排查成本极高。要么保证纯 aten 组合，要么老老实实注册后端 kernel + 写 derivatives.yaml。
+- **Q：为什么自研后端只写前向 kernel，autograd 就能工作？边界在哪？**
+  A：因为 autograd kernel 按算子注册（不按后端），反向公式是设备无关的数学，其执行由普通 aten 算子组合而成，会 redispatch 回你后端的**前向** kernel。所以凡是反向可分解为已有算子的，后端白给。边界：融合的单体 kernel（如自定义 fused attention）和外部库调用，其反向无法分解，必须自己提供 backward 实现并在 derivatives.yaml（或 autograd::Function）里挂上。
 
 ## 思维导图总结
 
-> 把整体思路凝练成思维导图，便于后续快速回顾。
+> 把整体思路凝练成思维导图，便于后续快速回顾。（当前为大纲版，markmap 类插件可直接渲染；视觉优化留待后续。）
+
+- **PyTorch 基本内部机制**
+  - **§1 张量**
+    - Tensor = TensorImpl（元数据：sizes / strides / offset / dtype / device / keyset）+ Storage（裸数据）
+    - view = 新元数据 + 旧 Storage → 零拷贝（transpose / 切片 / reshape 的免费来源）
+    - 布局三种：strided / sparse / mkldnn；「连续性」只是 strided 内部性质
+    - 扩展三轴：device × dtype × layout；wrapper（约定层）vs 真扩展（新 TensorImpl + 新 key）
+  - **§2 自动微分**
+    - 数学：链式法则 → 反向模式（loss 是标量，中间结果保持行向量尺寸）→ vJp / matrix-free（雅可比从不落地）
+    - 记录什么：grad_fn（反向函数句柄）+ saved tensors（反向要用的前向值）+ next_functions（连成反向图）
+    - 挂在哪：dispatch 第一跳 Autograd kernel——先记录，再 redispatch（排除 Autograd key）落到 backend
+    - 代价：saved tensors 吃激活显存 → 重计算换显存；in-place 靠 version counter 兜底
+  - **§3 代码结构**
+    - 四目录单向依赖：c10（最小公共底座）← ATen（算子）← torch/csrc（autograd / c10d / binding）← torch（Python）
+    - torch.add 七步链：`THPVariable_add` → `at::add` → dispatcher（算 keyset）→ `VariableType::add`（记录）→ `at::redispatch::add` → RegisterCPU 挂钩 → native kernel（内部 dtype switch）
+    - autograd 对后端免费：反向公式 = 设备无关的 aten 组合，执行时 redispatch 回后端前向 kernel
+  - **§4 编写算子**
+    - 两张表 + 两个洞：native_functions.yaml（声明接口，codegen 接线）+ derivatives.yaml（声明反向）；手写 kernel 体 + 反向公式
+    - yaml 语法：functional / in-place / out 三变体；`_` 给人看、`(a!)` 给机器（a=别名集，!=修改+version counter）；`*` 后仅关键字；缺 `dispatch:` = CompositeImplicitAutograd（纯 aten 组合则前反向全免费；混裸指针/外部库则反向静默错误）
+    - kernel 骨架四步：错误检查（TORCH_CHECK / TensorArg）→ 分配输出（三变体）→ dtype 派发（AT_DISPATCH 家族）→ 计算
+    - 数据访问梯子：裸 data_ptr（连续性假设，危）< TensorAccessor + parallel_for（stride 安全）< TensorIterator（广播/类型提升/分配/维度折叠/并行/SIMD 六件脏活）
+  - **§5 高效工作流**
+    - #include = 文本复制：改头文件（哪怕注释）= 重编所有包含者；越靠 c10 越接近全量；ccache 按预处理后代码哈希，可救注释场景
+    - 本地基线：`USE_CUDA=0 DEBUG=0 python setup.py develop`；改动尽量落 .cpp
+    - 内环（本地跑相关测试，快迭代）/ 外环（CI 全量 + 当作硬件机队采样器：芯片体质 / 驱动问题在此暴露）
+    - expecttest：`EXPECTTEST_ACCEPT=1` 自动重写预期输出，人只审 diff
 
 ## 后续预告
 
-- 依旧迷惑的问题：
-- 由此延伸出的想法：
-- 下一节博文预告：
+- **依旧迷惑的问题**（本文学习中挂账、待后续资料验证）：
+  1. **Storage 是否已经降格**：2019 年原文里 Storage 是实打实的独立层；现代 PyTorch 中它是否已退化为 TensorImpl 的附属细节？`untyped_storage()` 这条 API 线索待查（§1.2 坑）。
+  2. **`__torch_dispatch__` 的真实能力边界**：作为 Python 层拦截所有算子调用的标准挂点，它能否承接我们的两个真实需求——影子执行式自动对拍（〔过往经验〕的展望）和轻量布局扩展（回顾 Q7 的展望）？（§1.4 坑）
+  3. **复数 / 稀疏这类"真扩展"的源码落点**：新 dispatch key + 新 TensorImpl 子类在源码里具体长什么样、注册面有多大？找一个现成实现走读（§1.4 坑）。
+  4. **structured kernels**：§4.1 和 §4.3 两次提及未展开——它把"错误检查 + 输出分配"从 kernel 骨架里抽成声明式的 meta 函数，能省多少样板代码？（对应学习指引 §H）
+- **由此延伸出的想法**（正文挖的坑，值得单开一篇）：
+  - 低精度数据类型全景（int8 / int4 / fp8 / fp4，§1.1 挖坑）
+  - 高层并行语言能否统一算子实现（Triton / TileLang + 编译器，回顾 Q13 挖坑）
+- **下一节博文预告**：文章 2《从 `torch.add` 追到 kernel》——本文 §3.2 的七步链是"纸上谈兵"版，下一篇进真实源码逐帧验证这条链，顺路把 dispatcher 的 key 计算细节（Ezyang dispatcher 博客，学习指引 #6）补上。上面第 1、4 两个坑预计在源码走读中顺手核销。
