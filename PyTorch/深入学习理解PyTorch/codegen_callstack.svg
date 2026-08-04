@@ -1,0 +1,135 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="1180" viewBox="0 0 1200 1180" role="img" aria-labelledby="title desc">
+  <title id="title">torch.add 一次调用的代表性调用栈与 codegen 来源</title>
+  <desc id="desc">中间是 torch.add 从 Python 绑定、C++ API、Dispatcher、Autograd wrapper、redispatch 到 backend kernel 和 dtype 分支的代表性运行时路径。左侧是 native_functions.yaml 与 derivatives.yaml，右侧是 schema 和 backend 注册代码。</desc>
+  <defs>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="130%">
+      <feDropShadow dx="0" dy="3" stdDeviation="4" flood-color="#0f172a" flood-opacity="0.10"/>
+    </filter>
+    <marker id="arrow-dark" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L10,5 L0,10 Z" fill="#334155"/>
+    </marker>
+    <marker id="arrow-blue" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L10,5 L0,10 Z" fill="#2563eb"/>
+    </marker>
+    <marker id="arrow-purple" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L10,5 L0,10 Z" fill="#7c3aed"/>
+    </marker>
+    <style>
+      .text { font-family: Inter, "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif; fill: #0f172a; }
+      .title { font-size: 27px; font-weight: 700; }
+      .subtitle { font-size: 15px; fill: #475569; }
+      .column-title { font-size: 17px; font-weight: 700; fill: #334155; }
+      .node-title { font-size: 17px; font-weight: 700; }
+      .node-body { font-size: 13px; fill: #334155; }
+      .source-title { font-size: 17px; font-weight: 700; }
+      .source-body { font-size: 14px; fill: #334155; }
+      .legend { font-size: 13px; fill: #334155; }
+      .edge-label { font-size: 13px; font-weight: 600; }
+      .conclusion-title { font-size: 17px; font-weight: 700; }
+      .conclusion { font-size: 14px; fill: #334155; }
+    </style>
+  </defs>
+
+  <rect width="1200" height="1180" fill="#ffffff"/>
+  <text class="text title" x="600" y="45" text-anchor="middle">torch.add(a, b)：代表性调用栈与 codegen 来源</text>
+  <text class="text subtitle" x="600" y="75" text-anchor="middle">运行时路径沿中间向下；虚线表示声明文件对接口、autograd 或注册代码的生成关系</text>
+
+  <!-- Legend -->
+  <rect x="80" y="100" width="1040" height="72" rx="12" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.2"/>
+  <rect x="118" y="124" width="22" height="22" rx="4" fill="#dbeafe" stroke="#2563eb"/>
+  <text class="text legend" x="150" y="141">蓝色：根据 schema 生成的接口与接线</text>
+  <rect x="390" y="124" width="22" height="22" rx="4" fill="#f3e8ff" stroke="#7c3aed"/>
+  <text class="text legend" x="422" y="141">紫色：autograd 生成代码</text>
+  <rect x="650" y="124" width="22" height="22" rx="4" fill="#fef9c3" stroke="#ca8a04"/>
+  <text class="text legend" x="682" y="141">黄色：Dispatcher 框架</text>
+  <rect x="870" y="124" width="22" height="22" rx="4" fill="#dcfce7" stroke="#16a34a"/>
+  <text class="text legend" x="902" y="141">绿色：开发者实现的计算逻辑</text>
+
+  <text class="text column-title" x="190" y="213" text-anchor="middle">声明输入</text>
+  <text class="text column-title" x="600" y="213" text-anchor="middle">运行时调用路径</text>
+  <text class="text column-title" x="1010" y="213" text-anchor="middle">生成与注册结果</text>
+
+  <!-- Source inputs -->
+  <rect x="55" y="318" width="270" height="104" rx="13" fill="#dbeafe" stroke="#2563eb" stroke-width="1.7" filter="url(#shadow)"/>
+  <text class="text source-title" x="190" y="351" text-anchor="middle">native_functions.yaml</text>
+  <text class="text source-body" x="190" y="379" text-anchor="middle">一条 func entry</text>
+  <text class="text source-body" x="190" y="403" text-anchor="middle">描述前向 schema 与 dispatch</text>
+
+  <rect x="55" y="588" width="270" height="104" rx="13" fill="#f3e8ff" stroke="#7c3aed" stroke-width="1.7" filter="url(#shadow)"/>
+  <text class="text source-title" x="190" y="621" text-anchor="middle">derivatives.yaml</text>
+  <text class="text source-body" x="190" y="649" text-anchor="middle">一条 name entry</text>
+  <text class="text source-body" x="190" y="673" text-anchor="middle">描述内置算子的反向公式</text>
+
+  <!-- Runtime stack -->
+  <rect x="405" y="238" width="390" height="66" rx="12" fill="#f8fafc" stroke="#64748b" stroke-width="1.5" filter="url(#shadow)"/>
+  <text class="text node-title" x="600" y="264" text-anchor="middle">torch.add(a, b)</text>
+  <text class="text node-body" x="600" y="288" text-anchor="middle">Python 用户代码</text>
+
+  <rect x="405" y="334" width="390" height="70" rx="12" fill="#dbeafe" stroke="#2563eb" stroke-width="1.5"/>
+  <text class="text node-title" x="600" y="360" text-anchor="middle">① Python binding（代表性名称：THPVariable_add）</text>
+  <text class="text node-body" x="600" y="384" text-anchor="middle">解析参数，并把 PyObject 转为 Tensor</text>
+
+  <rect x="405" y="434" width="390" height="66" rx="12" fill="#dbeafe" stroke="#2563eb" stroke-width="1.5"/>
+  <text class="text node-title" x="600" y="460" text-anchor="middle">at::add()</text>
+  <text class="text node-body" x="600" y="484" text-anchor="middle">C++ 前端 API，进入 Dispatcher</text>
+
+  <rect x="405" y="530" width="390" height="72" rx="12" fill="#fef9c3" stroke="#ca8a04" stroke-width="1.5"/>
+  <text class="text node-title" x="600" y="556" text-anchor="middle">c10::Dispatcher::call</text>
+  <text class="text node-body" x="600" y="580" text-anchor="middle">合成 DispatchKeySet，选择当前最高优先级 key</text>
+
+  <rect x="405" y="632" width="390" height="82" rx="12" fill="#f3e8ff" stroke="#7c3aed" stroke-width="1.5"/>
+  <text class="text node-title" x="600" y="658" text-anchor="middle">② Autograd wrapper（如 VariableType::add）</text>
+  <text class="text node-body" x="600" y="682" text-anchor="middle">结合 GradMode 与输入判断是否记录反向图</text>
+  <text class="text node-body" x="600" y="702" text-anchor="middle">add 通常不需要保存 a、b 的数值</text>
+
+  <rect x="405" y="744" width="390" height="68" rx="12" fill="#dbeafe" stroke="#2563eb" stroke-width="1.5"/>
+  <text class="text node-title" x="600" y="770" text-anchor="middle">at::redispatch::add()</text>
+  <text class="text node-body" x="600" y="794" text-anchor="middle">排除已经处理的 Autograd key，继续调度</text>
+
+  <rect x="405" y="842" width="390" height="74" rx="12" fill="#dcfce7" stroke="#16a34a" stroke-width="1.7"/>
+  <text class="text node-title" x="600" y="868" text-anchor="middle">③ 已注册的 backend kernel</text>
+  <text class="text node-body" x="600" y="892" text-anchor="middle">CPU / CUDA / PrivateUse1 等后端的函数体</text>
+
+  <rect x="430" y="946" width="340" height="72" rx="12" fill="#dcfce7" stroke="#16a34a" stroke-width="1.7" filter="url(#shadow)"/>
+  <text class="text node-title" x="600" y="972" text-anchor="middle">④ dtype 分支与数值计算</text>
+  <text class="text node-body" x="600" y="996" text-anchor="middle">常见形式：AT_DISPATCH_* / switch</text>
+
+  <!-- Generated and registration results -->
+  <rect x="875" y="486" width="270" height="96" rx="13" fill="#dbeafe" stroke="#2563eb" stroke-width="1.5" stroke-dasharray="7 5"/>
+  <text class="text source-title" x="1010" y="518" text-anchor="middle">schema 与 dispatch 表</text>
+  <text class="text source-body" x="1010" y="546" text-anchor="middle">先让算子符号存在</text>
+  <text class="text source-body" x="1010" y="568" text-anchor="middle">Dispatcher 才能查找实现</text>
+
+  <rect x="875" y="818" width="270" height="110" rx="13" fill="#dbeafe" stroke="#2563eb" stroke-width="1.5" stroke-dasharray="7 5"/>
+  <text class="text source-title" x="1010" y="850" text-anchor="middle">backend 注册接线</text>
+  <text class="text source-body" x="1010" y="878" text-anchor="middle">如 RegisterCPU.cpp</text>
+  <text class="text source-body" x="1010" y="901" text-anchor="middle">把 backend key 关联到</text>
+  <text class="text source-body" x="1010" y="922" text-anchor="middle">开发者实现的 kernel</text>
+
+  <!-- Main runtime arrows -->
+  <path d="M600 304 L600 326" fill="none" stroke="#334155" stroke-width="2.4" marker-end="url(#arrow-dark)"/>
+  <path d="M600 404 L600 426" fill="none" stroke="#334155" stroke-width="2.4" marker-end="url(#arrow-dark)"/>
+  <path d="M600 500 L600 522" fill="none" stroke="#334155" stroke-width="2.4" marker-end="url(#arrow-dark)"/>
+  <path d="M600 602 L600 624" fill="none" stroke="#334155" stroke-width="2.4" marker-end="url(#arrow-dark)"/>
+  <path d="M600 714 L600 736" fill="none" stroke="#334155" stroke-width="2.4" marker-end="url(#arrow-dark)"/>
+  <path d="M600 812 L600 834" fill="none" stroke="#334155" stroke-width="2.4" marker-end="url(#arrow-dark)"/>
+  <path d="M600 916 L600 938" fill="none" stroke="#16a34a" stroke-width="2.5" marker-end="url(#arrow-dark)"/>
+
+  <!-- Codegen relationship arrows -->
+  <path d="M325 348 C360 348 370 369 397 369" fill="none" stroke="#2563eb" stroke-width="2" stroke-dasharray="7 5" marker-end="url(#arrow-blue)"/>
+  <path d="M325 370 C360 370 370 467 397 467" fill="none" stroke="#2563eb" stroke-width="2" stroke-dasharray="7 5" marker-end="url(#arrow-blue)"/>
+  <path d="M325 392 C350 392 350 778 397 778" fill="none" stroke="#2563eb" stroke-width="2" stroke-dasharray="7 5" marker-end="url(#arrow-blue)"/>
+  <text class="text edge-label" x="348" y="331" fill="#2563eb">生成接口与接线</text>
+
+  <path d="M325 640 L397 672" fill="none" stroke="#7c3aed" stroke-width="2.2" stroke-dasharray="7 5" marker-end="url(#arrow-purple)"/>
+  <text class="text edge-label" x="346" y="625" fill="#7c3aed">生成反向处理代码</text>
+
+  <path d="M875 534 L803 558" fill="none" stroke="#2563eb" stroke-width="1.8" stroke-dasharray="7 5"/>
+  <path d="M875 873 L803 879" fill="none" stroke="#2563eb" stroke-width="1.8" stroke-dasharray="7 5"/>
+
+  <!-- Conclusion -->
+  <rect x="80" y="1060" width="1040" height="86" rx="13" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1.2"/>
+  <text class="text conclusion-title" x="110" y="1091">如何阅读这张图</text>
+  <text class="text conclusion" x="110" y="1118">蓝色和紫色部分主要是由 schema、dispatch 声明与导数公式生成的接口或接线；绿色部分是开发者必须实现和验证的数值计算。</text>
+  <text class="text conclusion" x="110" y="1139">具体函数名、生成文件和调用层次会随 PyTorch 版本、overload 与 structured kernel 等机制变化。</text>
+</svg>

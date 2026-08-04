@@ -1,119 +1,117 @@
- 
-
-# Pytorch-1 基本内部机制
+# 深入学习理解 PyTorch 学习笔记 第 1 节：基本内部机制
 
 ## 资料来源
 
-1. **Ezyang "PyTorch Internals"（2019 经典）**
-   - 链接：https://blog.ezyang.com/2019/05/pytorch-internals/
-2. **Pytorch 官方文档——stride章节**
-   - 链接：https://docs.pytorch.org/docs/2.12/generated/torch.Tensor.stride.html
+1. Ezyang：[《PyTorch Internals》](https://blog.ezyang.com/2019/05/pytorch-internals/)，2019 年
+2. PyTorch 官方文档：[Tensor Attributes](https://docs.pytorch.org/docs/stable/tensor_attributes) 与 [`torch.Tensor.stride`](https://docs.pytorch.org/docs/stable/generated/torch.Tensor.stride)
+3. PyTorch 官方文档：[Autograd mechanics](https://docs.pytorch.org/docs/stable/notes/autograd)
+4. PyTorch 官方文档：[`torch.utils.checkpoint`](https://docs.pytorch.org/docs/stable/checkpoint)
+5. PyTorch 官方文档：[Extending the dispatcher for a new backend in C++](https://docs.pytorch.org/tutorials/advanced/extend_dispatcher.html)
+6. Vijay Korthikanti 等：[《Reducing Activation Recomputation in Large Transformer Models》](https://arxiv.org/abs/2205.05198)
 
 ## 先猜再学
 
-《PyTorch Internals》（PyTorch 内部机制）是由 PyTorch 核心开发者 Edward Z. Yang 所写的一篇经典技术博客，深入剖析了 PyTorch 底层架构、张量存储、派发系统及自动微分的运作原理。学习这篇文章对于我们了解 Pytorch 的基本功能很有帮助。但是由于文章写于2019年，时间较早，所以许多技术细节可能已经发生变迁而且缺少一些Pytorch2.0以来的一些新特性。我们不必死记硬背其中细节，重点了解思想即可。
+《PyTorch Internals》由 PyTorch 核心开发者 Edward Z. Yang 编写，介绍了 PyTorch 的底层架构、张量存储、派发系统和自动微分。这篇文章发布于 2019 年，其中一些实现细节已经变化，也不包含 PyTorch 2.0 以后的特性。因此，本文主要学习其中相对稳定的设计思路，并在涉及现代 PyTorch 时另行说明。
 
-### 当前状态背景
+### 当前知识背景
 
-关于Pytorch，我个人的背景是很熟悉的。在我工作中，Pytorch处于核心枢纽地位：向上面向深度学习训练、推理等各种框架应用程序，向下对接我们自研芯片的高性能算子库、通信库、运行时等底层软件工具包。于是，为了满足需求与调试问题，常常需要深入Pytorch源代码进行魔改和修复。其中，对于ProcessGroup通信组和添加自定义新算子最为熟悉，一方面是因为主导了对自定义ProcessGroup的适应性魔改，另一方面是为了适配各种新模型而添加大量自定义新算子。
+PyTorch 在我的工作中处于上下层软件之间：向上支持深度学习训练和推理框架，向下对接自研芯片的高性能算子库、通信库和运行时。为了适配新模型并排查问题，我经常需要阅读和修改 PyTorch 源码。我对 `ProcessGroup` 和自定义算子较为熟悉：前者来自自定义 `ProcessGroup` 的适配工作，后者来自新模型的算子补充工作。
 
 ### 期望回答的问题
 
-扫一遍文章的开头和自标题，大致看上去可以分为两个部分：概念和机制代码。概念上主要会讲述张量Tensor、数据布局Layout、自动微分Autograd。机制代码上主要讲述算子的调用、编写新算子和成熟的贡献代码工作流。那么，
+根据文章开头和各级标题，原文大致可以分为两部分：一部分介绍 Tensor、layout 和 autograd 等概念，另一部分介绍算子调用、新算子开发和代码贡献工作流。阅读之前，我希望回答以下问题。
 
-- 作为一个工程师从业者，我想要了解：
+- 从工程实践出发，我希望了解：
 
-  1. Tensor的数据结构是如何设计的？为什么要这样设计？
-  2. Pytorch内置支持哪些数据布局？
+  1. Tensor 的数据结构是如何设计的？为什么要这样设计？
+  2. PyTorch 内置支持哪些数据布局？
   3. 自动微分在工程上是如何实现的？
-  4. 从Python层的Pytorch代码到底层算子调用中整个算子调用链是怎样的？
+  4. 从 Python 层的 PyTorch 代码到底层 kernel，完整的算子调用链是怎样的？
   5. 编写新算子的标准化流程是怎样的？
-  6. 为Pytorch开源仓库贡献代码的标准流程是怎样的？
+  6. 为 PyTorch 开源仓库贡献代码的常见流程是怎样的？
 - 工作实践中遇到的问题：
 
-  7. 能否自定义Tensor数据布局？有没有方便的标准化方式？
-  8. 有时出于调试的需求，能否同时执行多条分支调用链？比如对于一个自定义算子，我想比较我写的算子和标准算子之间有无精度差异，能否同时自动调用二者进行比较？还是需要手动切换算子？
-  9. 编写新算子时，注册新算子的native function表语法令人比较迷惑，是否能讲解？
-- 假设我是一个对Pytorch了解不多的新人，我可能还想要了解：
+  7. 能否自定义 Tensor 数据布局？有没有较为标准的实现方式？
+  8. 调试自定义算子时，能否让自定义实现和标准实现同时执行，并自动比较二者的精度？
+  9. 编写新算子时，`native_functions.yaml` 的注册语法应该如何理解？
+- 如果我对 PyTorch 了解不多，还需要回答：
 
-  10. 什么是张量Tensor？为什么需要Tensor？
+  10. 什么是 Tensor？为什么需要 Tensor？
   11. 为什么需要多种数据布局？
   12. 自动微分在数学上的原理？
   13. 为什么一个算子可能要有多种调用链，而不是统一的实现方式？
 
 ### 我的直觉
 
-1. Tensor的数据结构是如何设计的？为什么要这样设计？
+1. Tensor 的数据结构是如何设计的？为什么要这样设计？
 
-对于一个相对比较复杂的数据容器，直观上的想法是需要一些元数据和实际数据进行分离，就像是C++ 标准库里对数据容器的设计那样。这样的设计可以使得对于数据的检索和不涉及数据底层的操作更为迅速且安全。
+对于较为复杂的数据容器，我的直觉是将元数据与实际数据分离，类似 C++ 标准库中的一些数据容器。这样可以更快地读取形状等信息，也能避免不涉及数据内容的操作直接处理底层存储。
 
-2. Pytorch内置支持哪些数据布局？
+2. PyTorch 内置支持哪些数据布局？
 
-我已知的数据布局应该只有基于offset和stride的连续或非连续布局。不知道还有没有其他内置布局。
+我当时只了解基于 offset 和 stride 的连续或非连续表示，不确定是否还有其他内置布局。
 
 3. 自动微分在工程上是如何实现的？
 
-对于每一个开启自动微分tensor，应该会有记录上一次计算操作的反向梯度传播到计算输入的tensor。通过链式一直向上传播到没有记录的tensor为止。
+我当时猜测，每个开启自动微分的 Tensor 都会记录生成它的上一次操作，反向传播再根据链式法则将梯度逐层传给输入，直到没有上游记录的 Tensor。
 
-4. 从Python层的Pytorch代码到底层算子调用中整个算子调用链是怎样的？
+4. 从 Python 层的 PyTorch 代码到底层算子，完整的调用链是怎样的？
 
-直觉上，对于Python上的算子操作：
+我当时认为，Python 层的算子操作会经过以下步骤：
 
-- 首先需要通过Python与C++之间的binding绑定，将操作映射到C++；
-- 其次由于Pytorch需要支持不同的加速器设备，所以还需要根据算子的输入tensor所处的设备来走到不同设备的算子；
-- 最后，还需要根据tensor其他属性进行调度，比如稀疏、复数、数据排布，从而到达最后的目标算子。
+- 通过 Python 与 C++ 之间的 binding，将操作映射到 C++；
+- 根据输入 Tensor 所在的设备，选择对应后端的算子实现；
+- 再根据 Tensor 的其他属性，如稀疏表示和数据布局，选择最终的实现。
 
 5. 编写新算子的标准化流程是怎样的？
 
 在我的工作中，编写新算子主要分为两部分：
 
-- 在自定义的高性能算子库中，使用自研AI加速芯片的类似C++的DSL进行编写运行在加速芯片上的算子代码。这部分并不在Pytorch中。
-- 然后在Pytorch中添加调用算子的代码。而添加调用代码的过程也可以分为两个步骤。
-  1. 先根据算子的功能与性质，实现C++的算子调用代码。
-     1. 检查输入参数的数据类型、tensor形状、数据排布等属性符合预期。
-     2. 然后进行调用算子库中的算子。
-     3. 最后添加检查对比算子结果的步骤，以便检查算子精度问题。
-  2. 然后需要在native_functions.yaml中注册算子，写明输入和输出参数。
-     如上就是基本流程。
+- 在自定义高性能算子库中，使用自研 AI 加速芯片的 C++ 类 DSL 编写芯片算子。这部分不在 PyTorch 仓库中。
+- 在 PyTorch 中添加算子调用代码：
+  1. 根据算子的功能实现 C++ 调用逻辑；
+  2. 检查输入的数据类型、Tensor 形状和数据布局；
+  3. 调用算子库，并在需要时加入精度对比；
+  4. 在 `native_functions.yaml` 中声明算子的输入和输出。
 
-6. 为Pytorch开源仓库贡献代码的标准流程是怎样的？
+6. 为 PyTorch 开源仓库贡献代码的常见流程是怎样的？
 
-猜测可能与其他GitHub开源项目类似。
+我猜测这与其他 GitHub 开源项目类似：
 
-- 先fork开源仓库到自己的分支。
-- 然后进行修改后测试功能与CI-CD可靠性。
-- 最后根据贡献文档要求规范提交PR。
+- fork 开源仓库并创建分支；
+- 完成修改后，验证功能并通过 CI；
+- 按照贡献文档的要求提交 PR。
 
-7. 能否自定义Tensor数据布局？有没有方便的标准化方式？
+7. 能否自定义 Tensor 数据布局？有没有较为标准的实现方式？
 
-我目前不了解Pytorch中是否存在直接定义数据布局的办法。在我们的自定义数据布局的工作中，只能采用一种提醒警告式的方式告知用户需要某些布局，并提供布局转换的算子函数，但在我们的补丁版Pytorch中实际上并无对布局变换的记录。
+我当时不了解 PyTorch 是否提供了直接定义数据布局的方法。在我们的实现中，程序只会提示用户将输入转换为指定布局，并提供对应的转换算子。补丁版 PyTorch 本身不会记录这种布局变化。
 
 8. 有时出于调试的需求，能否同时执行多条分支调用链？比如对于一个自定义算子，我想比较我写的算子和标准算子之间有无精度差异，能否同时自动调用二者进行比较？还是需要手动切换算子？
 
-对于这个问题，在我的工作经验中是直接将输入参数传输到CPU上进行重新计算。进行比较二者算子的输出结果。但不清楚是否有自动的办法。
+我们当时会将输入复制到 CPU，使用参考实现重新计算，然后比较两端的输出。我不确定 PyTorch 是否提供了现成的自动机制。
 
-9. 编写新算子时，注册新算子的native function表语法令人比较迷惑，是否能讲解？
+9. 编写新算子时，应该如何理解 `native_functions.yaml` 的语法？
 
-注册算子的native_functions.yaml中有许多细节语法：比如感叹号!表示原地操作，函数下划线_表示会修改输入Tensor参数之类的小细节。很容易令人忘记。再添加dispatch的一些语法就更迷惑了。其中README文档虽有解释，但依旧不足够清晰。常常的做法是寻找一个类似的已经注册的算子进行照葫芦画瓢地注册。希望能有更多详细解释。
+`native_functions.yaml` 包含许多细节，例如 `!`、函数名末尾的 `_` 以及 `dispatch:` 段。README 虽然提供了说明，我实际添加算子时仍经常需要参考类似算子的条目。我希望通过本文弄清这些符号各自的含义。
 
-10. 什么是张量Tensor？为什么需要Tensor？
+10. 什么是 Tensor？为什么需要 Tensor？
 
-相比于标量、向量、矩阵，我们可以将张量Tensor理解为更一般的量，是更通用的数据容器。
+Tensor 可以理解为标量、向量和矩阵向更高阶的推广。
 
-- 标量是0阶的，只有一个数量，例如数字5；
-- 向量是1阶的，可以有多个数量，但只能在一个轴上有量。例如[1,2,3]；
-- 矩阵是2阶的，同样有多个数量，不同在于可以有行和列两个轴上有量。例如[[1,2],[3,4]]；
-- 而张量就是根据以上的规律进行推广，可以是任意阶的，可以在任意方向轴上有量。即：[[[...]]]
+- 标量是 0 阶的，例如数字 5；
+- 向量是 1 阶的，例如 `[1, 2, 3]`；
+- 矩阵是 2 阶的，包含行和列两个轴，例如 `[[1, 2], [3, 4]]`；
+- Tensor 可以继续推广到任意阶数。
 
-张量的产生在工程中可以理解为是现实案例的需求。比如对于图像的表示，基本的方法就是为每一个像素赋予三种颜色通道RGB的数值。那么一张高为H、宽为W的图片就需要用维度形状为[H,W,3]的三阶张量进行表示。假如我有N张图片，那么就需要维度形状为[N,H,W,3]的四阶张量进行表示。以前的向量和矩阵是没办法完全表示这类需求的。所以可以表示更高阶的张量是很有必要的。
+例如，一张高为 $H$、宽为 $W$ 的 RGB 图像可以表示为形状 `[H, W, 3]` 的 3 阶 Tensor；$N$ 张图像则可以表示为 `[N, H, W, 3]` 的 4 阶 Tensor。这类数据无法只用单个标量、向量或矩阵完整表达。
 
 11. 为什么需要多种数据布局？
 
-多种数据布局和自定义Tensor数据布局是很有意义的。在我的经验中，Tensor数据布局会在一些情况下显著影响后续算子的执行效率，很多时候影响算子执行效率的不一定是计算能力本身，而是对数据的访存方式。尤其是对于数据访问存在诸多硬件限制、效率不高的加速芯片。
+在我的工作经验中，Tensor 的数据布局会显著影响算子性能。对一些存在特定访存限制的加速芯片来说，性能瓶颈可能来自数据访问方式，而非计算能力。
 
 12. 自动微分在数学上的原理？
 
-自动微分在数学上的核心原理是链式求导法则。AI模型往往是一连串大量函数计算的堆叠。例如对于如下的从输入x到输出y的一系列函数变换
+自动微分的数学基础是链式法则。AI 模型可以看作多个函数的复合。例如，从输入 $x$ 到输出 $y$ 经过以下变换：
 
 $$
 u = f(x), \quad v = g(u), \quad y = h(v)
@@ -135,33 +133,29 @@ $$
 \frac{du}{dx}
 $$
 
-PyTorch 自动做的，就是记录这些中间操作，然后在 `.backward()` 时从输出往输入方向，把这些局部导数一层层乘回去。
+PyTorch 会记录中间操作，并在调用 `.backward()` 时从输出向输入传播梯度，逐层应用局部导数。
 
-而对于向量、矩阵和张量的计算则会复杂一点，需要涉及到雅可比矩阵。后续有机会在单开一帖讨论吧。
+对向量、矩阵和 Tensor 求导时，还需要使用雅可比矩阵。
 
 13. 为什么一个算子可能要有多种调用链，而不是统一的实现方式？
 
-这是因为对于不同的底层计算硬件，执行计算的代码和思路是完全不同的。对于CPU上，我们可能会使用一些单指令多数据（SIMD）思路的高性能指令集进行计算，比如AVX512；对于GPU，我们基于单指令多线程（SIMT）思路使用CUDA编程语言；而对于更多其他种类芯片，比如华为的NPU、谷歌的TPU等等多种多样的计算芯片，各自的算子计算逻辑又可能不一样。几乎不可能在底层统一进行实现。
-不过话又说回来，随着triton、tilelang等高层次并行编程语言的发展，借助强大的编译器，在相对高层上统一实现代码是有可能的，但已经不属于本文Pytorch主题范畴。也挖一坑，以后可以单开一贴讨论。
+不同硬件后端的实现方式差异很大。CPU 算子可能使用 AVX-512 等 SIMD 指令集，GPU 算子通常使用 CUDA 基于 SIMT 模型编程，NPU 和 TPU 等加速器又有各自的编程模型和运行时。因此，底层 kernel 很难共享同一份实现。
+
+Triton 和 TileLang 等高层并行编程语言尝试将更多工作交给编译器，因此有可能在更高层共享部分算子代码。这个主题不在本文范围内。
 
 ## 学习过程
 
-本篇博客主要为那些想要参与Pytorch工程开发，为Pytorch开源项目贡献代码的人所讲述Pytorch的基本概念与机制。作者将内容分为了两部分：概念与机制。其中概念主要讲述张量Tensor与自动微分，而机制部分主要讲述代码逻辑和贡献代码的流程。由于内容较多，我在这里将其进一步细化为五个主题部分：张量Tensor、自动微分Autograd、基本代码结构、编写算子以及高效的工作流。其中前两部分属于原文的概念部分，后三部分属于机制部分。
+原文面向希望参与 PyTorch 工程开发和代码贡献的读者，内容分为概念与机制两部分。我根据学习过程将它重新组织为五个主题：Tensor、autograd、基本代码结构、算子开发和高效工作流。前两个主题对应原文的概念部分，后三个主题对应机制部分。
 
-### 1. 张量Tensor
+### 1. Tensor
 
-在张量主题中，主要讲述了Tensor的基本概念、Tensor的步长表示法、基于Tensor属性的算子调度和关于Tensor的Pytorch扩展。
+这一章介绍 Tensor 的基本概念、stride 表示、基于 Tensor 属性的算子调度，以及 PyTorch 的 Tensor 扩展方式。
 
-##### 1.1 Tensor的基本概念
+#### 1.1 Tensor 的基本概念
 
-作者直接给出了在Pytorch中张量Tensor的基本概念就是一个任意阶任意维的存储数据的结构，可以理解为向量、矩阵的更高阶推广。
+Ezyang 将 Tensor 定义为一种可以存储任意阶数数据的结构，可以视为向量和矩阵向更高阶的推广。Tensor 需要使用一组属性描述自身，其中最基本的是阶数和形状。例如，下面是一个 3 阶 Tensor：
 
-那么对于某一个特定的Tensor，他就有着一些属性用于表示他的特点。就像人有身高体重之类属性来表示人的特点。
-
-那么Tensor有哪些属性呢？从数学角度可以自然地想到，Tensor的**阶数**、**维度**肯定是他的属性。
-例如对于这样一个tensor
-
-```text
+```Plaintext
 [
     [
         [0, 8, 9],
@@ -181,35 +175,35 @@ PyTorch 自动做的，就是记录这些中间操作，然后在 `.backward()` 
 ]
 ```
 
-这就是一个阶数为3的、维度为(3, 3, 3)的Tensor。有时，还会称这个(3, 3, 3)为**sizes尺寸**或**shape形状**。
+它的阶数为 3，形状为 `(3, 3, 3)`。PyTorch 中常使用 sizes 或 shape 表示这组尺寸。
 
-以上就是从理论出发的Tensor基本概念。而为了从数学理论落地到计算实践，Tensor需要加上更多限制，同时也就带来更多属性。
+在计算机中表示 Tensor 时，还需要记录与数值类型、存储位置和数据布局相关的属性。
 
-1. dtype（数据类型Data Type）：在计算机的有限空间中，我们无法完全精准无误地表示拥有无限位数的实数。于是就诞生了使用有限位数表示数字的各种数据类型。学习过基本编程课程的同学应该已经知道一些数据类型，例如：int、long、float、double。而在Pytorch和深度学习领域，数据类型的位数是十分重要的，因为这代表了这一种数据类型能够表示的数值范围和精度。于是，我们常称以上常见数据类型为int32、int64、float32和float64。此外，在深度学习领域，模型常常不对精度特别敏感，拥有一定的容错，这就引发了大量对低精度计算的探索研究，比如int8、int4、fp8、fp4。未来有机会的话，这也是一个值得一讲的主题。
-2. device（计算设备）：在深度学习领域，与Tensor相关的计算操作往往都是可以并行化的，比如张量相加、相乘和矩阵乘等运算操作。而对于并行计算，GPU、NPU、TPU、LPU等等各种加速芯片设备的计算效率远高于常规CPU。于是，Pytorch常常会借助这些加速计算的设备实现快速的计算。而此时，这个张量存储在哪个计算设备上就十分重要。只有将张量存储到指定设备上才能调用这个设备的计算能力进行加速。
-3. stride（步长）/layout（数据布局）：这两个属性的引入被作者称为Pytorch的特性之一。后面一节我们会详细讲述。
+1. **dtype（数据类型）**：计算机使用有限位宽表示数值，因此不同 dtype 会带来不同的表示范围、精度和存储成本。常见类型包括 int32、int64、float32 和 float64。深度学习对数值误差存在一定容忍度，因此也大量使用 int8、int4、fp8 和 fp4 等低精度类型。
 
-以上就是Tensor常用到的基本属性。实际应用中为了兼容更多场景，还会有更多属性，后续我们遇到了再进行讲述。描述Tensor特点的这些属性数据被称为“元数据”，这是由于Tensor本身内部即存储了大量数据，从而与其内部数据相对应。
+2. **device（计算设备）**：Tensor 所在的设备决定了数据存放的位置，也决定了算子应该使用 CPU、GPU、NPU 或其他后端的实现。
 
-##### 1.2 Strided Representation（步长表示）
+3. **stride（步长）和 layout（数据布局）**：它们描述逻辑索引如何对应到底层存储。下一节将详细介绍 stride。
 
-在上一节中我们引入了stride，他是Tensor的一个属性，但并未详细讲述他。那么在本节中，我们就将进一步介绍步长的概念。
+这些用于描述 Tensor 的属性统称为元数据，与 Tensor 实际存储的数值数据相对。
 
-首先，stride步长是什么？在原文中并未给出明确的定义，而是通过描述步长的功能来给出对步长的直觉。如下：
+#### 1.2 Strided Representation（步长表示）
 
-> Suppose that I want to access the element at position tensor[1, 0] in my logical representation. How do I translate this logical position into a location in physical memory? Strides tell me how to do this: to find out where any element for a tensor lives, I multiply each index with the respective stride for that dimension, and sum them all together.
+上一节列出了 stride 属性，本节进一步说明它的含义。原文没有单独给出形式化定义，而是通过索引到物理存储位置的映射来解释 stride。
 
-译：假设我想要获取访问在tensor的[1, 0]逻辑位置的元素。我该如何将这个逻辑位置转为物理内存上的位置？步长可以告诉我如何去做到这一点：要找出张量中任意元素的位置，我可以将每个索引与该维度对应的步长相乘，然后将所有结果相加。
+> To find out where any element for a tensor lives, I multiply each index with the respective stride for that dimension.
 
-我认为关于stride这一点上，原文的讲述是相对模糊的。我认为可以参考[Pytorch官方文档](https://docs.pytorch.org/docs/2.12/generated/torch.Tensor.stride.html)中的描述
+这句话省略了最后一步求和。完整计算方式是：将每个索引与对应维度的 stride 相乘，再将结果相加，得到相对于 Tensor 起始位置的元素偏移。
+
+原文通过功能解释 stride，[PyTorch 官方文档](https://docs.pytorch.org/docs/stable/generated/torch.Tensor.stride) 的定义更直接：
 
 > Stride is the jump necessary to go from one element to the next one in the specified dimension dim.
 
-译：Stride是沿着某一特定维度，从一个元素到下一个元素所必需跳过的元素个数。
+译：Stride 是沿指定维度从一个元素移动到下一个元素时，需要跨过的元素数。
 
-举个简单的例子，假设有这样一个数据类型为int32，维度为(2, 2)且按最后一个维度轴连续存储在内存中的2阶Tensor，称之为A。那么逻辑上就可以表示为：
+例如，假设有一个 dtype 为 int32、形状为 `(2, 2)` 的 2 阶 Tensor `A`，数据按行优先顺序连续存储：
 
-```text
+```Plaintext
 A = [
     [2, 8],
     [6, 0]
@@ -225,192 +219,207 @@ A = [
 |    8    | 6        |
 |    12    | 0        |
 
-其中， $A[0,0]=2,A[0,1]=8,A[1,0]=6,A[1,1]=0$，且每经过一个元素内存地址增加了4是因为每个int32数据类型的数据需要占用4个字节的内存空间。
-那么，沿着第1个维度轴从一个元素到下一个对应元素，比如从A[0,0]到A[1,0], 所需要跨越的元素个数就是2个，stride就是2。
-而沿着第2个维度轴，从一个元素到下一个对应元素，比如从A[0,0]到A[0,1]，所需要跨越的元素个数就是1个，stride就是1。
-于是综合两个维度，这个Tensor的stride就是(2,1)。
+每个 int32 元素占 4 字节，因此表中的地址每次增加 4。沿第 0 维从 `A[0, 0]` 移动到 `A[1, 0]` 需要跨过 2 个元素；沿第 1 维从 `A[0, 0]` 移动到 `A[0, 1]` 只需跨过 1 个元素。因此，`A` 的 stride 是 `(2, 1)`。
 
-那么，有的小伙伴就会有疑问了：原文中提到的概念是对于张量中任意元素的位置，可以将每个索引与该维度对应的步长相乘，然后将所有结果相加。这是说的元素在物理内存中的位置与步长之间的关系。但我们刚才看到的stride的定义是元素之间的物理内存上的距离。这好像不太一样诶！
-
-确实不一样，但我们可以通过相对位置计算得到绝对位置，二者是互通的。假设张量中第1个元素的内存地址为0，那么第n个元素与第1个元素之间的相对距离就是第n个元素在物理内存的绝对位置地址。
-
-比如依旧考虑先前例子中的Tensor A：对于A[1,0]元素，与A[0,0]之间的元素个数距离是2，而根据索引和步长的对应相乘计算可以得到
+这两种描述分别对应相对距离和元素位置。已知各维度的 stride 后，可以计算任意索引相对于 Tensor 起始位置的元素偏移。例如，`A[1, 0]` 的偏移为：
 
 $$
 1 \times 2 + 0 \times 1 = 2
 $$
 
-可以发现，二者是相等的。所以，我认为实际上这计算绝对位置的方法应该属于stride的性质。说到这，stride的基本概念应该大致清晰了。
+这里的偏移单位是“元素”，而不是“字节”。使用带类型的 C/C++ 指针访问数据时，指针加 1 会自动跨过一个元素的字节数。因此，用元素数表示 stride 无需将 dtype 的字节数重复编码到元数据中。
 
-然后，我们就来到了为什么需要stride？为什么不把直接的内存地址偏移量作为所谓的stride呢？
-
-这是为了方便进行访问读取数据。拥有基本C/C++编程知识的同学应该了解：对于数组、链表、堆栈等数据结构的访问，我们常常都是通过指针地址进行访问的。在Pytorch中，也是如此。
-当我们编写算子处理Tensor计算时，我们往往是以Tensor的首元素的地址作为输入参数的。此时，stride就可以告诉我们如何从首元素的地址指针出发，加上stride作为偏移量，访问到Tensor中任意元素的地址，从而进行数据的访问读取。
-
-为什么不直接把内存地址偏移量作为所谓的stride呢？这是因为指针本身就带有数据类型的属性，指针加上一个整数就会自动乘以数据类型的字节数进行偏移计算了。比如对于int32类型的数据，每个元素占用4个字节，那么指针加上1就会自动乘以4进行偏移计算了。所以我们不需要再把内存地址偏移量作为所谓的stride了。
-
-进而，有了stride，我们可以实现一些特别功能。
-比如说对于一个先前例子中的Tensor A，如果我想要获取这个Tensor的第二行，也就是A[1,:]，那么我就可以通过stride来实现。由于A[1,0]的索引是(1,0)，对应的步长是(2,1)，所以A[1,0]元素在物理内存中的位置就是
+使用同样的方法，`A[1, :]` 中两个元素的偏移分别为：
 
 $$
 1 \times 2 + 0 \times 1 = 2
 $$
 
-也就是A[1,0]元素的内存地址是首元素地址加上2个元素的偏移量。由于A[1,1]元素的索引是(1,1)，对应的步长也是(2,1)，所以A[1,1]元素在物理内存中的位置就是
+对于 `A[1, 1]`：
 
 $$
 1 \times 2 + 1 \times 1 = 3
 $$
 
-也就是A[1,1]元素的内存地址是首元素地址加上3个元素的偏移量。于是，我们就可以通过stride来访问到A[1,0]和A[1,1]元素的内存地址，从而获取到第二行的数据了。
+因此，第二行对应偏移 2 和 3。一个完整的 view 还需要记录形状和 stride；只有 storage offset 并不足以描述这一行数据。
 
-不过，顺带一提，我们也可以通过offset，也就是整体Tensor的地址偏移量，来实现这个功能。由于A[1,0]元素在物理内存中的位置是首元素地址加上2个元素的偏移量，而A[1,1]元素在物理内存中的位置是首元素地址加上3个元素的偏移量，所以这些数据也是连续的，我们也可以通过offset来访问到A[1,0]和A[1,1]元素的内存地址，从而获取到第二行的数据了。
-
-再举一个例子，那么当想要获取这个Tensor的第一列，也就是A[:,0]，那么我们就可以通过stride来实现。由于A[0,0]的索引是(0,0)，对应的步长是(2,1)，所以A[0,0]元素在物理内存中的位置就是
+第一列 `A[:, 0]` 中两个元素的偏移分别为：
 
 $$
 0 \times 2 + 0 \times 1 = 0
 $$
 
-也就是A[0,0]元素的内存地址是首元素地址加上0个元素的偏移量。由于A[1,0]元素的索引是(1,0)，对应的步长也是(2,1)，所以A[1,0]元素在物理内存中的位置就是
+对于 `A[1, 0]`：
 
 $$
 1 \times 2 + 0 \times 1 = 2
 $$
 
-也就是A[1,0]元素的内存地址是首元素地址加上2个元素的偏移量。于是，我们就可以通过stride来访问到A[0,0]和A[1,0]元素的内存地址，从而获取到第一列的数据了。
+第一列对应偏移 0 和 2，这两个元素在底层存储中不连续。Stride 让同一套索引规则可以同时表示连续和非连续数据。
 
-我们可以通过改变Tensor的stride来实现不同的数据访问方式，从而在进行切片、形状改变等一系列操作时，不进行实际的数据复制，而是通过改变stride来实现数据的访问方式的改变，从而实现高效的计算。
-例如对于如下代码
+切片和转置等操作可以通过修改 Tensor 的元数据来改变访问方式，而不复制底层数据。例如：
 
-```python
+```Python
 import torch
 A = torch.tensor([
     [2, 8],
     [6, 0]
 ])
-B = A[:,1]
+B = A[:, 1]
 ```
 
-在这个代码中，我们通过切片操作获取了A的第一列数据，并将其赋值给了B。B和A共享了同一块内存空间。值得一提的是，如果后续B的数据发生了改变，那么A的数据也会发生改变。
-如果我不想A的数据也发生改变，那么我就需要进行数据复制了。比如可以通过如下代码实现：
+`B` 是 `A` 的第二列，两者共享底层存储。修改 `B` 会同时修改 `A` 中对应的数据。如果需要独立副本，可以调用 `clone()`：
 
-```python
+```Python
 import torch
 A = torch.tensor([
     [2, 8],
     [6, 0]
 ])
-B = A[:,1].clone()
+B = A[:, 1].clone()
 ```
 
-基于Stride的表示方法可以实现各种有趣的视图功能。文中还给出了一个有趣的可视化工具可以让我们看到在各种参数作用下，Tensor实际表示的内存布局情况：https://ezyang.github.io/stride-visualizer/index.html
+基于 stride 的表示可以支持多种零拷贝 view。Ezyang 也提供了一个 [stride 可视化工具](https://ezyang.github.io/stride-visualizer/index.html)，可以查看不同参数对逻辑视图和底层存储的影响。
 
-最后，Pytorch中如何为Tensor实现stride呢？
-既然底层数据需要保持不变，而只改变上层的访问方式。那么我们就需要将底层“存储”和上层“张量”进行分离了。Pytorch中就是通过Tensor与Storage的分离来实现的。Tensor中存储了Tensor的元数据属性，而Storage中存储了Tensor的数据内容与底层的元数据。通过这种分离，我们就可以在不改变底层数据内容的情况下，通过改变Tensor中的stride等属性来实现不同的数据访问方式了。
-任何Tensor，无论简单连续的还是复杂变换过的，都是基于Tensor-Storage分离的设计实现的。Tensor中的stride属性就是通过这种设计实现的。
+这种能力依赖 Tensor 元数据与底层存储的分离。TensorImpl 记录 sizes、strides、storage offset、dtype 和 device 等元数据，Storage 管理底层存储。多个 TensorImpl 可以引用同一个 Storage，同时使用不同的形状、stride 和 offset 解释数据。
 
-文中还提到了一点，团队正逐渐想让Storage不再成为独立概念，而是也是作为张量的一种特殊视图来实现的。也就是说，未来可能会将Storage也作为Tensor的一种特殊视图来实现，而不再是一个独立的概念了。不知道现在是否已经实现了。后续有机会的话可以看看如今的源码单开一贴来讲讲Storage的设计演变。
+原文还提到，当时的 PyTorch 团队希望逐步降低 Storage 作为独立抽象的存在感。现代 PyTorch 中 Storage 的实际定位还需要结合当前源码确认，本文将这个问题保留到后续的源码阅读。
 
-#### 1.3 基于Tensor属性的算子调度
+#### 1.3 基于 Tensor 属性的算子调度
 
-在前两节里，我们已经知道一个 Tensor 身上带有 device、dtype、layout 这些属性（外加上一节细讲的 stride）。那么很自然就冒出一个问题：当我写下一行 `torch.add(a, b)`，PyTorch 到底是怎么**根据这些属性，找到那段真正该执行的算子代码**的？
+已知 Tensor 包含 device、dtype、layout 和 stride 等属性后，下一个问题是：当程序调用 `torch.add(a, b)` 时，PyTorch 如何根据这些属性选择实际执行的 kernel？
 
-其实在「先猜再学」里我已经猜过这条调用链：先经过 Python 到 C++ 的 binding，再按 device 走到对应设备的算子，最后按数据排布等属性走到目标算子。读完发现大方向是对的——确实存在这样一层层“按属性分流”的过程，这个过程就叫 **dispatch（调度）**。但细节上我猜得并不准，有两处理解偏差，正好记下来。
+我在学习前猜测，调用会先经过 Python 到 C++ 的 binding，再按 device 和数据布局选择目标实现。这个方向基本正确，但缺少 autograd 这一层，也混淆了 layout 和连续性。这个根据输入属性和当前上下文选择实现的过程称为 dispatch。
 
-按 Ezyang 的说法，一次算子调用从外到内大致经过这么几层 dispatch。最外层是 **variable（autograd）调度**，原文说它负责 *unwrapping variables, calling the underlying implementation, and then rewrapping the results*——它不挑计算 kernel，而是为后续的反向传播做准备；具体准备什么，我们留到 §2 自动微分 再展开，这里只要记住它在最外面。再往里是 **device 加 layout 的调度**：*“The first dispatch is based on the device type and layout of a tensor: e.g., whether or not it is a CPU tensor or a CUDA tensor.”* 这一层决定走 CPU 还是 CUDA 实现、是普通 strided 还是 sparse 布局。最里面是 **dtype 调度**，原文说它 *“is just a simple switch-statement”*——float32 和 int 的乘法本就是两份代码，靠一个 switch 选到对应那份。
+按照 Ezyang 在 2019 年文章中的说法，一次算子调用从外到内大致经过以下几层 dispatch：
 
-第一处误解，是我把上一节的“连续性”概念误用到了这里，以为 layout 调度是按“连续 vs 非连续”来分的。其实不是。这里的 layout 指的是 `Layout` 这个枚举——Strided（普通 dense）、Sparse、Mkldnn 这种**整体布局类型**，与连续性无关。一个连续的 dense tensor，和一个转置后非连续的 view，它俩的 layout 都是 Strided，**会 dispatch 到同一个 kernel**。那连续性在哪里处理？在 kernel **内部**：element-wise 算子默认走 TensorIterator，直接按 stride 读非连续数据（通常还带一条 contiguous 的快路径）；而 matmul、conv 这类要进 BLAS/cuDNN 的，则可能先 `.contiguous()` 再算。也就是说，连续性是 dispatch **之后**的事，不参与选 kernel。
+- 外层是 **variable（autograd）调度**。原文将它的工作概括为 *unwrapping variables, calling the underlying implementation, and then rewrapping the results*。这一层不选择计算 kernel，而是处理反向传播所需的记录。
 
-第二处误解，是我以为 requires_grad 这层调度是**最后**才做的——直觉上 grad 像一个事后的附加步骤。其实它在**最外层**、最先做。一个便于理解的角度是：先有了带 device/dtype/layout 的普通 tensor，再在它外面套一层 variable 来实现 autograd；既然是套在最外面的一层，那么往里走时它自然最先被剥开。
+- 再向内是 **device 与 layout 调度**。这一层决定使用 CPU 还是 CUDA 等后端，以及处理 strided 还是 sparse 等布局。
 
-由此还引出一个更基础的问题：device/layout/dtype 我都能理解成“选不同的 kernel 实现”，但 variable 这一层在“选”什么？答案是——**它并不在选 kernel，而是在做记录，为反向传播做准备**。这就引出这一节最反直觉、也最关键的一点：**dispatch 不只是“选计算 kernel”，它是一套可叠加的“拦截层”机制——每一层都在算子前后插入一段行为，而只有最里面那层才是真正执行计算的 kernel。** autograd 是最典型的一层，此外 autocast、`torch.func` 的 vmap/grad、functionalization 也都是挂在 dispatch 上的拦截层。把心智模型从「dispatch = 选 kernel」修正为「dispatch = 一组依次嵌套的拦截层，最内层才是 kernel」，这一节就理顺了。
+- 最内层是 **dtype 分支**。在 Ezyang 介绍的这类 kernel 中，dtype 通过 kernel 内部的 switch 选择对应类型的实现。
 
-最后补一个把上面串起来的结构细节：device 和 layout 实际上是**合成一个 backend key**（CPU、CUDA、SparseCUDA……）一起 dispatch 的，并不是两次独立分流；而 dtype 并不是 dispatcher 级别的 key，它是落在 kernel **内部**的那个 switch。所以更准确的图景是：variable（最外）→ backend = device × layout（一层）→ kernel 内的 dtype switch（最内）。想对照源码看的话，dispatch key 的定义在 `c10/core/DispatchKey.h`，dtype 的 switch 就是 `aten/src/ATen/Dispatch.h` 里的 `AT_DISPATCH_*` 宏。
+下面把一次调用拆成下行和返回两条路径。左侧表示调用如何逐层进入：wrapper 处理当前语义后，通过 redispatch 继续选择下一个 key，直到进入 backend kernel 和 kernel 内部的 dtype 分支。底部完成计算后，结果沿右侧按照相反顺序返回，每个 wrapper 再完成自己的输出处理。
 
-这也顺带回答了我在「先猜」里提出的疑问：为什么一个 add 要准备这么多份 kernel？因为 device × layout × dtype 本身就是一个**笛卡尔积**——原文说得很直接，*“in principle the combination could make sense, and thus we support expressing it.”* 各种硬件、布局、数据类型的组合，原则上每一种都可能需要一份特定实现，数量自然就多了。
+![一次 PyTorch 算子调用的调度与返回路径](dispatch_roundtrip.svg)
 
-还有一点这里先不展开：现代 PyTorch 里 `Variable` 和 `Tensor` 已经合并，所谓“剥开 variable”在实现上是 redispatch 时把 autograd key 排除掉——这个机制，以及 variable 层究竟记录了什么，都留到 §2 自动微分。
+*图 1.3-1：一次算子调用的调度与返回路径（简化）。*
 
-#### 1.4 关于Tensor的Pytorch扩展
+图中的 Functionalize、vmap 和 Autocast 只是 wrapper key 的示例，并不表示每次调用都会经过全部这些层。实际路径由当前 DispatchKeySet 和 key 的优先级决定。Dispatcher 每次选择当前最高优先级的 key；wrapper 排除自身的 key 后调用 redispatch，Dispatcher 再继续选择下一层。
 
-上一节我们看到，一次算子调用是按 device、layout、dtype 这几个属性层层 dispatch、最终落到某段具体 kernel 的。那么一个很自然的问题就接着冒出来了：如果现有的 device、layout、dtype 都不够用，我想往 PyTorch 里加一种"新的 Tensor"，该怎么加？ 这一节讲的就是扩展 Tensor 的几种方式。对我而言这一节格外切身——我日常做的自研后端适配，本质上就是这里说的"扩展"之一。
+我学习前把“连续性”误当成了 layout 的分类依据。在原文的分类中，layout 指 strided、sparse 和 Mkldnn（现为 oneDNN）等整体布局类型。连续的 dense Tensor 和转置后的非连续 view 都属于 strided layout，因此会 dispatch 到同一类 kernel。现代 PyTorch 已经增加更多 sparse 布局和 jagged layout，但“layout 不等于连续性”这个区别仍然成立。
 
-先把框架立起来。Ezyang 指出，device、layout、dtype 这三者唯一确定了一个 tensor 是什么，原文说它们的笛卡尔积定义了所有可能的张量："The Cartesian product of these parameters define all of the possible tensors you can make." 这三者各管一件事：device 描述张量的物理内存实际存在哪里，layout 描述我们如何在逻辑上解释这块物理内存，dtype 描述每个元素里到底存的是什么。
+连续性通常在 kernel 内部处理。Element-wise 算子可以使用 TensorIterator 按 stride 访问非连续数据，并为连续数据保留快速路径。调用 BLAS 或 cuDNN 的 matmul、conv 等算子，则可能先将输入转换为连续布局。因此，连续性一般不参与这一层 kernel 选择。
 
-理解了"笛卡尔积"这个框架，就能看出沿三条轴扩展的成本是极不对称的。沿 layout 或 dtype 扩展往往是"局部"的：我新增一种 layout，可能只是为某个特定算子的特殊需求服务，不必让全量算子都支持它；我新增一种 dtype，也只是在 kernel 内部那个 AT_DISPATCH_* 的 switch 里多一个分支。但沿 device 扩展——也就是我做的事——是"全局"的：我欠下的是整张笛卡尔积的一整列，原则上每一个算子、配上每一种 layout 和 dtype，都要有一份对应的 kernel 才算完整。而且代价还不止算子：一个新设备要真正可用，还得把 graph 捕获、profiler、通信、内存分配、stream 这些运行时能力一并适配过去。这也是为什么 PyTorch 2.12 引入设备无关的图捕获 torch.accelerator.Graph 对我们这些后端开发者是刚需——它把"每个新后端都重写一遍图捕获"这件重复劳动抽象掉了。
+我的第二处误解是把 autograd 当成计算完成后的附加步骤。在 Ezyang 描述的调用链中，variable 层位于 backend kernel 之外，因此算子调用会先经过 autograd 处理，再进入实际计算的后端。
 
-不过，"想加点新东西"并不等于"非得做这种重量级扩展"。Ezyang 给了一个很关键的判据来决定该走哪条路：看你是否需要让这个张量在 autograd 的反向传播过程中被一路传递下去，原文是 "whether or not you need to pass this tensor along during the autograd backwards pass." 这个判据为什么是 autograd？回到 §1.3 的整体逻辑就清楚了：autograd 是挂在最外层的那层拦截，而它只认识 Tensor。如果我只是用一个普通的 Python wrapper 类把张量包起来，那么这个壳对 autograd 是不可见的，梯度链一遇到它就断了。于是就分出了三条路：
+Variable 层不负责选择 backend kernel，而是在算子执行前后处理 autograd 记录。因此，dispatch 不只用于选择计算 kernel，也可以叠加多层算子处理逻辑。Autograd、autocast、`torch.func` 中的 vmap/grad 和 functionalization 都使用了这套机制。
+
+在这个简化模型中，device 和 layout 合成 backend key，例如 CPU、CUDA 和 SparseCUDA；dtype 通常在 kernel 内部通过 switch 或 `AT_DISPATCH_*` 宏处理。因此，可以将调用链概括为：variable 处理 → backend key 调度 → kernel 内的 dtype 分支。Dispatch key 定义在 `c10/core/DispatchKey.h`，dtype 分支宏定义在 `aten/src/ATen/Dispatch.h`。
+
+这也回答了一个算子为什么需要多份 kernel：device、layout 和 dtype 构成组合空间，其中的不同组合可能需要不同实现。
+
+现代 PyTorch 已经合并 `Variable` 和 `Tensor`。在当前实现中，原文所说的“剥开 variable”主要对应 redispatch 时排除 autograd key。第 2 章会继续说明 variable 层记录的内容。
+
+#### 1.4 PyTorch 的 Tensor 扩展
+
+如果现有的 device、layout 和 dtype 无法表达新的 Tensor 类型，就需要扩展 PyTorch。这与我日常的自研后端适配直接相关。
+
+Ezyang 使用 device、layout 和 dtype 三个维度描述 Tensor：device 说明数据的存储位置，layout 说明如何在逻辑上解释存储，dtype 说明每个元素的数值类型。扩展这三个维度的工作量并不相同。
+
+对我的自研设备适配工作来说，沿 device 维度扩展的覆盖面最广。一个新设备需要为大量算子提供 kernel，并适配内存分配、stream、profiler、通信和 graph capture 等运行时能力。新 layout 可以只覆盖需要该布局的算子，也可以向更大的算子面扩展，成本取决于目标范围。新 dtype 也不只是在 `AT_DISPATCH_*` 中增加一个分支，还可能涉及类型提升、标量转换、序列化和算子覆盖。
+
+许多场景不需要直接扩展 Tensor。更轻量的方式是编写 Python wrapper，将普通 Tensor 作为成员。Ezyang 给出的一个判断条件是，新对象是否需要作为 Tensor 参与 autograd 的反向传播。普通 wrapper 不会被 dispatcher 视为 Tensor，但只要它的方法在内部调用普通 PyTorch 算子，autograd 仍可以跟踪其中 Tensor 的梯度。只有当新对象本身需要参与全套 dispatch 和 autograd 语义时，wrapper 才不足够。可以根据需求选择以下三种方式：
 
 | 需求                                                  | 手段                     | 是否需要在源码仓库中修改 |
 | ----------------------------------------------------- | ------------------------ | ------------------------ |
-| 只是个新对象，不需要梯度穿过它                        | wrapper 包装类           | 可完全 out-of-tree       |
+| 只需要组织普通 Tensor，不参与全套 dispatch          | wrapper 包装类           | 可完全 out-of-tree       |
 | 需要一个可导的新算子（如 STE）                        | 自定义 autograd.Function | 可 out-of-tree           |
-| 新对象要作为 tensor 本身参与全套 dispatch 与 autograd | 真正的 Tensor 扩展       | 传统上需 in-tree         |
+| 新对象要作为 Tensor 参与全套 dispatch 与 autograd       | Tensor subclass 或原生扩展 | 取决于所需能力；现代方案可 out-of-tree |
 
-把这三条路对到具体的最佳实践上，理解会更牢。PackedSequence（打包变长序列那个对象）是 wrapper 的典范：它内部就是一个普通张量 data 加上 batch_sizes 之类的元数据，梯度是穿过 data 这个普通张量流动的，那个外壳本身从不需要进入 autograd——所以它做成 wrapper 完全够用。反过来，稀疏张量就必须是真扩展：一个稀疏张量的梯度本身也是稀疏结构的，autograd 必须能构造出一个稀疏的梯度并继续往上传，你没法用一个外壳糊弄过去。复数也是同样的故事——2019 年之前大家用"最后一维等于 2"来假装复数，那本质是 wrapper 思路，可一旦要做到全算子覆盖加上 autograd，这种假装就撑不住了，于是复数最终被提升为真正的 complex64/128 dtype。
+这三种方式可以分别对应到以下实践案例。
 
-这里有一个很值得记下的反例：训练后量化（PTQ）用的 qint8 配 QuantizedCPU 后端，它只服务推理、根本不参与反向，可它仍然被做成了真扩展。这说明 autograd 判据只是"需要真扩展"的充分条件，而不是唯一条件。量化之所以做真扩展，买的是另外两样东西：一是透明的 dispatch，让 conv2d、matmul 照常写出来就能被 dispatcher 自动路由到 FBGEMM、QNNPACK 那些整数专用 kernel，而不必在 Python 里手动拦截整个算子面；二是真正的低比特存储，让 storage 实际就是 int8 字节，省下四倍内存、并让 kernel 直接读原始 int8。
+1. PackedSequence 是 wrapper 的一个例子，用于 RNN 的变长批处理。一个 batch 中的序列长度不同时，直接填充后输入 LSTM 会计算无效的 pad 位置；如果不额外处理，hidden state 还会继续受到 pad 步影响。`pack_padded_sequence` 会先按长度排列序列，再按时间步重新组织有效数据：data 先存放所有序列的第 0 步，再存放尚未结束序列的第 1 步，以此类推。三条长度为 [4, 3, 1] 的序列会排列为：
 
-理解了这套判断标准，我正好可以回看自己工作里的一次取舍。我们曾经为了让数据布局对硬件计算更友好，做了一套自定义的布局转换：自定义了布局转换的算子，也自定义了基于这种特殊布局的计算算子。现在用这张表来对照，这套实现其实落在"自定义算子"那条路上——是 op 级的。但问题在于，转换之后的张量是还要继续参与训练的，autograd 必须理解这个布局，所以它本应落在真正的 layout 扩展上。这方面最贴切的先例是 Mkldnn（oneDNN 的 blocked/packed 布局）：它同样是为硬件友好而做的分块排布，被实现成一个真正带 layout 的一等张量，并且参与 autograd——和我们的场景几乎一一对应。当然，还要先分清需求的轻重：如果我的布局只是 stride 的重排（数据还是连续的 strided，只是轴的顺序变了），那连 layout 扩展都不需要，用 memory_format（channels_last 那一套）就够了；只有当它是真正不同的分块打包时，才需要上升到真正的 Layout 扩展。我们当初那套 op 级方案的局限，也正好被这张表照了出来：因为采用的是"提醒式告知 + 布局转换算子、但补丁版 PyTorch 并不记录布局变换"的做法，这个布局对 PyTorch 而言始终是"账外"的——autograd、.contiguous()、view 操作、序列化、各种通用算子都不知道这些张量带着特殊布局，于是每一条路径我们都得手动去拦。而真扩展（或退一步的 memory_format）的价值，恰恰是把"这个张量是什么布局、它的梯度又对应什么布局"集中登记一次，让全栈自动认得它。
+```
+t=0: s1₀ s2₀ s3₀   batch_sizes[0] = 3
+t=1: s1₁ s2₁       batch_sizes[1] = 2   ← s3 结束，之后不再占位
+t=2: s1₂ s2₂       batch_sizes[2] = 2
+t=3: s1₃           batch_sizes[3] = 1
+```
 
-最后留两个坑。其一，本节讲的"真扩展传统上要 in-tree"是 2019 年的图景；2021 年之后 PyTorch 提供了 __torch_dispatch__ 的 Tensor 子类——它本身就是一个 Tensor，因此 autograd 认得它，却又能完全 out-of-tree 开发，正好填上了"既要 autograd、又不想动源码"的那个空档，torchao 的量化张量、NF4、DTensor 都走这条路。这对做后端的人是比硬塞一个 dispatch key 更轻的姿势，值得后续单开一篇细看。其二，是 §1.2 留下的那个坑：Storage 是否已经被"降格"成 Tensor 的一种特殊视图，也一并留待看源码时再追。
+data 一共有 8 行，等于 sum(lengths)，其中不存放 pad。按长度降序排列后，每个时间步仍在运行的序列构成 batch 前缀，kernel 可以读取连续的数据块。RNN 每一步根据 `batch_sizes[t]` 读取数据并更新 hidden state，已经结束的序列不再参与后续计算，因此计算量和相关激活只与有效 token 数量有关。这里使用 wrapper 就足够了：梯度通过 data 这个普通 Tensor 传播；batch_sizes 是整数计数，sorted_indices 是重排索引，都不需要求导。NestedTensor 则希望让变长数据参与更广泛的算子调度，因此采用了 Tensor 扩展。
+2. QAT（量化感知训练）中的 STE 适合使用自定义 `autograd.Function`。Fake quantization 在前向中包含 round，而 round 的导数几乎处处为零。STE 在前向保持量化操作，在反向中使用近似导数传递梯度；具体实现可能直接传递上游梯度，也可能在量化范围外使用 mask。这里新增的是带有自定义导数规则的运算，输入和输出仍然是普通浮点 Tensor。梯度反转层、手写融合 kernel 和外部库算子也可以使用同类方法接入 autograd。
 
-铺垫到这里，扩展 Tensor 的几条路就清楚了。而这几层里最特殊的，始终是挂在最外面的那层 variable（autograd）——它不挑 kernel，只做记录。它到底记录了什么、又是怎么把反向图建起来的，正是 §1.3 和这一节反复欠下、却一直没还的那笔债。下一节，我们就正式走进自动微分。
+3. 稀疏张量需要让 dispatcher 和算子理解其索引与数值的存储结构，因此不能只依靠普通 Python wrapper。复数也需要完整的 dtype、算子和 autograd 语义。早期代码有时用最后一维长度为 2 的实数 Tensor 表示复数；PyTorch 后来提供了 complex64 和 complex128 这两种正式 dtype。
 
-### 2. 自动微分Autograd
+训练后量化（PTQ）提供了一个反例：qint8 Tensor 配合 QuantizedCPU 后端主要用于推理，不需要参与反向传播，但仍然采用了 Tensor 扩展。这说明 autograd 需求只是选择 Tensor 扩展的一个条件。量化 Tensor 还需要透明的 dispatch，让 conv2d、matmul 等算子自动选择 FBGEMM 或 QNNPACK kernel，并需要底层 storage 真正保存 int8 数据。
 
-在自动微分主题中，我们先用一节数学预备（§2.0）从导数铺到矩阵求导，再分四节展开：Variable 到底记录了什么（§2.1，grad_fn、saved tensors 与反向图）、为什么自动微分采用反向模式（§2.2）、autograd 在工程上如何挂在 dispatch 机制之上（§2.3），以及 saved tensors 带来的显存代价与权衡（§2.4）。
+这套分类也可以用于检查我们过去的一项实现。为了让数据布局更适合自研硬件，我们实现了布局转换算子，以及使用这种特殊布局的计算算子。这个方案停留在算子层：补丁版 PyTorch 不记录转换后的布局，autograd、`.contiguous()`、view、序列化和通用算子都无法识别它，因此每条相关路径都需要单独处理。
+
+如果变化只是 strided layout 内部的轴顺序，可以使用 `memory_format`，例如 channels_last。我们的场景采用了不同的分块打包方式，更接近 oneDNN 的 blocked layout，因此完整方案需要将布局注册为 PyTorch 能识别的 Tensor 属性，并定义相应的 dispatch 和 autograd 行为。
+
+这里还需要补充现代 PyTorch 的变化。2019 年时，完整 Tensor 扩展通常需要修改仓库内部代码；后来出现的 Tensor subclass 和 `__torch_dispatch__` 支持 out-of-tree 开发，torchao 的部分量化 Tensor、NF4 和 DTensor 都使用了相关机制。它能否满足影子执行和轻量布局扩展等具体需求，还需要通过后续源码阅读和实验确认。Storage 在现代 PyTorch 中的定位也保留到后续文章继续检查。
+
+以上几种方案分别适用于 wrapper、自定义可导算子和 Tensor 扩展。下一章继续分析 variable 层记录了哪些信息，以及反向图如何建立。
+
+### 2. 自动微分
+
+这一章先复习从导数到矩阵求导所需的数学，再依次说明 Variable 记录的内容、反向模式的选择、autograd 与 dispatch 的关系，以及 saved tensors 带来的显存成本。
 
 #### 2.0 数学预备：从导数到矩阵求导
 
-在正式拆解 autograd 之前，我想先单开一节补数学。原因后面会看清——autograd 的工程实现几乎是一套数学的**逐字翻译**，$\text{grad\_input} = \text{grad\_output} \cdot J_\text{local}$ 这一个式子会贯穿始终。把背后的数学（链式法则、梯度、雅可比、矩阵求导）先理顺，2.1 和 2.2 就能轻装上阵。这一节对刚入门的读者是地基，对熟手是一张复习整图；已经烂熟的同学可以直接跳到 2.1。
+理解 autograd 的工程实现需要链式法则、梯度、雅可比和矩阵求导。后文会反复使用公式 $\text{grad\_input} = \text{grad\_output} \cdot J_\text{local}$，因此先在这里整理相关数学。已经熟悉这些内容的读者可以直接跳到第 2.1 节。
 
-我用一条主线把它串起来：**微分 $df = (\text{导数}) \cdot dx$**——而那个"导数"，会从一元的斜率，一步步推广成梯度、雅可比、矩阵导数。
+以下内容从微分关系出发，将一元导数依次推广到梯度、雅可比和矩阵导数。本文将梯度写成列向量。
 
-**目的：我们到底要算什么。** 训练就是用梯度下降最小化一个**标量** loss $L$，参数按这条式子一步步更新：
+深度学习训练通常使用梯度下降最小化标量 loss $L$，参数按照下式更新：
 
 $$
-\theta \leftarrow \theta - \text{lr} \cdot \frac{\partial L}{\partial \theta}
+\theta_{new} \leftarrow \theta_{old} - \text{lr} \cdot \frac{\partial L}{\partial \theta}
 $$
 
-这里 $\theta$ 是模型参数（权重），$\partial L/\partial\theta$ 是 loss 对参数的导数——它刻画"参数往某方向动一点、loss 会怎么变"，方向上指向 loss **上升**最快的那边。所以在前面**减去**它，就是让参数朝 loss **下降**的方向挪一步；$\text{lr}$（学习率）控制这一步迈多大；箭头 $\leftarrow$ 表示这是一次次反复迭代的赋值更新。整个训练，无非是不断重复这个动作、把 loss 一点点推低。可见**核心诉求只有一句——求 $L$ 对所有参数 $\theta$ 的偏导**。这里再立一个贯穿全文的约定：**梯度与参数同形**（既然要拿梯度去和参数相减，两者形状必须一致）。
+其中，$\theta$ 表示模型参数，$\frac{\partial L}{\partial \theta}$ 表示 loss 对参数的导数，$\text{lr}$ 表示学习率。梯度指向 loss 局部上升最快的方向，因此参数沿负梯度方向更新。训练所需的结果是 $L$ 对所有参数 $\theta$ 的偏导。本文采用“梯度与参数同形”的约定，便于直接进行参数更新。
 
-**① 一元微分：导数是"局部线性近似的斜率"。** 对 $f:\mathbb{R}\to\mathbb{R}$，导数 $f'(x)$ 的本质，是在 $x$ 处用一条直线近似曲线：
+**① 一元微分：局部线性近似。** 对 $f:\mathbb{R}\to\mathbb{R}$，$f'(x)$ 给出函数在 $x$ 附近的一阶变化率：
 
 $$
 df = f'(x)\,dx
 $$
 
-即"输入动一点 $dx$，输出大约动 $f'(x)\cdot dx$"。再加上链式法则 $(f\circ g)'(x) = f'(g(x))\cdot g'(x)$，整套自动微分要做的，就是把这两件事推广到多输入、多输出、矩阵参数。
+也就是说，当输入发生微小变化 $dx$ 时，输出的一阶变化约为 $f'(x)\,dx$。将这一关系与链式法则 $(f\circ g)'(x)=f'(g(x))g'(x)$ 推广到多输入、多输出函数，就得到后续自动微分使用的数学形式。
 
-**② 多元、单输出：梯度。** 对 $f:\mathbb{R}^n\to\mathbb{R}$（多输入、输出仍是标量，正是 loss 的形状），先有**偏导** $\partial f/\partial x_i$（只动第 $i$ 个输入时的斜率），再把所有偏导排成一个**与输入同形**的向量，就是**梯度**：
+**② 多元、单输出：梯度。** 对 $f:\mathbb{R}^n\to\mathbb{R}$，将所有偏导排列成与输入同形的列向量，就得到梯度：
 
 $$
-\nabla f = \left[\frac{\partial f}{\partial x_1},\dots,\frac{\partial f}{\partial x_n}\right]
+\nabla f = \left[\frac{\partial f}{\partial x_1},\dots,\frac{\partial f}{\partial x_n}\right]^\top
 $$
 
-它指向函数上升最快的方向（所以梯度下降取 $-\nabla f$）。多元版的 $df = (\text{导数})\cdot dx$ 写作全微分 $df = \nabla f \cdot dx$；而 $\nabla f \cdot v$ 是沿方向 $v$ 的变化率，叫方向导数。
+在欧氏度量下，它指向函数局部上升最快的方向，因此梯度下降使用 $-\nabla f$。全微分写成 $df=\nabla f^\top dx$，沿方向 $v$ 的方向导数则是 $\nabla f^\top v$。
 
-**③ 多元、多输出：雅可比矩阵。** 对 $f:\mathbb{R}^n\to\mathbb{R}^m$（多输入**且**多输出，比如网络中间一层），"导数"升级成**雅可比矩阵** $J\in\mathbb{R}^{m\times n}$——它把每个输出对每个输入的偏导排成一张表，第 $i$ 行第 $j$ 列是 $J_{ij} = \partial f_i/\partial x_j$，完整写出来就是：
+> **注：为什么负梯度是下降最快的方向？** 可微意味着 $L$ 在局部可以由线性函数 $\nabla L\cdot v$ 近似。根据 Cauchy–Schwarz 不等式，在单位向量中，$\nabla L$ 方向取得最大的方向导数，$-\nabla L$ 方向取得最小值。这个结论描述的是局部一阶近似；有限步长还会受到二阶项 $\frac{1}{2}d^\top Hd$ 的影响。若函数满足 $L$-smooth 条件，合适的学习率可以保证 loss 下降。“最陡”还依赖所选度量：欧氏度量对应 $-\nabla L$，Fisher 度量则对应自然梯度 $-F^{-1}\nabla L$。
+
+**③ 多元、多输出：雅可比矩阵。** 对 $f:\mathbb{R}^n\to\mathbb{R}^m$，雅可比矩阵 $J\in\mathbb{R}^{m\times n}$ 将每个输出对每个输入的偏导排列在一起，第 $i$ 行第 $j$ 列为 $J_{ij}=\partial f_i/\partial x_j$：
 
 $$
 J = \begin{bmatrix} \dfrac{\partial f_1}{\partial x_1} & \dfrac{\partial f_1}{\partial x_2} & \cdots & \dfrac{\partial f_1}{\partial x_n} \\ \dfrac{\partial f_2}{\partial x_1} & \dfrac{\partial f_2}{\partial x_2} & \cdots & \dfrac{\partial f_2}{\partial x_n} \\ \vdots & \vdots & \ddots & \vdots \\ \dfrac{\partial f_m}{\partial x_1} & \dfrac{\partial f_m}{\partial x_2} & \cdots & \dfrac{\partial f_m}{\partial x_n} \end{bmatrix}
 $$
 
-它同样满足 $df = J\,dx$（多输出版的 $df = (\text{导数})\cdot dx$）。
+它满足 $df=J\,dx$。
 
-雅可比的第 $i$ 行就是第 $i$ 个输出的梯度。可见**梯度是雅可比在 $m=1$ 时的特例**（退化成 $1\times n$ 行向量）。而链式法则在这里有了**矩阵形式**——若 $x \xrightarrow{f} h \xrightarrow{g} y$，则
+雅可比的第 $i$ 行是第 $i$ 个输出梯度的转置。标量输出对应 $m=1$，此时雅可比等于 $\nabla f^\top$。若 $x \xrightarrow{f} h \xrightarrow{g} y$，链式法则的矩阵形式为：
 
 $$
 J_{g\circ f} = J_g \cdot J_f
 $$
 
-一句话：**链式法则 = 雅可比连乘**。多层网络就是 $J = J_L \cdot J_{L-1} \cdots J_1$。
+因此，多层网络的导数可以写成 $J=J_LJ_{L-1}\cdots J_1$。
 
-把一个网络一直接到标量 loss，就得到 $\nabla L^\top = J_L \cdot J_{L-1} \cdots J_1$（形状 $1\times n$）。这里藏着一个关键问题：这串连乘，**先乘哪一对**？这正是区分"正向 / 反向传播"的分水岭——我们留到 §2.2 专门展开，这一节先只把数学工具备齐。
+当网络最终输出标量 loss 时，可以写成 $\nabla L^\top = J_L \cdot J_{L-1} \cdots J_1$，形状为 $1\times n$。矩阵连乘的结合顺序决定了导数从输入端还是输出端开始累积，这对应正向模式和反向模式的区别，第 2.2 节会继续分析。
 
-**④ 矩阵求导：当参数是一整个矩阵。** 实战里参数 $W$ 往往是矩阵（如线性层）。直接对矩阵求导，需要两件工具。其一是**约定**：标量对矩阵的导数 $\partial L/\partial W$ 与 $W$ 同形（这样才能逐元素相减）。其二是**微分迹法**——任何标量 $L$ 的微分都能整理成 $dL = \mathrm{tr}\!\left((\partial L/\partial W)^\top dW\right)$ 的样子，所以只要把 $dL$ 化简成 $\mathrm{tr}(M\cdot dW)$（$M$ 为某个矩阵），那个矩阵转置就是梯度，绕开逐元素求导的泥潭。几个常用结论（新读者记结论即可）：
+**④ 矩阵求导。** 模型参数 $W$ 经常是矩阵。本文约定标量对矩阵的导数 $\partial L/\partial W$ 与 $W$ 同形。微分迹法将标量微分写成 $dL=\mathrm{tr}((\partial L/\partial W)^\top dW)$；如果推导得到 $dL=\mathrm{tr}(M\,dW)$，那么 $\partial L/\partial W=M^\top$。下面列出几个后文会用到的结论：
+
+> **注：迹法为什么成立、怎么使用。** 由于 $\mathrm{tr}(A^\top B)=\sum_{ij}A_{ij}B_{ij}$，而全微分的定义是 $dL=\sum_{ij}(\partial L/\partial W_{ij})\,dW_{ij}$，所以 $dL = \mathrm{tr}\!\left((\partial L/\partial W)^\top dW\right)$。实际推导可以分为三步：① 按矩阵规则求微分，例如 $d(XY)=(dX)Y+X(dY)$；② 使用 $\mathrm{tr}(ABC)=\mathrm{tr}(CAB)$ 和 $\mathrm{tr}(A)=\mathrm{tr}(A^\top)$，将表达式整理为 $\mathrm{tr}(M\,dW)$；③ 得到 $\partial L/\partial W=M^\top$。矩阵乘积不能随意换序，但迹允许循环移位，因此可以将 $dW$ 调整到固定位置并读取其系数。这个方法可以用于推导 VJP 和 `derivatives.yaml` 中的反向公式。
 
 | 前向               | 导数 / 梯度                                                                                                           |
 | ------------------ | --------------------------------------------------------------------------------------------------------------------- |
@@ -419,114 +428,127 @@ $$
 | $L = x^\top A x$ | $\partial L/\partial x = (A+A^\top)x$                                                                               |
 | $Y = XW$         | $\partial L/\partial X = G\cdot W^\top$，$\partial L/\partial W = X^\top\cdot G$（$G = \partial L/\partial Y$） |
 
-最后一行就是**线性层的 backward**：用迹法验证，$dL = \mathrm{tr}\!\left(G^\top(dX\cdot W + X\cdot dW)\right) = \mathrm{tr}(WG^\top dX) + \mathrm{tr}(G^\top X\,dW)$，两项分别读出 $\partial L/\partial X = GW^\top$、$\partial L/\partial W = X^\top G$。这条恒等式，我们在 §2.1、§2.2 会反复用到。
+表格最后一行实际就是**线性层的 backward**：用迹法验证，$dL = \mathrm{tr}\!\left(G^\top(dX\cdot W + X\cdot dW)\right) = \mathrm{tr}(WG^\top dX) + \mathrm{tr}(G^\top X\,dW)$，两项分别读出 $\partial L/\partial X = GW^\top$、$\partial L/\partial W = X^\top G$。这条恒等式，我们在 $\S$ 2.1、$\S$ 2.2 会反复用到。
 
-**小结：一个公式贯穿始终。** 从一元的斜率到矩阵求导，变的只是"导数"的形态——数 → 向量（梯度）→ 矩阵（雅可比）→ 结构化矩阵运算，而 $df = (\text{导数}) \cdot dx$、以及"链式法则 = 导数连乘"这两条主干始终不变。反向传播，无非是这条连乘从标量 loss 那头起手算起。
+从一元导数到矩阵求导，导数的形式从数扩展为梯度、雅可比和结构化矩阵运算，但 $df = (\text{导数}) \cdot dx$ 与链式法则始终成立。后文主要使用四个结论：链式法则；梯度由偏导组成并与参数同形；雅可比描述多输入、多输出函数的导数；反向传播从标量 loss 一端开始累积雅可比乘积。
 
-> **给新读者的最小集**：只需扛走四件事——① 链式法则；② 梯度 = 偏导组成、与参数同形、指最速上升；③ 雅可比 = 多输出版的导数，链式法则 = 雅可比连乘；④ 反向传播 = 从标量 loss 端起手的连乘。
-> **给复习者的锚点**：微分迹法 $dL = \mathrm{tr}(G^\top dW)$ 读梯度 + 上面那张恒等式表 + 一句"save 集合 ≡ $J_\text{local}$ 的依赖项"。
+微分迹法 $dL = \mathrm{tr}(G^\top dW)$ 和上表中的矩阵恒等式，可以作为后续推导反向公式的参考。
 
 #### 2.1 Variable 记录了什么：grad_fn、saved tensors 与反向图
 
-如果说前面讲的张量让 PyTorch 看起来还只是一个"带设备的 Numpy"，那么真正把它和 Numpy 区分开的，是自动微分（autograd）。Ezyang 说得很直接："The distinguishing characteristic of PyTorch when it was originally released was that it provided automatic differentiation on tensors."而在 §1.3、§1.4 里我们反复欠下一笔债——dispatch 最外层那层 variable，"不挑 kernel、只做记录"，可它到底记录了什么？这一节就把它还上。
+自动微分是 PyTorch 区别于普通数组库的重要能力。前文已经提到，dispatch 外层的 variable 处理不负责选择计算 kernel，而是记录反向传播需要的信息。本节具体说明这些记录的内容。
 
-先定个性：autograd 实现的是**反向模式自动微分（reverse-mode）**——前向把一连串算子正着算一遍，反向时再把这条计算链"倒着走一遍"，沿途把局部导数乘起来，原文叫 "we effectively walk the forward computations backward to compute the gradients."至于为什么是"反向"走而不是"正向"走，留到 §2.2 专门讲，这里先接受这个设定。
+PyTorch autograd 主要实现反向模式自动微分。前向阶段依次执行算子并记录必要信息，反向阶段按照相反方向遍历计算关系，沿途组合局部导数。第 2.2 节会解释选择反向模式的原因。
 
-要支持"倒着走一遍"，前向时就得多存一些信息。Ezyang 把张量的数据结构做了调整：原本张量只指向一块 storage，现在外面再包一层 variable，额外存一份 **AutogradMeta**——"a variable which wraps this tensor, and also stores more information (AutogradMeta), which is needed for performing autograd when a user calls loss.backward()."那么这份元数据里到底记了什么？
+为了在反向阶段重新访问前向计算关系，前向阶段必须保存额外信息。Ezyang 在 2019 年的结构中使用 variable 包装 Tensor，并在 AutogradMeta 中保存调用 `loss.backward()` 所需的元数据。现代 PyTorch 已经合并 Variable 与 Tensor，但相应的 autograd 元数据仍然存在。
 
-在「先猜再学」里，我对这件事的直觉其实只对了一半：我猜"每个开启微分的 tensor 会记录上一次的操作，然后沿链一直往上传，直到没有记录的 tensor 为止"。"记录上一次操作"、"往上传到叶子为止"这两点都对，但我漏了关键的另一半——光知道"做了什么操作"还不足以算出反向，**还得把"反向时要用到的前向中间值"一并存下来**。所以 variable 层记录的是两件事：
+我在学习前猜到 Tensor 会记录生成它的操作，并沿计算关系将梯度传到叶子节点。但这还不够：反向公式通常还依赖前向阶段的输入、输出或其他中间值。因此，variable 层至少需要记录以下两类信息：
 
-1. **grad_fn（反向函数句柄）**：标记这个张量是被哪个算子算出来的，从而知道反向该调哪段代码。比如 `c` 由加法得到，`c.grad_fn` 就是 `AddBackward`。这个最简情形我画在同目录 `backward_graph.drawio`：`c = a + b` 的 `c` 挂着 `AddBackward`，而叶子 `a`、`b` 的 `grad_fn` 是 `None`。
-2. **saved tensors（反向要用的前向张量）**：因为绝大多数算子的反向都要用到前向的某些值。$z = x \cdot y$ 的反向 $\partial z/\partial x = y$、$\partial z/\partial y = x$，要用到输入 $x$、$y$；$y = \exp(x)$（即 `x.exp()`）的反向 $\partial y/\partial x = \exp(x) = y$，要用到输出 $y$。这些值在前向时就被对应的 grad_fn 节点"存档"，一直留到反向才取用。
+1. **grad_fn（反向函数句柄）**：标记这个张量是被哪个算子算出来的，从而知道反向该调哪段代码。比如 `c` 由加法得到，`c.grad_fn` 会指向类似 `AddBackward0` 的节点，而叶子 `a`、`b` 的 `grad_fn` 是 `None`。具体类名后缀可能随版本和 overload 变化。
+2. **saved tensors（反向要用的前向张量）**：因为绝大多数算子的反向都要用到前向的某些值。$z = x \cdot y$ 的反向 $\partial z/\partial x = y$、$\partial z/\partial y = x$，要用到输入 $x$、$y$；$y = \exp(x)$（即 `x.exp()`）的反向 $\partial y/\partial x = \exp(x) = y$，要用到输出 $y$。这些值在前向时由对应的 grad_fn 节点保存，反向执行时再取用。
 
-这里我自己踩过一个小坑，正好记下来：一开始我以为 `relu` 的反向要存"输入"（毕竟 relu 的导数看输入的符号），后来发现 PyTorch 实际存的是"输出 `y`"——因为对 relu 而言输出和输入同号，存输出一样能判断该不该让梯度通过，还能让输入缓冲早点释放。这说明"存输入还是存输出"是按"哪个够用且更省"来定的，并不是死板地存输入。
+![c 等于 a 加 b 时 Tensor 与反向节点的关系](backward_graph.svg)
 
-接着看这些 grad_fn 是怎么连起来的。`c.backward()` 是从 `c` 出发的，所以挂在 `c` 上的 grad_fn 必须知道"梯度算完了该送给谁"——它通过一组边（源码里叫 `next_functions`）指向它的各个输入各自的 grad_fn。于是所有 grad_fn 节点连成一张**反向图（DAG）**，方向是**从输出指回输入**。这里方向特别容易搞反：前向的数据是 `a`、`b` → `c` 地流，而反向图是 `c.grad_fn` → `a`/`b` 的 grad_fn 地连，二者正好相反。
+*图 2.1-1：输出 Tensor、grad_fn、next_functions 与叶子 Tensor 的关系。*
 
-用我们练手的例子 `y = (a * b).relu()` 串一遍（`a`、`b` 都是 `requires_grad=True` 的叶子）：前向先 `tmp = a * b`、再 `y = relu(tmp)`；反向图则是 `ReluBackward → MulBackward → AccumulateGrad(a) / AccumulateGrad(b)`。这张图我画在了同目录的 `autograd_test.drawio`，可对照着看。其中两个细节值得点出：
+我最初以为 `relu` 的反向必须保存输入，因为导数取决于输入是否大于 0。PyTorch 的反向公式可以改用输出 `y` 判断相同条件，因此保存输出也足够。一个算子保存输入还是输出，取决于反向公式实际需要哪些值，而不是固定保存输入。
 
-- 叶子张量 `a`、`b` 自己的 `grad_fn` 是 `None`（表示"我不是某个算子算出来的"），但它们在反向图里对应的节点是 **`AccumulateGrad`**——正是它把算到的梯度**累加**进 `a.grad`、`b.grad`。所以"张量的 grad_fn 属性"和"它在反向图里对应的节点"是两回事，叶子尤其要分清：属性是 None，干累加活的却是一个独立的 AccumulateGrad 节点。
-- 既然是"累加"，每个训练步开始前就得 `zero_grad()` 把上一步的梯度清掉，否则梯度会一步步越加越多。
+`c.backward()` 从 `c` 对应的 grad_fn 开始。该节点通过 `next_functions` 指向输入对应的 grad_fn，所有节点由此连接成一张反向图。前向数据从 `a`、`b` 流向 `c`，反向图中的边则从 `c.grad_fn` 指向输入一侧，方向与前向数据流相反。
 
-`backward()` 做的事，就是从输出节点出发、沿这张反向图按**反向拓扑序**遍历：每到一个节点，调用它的 backward、用它存档的 saved tensors 算出梯度、再顺着边把梯度送给上游节点，直到汇集到 AccumulateGrad、写进叶子的 `.grad`。
+以 `y = (a * b).relu()` 为例，其中 `a` 和 `b` 都是 `requires_grad=True` 的叶子 Tensor。前向阶段先计算 `tmp = a * b`，再计算 `y = relu(tmp)`；反向图可以简化为 `ReluBackward0 → MulBackward0 → AccumulateGrad(a) / AccumulateGrad(b)`。
 
-最后强调一点：这张反向图**不是预先编译好的**，而是前向每执行一个算子就顺手连一条边、即时长出来的——这就是 PyTorch 的"动态图"（define-by-run），也是它早年相对 TensorFlow 静态图最受欢迎的特性之一。
+![y 等于 a 乘 b 后进行 ReLU 的反向图](autograd_test.svg)
 
-到这里，"variable 层记录什么"这笔债就还清了：**grad_fn 选反向算子、saved tensors 供反向取值、next_functions 连成反向图、AccumulateGrad 收口到叶子**。但还留着三个线头，正好引出后面三节：① 为什么自动微分要"反向"走、而不是"正向"走？（§2.2，从 vjp / 雅可比的角度）② 这套"记录"在工程上具体挂在 dispatch 的哪一层、`Variable` 和 `Tensor` 合并后所谓"剥开 variable"又是什么意思？（§2.3）③ saved tensors 一直留到反向才释放，正是训练显存的大头——它和激活重计算、in-place 修改的陷阱之间该怎么权衡？（§2.4）
+*图 2.1-2：`y = (a * b).relu()` 的反向图与 saved tensors。*
+
+这里需要区分两个细节：
+
+- 叶子 Tensor `a` 和 `b` 的 `grad_fn` 是 `None`，因为它们不是由其他算子生成的；但反向图中仍有对应的 `AccumulateGrad` 节点，负责将梯度累加到 `a.grad` 和 `b.grad`。因此，叶子 Tensor 的 `grad_fn` 属性与反向图中负责处理它的节点不是同一个概念。
+- 梯度默认采用累加语义。若不希望保留上一轮的梯度，需要在适当位置调用 `zero_grad()` 或将梯度设为 `None`。
+
+`backward()` 从输出节点开始，按照反向拓扑顺序遍历这张图。每个节点调用自己的 backward，使用 saved tensors 计算对输入的梯度，再沿边传递给下一组节点，最终由 AccumulateGrad 写入叶子 Tensor 的 `.grad`。
+
+这张反向图不是预先定义的。前向阶段每执行一个需要记录的算子，autograd 就创建相应节点并连接边。这就是 PyTorch 的 define-by-run 动态图。
+
+这一过程可以概括为：grad_fn 指定反向函数，saved tensors 提供反向所需的前向值，next_functions 连接反向图，AccumulateGrad 将结果累加到叶子 Tensor。接下来分别讨论为什么选择反向模式、autograd 如何接入 dispatch，以及 saved tensors 带来的显存成本。
 
 #### 2.2 为什么是反向模式（reverse-mode）自动微分
 
-§2.0 末尾我们停在一个问题上：网络到标量 loss 的雅可比连乘 $\nabla L^\top = J_L \cdot J_{L-1} \cdots J_1$，链式法则没规定**先乘哪一对**。这个看似无关紧要的结合顺序，恰恰就是"正向传播 / 反向传播"的分水岭。这一节就回答：autograd 为什么一律选**反向模式**。
+$\S$ 2.0 留下了一个问题：网络到标量 loss 的雅可比连乘 $\nabla L^\top = J_L \cdot J_{L-1} \cdots J_1$，应该按照什么顺序计算？不同的结合顺序对应两种自动微分模式。
 
-**两种结合顺序，就是两种自动微分模式。**
+- **右结合** $J_L(\cdots(J_1 v))$：从靠近输入的 $J_1$ 开始，每一步计算雅可比与向量的乘积（Jacobian-vector product，JVP）。导数沿输入到输出的方向累积，这就是正向模式。
+- **左结合** $((u^\top J_L)J_{L-1})\cdots$：从靠近输出的 $J_L$ 开始，每一步计算向量与雅可比的乘积（vector-Jacobian product，VJP）。导数沿输出到输入的方向累积，这就是反向模式，也就是反向传播。
 
-- **右结合** $J_L(\cdots(J_1 v))$：从最靠近**输入**的 $J_1$ 起手，每步是"雅可比 × 向量"（Jacobian-vector product, Jvp）。导数**沿前向方向**（输入→输出）累积——这叫**正向模式**。
-- **左结合** $((u^\top J_L)J_{L-1})\cdots$：从最靠近**输出**的 $J_L$ 起手，每步是"向量 × 雅可比"（vector-Jacobian product, vJp）。导数**逆前向方向**（输出→输入）累积——这叫**反向模式**，也就是反向传播。
+正向模式不是数值微分。数值微分通过 $(f(x+h)-f(x))/h$ 近似导数，会受到截断误差和舍入误差的影响。正向模式和反向模式都直接应用链式法则，只是累积方向不同。正向模式可以让每个数值同时携带一个方向导数，并在前向计算中按照解析求导规则更新。一次计算先选定一个输入方向 $v$，因此只能得到该方向上的导数；若要得到对每个输入分量的完整导数，通常需要更换方向并重复计算。
 
-**先把正向模式讲清楚——这里有个极易混淆的点。** 正向模式**不是**数值微分。数值微分是 $(f(x+h)-f(x))/h$，是近似、还受舍入误差夹击；正向模式则和反向模式一样，用的是**精确的链式法则**，区别只在累积方向。它的做法是：给每个数值额外**携带一个导数分量**（数学上叫对偶数 / dual number），随前向计算一路同步推进，靠解析求导法则（如乘法用 $d(uv)=u\,dv+v\,du$）精确更新。但代价在于：**你必须先选定一个输入方向 $v$**（比如"只扰动参数 $w_5$"），一趟前向只能得到对**这一个方向**的偏导。要拿到对全部参数的偏导，就得换一个方向重跑一趟——有多少参数，跑多少趟。
+|          | 每步运算              | 完整雅可比所需传播次数主要取决于 | 适合           |
+| -------- | --------------------- | ------------------------------ | -------------- |
+| 正向模式 | JVP（雅可比 × 向量） | 输入维度                       | 输入少、输出多 |
+| 反向模式 | VJP（向量 × 雅可比） | 输出维度                       | 输出少、输入多 |
 
-**于是代价的不对称就出来了。**
+选择时可以从维度较小的一端开始累积。深度学习训练的目标通常是一个标量 loss，而输入包含大量参数。反向模式从输出端以 $u=1$ 为种子，一次反向传播即可得到所有参数的梯度。传播次数不随输入维度增加；但实际计算量仍然取决于模型规模和算子成本。若使用正向模式求完整梯度，则需要针对许多输入方向重复计算，因此训练通常采用反向传播。
 
-|          | 每步运算              | 代价正比于         | 适合           |
-| -------- | --------------------- | ------------------ | -------------- |
-| 正向模式 | Jvp（雅可比 × 向量） | **输入**个数 | 输入少、输出多 |
-| 反向模式 | vJp（向量 × 雅可比） | **输出**个数 | 输出少、输入多 |
+正向模式适合输入少、输出多的场景。例如，Hessian-向量积可以组合正向模式与反向模式，在不构造完整 Hessian 的情况下计算 $Hv$；可微仿真和敏感度分析也经常需要计算少数设计参数对大量输出的影响。RTRL 则沿时间正向维护敏感度，不需要像 BPTT 那样保存整段轨迹，但它自身的敏感度状态可能很大。PyTorch 提供了 `torch.func.jvp` 等正向模式接口。
 
-判据可以一句话记：**从维度小的那一头起手做连乘**。深度学习训练是最极端的情形——输出只有**一个标量 loss**，输入却是**上亿参数**。从输出那头（种子 $u=1$）左结合起手，全程都是廉价的"行向量 × 矩阵"，一趟反向就拿到全部参数的梯度，代价与参数数量无关。若改用正向模式，就要按参数个数跑上亿趟前向——彻底不可行。这就是为什么训练一律用反向传播。
+$\S$ 2.1 中，每个 grad_fn 节点使用 saved tensors 计算梯度。用这里的术语描述，每个 backward 节点都在计算一次 VJP：
 
-**那正向模式是不是没用？** 并非如此，它在"输入少、输出多"的场景反而更省。三个典型例子：其一，**二阶优化的 Hessian-向量积（HVP）**——要算 $Hv$ 又不想造出整个 Hessian，可以先用反向模式得到梯度函数 $\nabla f$，再对它沿方向 $v$ 做一次正向模式（forward-over-reverse），一趟拿到 $Hv$，用于 Newton-CG、K-FAC 等；其二，**RNN 的在线学习**——按时间反向传播（BPTT）是反向模式，要存下每个时间步的激活，而实时循环学习（RTRL）是正向模式，沿时间正向推敏感度、**不存历史**，适合无限流；其三，**可微仿真 / 敏感度分析**——少数设计参数对一大片输出场求导，这张"高瘦"雅可比按输入列扫更划算。PyTorch 也提供了正向模式接口 `torch.func.jvp`，只是训练主路用不到它。
+$$
+\text{grad\_input} = \text{grad\_output} \cdot J_\text{local}
+$$
 
-**现在把这节接回 §2.1 的反向图，两节就合上了。** §2.1 说每个 grad_fn 节点的 backward "用 saved tensors 算出梯度"，现在可以说得更准：**每个 backward 节点干的，就是一次 vJp $\text{grad\_input} = \text{grad\_output} \cdot J_\text{local}$**。那个从输出端一路左乘过来的行向量 $u$，在工程上就是反向时**从上游传进来的 `grad_output`**；起手的种子 $u=1$，正是标量 loss 的 $dL/dL$。这也解释了一个实战坑：对**非标量**张量直接 `y.backward()` 会报 `grad can be implicitly created only for scalar outputs`——因为输出不是标量时，种子 $u$ 不再天然是 $1$，你得自己传 `y.backward(gradient=u)` 把"输出方向"喂进去。
+从输出端传入的向量就是 `grad_output`。对于标量 loss，初始种子是 $dL/dL=1$；对于非标量输出，调用者需要通过 `y.backward(gradient=u)` 明确提供输出方向，否则 PyTorch 无法自动创建这一初始梯度。
 
-至于 $\text{grad\_output} \cdot J_\text{local}$ 怎么落地，关键是**从不在内存里真的造出 $J_\text{local}$ 这个矩阵**——这里的"造出"不只是"别逐元素去填它"，而是**连把它整体实例化成一个矩阵对象都不做**；我们利用它的结构，**一步直接算出乘积的结果**（即 $\text{grad\_input}$）。之所以非这样不可，是因为 $J_\text{local}$ 往往大得离谱。
+实现 VJP 时通常不会显式构造 $J_\text{local}$，而是利用算子的结构直接计算乘积。例如，逐元素函数 $y=\exp(x)$ 的局部雅可比是 $n\times n$ 的对角矩阵 $\mathrm{diag}(y)$。显式构造它需要 $O(n^2)$ 的存储和计算，而 VJP 可以直接写成逐元素乘法：
 
-看逐元素的 $y=\exp(x)$（设 $x$ 有 $n$ 个元素）：其 $J_\text{local}$ 是 $n\times n$ 的对角阵 $\mathrm{diag}(y)$。若真把它造出来再乘，就要 $O(n^2)$ 的显存和计算，把一个本该 $O(n)$ 的算子活生生撑爆；而利用"对角"这个结构，$\text{grad\_y}\cdot\mathrm{diag}(y)$ 在纸面上就塌缩成一次 $O(n)$ 的逐元素乘 $\text{grad\_x} = \text{grad\_y} \odot y$，那个 $n\times n$ 矩阵从头到尾不存在。线性层 $y = xW^\top$ 更能让人"看见"这笔内存账——它的完整雅可比要记录"每个输出元素对每个输入元素"的偏导，规模是「输出数 × 输入数」，是个巨大的高维对象。代入具体数字：当 $x$、$W$ 都是 $1024\times1024$ 时，输出和输入各约 $10^6$ 个元素，完整雅可比就有约 $10^6\times10^6 = 10^{12}$ 个元素，单是 fp32 存储就要约 **4 TB**；而这一层真正的 backward 不过是两个矩阵乘、几 MB 的梯度张量。两者差上万亿倍，足见"显式造雅可比"在内存上根本不可行。好在它**分块对角、每块都是 $W$**，vJp 直接塌缩成 $\text{grad\_x} = \text{grad\_y}\cdot W$、$\text{grad\_W} = \text{grad\_y}^\top\cdot x$（正是 §2.0 那条 $Y=XW$ 恒等式的转置变体），那 $10^{12}$ 个元素从头到尾不需要落地。
+$$
+\text{grad\_x} = \text{grad\_y} \odot y
+$$
 
-**一句话收束**：PyTorch 自动微分的精髓，就是**不构造雅可比矩阵，而是为每个算子实现一个 vJp（向量-雅可比积）函数、再沿反向图把它们左结合地串起来**——这正是 reverse-mode 自动微分，本质是一种 **matrix-free（无矩阵）** 的雅可比作用：就像数值线代里的无矩阵迭代法只需要算子作用在向量上的结果 $Av$、从不组装出矩阵 $A$，autograd 也只需要"雅可比作用在梯度向量上的结果"（即 vJp），从不组装出 $J$。代价因此与前向同阶——否则光是造各层的雅可比，训练就根本跑不起来。
+线性层 $y=xW^\top$ 也不需要构造完整雅可比。若只考虑 $y$ 对 $x$ 的雅可比，并令 $x$ 和 $y$ 都包含约 $10^6$ 个元素，完整矩阵约有 $10^{12}$ 个 fp32 元素，占用约 4 TB。实际反向只需要结构化的矩阵乘法：$\text{grad\_x}=\text{grad\_y}\cdot W$，以及 $\text{grad\_W}=\text{grad\_y}^\top\cdot x$。因此，PyTorch 为算子实现 VJP，并沿反向图组合这些计算，而不是保存或构造完整雅可比。
 
-这里还藏着一个写新算子时极好用的**自检**：因为 $J_\text{local}$ 本就由前向的操作数搭成，而 vJp 消费的正是这些操作数，所以**"saved tensors"按定义就等于"$J_\text{local}$ 依赖的前向值"**。反过来用——backward 公式里凡是出现、却没在前向 save 的张量，就是 bug（要么漏 save，要么得重算）。
+编写新算子时，可以从 VJP 公式反推需要保留的信息：backward 使用的前向值必须被保存、由其他已保存信息推导出来，或者在反向阶段重新计算。saved tensors 并不必然等于局部雅可比依赖的全部前向值，具体保存内容取决于实现采用的公式和重计算策略。
 
-最后给 §2.4 埋个伏笔：反向模式这个"一趟拿全部梯度"的时间便宜，并非没有代价——它是**拿显存换的**。因为反向的计算顺序和前向相反，前向算出的中间量（saved tensors）必须**一直留着**，等反向回头来取；正向模式反而没这负担（导数随算随丢）。这个"时间省下来、显存涨上去"的权衡，就是 §2.4 要算的账。
+反向模式还需要保留反向公式依赖的部分前向中间量，这些 saved tensors 构成训练激活显存的重要部分。$\S$ 2.4 将继续讨论这项内存成本。
 
 #### 2.3 Autograd 是如何挂在 dispatch 机制上的
 
-§2.1 我们知道 autograd 在最外层"只记录、不算"，§2.2 又知道它记录的本质是为每个算子实现一次 vJp。但这两件事在**工程上**到底怎么发生的？autograd 既不是另起炉灶的独立系统，也不是 tensor 里藏的某个开关——**它就是 dispatcher 上的一类 key**，和 §1.3 讲的 device/layout 那套 dispatch 是同一套机制。这一节就把它落到 dispatch 上，顺便还清 §1.3 留下的那笔债："`Variable` 和 `Tensor` 合并后，所谓'剥开 variable'到底指什么"。
+$\S$ 2.1 说明了 autograd 记录哪些信息，$\S$ 2.2 则把 backward 描述为 VJP。本节进一步说明 autograd 如何接入 dispatcher，以及 `Variable` 与 `Tensor` 合并后，原文所说的 “unwrap variable” 在现代 PyTorch 中对应什么操作。
 
-**autograd 是一个 dispatch key。** 回忆 §1.3：一次算子调用，dispatcher 按 tensor 的 `DispatchKeySet` 里**优先级最高**的 key 落地。`Autograd` 这类 key 的优先级**高于** backend key（`CPU`/`CUDA`/`PrivateUse1`），而它在不在 keyset 里，由输入是否 `requires_grad` 决定。所以只要有输入需要梯度，第一棒一定先落到 autograd。
+autograd 通过一组 dispatch key 接入调度流程。`AutogradCPU`、`AutogradCUDA` 和 `AutogradPrivateUse1` 等 key 位于相应 backend key 之上。需要注意，Tensor 的 keyset 是否包含 Autograd key，不能简单地等同于该 Tensor 的 `requires_grad` 值；进入 autograd kernel 后，还会结合 grad mode 和输入的 `requires_grad` 判断本次操作是否需要记录反向图。
 
-**一次 `requires_grad` 调用的完整轨迹。** 用 dispatch key 的语言走一遍 `y = op(x)`：
+以 `y = op(x)` 为例，当本次调用需要记录梯度时，流程可以概括为：
 
-1. **第一次 dispatch → Autograd kernel。** 它干两件事，正是 Ezyang 描述的 *"unwrapping variables, calling the underlying implementation, and then rewrapping the results into variables and recording the necessary autograd metadata for backwards"*——**先记录**（建好 `grad_fn` 节点、存下 saved tensors、用 `next_functions` 连好指向上游的边，即 §2.1 那张反向图），**再 redispatch**，但这次把 `Autograd` key **排除**掉。
-2. **第二次 dispatch → backend key。** 排除 autograd 后，keyset 里最高的 key 变成 backend key，于是落到真正的计算 kernel（按 device×layout 选 CPU/CUDA/你的芯片实现），把前向算出来。
-3. 算完，autograd kernel 再把 `grad_fn` 挂到输出张量上（`set_history`），返回。
+1. dispatcher 先进入 Autograd kernel。该 kernel 判断是否需要梯度，并准备反向节点及其边关系。
+2. Autograd kernel 排除当前 autograd 层后执行 redispatch，调用对应 backend kernel 完成前向计算。
+3. Autograd kernel 根据导数公式保存必要的输入、输出或元数据，并通过 `set_history` 等操作把反向节点关联到结果。
 
-**不会无限循环**的原因就在第 1 步那个"排除"——否则 redispatch 又会选回 autograd，循环不止。
+redispatch 时排除 autograd 层，可以避免再次选择同一个 Autograd kernel。
 
-**还债：现代的"剥开 variable"是什么。** §1.3 里我只记下一句"redispatch 时排除 autograd key"，当时没展开。现在补上：2019 之前 `Variable` 是套在 `Tensor` 外的真壳，"剥开"是真去掉一层对象；但现代 `Variable` 和 `Tensor` **已经合并**，根本没有壳可剥了。所以今天的"剥开 variable"**不再是剥对象，而是 redispatch 时把 `Autograd` key 屏蔽掉**这一个动作。Ezyang 那句 *"once you unwrap and go into the non-Variable Tensor universe, that's it; you never go back to Variable"*，对应的就是：autograd key 一旦被屏蔽，这趟调用的剩余部分就一直在 autograd 层**之下**跑，不会再弹回来。
+2019 年以前，`Variable` 曾经是包在 `Tensor` 外的一层对象，因此 “unwrap” 可以理解为去掉包装。现代 PyTorch 已经合并二者，不再存在这一层对象包装。对应的实现动作主要是 redispatch 到 autograd 层之下，后续由 backend kernel 完成计算。
 
-**autograd key 是按后端细分的。** 它不是一个笼统的 `Autograd`，而是 `AutogradCPU`、`AutogradCUDA`、`AutogradPrivateUse1`……所以**你的自研后端有自己专属的 autograd 入口**，这一点在下面"加可导算子"时会用到。
+Autograd key 按后端细分，例如 `AutogradCPU`、`AutogradCUDA` 和 `AutogradPrivateUse1`。自研后端因此也有对应的 autograd 调度入口。
 
-**接本职：让一个自定义算子可导，到底要注册什么？** 这是这节对我最实用的部分。先纠正我自己一个长期的混淆——我一直以为反向也是在 `native_functions.yaml` 里注册的，其实不是。两者是**两个不同 key 上的两次独立注册**：
+我过去一直以为前向和反向都在 `native_functions.yaml` 中注册。实际上，对于 PyTorch 内置算子，二者来自不同的声明：
 
-| 注册什么 | 注册在哪 | 挂在哪个 key |
-| --- | --- | --- |
+| 注册什么           | 注册在哪                                            | 挂在哪个 key                         |
+| ------------------ | --------------------------------------------------- | ------------------------------------ |
 | 算子 + 前向 kernel | `native_functions.yaml`（schema + `dispatch:`） | `CPU` / `CUDA` / `PrivateUse1` |
-| 反向公式（导数） | **`tools/autograd/derivatives.yaml`** | codegen 生成的 `Autograd` kernel |
+| 反向公式（导数）   | `tools/autograd/derivatives.yaml`                     | codegen 生成的 `Autograd` kernel   |
 
-`native_functions.yaml` 只管前向；**反向公式写在 `derivatives.yaml`**，构建时 codegen 据此自动生成 autograd kernel（就是上面"先记录再 redispatch"那个家伙）。如果是自定义 / out-of-tree 算子，则**两个 yaml 都不碰**，改用 `torch.autograd.Function`（自写 forward+backward）或 `torch.library.register_autograd(...)`。
+`native_functions.yaml` 描述算子 schema 和前向 dispatch，`derivatives.yaml` 提供导数公式，codegen 据此生成 autograd kernel。对于 out-of-tree 自定义算子，一般不修改这两个文件，而是使用 `torch.autograd.Function` 或 `torch.library.register_autograd(...)`。
 
-**一个省力的事实：** 反向公式通常是用**别的 ATen 算子**表达的（`mul` 的反向就是两个 `mul`），而这些算子在你后端上**已经有 kernel**。所以只要你把 backward 写成现有算子的组合，它会自动 dispatch 回你的后端、**"免费"获得可导性**，你不必为反向再单独写一个芯片 kernel——只有当反向需要一个全新的底层原语时，才得在芯片上实现一个 backward kernel。
+反向公式通常由其他 ATen 算子组成。例如，`mul` 的反向仍然会调用 `mul`。如果这些基础算子已经在自研后端上实现，backward 中的调用会重新 dispatch 到该后端，因此不需要为每条导数公式单独编写芯片 kernel。只有反向依赖新的底层原语或专用融合实现时，才需要额外的 backward kernel。
 
-**no_grad 为什么能省显存。** 既然 autograd 只是最外层一个 key，那把它关掉就是一件很轻的事：`torch.no_grad()` / `inference_mode()` 通过线程局部状态（TLS）**从一开始就把 `Autograd` key 排除**，于是连第 1 步的记录都不发生——不建 `grad_fn`、不存 saved tensors，输出张量 `requires_grad=False`。这既省显存又稍快。`inference_mode()` 更狠，连版本号、view 追踪都省掉。而"saved tensors 一旦不建就省下的那块显存"有多大、训练时又怎么权衡，正是下一节 §2.4 要算的账。
+`torch.no_grad()` 通过线程局部的 grad mode 让计算不再记录反向图，即使输入原本 `requires_grad=True`，也不会为这些操作创建 `grad_fn` 或保存反向所需的 Tensor。`inference_mode()` 在此基础上还会关闭额外的 autograd 开销，并对推理模式下创建的 Tensor 施加更严格的使用限制。二者都能减少反向图和 saved tensors 带来的内存占用。
 
 <details>
 <summary><b>进阶：dispatcher 内部的 TLS / RAII 机制（普通读者可跳过）</b></summary>
 
-上面说"把 autograd key 排除掉"，底层是怎么实现的？涉及两个 C++ 概念。
+redispatch 到 autograd 层之下时，会用到 TLS 和 RAII 两类机制。
 
-**RAII** 是 C++ 习语：把状态的获取与释放绑到一个对象的构造函数与析构函数上，对象一离开作用域（正常结束**或**抛异常）就自动还原——相当于 C++ 版的 `with` 块。
+**RAII** 是常见的 C++ 资源管理方式：对象在构造时修改状态，在析构时恢复状态。即使作用域因异常退出，析构函数仍会执行。
 
-**被它操纵的 TLS 状态**：每个线程有一份 `c10::impl::LocalDispatchKeySet`，内含两个集合：
+每个线程有一份 `c10::impl::LocalDispatchKeySet`，其中包含两个集合：
 
 ```cpp
 struct LocalDispatchKeySet {
@@ -536,21 +558,22 @@ struct LocalDispatchKeySet {
 // 最终 keyset ≈ (输入 tensor 的 keyset │ included_) − excluded_，再取最高优先级
 ```
 
-把 `Autograd` 塞进 `excluded_`，就等于"这一刻当 tensor 没带 autograd"——而 tensor 自身的 keyset 一个字节没动。
+将相应 key 加入 `excluded_` 可以在当前线程和作用域中忽略该 key，而不修改 Tensor 自身保存的 keyset。
 
-**具体的卫士（由内到外）**：`ExcludeDispatchKeyGuard`/`IncludeDispatchKeyGuard`（底层原语）→ `AutoDispatchBelowADInplaceOrView`（codegen redispatch 前用，老名 `AutoNonVariableTypeMode` 已废）→ `AutoGradMode(false)`（`no_grad` 的真身，翻 `GradMode` TLS）→ `InferenceMode`（更狠，连 `ADInplaceOrView` 也排除）。
+相关 guard 包括 `ExcludeDispatchKeyGuard`、`IncludeDispatchKeyGuard` 和 `AutoDispatchBelowADInplaceOrView`。`AutoGradMode(false)` 修改的是线程局部的 GradMode；`InferenceMode` 还会调整与 autograd 和 view 追踪有关的 dispatch 状态。这几种机制作用不同，不应简单视为同一层层递进的开关。
 
-**在生成代码里长这样**（简化）：
+下面用伪代码表示生成 wrapper 的主要职责，具体顺序和 helper 名称以目标版本源码为准：
 
 ```cpp
 // torch/csrc/autograd/generated/VariableType_*.cpp（自动生成，简化）
 at::Tensor mul_Tensor(c10::DispatchKeySet ks,
                       const Tensor& self, const Tensor& other) {
-  // 1) 记录：建反向节点 + 存 saved tensors + 连边
-  auto grad_fn = std::make_shared<MulBackward0>();
-  grad_fn->set_next_edges(collect_next_edges(self, other));
-  grad_fn->self_  = SavedVariable(self,  /*is_output=*/false);
-  grad_fn->other_ = SavedVariable(other, /*is_output=*/false);
+  // 1) 结合 GradMode 和 requires_grad 判断是否需要记录
+  std::shared_ptr<MulBackward0> grad_fn;
+  if (compute_requires_grad(self, other)) {
+    grad_fn = std::make_shared<MulBackward0>();
+    grad_fn->set_next_edges(collect_next_edges(self, other));
+  }
 
   // 2) redispatch 到 autograd 之下
   auto result = ([&]() {
@@ -558,131 +581,135 @@ at::Tensor mul_Tensor(c10::DispatchKeySet ks,
     return at::redispatch::mul(ks & c10::after_autograd_keyset, self, other);
   })();                                                       // lambda 返回，guard 析构，TLS 自动恢复
 
-  // 3) 把记录挂回结果
-  set_history(result, grad_fn);   // result.grad_fn = grad_fn; requires_grad = true
+  // 3) 按导数公式保存必要信息，并把反向节点关联到结果
+  if (grad_fn) {
+    grad_fn->self_  = SavedVariable(self,  /*is_output=*/false);
+    grad_fn->other_ = SavedVariable(other, /*is_output=*/false);
+    set_history(result, grad_fn);
+  }
   return result;
 }
 ```
 
-这里有**两道防循环保险**并存：① keyset 参数 `ks & after_autograd_keyset`——透传的 `DispatchKeySet` 里直接抹掉 autograd，这次 dispatch 从计算上就选不到它；② TLS 卫士——覆盖 redispatch **内部再发生的嵌套调用**（backend kernel 里又调别的算子时也不会重新触发 autograd）。
+这里同时使用传入 redispatch 的 keyset 和作用域 guard：前者限制本次 redispatch 可选择的 key，后者影响作用域内的相关嵌套调用。
 
-**为什么非 RAII + TLS**：TLS 保证线程隔离（多线程各跑 autograd 不串味）；RAII 保证异常安全——backend kernel 若在 redispatch 里抛异常，`guard` 析构照样执行、TLS 照样恢复，绝不残留"autograd 被永久屏蔽"的脏状态。
+TLS 保证线程之间的状态互不干扰，RAII 则保证作用域结束后恢复原状态。如果 backend kernel 抛出异常，guard 的析构函数仍会执行。
 
-**调试钩子**：排查"某算子没建反向图 / `grad_fn` 是 None"时，多半是某层 `excluded_` 把 `AutogradPrivateUse1` 蒙住了（常见元凶：外面套了 `no_grad`/`inference_mode`，或某段 C++ 残留了一个 `AutoDispatchBelowAutograd` 卫士）——去 `c10::impl::tls_local_dispatch_key_set()` 看 `included_`/`excluded_` 里有什么。
+排查某个算子没有建立反向图时，可以同时检查输入的 `requires_grad`、当前 GradMode、是否处于 `no_grad` 或 `inference_mode`，以及 `c10::impl::tls_local_dispatch_key_set()` 中的 `included_` 和 `excluded_`。不能只根据 `grad_fn is None` 判断 dispatch key 被排除了，因为叶子 Tensor 的 `grad_fn` 本来就是 `None`。
 
 </details>
 
 #### 2.4 saved tensors 的内存代价：激活显存、重计算与 in-place 陷阱
 
-§2.2 末尾我说反向模式的时间便宜是"拿显存换的"，§2.3 末尾又说 `no_grad` 省下的正是这块——这一节就把这笔显存账算清。它也是整章里对做训练/推理系统的人最贴身的一节。
+$\S$ 2.2 提到，反向模式需要保存部分前向中间量；$\S$ 2.3 则说明了 `no_grad` 为什么能够避免这部分记录。本节进一步讨论 saved tensors 的内存成本及其常见优化方式。
 
-**saved tensors 就是"激活显存"。** §2.2 讲过，反向的计算顺序和前向相反，所以前向算出的中间值（saved tensors）必须**一直留到反向**才能释放。这批留驻的中间值，就是训练显存里那块叫**激活（activations）**的东西——前向走多深、留得就多深。于是反向模式虽然时间上一趟拿全部梯度，却要在整个前向期间扛着这批激活，这就是它的代价。
+反向公式需要的中间值通常要保留到相应 backward 节点执行。这些 saved tensors 是训练激活显存的重要组成部分，但二者不宜完全画等号：激活还可能包括暂存值和算子工作区，而某些 saved tensors 也可以只保存元数据、经过压缩，或者通过钩子转移到其他设备。
 
-围绕"怎么管理这块激活显存"，有**三个方向的杠杆**，代价各不相同：
+常见的三类处理方式如下：
 
-| 杠杆 | 做法 | 拿什么换 |
-| --- | --- | --- |
-| **不存 → 重算** | gradient checkpointing | 算力（多一遍前向） |
-| **就地存 → 省分配** | in-place 操作 | autograd 正确性的风险 |
-| **挪走存 → 换介质** | saved tensors offload | CPU/NVMe 带宽 |
+| 方式                   | 做法                   | 主要代价                      |
+| ---------------------- | ---------------------- | ----------------------------- |
+| 重计算                 | gradient checkpointing | 增加计算量                    |
+| 减少临时分配           | in-place 操作          | 别名关系和 autograd 限制      |
+| 转移 saved tensors     | offload                | CPU/NVMe 容量、带宽与传输延迟 |
 
-**① 不存 → 重算（gradient checkpointing）。** 思路是：前向时**故意不存**某些中间激活，等反向需要它们时，**重新跑一遍那段前向**把它们算回来。经典做法对 $L$ 层网络只在 $O(\sqrt{L})$ 个边界存激活、其余重算，把激活显存从 $O(L)$ 压到 $O(\sqrt{L})$，代价约是**多一遍前向（≈33% 额外算力）**。PyTorch 的接口是 `torch.utils.checkpoint`，它内部正是 §2.3 那套机制——重算那段前向时用一个类似 `no_grad` 的环境跑、不建图，只在真正需要的边界处重新挂上 autograd。
+**① 重计算（gradient checkpointing）。** 前向阶段不保留选定区域中的部分中间激活，反向需要时再执行一次该区域。分段策略不同，节省的内存和增加的计算量也不同，不能统一写成固定的 33%。PyTorch 提供 `torch.utils.checkpoint`；其中 reentrant 与 non-reentrant 两种实现对前向图记录、重计算范围和 API 支持的行为并不相同，因此也不能笼统地说 checkpoint 重计算都在 `no_grad` 下执行。
 
-**② 就地存 → 省分配（in-place）+ version counter 陷阱。** in-place 操作（`x.add_()`、`relu_()`）直接改写原 storage、省掉一次分配。但它有个陷阱：**如果被改的张量正是某个算子 save 起来留作反向用的，反向时就会读到被污染的值**。PyTorch 用 **version counter** 来兜底：版本号绑在底层 storage 上（`tensor._version` 可读），`SavedVariable`（§2.3 那个存档对象）在 save 时记下当时的版本，反向解包时拿当前版本一比，不一致就抛错：
+**② in-place 操作与 version counter。** `x.add_()`、`relu_()` 等操作直接修改已有 Tensor，可能减少一次输出分配。但如果被修改的值已经被保存供 backward 使用，反向阶段就可能读到错误内容。PyTorch 使用 version counter 检测这类问题：`SavedVariable` 保存当时的版本，反向取值时再与当前版本比较；若不一致，就会报错。
+
+version counter 属于 Tensor 的 autograd/`TensorImpl` 语义，而不是简单绑定在 `Storage` 上。view 通常与 base Tensor 共享 version counter，但两个碰巧引用同一块 storage 的独立 Tensor 不一定共享同一计数器。
 
 ```text
 one of the variables needed for gradient computation has been modified by an
 inplace operation: ...; expected version N but got version M
 ```
 
-这里要记住 version counter 的真正价值：**它不是帮你算，是帮你拦**——把"静默地算出错误梯度"（最难查的 bug）转成"当场报错、还告诉你期望版本 N、实际 M"（一眼定位）。
+version counter 不参与梯度计算，它用于把可能产生错误梯度的修改转成显式错误。
 
-**③ in-place 到底什么时候安全？** 由上可得一条判据（写自定义算子时直接能用）：
+**③ 如何判断 in-place 是否可用。** backward 不得依赖已经被覆盖、又无法恢复的值；同时还要考虑 view、别名关系、叶子 Tensor 限制，以及计算图中其他使用者。导数公式只使用 `result` 而不使用 `self`，只能说明保存输入的需求较少，不能单独证明 in-place 一定安全。在 grad mode 中，PyTorch 会禁止部分明显不合法的操作，例如直接修改 `requires_grad=True` 的叶子 Tensor；对于已保存且版本发生变化的 Tensor，则会在 backward 时通过 version counter 报错。工程上应优先使用 out-of-place 版本，只有在验证内存收益并理解别名关系后再采用 in-place。
 
-> 一个算子能安全地做 in-place，当且仅当它的 **backward 不依赖任何会被这次原地写覆盖掉的值**——等价地说，backward 只依赖**输出**（或什么都不依赖），而不依赖被改写的**输入**。
+**④ saved tensors offload。** `torch.autograd.graph.saved_tensors_hooks` 可以注册 pack/unpack 钩子，在保存和取回 Tensor 时执行自定义处理。例如，把 Tensor 转移到 CPU，反向使用前再移回原设备。若要使用 NVMe，还需要应用层自行实现相应的序列化、存储和异步传输逻辑。offload 保留数据但改变存储位置，主要以带宽和延迟换取设备显存。
 
-落到三种情形：① 张量**无 grad / 没被 save** → 随便改，还省一次分配；② backward 只用**输出**（如 `relu_`、`exp_`，导数靠输出就能算）→ 安全，PyTorch 允许；③ **叶子张量且 `requires_grad=True`** → 直接禁止，报 `a leaf Variable that requires grad is being used in an in-place operation`。实操上有个捷径：**看你的 derivative 公式里出现的是 `self`（输入）还是 `result`（输出）**——只出现 `result` 就能放心提供 in-place 变体；一旦出现 `self`，in-place 变体要么禁掉、要么得先把输入克隆一份留作 saved（那就没省到分配了）。
-
-**④ 挪走存 → 换介质（offload）。** 第三个杠杆是 `torch.autograd.graph.saved_tensors_hooks`：注册一对 pack/unpack 钩子，把 saved tensors 在前向后**搬到 CPU/NVMe**、反向前再搬回，拿带宽换显存。它和重算是两种正交的省法——一个不存（省到底但费算力），一个挪走（仍存但不占显存，费带宽）。
-
-至此 §2 自动微分四节（数学预备 → 记录什么 → 为什么反向 → 挂在 dispatch 上 → 显存账）全部走完。而 saved tensors 这块"激活"只是训练显存的一部分——既然算到这里，不妨把训练显存的**全局分布**也一并铺开，看看不同场景下钱都花在哪。
+至此，自动微分部分已经说明数学基础、反向图、反向模式、dispatch 接入方式和 saved tensors 的内存成本。下面再把 saved tensors 放回训练显存的整体构成中观察。
 
 ##### 扩展：训练显存量分布与多场景占比
 
-**先把显存切成两大类**，分界线是"它的大小受不受 batch 影响"：
+训练显存可以先分为模型状态、激活和其他临时占用：
 
-| 类别 | 包含 | 随什么增长 | 受 batch 影响 |
-| --- | --- | --- | --- |
-| 模型状态 model states | 参数 + 梯度 + 优化器状态 | 参数量 $P$、优化器、精度 | ❌ |
-| 激活 activations | 前向留给反向的中间值（saved tensors） | $b \times s \times h \times L$ | ✅ |
-| （残留/临时） | 通信桶、kernel 临时 buffer、碎片、CUDA context | 杂项 | 部分 |
+| 类别                  | 包含                                           | 随什么增长                       | 受 batch 影响 |
+| --------------------- | ---------------------------------------------- | -------------------------------- | ------------- |
+| 模型状态 model states | 参数 + 梯度 + 优化器状态                       | 参数量$P$、优化器、精度        | ❌            |
+| 激活 activations      | 前向留给反向的中间值（saved tensors）          | $b \times s \times h \times L$ | ✅            |
+| （残留/临时）         | 通信桶、kernel 临时 buffer、碎片、CUDA context | 杂项                             | 部分          |
 
-这条线是钥匙：**模型状态是固定成本，激活是可变成本**，谁主导决定了你该用哪种省法。
+模型状态主要随参数量、优化器和精度配置变化；激活则通常随 batch、序列长度和网络深度变化。优化前应先确认哪一部分占主导。
 
-**模型状态——一笔每参数的固定账。** 以 Adam + 混合精度为例：
+下面给出一种常见但并非通用的 Adam 混合精度配置。不同框架版本、优化器实现、梯度精度和 master weight 策略都会改变每参数字节数。
 
-| 项 | 字节/参数 |
-| --- | --- |
-| fp16 权重 | 2 |
-| fp16 梯度 | 2 |
-| fp32 master 权重 | 4 |
-| fp32 一阶动量 $m$ | 4 |
-| fp32 二阶动量 $v$ | 4 |
-| **合计** | **16 B/参数** |
+| 项                 | 字节/参数           |
+| ------------------ | ------------------- |
+| fp16 权重          | 2                   |
+| fp16 梯度          | 2                   |
+| fp32 master 权重   | 4                   |
+| fp32 一阶动量$m$ | 4                   |
+| fp32 二阶动量$v$ | 4                   |
+| **合计**     | **16 B/参数** |
 
-**优化器状态（master + $m$ + $v$ = 12B）占了 3/4**，是模型状态的绝对大头——这也是为什么我把问 1 里的"训练数据"修正成了"优化器状态"。换算：1B 模型 → 16 GB，7B 模型 → **112 GB**（已超单卡，故非分片不可）。换配置这张表就变：SGD+momentum 约 12 B/参数；8-bit Adam（$m$/$v$ 压到 int8）约 8 B/参数；LoRA/PEFT 把冻结基座的梯度与优化器状态**砍光**（基座只留 2B 的 fp16 权重），只有极小的适配器吃满 16B——但它**一点没省激活**。
+在这项配置下，master weight 与两个 Adam 动量合计 12 B/参数，模型状态总计约 16 B/参数。因此，1B 参数约需 16 GB，7B 参数约需 112 GB。这个估算尚未包含 allocator 碎片、通信 buffer 和临时工作区。换用 SGD、8-bit optimizer 或不保留 fp32 master weight 时，结果都会变化。LoRA/PEFT 可以省去冻结基座参数的梯度和优化器状态，但前向过程中仍会产生激活。
 
-**激活——一笔随 batch 与序列膨胀的可变账。** 激活不直接随 $P$ 走，而随 $b \times s \times h \times L$。对 Transformer，每层激活量近似为（Megatron《Reducing Activation Recomputation》）：
+激活通常随 batch、序列长度、隐藏维度和层数增加。Megatron 论文《Reducing Activation Recomputation in Large Transformer Models》给出过一项特定 Transformer 配置下的近似式：
 
-$$ \text{每层} \approx s\,b\,h\left(34 + 5\,\frac{a\,s}{h}\right) \text{字节}\quad(a=\text{注意力头数}) $$
+$$
+\text{每层} \approx s\,b\,h\left(34 + 5\,\frac{a\,s}{h}\right) \text{字节}\quad(a=\text{注意力头数})
+$$
 
-两个要点：它**线性正比于 batch $b$**（减 batch 直接降激活）；括号里 $5as/h$ 项来自注意力分数矩阵、带一个 **$s^2$**——所以**长上下文训练里激活会被注意力炸上天**，这正是 FlashAttention（不实例化 $s \times s$ 分数矩阵）和序列并行的动机。
+这个近似式表明，激活随 batch $b$ 线性增长，注意力相关项还包含 $s^2$。具体常数取决于模型结构和实现，不能直接套用到所有 Transformer。FlashAttention 通过分块和在线 softmax 等方式避免将完整 $s\times s$ 注意力矩阵写入高带宽内存，从而降低这部分内存访问和中间状态开销。
 
-**多场景下谁主导（核心）：**
+不同场景的常见主导项如下，但最终应以 profiler 和内存快照为准：
 
-| 场景 | 主导块 | 为什么 | 对症手段 |
-| --- | --- | --- | --- |
-| 大模型 + 小 batch（LLM 预训练/全参微调） | 模型状态 | $16P$ 巨大、激活相对小 | ZeRO/FSDP、优化器 offload、8-bit Adam |
-| 小模型 + 大 batch（BERT 大批量、视觉高分辨率） | 激活 | $b$ 大、$P$ 小 | checkpointing、减 batch、激活 offload |
-| 长上下文训练 | 激活（注意力 $s^2$） | $5as/h$ 随 $s^2$ 爆炸 | FlashAttention、序列并行、重算 |
-| LoRA/PEFT 微调 | 激活 + 冻结权重 | 优化器状态被砍光、前向激活照旧 | 重算 + 量化基座（QLoRA） |
-| **推理** | 参数 + KV cache | 无梯度/优化器/反向激活，KV cache 随 $b\cdot s\cdot L\cdot h$ 涨 | PagedAttention、KV 量化、KV offload |
+| 场景                                           | 主导块                | 为什么                                                           | 对症手段                              |
+| ---------------------------------------------- | --------------------- | ---------------------------------------------------------------- | ------------------------------------- |
+| 大模型 + 小 batch（LLM 预训练/全参微调）       | 模型状态              | $16P$ 巨大、激活相对小                                         | ZeRO/FSDP、优化器 offload、8-bit Adam |
+| 小模型 + 大 batch（BERT 大批量、视觉高分辨率） | 激活                  | $b$ 大、$P$ 小                                               | checkpointing、减 batch、激活 offload |
+| 长上下文训练                                   | 激活（注意力$s^2$） | $5as/h$ 随 $s^2$ 爆炸                                        | FlashAttention、序列并行、重算        |
+| LoRA/PEFT 微调                                 | 激活 + 冻结权重       | 冻结参数不保存梯度与优化器状态，前向激活仍然存在                 | 重算 + 量化基座（QLoRA）              |
+| **推理**                                 | 参数 + KV cache       | 无梯度/优化器/反向激活，KV cache 随$b\cdot s\cdot L\cdot h$ 涨 | PagedAttention、KV 量化、KV offload   |
 
-**把省显存手段对回"砍哪一块"**，就是一张完整作战图：
+各类优化针对的内存组成不同：
 
-| 手段 | 砍哪块 | 拿什么换 |
-| --- | --- | --- |
-| gradient checkpointing | 激活 | 算力 |
-| in-place | 激活（省分配） | autograd 正确性风险 |
-| `saved_tensors_hooks` offload | 激活 | CPU/NVMe 带宽 |
-| ZeRO-1/2/3、FSDP | 模型状态（优化器/+梯度/+参数） | 通信量 |
-| 8-bit / online 优化器 | 优化器状态 | 少量精度 |
-| 张量并行 / 序列并行 | 参数 + 激活 | 卡间通信 |
-| FlashAttention | 激活的注意力 $s^2$ 项 | 重算 |
+| 手段                            | 砍哪块                         | 拿什么换            |
+| ------------------------------- | ------------------------------ | ------------------- |
+| gradient checkpointing          | 激活                           | 算力                |
+| in-place                        | 激活（省分配）                 | autograd 正确性风险 |
+| `saved_tensors_hooks` offload | 激活                           | CPU/NVMe 带宽       |
+| ZeRO-1/2/3、FSDP                | 模型状态（优化器/+梯度/+参数） | 通信量              |
+| 8-bit / online 优化器           | 优化器状态                     | 少量精度            |
+| 张量并行 / 序列并行             | 参数 + 激活                    | 卡间通信            |
+| FlashAttention                  | 注意力中间状态与内存访问     | 分块、在线归一化及部分重计算 |
 
-**一句收束。** 推理那行最值得玩味：`no_grad` 一开就省掉了优化器状态与反向激活（正是 §2.3 那套从 TLS 排除 autograd），于是显存只剩**参数 + KV cache**，而 KV cache 成了新的"可变大头"。可见 **autograd 的激活账（训练侧）与 KV cache 账（推理侧），本质是同一个问题——"中间状态该存多少、怎么存"——在两个战场上的两个化身。** 这也把这一整章的训练视角，接回了你主战场的推理视角。
+推理通常不需要梯度、优化器状态和供 backward 使用的激活，主要占用转为参数、KV cache、临时工作区和 allocator 预留内存。训练侧关注 saved tensors，推理侧关注 KV cache，二者都涉及中间状态的容量、存储位置和生命周期管理。
 
 ### 3. 基本代码结构
 
-进入原文的「机制」部分。这一章把前两章抽象的 dispatch 与 autograd 落到真实的代码组织上：先看 PyTorch 的目录分层各管什么（§3.1），再跟着一次 `torch.add` 调用走一遍从 Python 到 kernel 的代码旅程（§3.2）。
+进入原文的「机制」部分。这一章把前两章抽象的 dispatch 与 autograd 落到真实的代码组织上：先看 PyTorch 的目录分层各管什么（$\S$ 3.1），再跟着一次 `torch.add` 调用走一遍从 Python 到 kernel 的代码旅程（$\S$ 3.2）。
 
 #### 3.1 四大目录分层：c10 / ATen / torch/csrc / torch
 
-前两章一直在讲抽象——§1.3 的 dispatch 怎么按属性分流、§2 的 autograd 怎么记录反向图。从这章起进入原文的「机制」部分，把这些抽象落到真实的代码组织上。第一步先摊开目录地图：PyTorch 源码文件夹极多，但撑起骨架的是四个，而且它们之间有严格分层。
+前两章介绍了 dispatch 和 autograd。本节从源码目录出发，观察这些机制分别位于哪些模块。PyTorch 的目录很多，这里只讨论原文涉及的四个主要层次。
 
-我先凭工作印象给这四层排了个序，对了大半、错了两处，正好记下来。熟悉的两个落点是准的：魔改 ProcessGroup 在 `torch/csrc/distributed/c10d`，加自定义算子的 kernel 实现在 `aten/src/ATen/native/`。但「c10 和 ATen 谁在下」我答成了平级——这是错的。
+我原来把 c10 和 ATen 看成平级目录。实际依赖关系中，ATen 使用 c10 提供的基础设施。此前的工作经验只让我熟悉两个具体位置：ProcessGroup 位于 `torch/csrc/distributed/c10d`，内置算子的许多 kernel 实现位于 `aten/src/ATen/native/`。
 
 按 Ezyang 的划分，四个目录自底向上分工如下：
 
 - **`c10/`**（名字来自 Caffe2 + ATen 的合并）——**设备无关的核心底座**。最核心、要被所有后端共用的数据结构都在这：`TensorImpl`、`StorageImpl`、`DispatchKey` / `DispatchKeySet`、`Device`、`ScalarType`、`Allocator`，以及 **Dispatcher 本体**。
 - **`ATen/`**（A Tensor library，目录 `aten/`）——**算子库**。内置算子 kernel 实现落在 `aten/src/ATen/native/`（CPU 在本层、CUDA 在 `native/cuda/`），schema 声明文件 `native_functions.yaml` 也在这。
 - **`torch/csrc/`**——**C++ 前端**。autograd 引擎、生成的 `VariableType`、C++ API（`api/`）、ProcessGroup（`distributed/c10d`）、JIT（`jit/`）都在这。
-- **`torch/`**——**Python 包**。`import torch` 摸到的 `.py`，加上生成的 `_C` 绑定。
+- **`torch/`**——**Python 包**。包括 `import torch` 后使用的 Python 模块，以及与生成绑定相关的代码。
 
-我之前的错误这里就能纠正：**c10 严格在 ATen 之下，不是平级**——ATen 依赖 c10，反过来不行。整条依赖链严格单向：
+按这项简化模型，主要依赖方向如下：
 
 ```text
-c10/        ← 最底座：核心抽象，设备无关，不许反向依赖任何上层
+c10/        ← 核心抽象与设备无关基础设施
   ↑
 ATen/       ← 算子库：native/ 里的真实 kernel、native_functions.yaml
   ↑
@@ -691,62 +718,66 @@ torch/csrc/ ← C++ 前端：autograd 引擎 + 生成的 VariableType、distribu
 torch/      ← Python 包：.py + 生成的 _C 绑定
 ```
 
-记法是「**核心 → 算子 → 前端/autograd → Python**」，箭头只能从下往上 `#include`，c10 绝不许反过来依赖 ATen。
+可以将其概括为“核心基础设施 → 算子库 → C++ 前端与 autograd → Python 包”。真实源码中还存在生成代码、工具和少量跨层细节，这里只保留理解主体结构所需的依赖方向。
 
-那为什么偏偏这几样东西放进 c10？我起初理解成「方便别处取用」，但真正的理由更硬：**c10 是设备无关的最小公共底座**。CPU 构建、CUDA 构建、移动端、还有我做的 PrivateUse1 后端，全都链接同一份 c10。既然谁都得用、又不能绑死任何一种后端，它就只能装最纯的核心抽象——`TensorImpl`、`DispatchKey`、`Dispatcher` 这些与具体硬件无关的东西。把它做轻、做纯，正是为了让所有后端共享。
+c10 提供多个后端共同依赖的设备无关抽象，例如 `TensorImpl`、`DispatchKey` 和 `Dispatcher`。这些类型不能依赖某个具体设备实现，否则 CPU、CUDA、移动端和 PrivateUse1 等后端就难以共享同一套调度基础设施。
 
-这套分层也解释了我的工作为什么横跨四层：PrivateUse1 这个 `DispatchKey` 定义在 `c10/core/DispatchKey.h`、算子 kernel 注册进 ATen 的 dispatcher、自定义 ProcessGroup 落在 `torch/csrc/distributed/c10d`。平时随手魔改的几个点，恰好把整条依赖链串了起来。
+这也解释了我的工作为什么会涉及多个目录：PrivateUse1 的 `DispatchKey` 定义在 `c10/core/DispatchKey.h`，算子 kernel 通过 ATen 相关代码注册到 dispatcher，自定义 ProcessGroup 则位于 `torch/csrc/distributed/c10d`。
 
-这里有一个把我绕过弯的认知点，值得单独点破：**「注册算子」注册的是 c10 的 Dispatcher，而不是「把代码放进 aten 就算注册」**。我日常总在 `aten/native/` 和 `native_functions.yaml` 里写算子，于是默认「算子就属于 ATen」。但「kernel 实现放哪」和「注册动作落在哪」是两件事：实现的函数体确实在 `aten/native/`，可真正让一个算子「生效」的，是它在 **c10 Dispatcher 那张 `(算子, DispatchKey) → 函数指针` 表**里有没有对应表项——判定注册是否完成，唯一标准就是这张表。至于这张表怎么被填进去（codegen 还是手写 `TORCH_LIBRARY_IMPL`），留到 §4.1 细讲，这里先把「实现在 ATen、注册表在 c10」这层关系理清。
+“kernel 实现位于哪里”和“kernel 是否已注册”是两个问题。函数体可以位于 `aten/native/`，但 dispatcher 还需要建立 `(算子, DispatchKey) → kernel` 的映射。这个映射可以由 codegen 生成，也可以通过 `TORCH_LIBRARY_IMPL` 等接口显式注册，$\S$ 4.1 会继续讨论。
 
-最后补一个和本职密切相关、又极易混的点：**通信和普通算子走的是两套并行机制**。我一度以为 ProcessGroup 搭好后调的「通信算子」也走 §1.3 那套 dispatch，其实不是。经典 collective（`allreduce` 这类）是**直接调 `ProcessGroup` 对象的 C++ 方法 → 进 NCCL / 自研 CCL**，根本不经过 dispatcher；只有较新的 functional collectives（`torch.ops._c10d_functional`）才被注册成 dispatcher 算子、能进计算图。所以我魔改自定义 ProcessGroup 时动的那套，和我加自定义算子动的 dispatch 那套，是**两条不同的路**。
+通信还需要区分两条调用路径。传统 collective 可以直接调用 `ProcessGroup` 的 C++ 方法，再进入 NCCL 或自研 CCL；functional collectives 则以 `torch.ops._c10d_functional` 等算子形式进入 dispatcher。修改 ProcessGroup 与为普通 ATen 算子增加 backend kernel，涉及的扩展点并不相同。
 
-目录地图到这里就清楚了。下一节我们挑一个最普通的 `torch.add`，跟着它从 Python 一路走到 CPU kernel，看这几层在一次真实调用里怎么依次登场。
+下一节以 `torch.add` 为例，把这些目录对应到一次算子调用中。
 
 #### 3.2 一次调用的代码旅程：torch.add 从 Python 到 kernel 的调用栈
 
-上一节摊开的是静态地图，这一节让它动起来——挑一个最普通的 `torch.add(a, b)`（设 `a` 是 CPU 上、`requires_grad=True` 的 float32），跟着它从 Python 那行走到最终的 CPU kernel，看 §1.3 概念上的「variable → backend → dtype」三层在代码里分别是哪一跳。我先凭印象猜了两处，都只对一半，正好拿来对照。
+这里使用 `torch.add(a, b)` 说明从 Python 入口到 CPU kernel 的主要调用层次。假设 `a` 是 CPU 上、`requires_grad=True` 的 float32 Tensor。下面的函数名和生成文件名用于表达结构，可能随 PyTorch 版本和具体 overload 发生变化。
 
 完整调用栈大致四跳：
 
 ```text
 torch.add(a, b)                          # Python
   └─ THPVariable_add                     # ① 生成，python_torch_functions.cpp，PythonArgParser 解析+解包
-       └─ at::add → c10::Dispatcher::call    # 进调度器，算 DispatchKeySet（grad → Autograd 最高）
+       └─ at::add → c10::Dispatcher::call    # 进入调度器并计算 DispatchKeySet
             └─ VariableType::add         # ② autograd 那跳，注册在 Autograd key
-                 │  造 AddBackward0、连 next_edges、save 输入
-                 └─ at::redispatch::add  # 排除 Autograd key 后【重新派发】（§2.3「剥开 variable」）
+                 │  判断是否记录、建立 AddBackward0 与 next_edges
+                 └─ at::redispatch::add  # redispatch 到 autograd 层之下
                       └─ at::native::add     # ③ 落到 CPU backend kernel，经生成的 RegisterCPU.cpp
                            └─ TensorIterator + AT_DISPATCH(float32)   # ④ kernel 内 dtype switch
 ```
 
-第一处我猜错的是 Python 到 C++ 的第一跳。我以为是 pybind11 的绑定函数——「生成的」这点猜对了（我确实从没手写过它），但**它不是 pybind11**。torch.* 这些算子的 Python 绑定出于性能考虑，走的是 codegen 生成的**裸 CPython C-API 加 `PythonArgParser`**（pybind11 对热路径太重）。那个函数叫 `THPVariable_add`，在生成文件 `python_torch_functions.cpp` 里，负责解析 Python 参数、把 `PyObject` 解包成 `at::Tensor`。
+我原以为 Python 到 C++ 的第一层由 pybind11 直接绑定。原文所描述的常见路径使用 codegen 生成的 CPython C API 代码和 `PythonArgParser`，例如生成的 `THPVariable_add` 负责解析参数并把 `PyObject` 转成 `at::Tensor`。现代版本中应以当前生成代码为准。
 
-进入 C++ 后，`at::add` 调到 `c10::Dispatcher::call`，按输入张量算出一个 `DispatchKeySet`。因为 `a` 带 `requires_grad`，**Autograd key 优先级最高**，于是第一个被选中的不是计算 kernel，而是 autograd 那层。
+进入 C++ 后，`at::add` 通过 `c10::Dispatcher::call` 参与调度。Autograd key 位于对应 backend key 之上；进入 autograd kernel 后，再结合 GradMode 与输入的 `requires_grad` 决定是否记录反向图。
 
-第二处我猜错的是 autograd 在代码里的形态。我以为它是「某个图数据结构」，其实**反向图是它的产物，不是它本身**。autograd 在调用栈里的真身，是一个**注册在 Autograd key 上的生成函数 `VariableType::add`**（在 `torch/csrc/autograd/generated/VariableType_N.cpp`）。它干的正是 §2.1 讲的那套记录：造一个 `AddBackward0` 节点、连好指向输入的 `next_edges`、把反向要用的输入 save 下来。换句话说——这是我学这节最大的顿悟——**`VariableType::算子` 就是 autograd「做记录」的那个 kernel**。我以前一直疑惑这个 `VariableType::` 开头的东西到底干嘛，现在它在调用栈里的位置、由谁生成、负责什么，全锁定了。
+我还曾把 autograd 理解成调用栈中的一个图对象。更准确地说，反向图是 autograd kernel 执行后的结果。生成的 `VariableType::add` 一类函数注册在 Autograd key 上，负责按需创建 `AddBackward0`、连接 `next_edges`，并保存导数公式需要的信息。`add` 的反向不依赖输入数值，因此这里不需要保存 `a` 和 `b` 的 Tensor 内容。
 
-记录做完，它并不自己算加法，而是调 `at::redispatch::add` **把 Autograd key 排除掉、重新派发一次**——这正是 §2.3 说的「剥开 variable」在代码里的样子。这次 dispatch 落到 backend：CPU key 对应的 `at::native::add`（经生成的 `RegisterCPU.cpp` 注册进来），才是真正算加法的 kernel。在 kernel 内部，`TensorIterator` 按 stride 遍历元素，`AT_DISPATCH` 宏按 float32 选到具体那份循环。
+autograd kernel 不负责加法本身，而是调用 `at::redispatch::add` 进入 autograd 层之下。随后，CPU key 选择相应的 backend kernel；该 kernel 可以使用 `TensorIterator` 处理 shape、stride 和广播，并在内部按 dtype 选择具体实现。
 
-把这四跳对回 §1.3 的概念三层，严丝合缝：**variable 层 = `VariableType::add`，backend 层 = `at::native::add`，dtype 层 = kernel 内的 `AT_DISPATCH` switch**。§1.3 抽象画的那张「拦截层」图，到这里有了真实的文件名和函数名。
+因此，$\S$ 1.3 的三层可以对应为：autograd 层由生成的 VariableType kernel 处理，backend 层由 CPU 或其他设备 kernel 处理，dtype 则常在 kernel 内部继续分派。具体算子可能使用不同的实现结构，不一定都经过完全相同的函数名。
 
-这一趟也顺手还清了 §2.3 欠下的债：`VariableType` 从哪来？它由 codegen 读 **`tools/autograd/derivatives.yaml`** 生成。于是两张表的分工浮出来了——`native_functions.yaml` 生成 backend kernel 的注册，`derivatives.yaml` 生成 `VariableType`（即 Autograd key 上）的注册。这两张表正是下一章 §4.1 的主角。
+`VariableType` 相关代码由 codegen 根据 `tools/autograd/derivatives.yaml` 等输入生成；backend 注册代码则与 `native_functions.yaml` 中的声明有关。下一章将继续说明二者的分工。
 
-这条调用栈我画成了一张图（同目录 `codegen_callstack.drawio`）：竖脊就是上面这四跳，而每个框还标注了它的 codegen 生成来源——那正是下一章 §4.1 的话题，同一张图两节共用。
+下面的调用栈示意图同时标出了主要调用层次和各层代码的生成来源，下一章还会继续使用。
 
-##### 扩展：autograd 为什么对后端「免费」
+![torch.add 的代表性调用栈与 codegen 来源](codegen_callstack.svg)
 
-`at::redispatch` 这一跳——autograd 记录完就把活儿重新派发给 backend——表面是实现细节，背后却藏着一条对后端开发者极重要的性质：**autograd 对一个新后端几乎是免费的，你只需实现前向 kernel，反向会自动工作。** 这结论初听反直觉，拆成两条机制就清楚了。
+*图 3.2-1：`torch.add(a, b)` 的代表性调用栈与 codegen 来源。*
 
-**其一，autograd kernel 按「算子」注册，不按「后端」注册。** `VariableType::mul` 只有一份，键挂在 `aten::mul` 上，和 CPU / CUDA / PrivateUse1 无关。无论 mul 最终在哪种设备上算，它「反向该怎么建图」都是同一套逻辑——因为乘法的求导规则是数学，不随硬件变。所以这一份生成代码服务所有后端。
+##### 扩展：autograd 如何复用后端算子
 
-**其二，反向公式是设备无关的数学，执行时会 redispatch 回你的前向 kernel。** 拿 mul 走一遍：数学上 $z = x \cdot y$，反向是 $\text{grad}_x = \text{grad}_z \cdot y$、$\text{grad}_y = \text{grad}_z \cdot x$，这份公式写死在 `derivatives.yaml` 里、与硬件无关。假设我只为 PrivateUse1 实现了**前向 mul kernel**，用户在我的设备上跑 `z = x*y; z.backward()`：前向时调度到 `AutogradPrivateUse1`，通用的 `MulBackward` 建好图、redispatch 到我的前向 mul kernel 算出 `z`；反向时 `MulBackward::apply` 执行公式 `grad_x = grad_z * y`，而**这里的乘法又是一次 `at::mul` 调度**——它再次落到我的前向 mul kernel。关键就在这：**反向无非是「再调用几次前向类算子」，而这些调用自动 redispatch 到我的 kernel**。于是我明明只写了前向 mul，反向却凭空有了。
+`at::redispatch` 使 autograd 可以复用 backend kernel，但这不表示新后端只实现一个前向 kernel 就一定能完整支持训练。它成立需要若干前提。
 
-摆到三层来看，没有一层需要后端开发者重写：autograd 引擎（建图、反向遍历、`AccumulateGrad`）是后端无关的通用代码；反向公式（`derivatives.yaml`）是后端无关的数学；公式落地执行时靠 redispatch 借用我的前向 kernel。我欠的只剩**前向 kernel 这一列**——正好接上 §1.4 那个说法：扩展一个 device，就是欠下整张笛卡尔积的一整列；而 autograd 能自动从这一列里把全部反向「组装」出来。这就是为什么 PyTorch 上换个后端，模型照样能训。
+第一，导数公式通常可以跨后端复用。`mul` 在 CPU、CUDA 和 PrivateUse1 上遵循相同的求导规则，生成的 autograd 逻辑不需要为每种硬件重写一套数学公式。
 
-当然有边界，而且这条边界正好划开了我工作里两类活：**新算子若能分解成已有 aten 算子的组合**（即 CompositeImplicitAutograd），autograd 仍然免费，因为每个子算子各自有反向、计算图自动穿过它们；**新算子若是一整块单体融合 kernel**（如为性能手写的融合 attention 或通信 kernel），就没有子算子可借，必须自己提供 backward，而那个 backward 里往往还得再手写一个反向 kernel。一句话钉死实践：适配模型时能用现有算子拼出来的，训练能白嫖反向；为性能手写的融合大 kernel，必须配套手写 backward——某个自定义算子能不能 `.backward()`，全看它落在这条边界的哪一边。
+第二，反向公式通常由其他 ATen 算子表达。对于 $z=x\cdot y$，反向计算包含 `grad_z * y` 和 `grad_z * x`。这些乘法会再次进入 dispatcher。如果 PrivateUse1 已经覆盖所需的 `mul` 及相关辅助算子，反向公式就可以直接在该后端执行。
 
-到此 §3 两节——静态目录地图与一次调用的动态旅程——走完了。沿途反复冒头的那两张表（`native_functions.yaml` 与 `derivatives.yaml`），正是下一章「编写算子」要逐行拆解的主角。
+autograd 引擎和许多导数公式可以共享，但后端仍要覆盖反向公式调用到的算子、dtype、布局和设备语义。缺少其中任何一项，都可能在 backward 中遇到未实现的 kernel。因此，更准确的说法是 autograd 降低了后端实现反向传播的重复工作，而不是无条件提供完整可导性。
+
+如果新算子由已有且可导的 ATen 算子组合而成，计算图可以记录这些子算子，通常不需要另写反向公式。若新算子是外部库调用或单体融合 kernel，autograd 无法观察其内部计算，就需要通过 `derivatives.yaml`、`torch.autograd.Function` 或 `torch.library.register_autograd` 等方式显式定义反向。反向是否还需要专用芯片 kernel，取决于其公式能否由后端已覆盖的算子组成。
+
+至此，目录分层和算子调用路径已经建立联系。下一章继续分析 `native_functions.yaml` 与 `derivatives.yaml`。
 
 ### 4. 编写算子
 
@@ -754,41 +785,37 @@ torch.add(a, b)                          # Python
 
 #### 4.1 注册总览：声明表 native_functions.yaml × 求导表 derivatives.yaml
 
-§3.2 那条调用栈里，有两张表反复冒头：`native_functions.yaml` 和 `derivatives.yaml`，它们正是「编写算子」这章的主角。这一节先不抠语法，而是把总览立起来——两张表各生成什么、我到底要亲手写什么。抓住这个总览，下一节再逐行拆 yaml 时，就不会像我过去那样「照葫芦画瓢」。
+$\S$ 3.2 涉及 `native_functions.yaml` 和 `derivatives.yaml`。本节先说明两者分别生成什么，以及开发者还需要编写哪些内容；下一节再讨论具体语法。
 
-先把分工一句话钉死：
+- **`native_functions.yaml` 描述前向接口**：它声明算子名称、schema、变体和 dispatch 信息。codegen 据此生成 Python/C++ 接口和部分注册代码，但不会生成 kernel 的数值计算逻辑。
+- **`derivatives.yaml` 描述内置算子的反向公式**：codegen 据此生成相应的 autograd 处理代码。
+- **开发者编写 kernel 函数体，并按算子的实现方式提供反向定义**：反向可能来自 `derivatives.yaml`、已有 ATen 算子的可导组合，或 out-of-tree API。
 
-- **`native_functions.yaml` 是前向的「接口声明」**：我声明「有个算子叫 add、签名长这样」，codegen 据此生成一整套「接线」——Python 绑定、C++ API、schema 注册、把 kernel 挂到后端 key 的注册代码。**它不含任何 kernel 逻辑。**
-- **`derivatives.yaml` 是反向公式**：我给出每个输入的梯度式（add 的 `self: grad`、`other: grad`），codegen 据此生成 `VariableType`——就是 §3.2 那个「autograd 记录 kernel」。
-- **我亲手写的，永远只有 kernel 函数体**：前向必写，反向按需。
-
-那么，一条 `native_functions.yaml` entry 到底生成了哪些东西？我起初把这份清单当「知识点」硬记，记着像背课文——直到换个角度才发现：它根本不用背，是能一步步推出来的。
-
-推导的钥匙是那条原理：**一条 yaml = 一次「接口声明」，codegen 要做的只是把这个接口从 Python 调用一路「接线」到我的 kernel、再穿过 autograd。** 于是我只要站在 §3.2 的调用链上，每一环问一句「下一步要成立，必须先有什么」，答案就是一个生成物：
+可以沿 $\S$ 3.2 的调用路径理解一条 `native_functions.yaml` entry 带来的生成物：
 
 1. 用户在 Python 写 `torch.add(a, b)` → 得有东西接住 Python 调用、把 `PyObject` 解包成 `Tensor` → **Python 绑定 `THPVariable_add`**。
 2. 绑定总得调一个 C++ 函数 → **C++ API `at::add()`**。
-3. `at::add` 不知道该跑哪份 kernel，交给 dispatcher；但 dispatcher 只派发它「认识」的算子 → **schema 得先注册进调度表**。
-4. dispatcher 见 `requires_grad`、Autograd key 最高，要先走 autograd → 得有个**记录 kernel `VariableType::add`**（这一样是例外——它的内容是反向逻辑，所以来自 `derivatives.yaml`）。
-5. 记录完得继续算真值、且不能再被 autograd 拦一次 → **`at::redispatch::add()`**。
-6. 要落到后端 kernel，可函数体是散装的，得先挂到 CPU key 上 → **注册挂钩 `RegisterCPU.cpp`**（`TORCH_LIBRARY_IMPL`）。
-7. 终于跑到 kernel——链上唯一「真正算数值」的一环 → **我手写的函数体**（+ 内部 dtype switch）。
+3. dispatcher 要识别该算子 → **schema 注册**。
+4. autograd 需要处理该算子的导数 → **由 `derivatives.yaml` 等信息生成的 VariableType 代码**。
+5. autograd 处理后继续调用后端 → **`at::redispatch::add()`**。
+6. backend key 要找到实现 → **`RegisterCPU.cpp` 等生成的注册代码**。
+7. kernel 执行数值计算 → **开发者编写的函数体**。
 
-走完 1→7，我没背任何东西，生成清单却一字不差地推了出来。而且界线自明：**1、2、3、5、6 全是「连接件」，由 `native_functions.yaml` 从签名机械生成；第 4 步是 autograd 记录、来自 `derivatives.yaml`；只有第 7 步（和第 4 步背后的公式）是「计算逻辑」，必须我写。**
+其中，Python 绑定、C++ API、schema、redispatch API 和部分 backend 注册代码由 codegen 生成；autograd 代码还依赖导数声明；kernel 函数体则需要人工实现。具体生成范围会随算子类别和 PyTorch 版本变化。
 
-§3.2 末尾那张图（`codegen_callstack.drawio`）在这里正好读第二遍：竖脊是调用栈（运行时怎么一跳跳走），每个框的颜色是生成来源（这一环谁铺的线）。这图最想说的是——**「调用栈」和「yaml 生成了什么」不是两个知识点，而是同一条链：一个讲「怎么走」、一个讲「谁铺的路」。** 我过去觉得像背诵，正因把「铺路清单」单拎出来记了；贴回「走路的链」上，逻辑就自洽了。
+图 3.2-1 同时标出了运行时调用顺序与各层代码的生成来源。将二者放在一张图中，可以区分“运行时调用了什么”和“构建时由什么文件生成”。
 
-这里还有一刀我原先切错，值得点出：「注册 vs 实现」的分界，不在 autograd 跳和 backend 跳之间，而在「**注册挂钩**」和「**kernel 逻辑**」之间。backend 那跳其实被劈成两半——`at::native::add` 的**函数体是我手写的**，但把它绑到 CPU key 的那段 `TORCH_LIBRARY_IMPL` **是 codegen 生成的**（正是 §3.1「实现在 ATen、注册在 c10」的具体化）。
+注册和实现也需要分开理解。`at::native::add` 的函数体实现数值计算；把函数关联到 CPU key 的注册代码则可以由 codegen 生成。二者都位于 backend 调用路径中，但承担的职责不同。
 
-一句话锚点，存脑子里替代那张清单：**yaml 声明接口 → codegen 把接口沿调用链接成线 → 我只填两个洞：前向 kernel 体、反向公式。**
+可以概括为：yaml 声明接口和导数，codegen 生成接口与注册代码，开发者实现数值计算，并在需要时补充反向定义。
 
-##### 扩展：三种注册姿势
+##### 扩展：三种注册方式
 
-上面默认了「前向写 backend kernel、反向写 derivatives.yaml」这一种姿势，但 PyTorch 其实提供三种，成本差别很大。搞清它们，正好照亮我工作里「什么时候能偷懒、什么时候必须硬写」的判断。
+内置算子常见的注册方式可以简化为以下三类。实际选择还要考虑 structured kernel、Meta kernel、functionalization 和 out-of-tree API，这里只比较本文涉及的 autograd 与 backend 关系。
 
-**姿势一：backend kernel + `derivatives.yaml`。** 逐后端手写前向（可以是融合大 kernel）、手写反向公式。最快，但活最多。
+**方式一：backend kernel + `derivatives.yaml`。** 为目标后端实现前向 kernel，并提供反向公式。它适合专用或融合实现，但需要分别考虑后端覆盖和反向支持。
 
-**姿势二：`CompositeImplicitAutograd`（反向免费、后端免费）。** 做法出奇简单：在 `native_functions.yaml` 里**不写 `dispatch:` 段**，算子就默认注册到 `CompositeImplicitAutograd` 这个 alias key 上；而我写的函数体**必须完全由已有的 aten 算子拼成**：
+**方式二：`CompositeImplicitAutograd`。** 实现由已有 ATen 算子组成，autograd 可以记录这些子算子，其他后端也可以复用相同分解，前提是它们覆盖分解所需的算子。下面用简化示例表达这一结构：
 
 ```yaml
 - func: my_gelu(Tensor self) -> Tensor
@@ -802,27 +829,25 @@ Tensor my_gelu(const Tensor& self) {
 }
 ```
 
-它注册的位置在 backend dispatch **之上**，一次调用走到这层时不算数值，而是把自己「摊开」成 `mul`、`add`、`erf` 这些子算子，再各自往下 dispatch。于是两样东西凭空白来：**反向免费**——反向图自动穿过这些子算子，它们各自的 `VariableType` 早就有了，`my_gelu` 不需要任何 `derivatives.yaml` 条目；**后端免费**——摊开后的子算子落到哪个后端就在哪跑，我的 PrivateUse1 只要实现了 `mul`/`add`/`erf`，`my_gelu` 一行后端代码都不用写。代价是**没法融合**：一个算子被摊成好几次 dispatch、好几趟访存，对加速芯片往往远慢于一个融合 kernel。
+调用该实现时，计算被分解为 `mul`、`add` 和 `erf` 等子算子。反向图由这些可导子算子构成，PrivateUse1 等后端也可以调用各自的子算子 kernel。代价是 eager 执行下会产生多次 dispatch 和中间结果；编译器能否进一步融合，则取决于编译路径和算子支持。
 
-**姿势三：`CompositeExplicitAutograd`。** 也是一份实现管所有后端，但注册在 autograd **之下**，autograd **不是**隐式的——它**仍要我写 `derivatives.yaml`**。记法很好背：名字里 **Implicit = 反向隐式白给，Explicit = 反向要显式提供。**
+**方式三：`CompositeExplicitAutograd`。** 一份 composite 实现可以供多个后端复用，但该注册方式不依靠内部子算子自动建立该算子的 autograd 语义，因此仍需显式提供相应的反向支持。
 
 三者摆一起：
 
-| 姿势 | 前向 | 反向 | 后端覆盖 | 速度 |
-| --- | --- | --- | --- | --- |
-| backend kernel + derivatives.yaml | 每后端手写（可融合） | 手写公式 | 逐后端写 | 快 |
-| CompositeImplicitAutograd | 一份 aten 组合 | 免费 | 全后端免费 | 慢（无融合） |
-| CompositeExplicitAutograd | 一份实现 | 手写公式 | 全后端一份 | 中 |
+| 注册方式                          | 前向                   | 反向支持                   | 后端覆盖                         |
+| --------------------------------- | ---------------------- | -------------------------- | -------------------------------- |
+| backend kernel + derivatives.yaml | 逐后端实现，可使用融合 | 显式公式                   | 取决于各后端实现                 |
+| CompositeImplicitAutograd         | 一份 ATen 算子组合     | 由可导子算子形成           | 取决于子算子的后端覆盖           |
+| CompositeExplicitAutograd         | 一份 composite 实现    | 需要显式提供               | 可复用实现，但仍受底层能力限制   |
 
-这张表正是 §3.2 扩展那条边界的两端具体化：CompositeImplicitAutograd 是「可分解 → autograd 免费」那端，融合 backend kernel 是「单体 → 必须自己写反向」那端。
+对于以正确性验证为先、再优化热点的场景，可以先用已有 ATen 算子编写 composite 参考实现，确认数值和梯度，再为性能关键路径增加融合 backend kernel 及对应反向。这一策略不能自动保证所有后端都可用，仍需检查分解中每个子算子的覆盖情况。
 
-对「推理为主、性能按需上」的场景，这引出一个很实用的策略：**先用 CompositeImplicitAutograd 写个「参考实现」保证正确性与全后端可用，再挑真正的热点算子替换成融合 backend kernel + derivatives.yaml。** correctness-first、性能按需上，不必一上来就为每个新算子手写前向＋反向＋逐后端。
-
-到这里，两张表的总览、一条 entry 的生成逻辑、三种注册姿势都理清了。下一节 §4.2 正式钻进「接口声明」这张 yaml 的内部——把 `_`、`!`、`dispatch:` 段、out/inplace/functional 三变体这些一直让我「照葫芦画瓢」的语法逐行拆开，还清 §先猜 Q9 那笔正债。
+下一节继续分析 `_`、`!`、`dispatch:` 以及 out、in-place、functional 三种变体的语法。
 
 #### 4.2 native_functions.yaml 语法精讲
 
-§4.1 把 `native_functions.yaml` 定性为前向的「接口声明」，但没说这张 yaml 到底怎么写。这节钻进它内部——正是我 §先猜 Q9 抱怨的地方：`_`、`!`、`dispatch:` 段那些语法一直让我"照葫芦画瓢"，看懂别人的、自己写就发怵。拿 `add` 三变体当解码样本逐符号拆一遍，债就清了。
+$\S$ 4.1 把 `native_functions.yaml` 定义为前向接口声明。本节以 `add` 的三种变体为例，说明 `_`、`!`、`dispatch:` 等语法。过去我能看懂已有条目，但很难独立判断每个标记的作用，因此需要把命名约定和机器读取的 alias annotation 分开理解。
 
 三条签名：
 
@@ -832,39 +857,39 @@ add_.Tensor(Tensor(a!) self, Tensor other, *, Scalar alpha=1) -> Tensor(a!)
 add.out(Tensor self, Tensor other, *, Scalar alpha=1, Tensor(a!) out) -> Tensor(a!)
 ```
 
-它们是同一算子的三种内存姿势——**functional / in-place / out**：
+它们是同一算子的三种输出方式：
 
-- **functional**（`add`）：不碰输入，**新分配**一个张量装结果返回。最干净。
-- **in-place**（`add_`）：结尾 **`_` 是命名约定**，把结果**写回 `self`、返回 `self`**，省一次分配。
-- **out**（`add.out`）：**`.out`** 表示调用方**预分配一个输出张量、作 `out` 关键字参数传入**，结果写进它——常用于复用 buffer。
+- **functional**（`add`）：不修改输入，返回一个新的结果 Tensor。
+- **in-place**（`add_`）：末尾的 `_` 是命名约定；结果写回并返回 `self`。
+- **out**（`add.out`）：调用方通过 `out` 参数提供输出 Tensor，算子将结果写入其中。必要时，out 变体仍可能调整输出的 shape 或重新分配其 storage，因此“调用方预分配”不等于任何情况下都零分配。
 
-先扫掉一个和内存无关、却容易看歪的符号：参数中间那个 **`*`**。它不是 `*args`（可变数量），而是**「关键字参数分隔符」**——**`*` 之后的参数必须具名传**（`torch.add(a, b, alpha=2)`，不能 `torch.add(a, b, 2)`）。ATen 用它换 API 稳定：强制具名既防误传，也方便日后加 kwarg 不破坏按位置的老调用。
+参数中的 `*` 是关键字参数分隔符，不是表示可变数量参数的 `*args`。`*` 之后的参数必须具名传递，例如 `torch.add(a, b, alpha=2)`。这可以减少位置参数误用，也便于以后扩展可选参数。
 
-真正的核心是 **`Tensor(a!)`** 这个注解，它把我 Q9 混了很久的东西一次讲清。两个符号：
+`Tensor(a!)` 是机器可读的 alias annotation：
 
-- **`!`**：标记**这一个参数会被算子 mutate（写入）**。注意它精确到**具体某个参数**，而**不是**我从前以为的"这个算子是原地的"。
-- **`a`**：一个 **alias-set 标签（别名集标识）**，标"谁与谁**共享同一块存储**"，**同名标签 = 共享内存**。它**不是**"一个叫 a 的张量"。
+- **`!`** 表示该参数会被修改，标记作用于具体参数。
+- **`a`** 是 alias set 标签。输入和输出使用同一标签，表示二者可能存在别名关系。它描述的不只是“数据指针相同”，还用于表达 view 和 mutation 语义。
 
-合起来看 `add_`：`self` 和**返回值**都标 `(a!)` → codegen 据此得知「**返回的张量就是 `self` 本身（同一块存储）、且被改写**」。所以"`add_` 返回 self"，机器不是从名字 `_` 猜的，而是从这对 `a` 标签**读**出来的。
+对于 `add_`，`self` 与返回值都标记为 `(a!)`。codegen 据此理解返回值与被修改的 `self` 存在相同 alias 关系，而不是从函数名末尾的 `_` 推断语义。
 
-拆成三态，整个别名系统就解码了：
+常见注解可以简化为：
 
-| 注解 | 含义 | 算子类型 |
-| --- | --- | --- |
-| `Tensor`（无注解） | 全新张量，不与谁共享 | functional |
-| `Tensor(a)` | 与同标签者共享存储、**不改** | view（如 `transpose(Tensor(a) self,...) -> Tensor(a)`） |
-| `Tensor(a!)` | 与同标签者共享存储、**且改写** | in-place / out |
+| 注解                 | 含义                                 | 算子类型                                                 |
+| -------------------- | ------------------------------------ | -------------------------------------------------------- |
+| `Tensor`（无注解） | 全新张量，不与谁共享                 | functional                                               |
+| `Tensor(a)`        | 与同标签者存在别名关系，不修改 | view（如 `transpose(Tensor(a) self,...) -> Tensor(a)`） |
+| `Tensor(a!)`       | 与同标签者存在别名关系，并修改 | in-place / out                                          |
 
-到这里，我 Q9 一直混的 `_` 和 `!` 彻底分家了——它们**都在说"原地"，但在两个层**：
+因此，`_` 和 `!` 位于不同层次：
 
-- **`_`（名字后缀）= 给人看的命名约定**：一眼知道"这是原地变体"。
-- **`(a!)`（签名注解）= 给编译器看的机器可读事实**：精确到"哪个参数被改、返回值和谁共享存储"。
+- **`_`（名字后缀）= 给人看的命名约定**：提示这是 in-place 变体。
+- **`(a!)`（签名注解）= 给 codegen 读取的信息**：说明哪个参数会被修改，以及返回值与哪个参数存在 alias 关系。
 
-同一个"原地"，`_` 讲给人、`(a!)` 讲给 codegen，不是重复而是**分工**，缺一不可：注册自定义 in-place 算子光起 `_` 名没用，**必须把 `(a!)` 写对**，否则 codegen 和 autograd 不知道 self 被改了。
+命名约定方便使用者识别 in-place 变体，alias annotation 则让 codegen、functionalization 和 autograd 等机制了解 mutation 与别名关系。自定义 in-place 算子不能只依靠名称表达语义。
 
-这个 `!` 正好接回 §2.4 的 **version counter**：`(a!)` 一标，dispatcher 就知道该参数被 mutate、要给版本号 +1，反向时 autograd 才能检测"某个 saved tensor 被原地改脏"。更进一步，`a` 标签还织出一张更大的网——**view 与它的 base 共享同一个 version counter**，所以 `y = x.transpose(0,1); x.add_(1)` 里改 `x` 会让 `y` 的版本号也跳，若 `y` 被 save 给反向，这次原地写**也会被判成"saved tensor 变脏"**。可见 `!` 只说"这一个参数被改"，而 `a` 追踪的是"**一次原地写波及哪一串共享存储的张量**"——§2.4 版本计数器的信息，源头就是这两个符号。
+alias annotation 还会影响生成的 mutation、view 与 autograd 处理代码。view 通常与 base Tensor 共享 version counter，因此修改 base 也会改变 view 观察到的版本。需要注意，version counter 的维护并不是 dispatcher 仅根据一个 `!` 字符完成的；它涉及 codegen 生成的 wrapper、`ADInplaceOrView` 和 autograd 相关逻辑。
 
-最后是 **`dispatch:` 段**，它决定算子"落到哪份 kernel"：
+最后是 **`dispatch:` 段**，它声明不同 backend key 对应的 kernel：
 
 ```yaml
 dispatch:
@@ -873,29 +898,29 @@ dispatch:
   PrivateUse1: add_privateuse1
 ```
 
-每行是一条 `(后端 key → kernel 函数名)` 映射，codegen 据此生成 `RegisterCPU.cpp` / `RegisterPrivateUse1.cpp` 里的 `TORCH_LIBRARY_IMPL`——就是 §3.2 的 **③ 注册挂钩**（生成的是**注册**、非 kernel 本体，函数体仍我手写）。这落到语法上更直观地印证了 §4.1 的一点：**写不写 `dispatch:`，是在两种注册姿势间切换**——有它，走完整的逐后端 dispatch（§3.2 那条栈）；没有它，默认注册成 `CompositeImplicitAutograd`、靠摊开成子算子来跑。所以删掉 `dispatch:` 段**不报错**，只是换了条路。
+每行是一条 backend key 到 kernel 函数名的映射。codegen 可以据此生成 `RegisterCPU.cpp` 或 `RegisterPrivateUse1.cpp` 中的注册代码；kernel 函数体仍需单独实现。对于本文讨论的这类 in-tree native function，省略 `dispatch:` 往往表示使用 composite 实现，但实际行为还要结合其他 yaml 字段和 codegen 规则判断，不能把“删除该段不会报错”作为通用结论。
 
-**但这里有一个必须盯死的坑，尤其对我这种成天调外部库的人。** 当我删掉 `dispatch:`（走 composite）、而函数体做的是**裸指针操作或调用外部加速库**时，会撞上最难查的一类 bug：**前向完全正常、数值全对，反向却静默出错。** 因为 composite 指望反向图由内部的 aten 子算子自动织出，可裸指针和外部库**绕开了 dispatcher、autograd 根本看不见**，于是没有任何 grad_fn 边把"输出→输入"连起来。结果：梯度流不到这个算子的输入（拿到 `None` 或错值），**而且往往不抛异常**——在 autograd 看来"没有可微操作被记录"并不违法，它只是没建那条边。唯一可能救场的是输出最终 `requires_grad=False`、且它是 loss 唯一路径时 `backward()` 报 `does not require grad`；但只要有别的路径混着这层保护就失效，退回静默错误，不能指望它兜底。
+如果 composite 实现内部直接操作裸指针或调用外部加速库，这些计算不会自动表现为一组可导的 ATen 子算子。结果可能是输出不带预期的 autograd 历史、backward 报错、梯度为 `None`，也可能因为图中还有其他路径而较晚才暴露。不能假设前向数值正确就代表反向已经建立。
 
-这条坑正好把 §3.2 那条边界收死：**凡是计算发生在 dispatcher 之外（外部库 / 裸内存）的算子，autograd 一定看不穿它，绝不能靠 CompositeImplicitAutograd 白嫖反向**——必须走 §4.1 姿势一：显式 `dispatch:` 注册 backend kernel + 显式提供反向（`derivatives.yaml` 或 `torch.autograd.Function`）。我们的芯片算子清一色是"调外部库"这种黑盒，所以工作里"只写前向、一训练就断梯度"的现象，根源就在此。
+对于外部库或裸内存实现，应显式注册 backend kernel，并通过适合当前扩展方式的接口定义反向，例如 in-tree 算子的 `derivatives.yaml`，或 out-of-tree 算子的 `torch.autograd.Function`、`torch.library.register_autograd`。我们的芯片算子主要调用外部库，因此只实现前向并不足以保证训练可用。
 
-到这里，「接口声明」这张 yaml 拆透了：`_` / `.out` / `*` 三个语法糖、`Tensor(a!)` 别名系统、`dispatch:` 段的姿势切换，以及 composite 那条静默反向红线。下一节 §4.3 从"声明"转向"实现"，钻进 kernel 函数体本身——错误检查、分配输出、dtype 派发这三件事怎么搭。
+以上内容区分了 `_`、`.out`、`*`、`Tensor(a!)` 和 `dispatch:` 的职责。下一节转向 kernel 函数体，讨论错误检查、输出分配和 dtype 分派。
 
 #### 4.3 kernel 骨架：错误检查 → 分配输出 → dtype 派发
 
-§4.1、§4.2 讲完了「声明」——yaml 怎么写、codegen 替我生成什么。这节转向「实现」：那个唯一必须我亲手写的 kernel 函数体，内部的标准骨架长什么样。
+$\S$ 4.1 和 $\S$ 4.2 讨论了声明与生成代码。本节转向 kernel 函数体，按错误检查、输出分配、dtype 分派和数值计算四个部分组织。
 
-先对照一下我自己的产线经验。写自研芯片算子这么久，我的流程一直是三步：检查输入 → dtype 分支调用外部库计算 → 对比结果。拿它对齐 Ezyang 的标准骨架（错误检查 → 分配输出 → dtype 派发 → 真正计算）时，暴露出一个被我"折叠"掉的步骤——**分配输出**。我没单独感知它，是因为外部库的 kernel 多半接收预分配好的输出指针，分配这个动作被我归进"调库前的准备"里了。摊开来，我的骨架其实也是四步：**检查输入 → 分配输出 → dtype 派发调库 → 对比结果**——前三步和标准骨架一一对应（标准的三、四步在我这合成一步），第四步对拍是我们为排查精度问题自加的（那套环境变量触发的 CPU 对拍宏，详述留到文末〔下游透镜〕）。下面按标准骨架逐步拆。
+我的工作流程原来写成三步：检查输入、按 dtype 调用外部库、对比结果。对照 Ezyang 的划分后，我意识到输出分配被包含在调用外部库前的准备工作中。更完整的流程是：检查输入、准备输出、选择 dtype 实现、执行计算，随后按需运行 CPU 参考实现做结果对比。
 
 **第一步：错误检查。** 工具箱分三层，按检查的性质选：
 
-| 工具 | 场景 |
-| --- | --- |
-| `TORCH_CHECK(cond, msg...)` | 任意条件：整除约束、维度大小关系、业务规则 |
+| 工具                                    | 场景                                       |
+| --------------------------------------- | ------------------------------------------ |
+| `TORCH_CHECK(cond, msg...)`           | 任意条件：整除约束、维度大小关系、业务规则 |
 | `TensorArg` + `checkAllSameType` 等 | 多张量一致性（同 dtype / 同卡 / 同 shape） |
-| `AT_DISPATCH_*` 的 default 分支 | 未支持 dtype 的兜底报错（见第三步） |
+| `AT_DISPATCH_*` 的 default 分支       | 未支持 dtype 的兜底报错（见第三步）        |
 
-`TORCH_CHECK` 是主力，任何谓词都能写。真正值得练的是报错信息的写法——把实际值打进消息、说出为什么、带上算子名：
+`TORCH_CHECK` 可以表达一般条件。报错信息应包含算子名、期望条件、实际值，以及必要的约束原因：
 
 ```cpp
 TORCH_CHECK(self.size(1) % 128 == 0,
@@ -903,9 +928,9 @@ TORCH_CHECK(self.size(1) % 128 == 0,
     "but got self.sizes() = ", self.sizes());
 ```
 
-三个细节各有理由：`self.sizes()` 直接流式拼进消息（用户拿到报错第一个问题就是"实际是多少"）；`(hardware tile size)` 这句"为什么"能让用户直接知道该怎么改（pad 到 128 的倍数），不必回头翻文档；`my_op:` 前缀是因为 `TORCH_CHECK` 不自动带上下文、Python 层堆栈又常被截断。
+这里的 `self.sizes()` 给出实际 shape，`hardware tile size` 说明约束来源，`my_op:` 则标明报错算子。用户可以直接判断是否需要 padding，而不必先查源码。
 
-`TensorArg` 则服务另一类高频检查——多个张量之间的一致性。把张量包上「名字 + 参数位置」：
+`TensorArg` 等工具可以处理多 Tensor 之间的一致性检查，并保留参数名称和位置：
 
 ```cpp
 TensorArg self_arg{self, "self", 1}, other_arg{other, "other", 2};
@@ -914,21 +939,21 @@ checkAllSameType(c, {self_arg, other_arg});
 checkAllSameGPU(c, {self_arg, other_arg});
 ```
 
-价值全在报错上，它会自动生成 `Expected tensor for argument #2 'other' to have the same type as tensor for argument #1 'self'; but type CUDABFloat16Type does not equal CUDAFloatType (while checking arguments for my_op)` 这种带全上下文的消息——哪个算子、第几个参数、期望什么、实际什么，用户不用翻源码就能定位。分工一句话：**单条件用 `TORCH_CHECK`，多张量一致性用 `TensorArg` 系列**（`checkSameSize` / `checkDim` / `checkContiguous` 等都在 `aten/src/ATen/TensorUtils.h`）。
+这些工具能生成包含算子、参数位置、期望值和实际值的错误信息。相关 API 和错误文本可能随版本变化，使用时应查看当前 `aten/src/ATen/TensorUtils.h`。一般条件可用 `TORCH_CHECK`，多 Tensor 一致性则优先复用现有检查函数。
 
-检查放 kernel 体最前面——形状不合法时一分内存都别浪费；开销不用担心，几个整数比较相对 kernel launch 完全可忽略。
+输入检查通常放在分配和 kernel launch 之前，以便尽早返回可理解的错误。是否需要在热路径中合并或下沉检查，应以实际性能数据为准。
 
-**第二步：分配输出。** §4.2 的三变体，在 schema 上是三条签名，落到 kernel 体里就是这一步的三种姿势：
+**第二步：分配输出。** $\S$ 4.2 的三种变体在 schema 中使用不同签名，在实现中也对应不同的输出准备方式：
 
-| 变体 | 输出内存从哪来 |
-| --- | --- |
-| functional | kernel 内 `at::empty(...)` **新分配** |
-| out | 用传入的 `out`（不分配，至多 resize） |
-| in-place | 输出就是 `self`，不分配、直接写回 |
+| 变体       | 输出内存从哪来                               |
+| ---------- | -------------------------------------------- |
+| functional | 准备新的输出 Tensor，可能由 structured/meta 层统一完成 |
+| out        | 使用传入的 `out`，必要时可能 resize 或更换 storage    |
+| in-place   | 输出与 `self` 存在别名关系，直接修改其内容             |
 
-也就是说，「functional / in-place / out 的区别」这件事贯穿三层：§4.2 的签名注解（`Tensor` / `Tensor(a!)`）告诉 codegen 和 autograd，这一步的分配策略落实到内存，两边说的是同一件事。顺带一提，现代 ATen 的 `structured:` kernel（§4.1 提过）把这步做了更彻底的拆分：「算输出形状 + 分配」抽成 `meta` 函数、「填数值」留在 `impl` 函数——分配逻辑从此三变体共享一份。
+这三种变体既体现在 $\S$ 4.2 的 schema 和 alias annotation 中，也体现在输出准备方式上。现代 ATen 的 structured kernel 还会把 shape 与元数据推导放入 meta 函数，把数值填充留给 impl，从而让多个变体复用输出元数据逻辑。
 
-**第三步：dtype 派发。** 就是 §3.2 调用栈最内层那个"dtype switch"、§1.3 说的"dtype 不是 dispatcher 级的 key"。in-tree 的标准工具是 `AT_DISPATCH_*` 宏家族：
+**第三步：dtype 派发。** 在本文讨论的常见 kernel 结构中，dtype 由 kernel 内部的 switch 处理，而不是作为普通 backend key 选择。in-tree 实现常使用 `AT_DISPATCH_*` 宏家族：
 
 ```cpp
 AT_DISPATCH_FLOATING_TYPES(self.scalar_type(), "my_op", [&] {
@@ -937,15 +962,15 @@ AT_DISPATCH_FLOATING_TYPES(self.scalar_type(), "my_op", [&] {
 });
 ```
 
-它展开成一个对 `scalar_type()` 的 switch，每个 case 把 `scalar_t` typedef 成对应 C++ 类型再跑 lambda——**一份模板化的 kernel 源码覆盖所有 dtype**。宏家族的命名规律一条就够：「类型家族 + `_AND{N}`（额外补 N 个类型）」——`AT_DISPATCH_FLOATING_TYPES`（float/double）、`..._AND2(kHalf, kBFloat16, ...)`（再补两个）、`AT_DISPATCH_INTEGRAL_TYPES`、`AT_DISPATCH_ALL_TYPES_AND{N}`、复数系 `..._COMPLEX_TYPES`，如此类推。不在覆盖列表里的 dtype 走 default 分支，自动抛 `"my_op" not implemented for 'ComplexDouble'`——所以**选哪个宏，就是在声明这个 kernel 支持哪些 dtype**。§1.3 末尾那道面试题（PrivateUse1 只实现 float32、用户传 bfloat16）的修法正在于此：把 `FLOATING_TYPES` 换成 `FLOATING_TYPES_AND2(Half, BFloat16, ...)`，扩的就是这张 switch 的 case 列表。
+宏会根据 `scalar_type()` 选择对应的 C++ 类型，并将其定义为 `scalar_t` 后执行 lambda。不同宏覆盖不同类型集合，例如 `AT_DISPATCH_FLOATING_TYPES` 通常覆盖 float 和 double，`_AND{N}` 变体可以加入额外类型。选择宏等于限定该段 kernel 的 dtype 实例化范围，但增加 switch case 还不代表底层算法已经正确支持该 dtype。为 PrivateUse1 增加 bfloat16 时，除了扩展 dispatch 宏，还要验证外部库实现、累加精度和数值容差。
 
-**第四步：真正计算**——访问数据与并行，留给 §4.4。
+**第四步：真正计算**——访问数据与并行，留给 $\S$ 4.4。
 
-最后补一个我的场景与内置 kernel 的真实差异：连续性处理。PyTorch 自家 element-wise kernel 通常不检查连续性——TensorIterator 直接按 stride 读非连续数据（§1.3 讲过）；而调外部库、库要求连续时，先 `.contiguous()` 或直接 check 报错都是合理做法。这不是我做错了，是"自己算"和"调库"两种 kernel 形态的天然差别。
+内置 element-wise kernel 常通过 TensorIterator 按 stride 处理非连续 Tensor。外部库若只支持连续输入，可以在 wrapper 中调用 `.contiguous()`，也可以明确检查并拒绝非连续输入。前者会引入拷贝，后者会收紧算子接口，需要结合性能和兼容性选择。
 
 ##### 扩展：当 kernel 靠字符串路由——AT_DISPATCH 之外的 dtype 派发
 
-上面的 `AT_DISPATCH` 有个隐含前提，值得挑明：**它服务的是「一份模板源码、多种类型实例化」的 kernel**——它的本质价值是把运行时的 `ScalarType` 枚举物化成编译期的 C++ 类型 `scalar_t`，好让模板实例化。但我的工作场景不是这样：外部库按**字符串名**启动 kernel（`kernel.launch("add_bf16_tensor")` 这种），不同 dtype 对应的是**不同名字的现成 kernel**，整条链路里没有任何地方需要编译期类型。这时绕道 `AT_DISPATCH` 拿 `scalar_t` 再判回字符串，是弯路；对症的工具是一个**集中式的 `ScalarType → 命名后缀` 映射**：
+`AT_DISPATCH` 适合一份模板源码对应多种 C++ 类型实例化的场景。我的外部库则通过字符串选择已经编译好的 kernel，例如 `kernel.launch("add_bf16_tensor")`。这条路径不需要得到编译期 `scalar_t`，可以直接维护集中的 `ScalarType → kernel 名称` 映射：
 
 ```cpp
 const char* dtypeSuffix(at::ScalarType t) {
@@ -959,9 +984,9 @@ const char* dtypeSuffix(at::ScalarType t) {
 kernel.launch(std::string("add_") + dtypeSuffix(self.scalar_type()) + "_tensor");
 ```
 
-好处正是 `AT_DISPATCH` 给模板世界的那三样，原样搬进字符串世界：命名规则只写一处、default 统一抛 unsupported（手搓 if-else 最容易忘的那个兜底）、支持哪些 dtype 一目了然。
+集中映射可以统一命名规则、不支持类型的错误处理和 dtype 支持清单。
 
-不过现实还要再泼一盆冷水：这个映射函数假设命名有规律，而外部库是另一个组维护的，命名规范执行得并不严——有的 kernel 后缀写 `bf16`、有的写 `bfloat16`、有的干脆没有后缀。规则函数写不出来，历史上就积累成了各算子里的 if-else 特判。但这里有个值得记下的辨析：**命名无规律杀死的是「按规则生成名字」，杀不死「集中登记」**。规则函数和散装 if-else 之间还有一档——数据表：
+这项映射假设名称遵循一致规则，但外部库中可能同时存在 `bf16`、`bfloat16` 或无后缀等历史命名。此时无法按规则生成名称，仍可以使用显式登记表集中维护：
 
 ```cpp
 // 显式登记表：无规律没关系，逐条登记
@@ -972,46 +997,46 @@ static const std::map<std::pair<std::string, at::ScalarType>, const char*> kKern
 };
 ```
 
-if-else 与这张表表达能力完全等价——特例在 if-else 里是一个分支，在表里是一行；区别只在**同样的混乱是摊在几百个算子文件里，还是收在一处**。收在一处，就换回了"改一处、统一兜底、支持矩阵可审计"三样好处，而且登记动作全在我这边，不需要外部组配合改名。当然，历史 if-else 已经能跑、没人有空迁移，也是合理的工程取舍——这张表是"下次重构该长的样子"，不是"明天必须还的债"。
+if-else 与登记表都能表达例外，区别在于维护位置。集中登记便于统一错误处理、审核 dtype 覆盖和修改名称，同时不要求外部库先完成重命名。已有 if-else 是否迁移，应根据维护成本和实际故障率决定。
 
-一句话收束：**dtype 派发的工具跟着 kernel 的选择机制走**——模板实例化的 kernel 用 `AT_DISPATCH`，字符串路由的 kernel 用集中映射表；照抄"官方怎么写"而不看自己的 kernel 怎么被选中，就会拿着宏绕弯路。
+因此，dtype 分派工具应与 kernel 的选择方式一致：模板实例化可以使用 `AT_DISPATCH`，字符串路由则更适合集中映射表。
 
-骨架四步齐了：检查、分配、派发，以及留给下一节的"真正计算"——数据到底怎么访问（TensorAccessor / TensorIterator）、循环怎么并行（`parallel_for`），§4.4 见。
+下一节继续讨论数值计算中的数据访问和并行方式。
 
 #### 4.4 计算核与并行：TensorAccessor / TensorIterator 与 parallel_for
 
-§4.3 的骨架走完了前三步，输入合法、输出分好、dtype 选定，就剩最后一件事——真正把数放进去算。这一节讲两个问题：**数据怎么读写**（别读错位）、**循环怎么并行**（别浪费核）。
+$\S$ 4.3 已经讨论输入检查、输出准备和 dtype 分派。本节关注数据访问与循环并行。
 
-先从最裸的方式说起。拿到一个 2 维 float Tensor，最直接的访问是 `float* p = t.data_ptr<float>();` 然后 `p[i * ncols + j]` 读 `[i][j]`——这个写法藏着一个 §1.2 就能看穿的隐患：它隐含假设了 stride 就是 `(ncols, 1)`，即张量是连续的。一旦 `t` 是转置、切片出来的 view，`p[i*ncols+j]` 读到的就不是 `t[i][j]`，而且**不报错、静默读错数**——比上一节那个静默反向还阴险，这是正向就悄悄算错。所以裸 `data_ptr` 只有两种合法用法：要么先 `.contiguous()` 把假设变成事实，要么老老实实按 `t.stride(0)*i + t.stride(1)*j` 算偏移。
+对于二维 float Tensor，直接使用 `float* p = t.data_ptr<float>()` 并通过 `p[i * ncols + j]` 访问元素，隐含了 stride 为 `(ncols, 1)` 的连续性假设。若 `t` 来自转置或切片，这个索引会读取错误位置而不一定报错。使用裸 `data_ptr` 前，应明确保证 Tensor 连续，或者根据 stride 计算偏移。
 
-而"老老实实按 stride 算"这件事，ATen 给了个零开销的安全封装——**TensorAccessor**：
+TensorAccessor 提供了带 size 和 stride 的多维访问接口：
 
 ```cpp
 auto a = t.accessor<float, 2>();   // <元素类型, 维数>，维数不符直接报错
-float v = a[i][j];                  // 内部自动按 stride 算偏移，怎么写都不会错位
+float v = a[i][j];                  // 根据 stride 计算偏移
 ```
 
-它就是"带 stride 的多维下标"：`a[i][j]` 展开成 `data + i*stride0 + j*stride1`，不拷贝数据、编译后和手写偏移一样快。CUDA kernel 里用它的孪生兄弟 `PackedTensorAccessor`（把指针 + sizes + strides 打包按值传进 device）。适用场景：自己写循环、但想免疫 stride 错位。
+`a[i][j]` 会根据 stride 计算元素位置，不会复制 Tensor 数据。CUDA kernel 中可以使用适合 device 传参的 `PackedTensorAccessor`。这类接口适合需要自定义循环结构、同时又要支持非连续 Tensor 的场景。
 
-不过看 ATen 自己的 element-wise 算子源码，会发现它们连循环都不写。我第一次看到 CPU kernel 长这样时是困惑的——一个算子怎么就这么几行：
+许多 ATen element-wise kernel 使用 TensorIterator 统一处理遍历逻辑，例如：
 
 ```cpp
 auto iter = TensorIteratorConfig().add_output(out).add_input(a).add_input(b).build();
 cpu_kernel(iter, [](float x, float y) { return x + y; });   // 只写"一对元素怎么算"
 ```
 
-谜底是 **TensorIterator** 把所有脏活都包掉了。写一个 element-wise 二元算子，除了寻址其实还有一堆事，每一件它都替你干了：
+TensorIterator 可以根据配置承担以下部分工作：
 
 1. **广播**：`(3,1,5) + (4,5)` 的形状对齐、扩维；
 2. **类型提升**：`float + int` 该出什么 dtype；
-3. **输出分配**：形状/dtype 算好后 empty 出来（§4.3 的第二步它顺手做了）；
-4. **维度折叠**：检测到内存实际连续时，把 N 维循环**塌成一维**——§1.3 说"连续性在 kernel 内部处理、element-wise 有 contiguous 快路径"，那条快路径的出生地就是这里；
-5. **并行切分**：数据量大时自动切块撒到多线程；
-6. **向量化**：内层循环用 SIMD（`Vectorized<T>`）一次算 8/16 个数。
+3. **输出准备**：部分配置可以结合 structured kernel 或 helper 处理输出 shape、dtype 与分配；
+4. **维度合并**：在 stride 关系允许时合并相邻维度，简化迭代；
+5. **并行切分**：相关 CPU helper 可以把较大的迭代范围分配给多线程；
+6. **向量化接口**：配合 `cpu_kernel_vec`、`Vectorized<T>` 等 helper 提供 SIMD 路径；并非所有 `cpu_kernel` 调用都会自动获得向量化。
 
-于是 kernel 作者只剩一个标量 lambda：「一对元素怎么算」。怎么遍历、怎么广播、怎么并行，全部与算子逻辑解耦——这就是 ATen 里几百个 element-wise 算子每个只有几行的原因。
+对于适合这一抽象的算子，kernel 作者主要提供单元素或向量化计算逻辑，遍历、广播和部分并行细节由公共基础设施处理。
 
-第 5 件脏活值得单独展开，因为它是这节的第二个主角。CPU 上的线程级并行，传统手段是 OpenMP——Ezyang 原文说的正是 TH 时代满地的 `#pragma omp parallel for`。现代 ATen 把它收拢成统一入口 **`at::parallel_for`**：
+CPU 线程级并行可以使用 `at::parallel_for`。它为不同并行后端提供统一入口：
 
 ```cpp
 at::parallel_for(0, n, GRAIN_SIZE, [&](int64_t begin, int64_t end) {
@@ -1019,179 +1044,168 @@ at::parallel_for(0, n, GRAIN_SIZE, [&](int64_t begin, int64_t end) {
 });
 ```
 
-本质是数据并行：把 `[0, n)` 切成若干块，每个线程拿一块、跑同一个 lambda（`begin/end` 是这块的边界）。三个细节让它比裸 pragma 好用：**线程不现起**——用进程里预建的 intra-op 线程池（`torch.set_num_threads` 控制的那个），主调线程自己也分一块干活；**GRAIN_SIZE 兜底**——每块不小于这个粒度，`n` 太小干脆不并行，避免"起线程的开销比活儿还大"；**无锁**——块与块的索引区间不相交，每个线程只写输出的自己那段，天然无竞争。
+该接口将 `[0,n)` 分成多个区间，对每个区间执行同一个 lambda。`GRAIN_SIZE` 用于控制任务粒度，数据量较小时可以不启用并行。示例中每个区间只写各自的输出范围，因此不需要为输出元素加锁；若 lambda 访问共享可变状态，仍需由开发者处理同步。具体线程池实现取决于 PyTorch 的构建配置。
 
-这里顺手把三条容易混的"并行轴"分清——我起初就把它们搅在一起：**线程级**（OpenMP → `parallel_for`，多核分块）、**指令级**（SIMD / `Vectorized<T>`，一条指令算多个数，TensorIterator 的第 6 件事）、**调库**（BLAS / Eigen，matmul 这类计算密集型直接交给专业库，element-wise PyTorch 自己写）。三条轴正交，一个 kernel 可以同时占全——多线程分块、块内 SIMD、矩阵乘调 BLAS。另外术语上，算子**内部**的多线程叫 intra-op 并行；与之相对的 inter-op（多个算子并发执行）是另一套开关，平时说"CPU kernel 并行"默认指前者。
+这里需要区分线程级并行、SIMD 指令级并行和调用 BLAS 等外部库。三者解决的层次不同，也可以组合使用。算子内部的多线程通常称为 intra-op 并行；多个算子或任务之间的并发则属于 inter-op 并行。
 
 把这节收成一张梯子，从裸到高三层：
 
-| 层 | 工具 | 你写什么 | 适用 |
-| --- | --- | --- | --- |
-| 裸 | `data_ptr` | 一切自己来 | 已确保 contiguous、调外部库传裸指针 |
-| 中 | `TensorAccessor` + `parallel_for` | 自己写循环，寻址/并行有护栏 | 循环结构特殊、TensorIterator 套不上 |
-| 高 | `TensorIterator` + `cpu_kernel` | 只写标量 lambda | element-wise / reduction（内置算子主力） |
+| 层 | 工具                                  | 你写什么                    | 适用                                     |
+| -- | ------------------------------------- | --------------------------- | ---------------------------------------- |
+| 低层 | `data_ptr`                          | 自行处理 stride、shape 和并行 | 已保证 contiguous，或向外部库传指针       |
+| 中层 | `TensorAccessor` + `parallel_for` | 自定义循环，按 stride 寻址    | 循环结构不适合 TensorIterator              |
+| 高层 | `TensorIterator` + CPU helper      | 提供标量或向量计算逻辑        | 常见 element-wise 及适用的迭代型算子       |
 
-我的日常工作其实一直在"裸"层——真正的循环在芯片上，外部库只要一个指针，这完全正当（又一次"自己算 vs 调库"的形态差异，§4.3 连续性那段的续集）。但中、高两层也不是与我无关：我们对拍宏里的 CPU 参考实现，就是要亲手写 CPU kernel 的地方。用这张梯子对一遍，选层的判据很清晰——**首选甚至不在梯子上：能用现成 aten 算子拼，就别亲手写**，`at::add(a, b)` 本身就是最好的参考实现（久经测试，stride、广播、类型提升全对）；没有对应算子的自定义融合 op 才落到梯子上，element-wise 用 TensorIterator、复杂循环用 TensorAccessor；**唯独永远不选裸 `data_ptr`**——对拍工具里的参考实现如果自己静默算错，是最坏的情况：校尺在撒谎，你要么追着幻影精度 bug 跑，要么把真 bug 放过去。校尺必须比工件直，所以参考实现恰恰是最不能容忍错位风险的地方。也因此它只求对、不求快，连 `parallel_for` 都可以省。
+我的主要工作位于较低层：芯片执行循环，PyTorch wrapper 只向外部库传递指针。CPU 参考实现则可以优先由现有 ATen 算子组合，以复用已经验证的 stride、广播和类型提升语义。若必须自行编写 element-wise 逻辑，可以考虑 TensorIterator；特殊循环可以使用 TensorAccessor。直接使用 `data_ptr` 也不是绝对禁止，但必须把连续性或 stride 假设写成明确检查，并为非连续输入补充测试。参考实现以正确性为主，不需要为了速度引入未经验证的索引优化。
 
-到这里，§4 编写算子整章走完了：两张表怎么声明（§4.1–4.2）、kernel 体怎么搭（§4.3）、数据怎么访问怎么并行（§4.4）。剩下的问题很实际——在这么庞大的一套 C++/CUDA 代码上改一行要编多久？§5 讲 Ezyang 传授的高效工作流。
+$\S$ 4 介绍了算子声明、kernel 结构、数据访问和并行。下一章讨论大型 C++/CUDA 代码库中的编译与测试工作流。
 
-### 5. Pytorch中高效的工作流
+### 5. PyTorch 中的高效工作流
 
 最后一章是原文的「workflow efficiency」：在这套庞大的 C++/CUDA 代码上高效迭代的实践经验。
 
 #### 5.1 编译效率：不改头文件、ccache、避免全量重编
 
-会写 kernel 之后，现实的问题立刻跟上：PyTorch 这个量级的 C++ 代码库，改一行要编多久？这一章是 Ezyang 传授的生存经验，也恰好是我天天维护 patch 版 PyTorch 的日常——正好逐条对照自家实践。
+大型 C++ 代码库中的编译时间会直接影响迭代效率。Ezyang 给出的建议也可以与我维护 patch 版 PyTorch 的经历相互对照。
 
-先报我的真实基线：我们全量编译一次 patch 版 PyTorch 大约 20–30 分钟，常用命令是 `USE_CUDA=0 DEBUG=0 python setup.py develop`。对照原文才发现，这条命令已经不知不觉吃下了三条建议：`USE_CUDA=0`（CUDA 编译极慢，能关就关——我们不用 NV 卡，天然白嫖）、`DEBUG=0`（调试构建更慢、产物更大，留给真要 gdb 的时候）、`setup.py develop`（增量编译 + 软链安装——改一个 .cpp 只重编一个文件，改 Python 文件干脆零重编）。
+在我们的 fork 和构建环境中，全量编译约需 20–30 分钟，长期使用的命令是 `USE_CUDA=0 DEBUG=0 python setup.py develop`。其中，关闭不需要的 CUDA 构建可以减少编译范围，非调试构建也能降低编译和产物成本。`setup.py develop` 是这套分支和环境中的现有做法；它不应当被写成所有现代 PyTorch 版本的统一推荐，使用其他版本时应先查看该分支的构建文档。
 
-真正的头号建议是那句朴素的「**改 .cpp，别改头文件**」。我原以为改头文件贵是因为"接口变了要重新 codegen"——错了，codegen 只认 `native_functions.yaml` 那几个输入，跟普通 .h 无关。真正的机制是 C++ 编译模型本身：`#include` 是**文本复制**，头文件的内容物理上存在于每一个包含它的翻译单元里；而构建系统（ninja）判断"要不要重编"只看文件变没变（时间戳/哈希），**不理解语义**。于是一个被上千个 .cpp 包含的头文件，**哪怕只改一行注释**，也会触发上千次重编；改一个 .cpp 则只重编它自己、再重链接，几秒到几十秒。
+应尽量把局部修改放在 `.cpp` 中，避免无必要地修改高扇出的头文件。原因不是普通 `.h` 变化会触发 codegen，而是 C++ 的包含和依赖模型：一个头文件被多少翻译单元依赖，它的变化就可能使多少翻译单元失效。构建系统通常依据依赖关系和文件状态判断是否重编，并不理解一次修改在语义上是否影响生成代码。相比之下，修改单个 `.cpp` 通常只需要重新编译该翻译单元并链接。
 
-再叠上 §3.1 的分层，就得到"贵"的梯度：**头文件越靠依赖链底部，被传递包含得越广，改起来越贵**。改 `c10/core/TensorImpl.h` 约等于全库重编——c10 是所有人的地基；改 `aten/native/` 里某个 .cpp 只是几秒的事。落到我的 patch 工程上就是两条纪律：后端补丁尽量落在 .cpp 和自己的插件库里；万不得已要动 c10/ATen 的头文件时，**攒一批一起改**，一次付清全量重编的代价。
+头文件越靠近依赖链底层，被间接包含的范围通常越大。修改 `c10/core/TensorImpl.h` 可能影响大量目标，而修改 `aten/native/` 中的单个 `.cpp` 往往只影响局部。因此，我们尽量把后端补丁放在 `.cpp` 或自有扩展库中；必须修改 c10/ATen 公共头文件时，再集中安排并预留完整构建时间。
 
-ccache 则是给上面这套机制装的"细粒度补救"。它的哈希对象是**预处理后**的代码——注释在预处理时就被剥掉了。于是"只改了头文件注释"那一幕有了新结局：ninja 照样触发上千个翻译单元重编，但每个都命中 ccache 缓存、直接取出旧产物，几十秒了事。它最值的场景是切分支和删 build 目录重来——同样的翻译单元不再重编。验证自己有没有用上它也简单：`which ccache` 看装没装，编译前后 `ccache -s` 看命中数涨没涨（PyTorch 的 cmake 会自动探测，装了一般就在用）。
+ccache 可以复用相同编译输入对应的产物，在切换分支或重建 build 目录时尤其有用。其 direct mode、preprocessor mode 和 sloppiness 配置会影响缓存键与命中行为，因此不能保证修改注释后一定命中。可以通过 `ccache -s` 查看命中率，并检查实际编译命令是否经过 ccache；也不能只根据系统安装了 ccache 就断定当前构建已经启用。
 
-把这些收成一份给团队的 checklist，每条带上"为什么"：
+团队内可以使用以下检查清单：
 
-1. **少动 .h**——include 文本复制，一改全员重编；越靠 c10 越贵，必须动就攒批改。
-2. **装并验证 ccache**——预处理级缓存，切分支/重建 build 时把重编变取缓存。
+1. **减少公共头文件改动**——依赖范围越广，潜在重编目标越多。
+2. **安装并验证 ccache**——切分支或重建时复用相同编译输入的产物。
 3. **`USE_CUDA=0` + `DEBUG=0`**——用不上的设备代码不编，调试信息按需。
-4. **坚持 `setup.py develop`**——增量 + 软链，防止哪天退化成 `install` 全量重装。
+4. **固定当前分支验证过的增量构建方式**——我们的环境使用 `setup.py develop`，其他版本以官方构建说明为准。
 
 #### 5.2 开发环境：本地内环与 CI 外环的分工
 
-第二组经验关于环境怎么摆。Ezyang 的建议有两层，我们的实践恰好还能补出第三层。
+第二组经验涉及编译环境、本地测试和 CI 的分工。
 
-**其一，编译用强机。** CUDA 构建慢到什么程度——Facebook 内部给开发者配专用 build server。我们的对应物是团队的编译机；原则一致：迭代者的时间比机器贵，编译这种令人尴尬的并行任务就该扔给核多的机器。
+**其一，使用合适的编译资源。** 原文提到使用专用 build server。我们的团队也使用核数较多的编译机，减少开发者等待完整构建的时间。
 
-**其二，测试分内外环。** 本地是**内环**：`python test/test_ops.py -k test_my_op` 只跑改动相关的几个测试点，秒级到分钟级，配合 develop 增量编译形成"改一行→验一次"的快循环。CI 是**外环**：全量测试矩阵——不同 CUDA 版本、平台、ASAN 构建这些**本地根本没有的配置**，开个 PR 让 CI 农场去跑。关键是中间不要有"本地跑全量"这种两头不占的姿势：既慢过内环、又盖不住外环的配置面。我们组的分工已经天然如此——本地只跑相关测试、CI 跑完整套。
+**其二，区分本地快速验证与 CI 完整验证。** 本地运行与改动直接相关的测试，例如 `python test/test_ops.py -k test_my_op`，用于缩短反馈时间。CI 再覆盖不同平台、设备配置和 sanitizer 构建。是否需要在提交前运行更大的本地测试集合，应根据改动风险和 CI 成本决定，不能把“本地只跑最小测试”写成固定规则。
 
-**其三（我们自己补的一层）：对芯片厂，CI 还是硬件采样器。** 我们有大量"本地复现不了、只在 CI 上挂"的案例，但细看多数**不是配置差异，而是芯片体质差异和驱动不稳定**——同一份代码同一配置，这颗芯片过、那颗挂。这类问题里 CI 的角色变了：不是"补配置矩阵"，而是**在几十颗体质各异的芯片上抽样**，暴露单机永远看不见的边界体质。应对手段也完全不同：配置差异靠 CI 补矩阵就能复现追查；硬件飘忽要靠重试策略、known-issue 清单、芯片分档。把这两类"只有 CI 能发现的错"分开对待，排查时才不会拿着配置思路去追体质问题。
+**其三，CI 还能覆盖硬件个体与驱动状态差异。** 我们遇到过同一代码和配置在不同芯片上表现不一致的情况，原因可能涉及硬件个体、固件、驱动或机器环境。应先区分稳定可复现的配置问题与非确定性硬件问题。前者通过补充矩阵和复现环境定位；后者需要结合重试统计、known issue、设备健康检查和必要的硬件分档处理。
 
 #### 5.3 测试工具：expecttest
 
-最后是一个 Ezyang 自己写的小工具，解决一类很具体的麻烦：**expected-output 测试的预期值维护**。
+最后介绍 expecttest，它用于维护 expected-output 测试中的预期值。
 
-"断言输出符合预期"谁都会写，麻烦在预期值本身。当被测的输出又长又常变——报错信息、生成代码、计算图 dump——每次有意变更行为，都得手工去改几十处 expected 字符串。expecttest 的做法是把预期**内联在测试源码里**：
+当报错信息、生成代码或计算图 dump 较长时，手工更新多处 expected 字符串容易出错。expecttest 可以把预期值内联在测试源码中：
 
 ```python
 self.assertExpectedInline(str(result), """tensor([1., 2., 3.])""")
 ```
 
-平时它就是普通断言；而当行为有意变更时，跑一次 `EXPECTTEST_ACCEPT=1 python test_foo.py`，**框架自动把测试文件里的预期字符串重写成新输出**，人只需要 `git diff` 审一遍这些新预期对不对。一句话：**自动更新、人工审查**——省的是抄写的手，不省判断的脑。
+正常运行时它执行断言；确认行为变化符合预期后，可以通过 `EXPECTTEST_ACCEPT=1 python test_foo.py` 更新测试文件中的内联结果。更新后仍需检查 `git diff`，确认变化来自预期行为，而不是把错误结果固化进测试。
 
-这对我们的对拍体系是个现成可抄的模式：对拍脚本里若有大段 expected 输出，与其手工维护，不如引入"ACCEPT 重写 + 审 diff"的流程。
+如果对拍脚本也包含大段稳定文本输出，可以借鉴“自动更新、人工审查”的流程；数值容差和动态输出仍需要单独设计。
 
-至此，「学习过程」五章——张量、自动微分、基本代码结构、编写算子、高效工作流——全部走完，Ezyang 这篇《PyTorch Internals》读毕。接下来是文末的收口：回答「先猜再学」埋下的问题、把工作经验接进「下游透镜」、凝练思维导图，以及给下一篇挖坑。
+至此，正文已经讨论张量、自动微分、源码结构、算子开发和工作流。下面回顾开篇问题，并联系实际工作经验。
 
 ## 读后回顾
 
-> 完整学完一遍后回头收口：把 §先猜再学 的 13 个问题逐条对照。按对照结果分三档——直觉成立的、只对了一半的、实打实错位的。
-
 ### 直觉成立的
 
-- **Q10（什么是张量）**：阶数推广 + 图像 `[N,H,W,3]` 的例子，读完无需修改。
-- **Q6（贡献流程）**：fork → 测试 → PR 的猜测未被推翻。原文这部分讲的其实是工作流效率（本地环境与 CI 的分工、expecttest），流程本身一句带过。
-- **Q1 前半（元数据/数据分离）与 Q12 前半（链式法则）**：大方向都对，但各缺了关键的另一半，见下档。
+- **Q10（什么是张量）**：将标量、向量和矩阵推广到更高阶数组，并用 `[N,H,W,3]` 表示一批图像，这项理解基本成立。
+- **Q6（贡献流程）**：fork、测试、提交 PR 的流程没有被原文否定。原文主要补充了本地构建、CI 和 expecttest 等效率问题。
+- **Q1 前半（元数据与数据分离）和 Q12 前半（链式法则）**：方向正确，但还缺少 view 共享 Storage 和 VJP 两项关键内容。
 
 ### 对了一半的
 
-- **Q1 后半**：我猜到了分离，没猜到分离的最大红利——多个 TensorImpl 可以共享同一个 Storage，view/transpose/切片只需新建一份 sizes/strides/offset 元数据，零拷贝。一句话：**view = 新元数据 + 旧 Storage**。
-- **Q3（autograd 工程实现）**：「记录上一次操作、沿链传到叶子为止」这一半对；缺的三件是——①记录的不只是操作，还有 **saved tensors**（反向要用的前向值，可能是输入也可能是输出）；②记录发生在 dispatch 的**第一跳**（Autograd key 在 keyset 高位就先落 autograd kernel，requires_grad 只是 kernel 内部"记录还是白过"的开关）；③反向公式由普通 aten 算子组合而成，执行时 **redispatch 回后端的前向 kernel**——这正是 autograd 对后端"免费"的原因。
-- **Q4（调用链）**：「binding → 按 device 分流 → 按属性到目标算子」的骨架对，但有两处错位：autograd 这一整层在我猜的链里缺席（实际它是 binding 之后的第一跳调度，排在 backend 之前）；第一跳 binding 我以为是 pybind11，实际是 codegen 生成的 CPython 原生绑定 `THPVariable_add`（性能考虑不走 pybind11）。完整七步链见 §3.2。
-- **Q12 后半**：当初把雅可比"挖坑以后再说"，坑已在 §2.0/§2.2 填平——工程上**从不显式构造雅可比**，靠 matrix-free 的 vJp：每个算子只提供"给我上游梯度、我直接返回乘积"的反向函数，反向图把它们串起来。选反向模式是因为 loss 是标量，从输出端往回走，中间结果始终保持"行向量"尺寸。
-- **Q13（为什么多条调用链）**：我只答出了硬件差异这一个维度。同一设备内还有至少四个分叉：requires_grad 开关（走不走记录层）、layout（strided/sparse 不同 kernel）、dtype（kernel 内 switch）、以及 composite 分解（没有专用 kernel 的算子直接拆成已有 aten 算子的组合，链的深度都不一样）。
+- **Q1 后半**：多个 TensorImpl 可以引用同一个 Storage。transpose 和许多切片操作只创建新的 size、stride 与 offset 元数据，不复制底层数据。可以简化为：view = 新元数据 + 共享的底层数据。
+- **Q3（autograd 工程实现）**：autograd 不只记录生成操作，还要保存 backward 需要的 Tensor 或元数据，并通过 `next_functions` 连接反向图。Autograd kernel 进入 backend 前会执行 redispatch；反向公式中的 ATen 算子也会继续按照各自的 keyset 调度。
+- **Q4（调用链）**：我原来遗漏了 autograd 层，也把 Python 绑定统一理解为 pybind11。以文中的版本和 overload 为例，Python 入口可由 codegen 生成的 CPython C API 代码处理；随后进入 dispatcher、autograd 和 backend。具体函数名需要以目标版本源码为准。
+- **Q12 后半**：反向传播通常不显式构造完整雅可比，而是让每个 backward 节点计算 VJP，再沿反向图组合。标量 loss 使反向模式只需一次反向传播即可得到所有参数梯度。
+- **Q13（为什么存在多条调用路径）**：除了设备差异，还要考虑 layout、dtype、autograd 是否记录、composite 分解、Tensor subclass 和其他 dispatch key。它们会改变最终选择的 kernel 或调用层次。
 
-### 实打实错位的
+### 需要纠正的
 
-- **Q2+Q11（数据布局）**：我把「连续/非连续」当成了布局的一种。实际上内置布局是 strided / sparse / mkldnn 三种，而连续性是 **strided 布局内部的性质**（stride 排列是否恰好行优先紧密）——两码事，dispatch 按 Layout 枚举分流，不看连续性。
-- **Q9（yaml 语法）**：我原来的记法「`!` 表示原地、`_` 表示修改输入」是把一层含义拆给了两个记号。真相是两个记号各司一层：**`_` 是纯命名习惯，只给人看**（提示 in-place 变体，机器不读）；**`(a!)` 注解才是机器读的真值**（`a` 是别名集标签，`!` 表示此参数被就地修改，并喂 version counter +1）。另外 `dispatch:` 节删掉不会报错——会被视作 CompositeImplicitAutograd：函数体若由 aten 算子组合而成，前向反向都白给；若是裸指针/外部库调用，**前向照常、反向静默错误**——这正是我们「只写前向、训练断梯度」现象的根。
-- **Q7（自定义布局）**：我以为没有正规办法。实际上布局是 §1.4 扩展三轴之一，标准路存在——但属于"真扩展"档：新 TensorImpl 子类 + 新 dispatch key + 给所有相关算子注册 kernel，成本极高。我们补丁版的"提醒 + 手动转换"对应的是约定层做法，不进入 dispatch 体系，代价是布局状态全靠人肉维护。
-- **Q5（标准流程）**：我把 yaml 注册当成流程"最后一步的一个动作"，实际它是**起点**——接口声明驱动 codegen 生成整条接线（Python 绑定、C++ API、schema 注册、后端挂钩），我只需要手填两个洞：kernel 函数体和 derivatives.yaml 里的反向公式。后者是我当初完全不知道存在的第二张表。我们 fork 整仓属于 in-tree 玩法，享受 codegen；真 out-of-tree 插件才需要手写 `TORCH_LIBRARY_IMPL`。
-- **Q8（自动对拍）**：我不确定有没有自动机制——答案是**没有现成开关**，我们环境变量触发 CPU 对拍宏这套本来就是自建的（经验细节见〔下游透镜·过往经验〕）。展望：现代的 `__torch_dispatch__` 提供了实现这种"影子执行"的标准挂点，留到后续验证。
+- **Q2 + Q11（数据布局）**：连续性不是一种独立 layout，而是 strided Tensor 的 stride 与 shape 关系所表现出的属性。现代 PyTorch 还包含多种 sparse layout、`torch.jagged` 等形式，因此不能把 layout 固定概括为 strided、sparse、mkldnn 三种。
+- **Q9（yaml 语法）**：`_` 是面向使用者的命名约定，`(a!)` 是机器读取的 alias 与 mutation 信息。mutation 的版本维护还涉及生成 wrapper 和 `ADInplaceOrView`，不能简化成 `!` 直接让 dispatcher 给 version counter 加一。省略 `dispatch:` 的结果也应结合完整 yaml 与 codegen 规则判断；若实现调用外部库，还必须单独定义 autograd 语义。
+- **Q7（自定义布局）**：自定义布局或 Tensor 行为有多种实现层级，包括 Python Tensor subclass 与 `__torch_dispatch__`、wrapper subclass、专用 TensorImpl/dispatch key 等。需要的算子覆盖面和实现成本差异很大，不能统一描述为“新 TensorImpl + 新 key”。我们当前的提醒与手动转换方案属于应用约定，不会自动进入 PyTorch 的 dispatch 和 view 语义。
+- **Q5（标准流程）**：对于 in-tree 算子，yaml 声明会参与 codegen，并生成接口和注册相关代码；开发者仍要实现 kernel，并按实现方式提供 autograd 支持。out-of-tree 扩展则通常使用 `TORCH_LIBRARY`、`TORCH_LIBRARY_IMPL` 与 `torch.library` 等接口，不修改 PyTorch 内部 yaml。
+- **Q8（自动对拍）**：我没有发现可以直接满足当前需求的统一开关，所以现有 CPU 对拍宏仍是自建方案。`__torch_dispatch__` 可以拦截 Tensor 操作，但能否稳定实现通用影子执行，还要处理递归、别名、随机性、设备转换、性能和不经过 dispatcher 的路径，不能先写成已经成立的方案。
 
-## 实践（纯理论板块改成手算 / 反例构造 / 数值验证）
-
-> 小型实验验证、加深理解。工作量大时可延后到节假日补，不必首发即带。
-
-## 下游透镜
-
-> 把知识接到两个真实场景，让它不止停在"学了"和"demo"。
+## 实际工作与面试
 
 ### 过往经验
 
-> 与过去工作相关时，分享处理经验（向后接：用新知识回看旧经验）。不一定普适，仅供参考。
+**自建对拍宏：用于算子精度回归。** 我们的自定义算子调用外部高性能算子库，PyTorch 不会自动同时运行 CPU 参考路径并比较结果。为此，我们实现了一个由环境变量控制的对拍宏：开启后，把输入同步到 CPU，运行参考实现，再将其结果与自研芯片 kernel 的输出比较，误差超过设定范围时报告失败。
 
-**自建对拍宏：没有现成机制时的精度回归手段。** 我们的自定义算子走的是外部高性能算子库（§4.3 的字符串路由那套），精度问题没法靠 PyTorch 自动发现——如「读后回顾 Q8」所说，PyTorch 并没有"同时跑两条链自动比对"的现成开关。我们的做法是自建一个环境变量触发的对拍宏：开启后，算子执行时把输入同步搬到 CPU，用参考实现重算一遍，与自研芯片 kernel 的输出比较，超出容差就报。学完 §4.4 之后回看，这套机制有一条当时靠直觉、现在能说清依据的原则——**校尺必须比工件直**：参考实现要用已有 aten 算子组合出来，绝不能拿裸 `data_ptr` 手写。裸指针带着连续性假设，遇到非连续输入会静默读错数据；校尺自己先弯了，对拍就变成了两个错误实现互相认证。
+参考实现应尽量由已有 ATen 算子组合，并覆盖非连续输入、广播和类型提升等语义。如果直接使用裸 `data_ptr` 手写索引，就必须明确处理 stride；否则参考实现本身也可能出错，使对拍失去判断依据。
 
-**容差阈值不是常数，而是硬件精度特性的函数。** 对拍宏真正难的不是搭机制，而是定容差——我们在两个方向上都吃过误报：
+**容差需要结合算子、dtype 和硬件实现确定。** 我们遇到过两类情况：
 
-- **参考端反而更差的假阳性**：我们芯片的向量计算单元只支持 fp32，bf16 tensor 会被升到 fp32 计算、结束再降回 bf16。于是常规算子的 bf16 结果本质上是 fp32 精度，**比 CPU 的原生 bf16 计算更准**——对拍宏却因为"和 CPU 不一致"报警。这类假阳性只能按算子实际情况放宽容差。
-- **硬件本底误差**：反过来，矩阵乘单元只支持 bf16，fp32 矩阵乘的精度天然比 CPU 差。这是硬件决定的系统性误差，要消除就得用多次 bf16 矩阵乘拼出高精度（拿计算时间换精度），常规场景下不划算，同样只能扩大容差阈值。
+- **计算路径不同**：我们的向量单元以 fp32 执行部分 bf16 算子，再将结果转换回 bf16。它与 CPU 参考实现的指令和舍入路径不同，即使都满足精度要求，结果也不一定逐位一致。
+- **底层精度受限**：矩阵乘单元主要支持 bf16 时，fp32 接口可能通过低精度计算近似实现，与 CPU fp32 结果存在稳定差异。若要提高精度，可能需要分解或补偿算法，并付出更多计算成本。
 
-两条合起来的教训：**对拍的"正确答案"不存在绝对基准**——CPU 参考实现和自研芯片各有自己的精度轮廓，容差是对两条链精度轮廓差异的建模，得逐算子、逐 dtype 地校。
+CPU 结果不是所有场景下的逐位标准，但仍可以作为参考路径。容差应基于高精度基准、误差分布、输入规模和算法特性分别制定，并同时检查绝对误差、相对误差以及 NaN/Inf 等特殊值。不能只为消除失败而统一放宽阈值。
 
-（展望：`__torch_dispatch__` 提供了在 Python 层拦截所有算子调用的标准挂点，理论上可以把这套对拍做成通用的"影子执行"模式而不必逐算子埋宏——留到后续学习验证。）
+`__torch_dispatch__` 可能用于实现更通用的影子执行，但仍需验证递归控制、别名、随机算子、设备同步和性能成本，本文暂不作结论。
 
-### 面试问题Q&A
-
-> 构造几道可能被问到的面试题 + 我的理解（向前用）。不一定准确，欢迎读者补充指正。
+### 面试问题 Q&A
 
 - **Q：一次 `torch.add(a, b)` 调用会经过哪些 dispatch 层？**
-  A：从外到内是 variable(autograd) → backend(device × layout) → kernel 内的 dtype switch。variable 层只在有输入 `requires_grad=True` 时才真正介入（为反向传播做记录），否则相当于透传。
+  A：简化来看，会经过 Python/C++ 绑定、dispatcher、Autograd key、backend key，以及 kernel 内部的 dtype 分派。Autograd kernel 是否记录反向图，还要结合 GradMode 和输入的 `requires_grad`。Tensor subclass、functionalization、autocast 等 key 也可能加入实际调用路径。
 - **Q：连续和非连续的 dense tensor，调同一个算子会 dispatch 到同一个 kernel 吗？**
-  A：会。layout 调度看的是 `Layout` 枚举（Strided/Sparse/Mkldnn）这种整体类型，不看连续性。连续性在 kernel 内部处理——element-wise 走 TensorIterator 按 stride 读，或某些算子先 `.contiguous()`。
+  A：通常会进入同一 backend kernel，因为二者都属于 strided layout。kernel 可以通过 TensorIterator 按 stride 访问，也可以选择连续快路径或调用 `.contiguous()`。个别算子可能在内部继续选择不同实现，因此“同一 dispatch kernel”不代表执行完全相同的代码路径。
 - **Q：为什么 PyTorch 给一个算子要准备这么多份 kernel？**
-  A：因为 device × layout × dtype 是一个笛卡尔积，每个组合原则上都可能需要一份特定实现。
+  A：device、layout、dtype、稀疏格式和性能特化都会影响实现。概念上可以看成多维组合，但 PyTorch 会通过模板、TensorIterator、composite decomposition 和 fallback 复用代码，并不是每个组合都必须拥有独立函数体。
 - **Q：自研 PrivateUse1 后端的某算子只实现了 float32，用户传 bfloat16 会怎样、怎么修？**
-  A：dispatcher 会成功把调用送到该 kernel（device + layout 匹配上了），随后在 kernel 内部的 `AT_DISPATCH_*` 默认分支抛错 `not implemented for 'BFloat16'`——并非 dispatcher 级的 backend 报错。修法是把 `AT_DISPATCH_FLOATING_TYPES` 换成 `AT_DISPATCH_FLOATING_TYPES_AND2(Half, BFloat16, ...)`，而不是注册新的 dispatch key。
+  A：如果同一个 backend kernel 已注册且仅在内部限制 dtype，调用会进入该 kernel，再由 `AT_DISPATCH_*` 或显式检查报告不支持 bfloat16；如果注册方式按 dtype 或算子路径另有区分，也可能更早失败。修复不只是扩大宏的类型集合，还要提供正确的底层实现，并验证累加精度、类型提升和数值容差。
 - **Q：反向传播为什么不直接构造雅可比矩阵？它的替代方案是什么？**
-  A：不构造，是因为完整雅可比的规模 =「输出数 × 输入数」，往往大到不可行——一个 $1024\times1024$ 的线性层，其雅可比约 $10^{12}$ 个元素、fp32 约 4 TB，而它真正的 backward 只是几 MB 的矩阵乘；何况训练只要标量 loss 对参数的梯度，并不需要整个 $J$。替代方案是 **matrix-free（无矩阵）的 vJp（向量-雅可比积）**，分三层：① **算子级**——每个算子配一个 backward 规则，直接算出 $\text{grad\_input} = \text{grad\_output}\cdot J_\text{local}$ 这个乘积的闭式结果（用矩阵求导离线推好、利用 $J_\text{local}$ 的结构塌缩成逐元素乘或矩阵乘），只返回"作用在向量上的结果"、从不返回 $J$，并 save 必要的前向张量；② **记录级**——前向时给输出张量挂 `grad_fn`（封装这个 vJp 函数 + saved tensors + 指向上游的边），即时建出反向图；③ **装配级**——`backward()` 从输出端种子 $u=1$ 起，沿反向图把各算子的 vJp 左结合地串起来（即链式法则连乘），节点间只流动梯度向量。一句话：不求 $J$、只求 $J^\top$ 对向量的作用，逐算子实现、整图串联——这就是 reverse-mode 自动微分，代价与前向同阶。
+  A：完整雅可比的大小是输出元素数乘输入元素数，通常远大于实际需要。反向模式让每个 backward 节点直接计算 $\text{grad\_output}\cdot J_\text{local}$，也就是 VJP，再沿反向图组合这些结果。对于标量 loss，初始向量是 1。这样只保存和计算梯度传播需要的结构化结果，不构造完整雅可比。
 - **Q：给 PyTorch 新增一个算子，`native_functions.yaml` 里一个条目到底生成了什么？哪些还得你自己写？**
-  A：yaml 条目是接口声明，codegen 沿调用链把"接线"全部生成：Python 绑定（`THPVariable_*`）、C++ API（`at::*` / `at::redispatch::*`）、schema 注册进 dispatcher、后端注册挂钩（`RegisterCPU.cpp` 里的 `TORCH_LIBRARY_IMPL`）。它不生成的只有两个"洞"：kernel 函数体（真正算数值的代码）和反向规则（`derivatives.yaml` 里的公式，供生成 autograd 记录 kernel）。一句话：yaml 声明接口 → codegen 接线 → 人只填两个洞。
+  A：对于 in-tree native operator，该条目参与生成 Python/C++ 接口、schema、redispatch API 和部分 backend 注册代码。开发者仍需实现 kernel 数值逻辑，并根据算子类型提供 meta、functionalization 和 autograd 等支持。`derivatives.yaml` 是内置算子提供反向公式的一种方式，不能把所有新增算子都简化为只填写两个位置。
 - **Q：一个算子在 yaml 里不写 `dispatch:` 节会怎样？什么情况下这是陷阱？**
-  A：不报错——它被视作 CompositeImplicitAutograd：默认实现对所有后端生效，且只要函数体由 aten 算子组合而成，反向图会在这些子算子上自动建好，backward 免费。陷阱在于：如果函数体里混了裸指针运算或外部库调用，这些计算对 autograd 不可见，**前向结果正确、反向静默错误**（不抛异常、梯度就是错的/断的）——排查成本极高。要么保证纯 aten 组合，要么老老实实注册后端 kernel + 写 derivatives.yaml。
+  A：在本文讨论的 in-tree 场景中，它可能使用 composite 实现，但必须结合完整 yaml 字段和当前 codegen 规则确认。如果实现完全由可导的 ATen 算子组成，autograd 可以记录子算子；若内部使用裸指针或外部库，则必须显式定义 backend 和 autograd 行为。前向测试通过不能替代梯度测试。
 - **Q：为什么自研后端只写前向 kernel，autograd 就能工作？边界在哪？**
-  A：因为 autograd kernel 按算子注册（不按后端），反向公式是设备无关的数学，其执行由普通 aten 算子组合而成，会 redispatch 回你后端的**前向** kernel。所以凡是反向可分解为已有算子的，后端白给。边界：融合的单体 kernel（如自定义 fused attention）和外部库调用，其反向无法分解，必须自己提供 backward 实现并在 derivatives.yaml（或 autograd::Function）里挂上。
+  A：更准确的说法是：如果该算子的导数公式已经存在，而且公式调用的所有 ATen 算子都被自研后端覆盖，那么 backward 可以复用这些 backend kernel。缺少基础算子、dtype、layout 或设备语义时，反向仍会失败。对于外部库或融合单体 kernel，还需要显式注册 autograd 公式，必要时实现专用 backward kernel。
 
 ## 思维导图总结
 
-> 把整体思路凝练成思维导图，便于后续快速回顾。（当前为大纲版，markmap 类插件可直接渲染；视觉优化留待后续。）
-
 - **PyTorch 基本内部机制**
-  - **§1 张量**
-    - Tensor = TensorImpl（元数据：sizes / strides / offset / dtype / device / keyset）+ Storage（裸数据）
-    - view = 新元数据 + 旧 Storage → 零拷贝（transpose / 切片 / reshape 的免费来源）
-    - 布局三种：strided / sparse / mkldnn；「连续性」只是 strided 内部性质
-    - 扩展三轴：device × dtype × layout；wrapper（约定层）vs 真扩展（新 TensorImpl + 新 key）
-  - **§2 自动微分**
-    - 数学：链式法则 → 反向模式（loss 是标量，中间结果保持行向量尺寸）→ vJp / matrix-free（雅可比从不落地）
+  - **$\S$ 1 张量**
+    - TensorImpl 保存 sizes、strides、offset、dtype、device、keyset 等信息，并通过 Storage 访问底层数据
+    - view 使用新的元数据解释共享数据；transpose 和部分切片可零拷贝，reshape 是否复制取决于 stride 条件
+    - 连续性是 strided Tensor 的属性，不是独立 layout；现代 PyTorch 还有多种 sparse 和 jagged layout
+    - 扩展方式包括新 device、dtype、layout、Tensor subclass 和 wrapper，成本与能力边界不同
+  - **$\S$ 2 自动微分**
+    - 数学：链式法则 → 反向模式（loss 通常是标量）→ VJP / matrix-free（不构造完整雅可比）
     - 记录什么：grad_fn（反向函数句柄）+ saved tensors（反向要用的前向值）+ next_functions（连成反向图）
-    - 挂在哪：dispatch 第一跳 Autograd kernel——先记录，再 redispatch（排除 Autograd key）落到 backend
-    - 代价：saved tensors 吃激活显存 → 重计算换显存；in-place 靠 version counter 兜底
-  - **§3 代码结构**
-    - 四目录单向依赖：c10（最小公共底座）← ATen（算子）← torch/csrc（autograd / c10d / binding）← torch（Python）
-    - torch.add 七步链：`THPVariable_add` → `at::add` → dispatcher（算 keyset）→ `VariableType::add`（记录）→ `at::redispatch::add` → RegisterCPU 挂钩 → native kernel（内部 dtype switch）
-    - autograd 对后端免费：反向公式 = 设备无关的 aten 组合，执行时 redispatch 回后端前向 kernel
-  - **§4 编写算子**
-    - 两张表 + 两个洞：native_functions.yaml（声明接口，codegen 接线）+ derivatives.yaml（声明反向）；手写 kernel 体 + 反向公式
-    - yaml 语法：functional / in-place / out 三变体；`_` 给人看、`(a!)` 给机器（a=别名集，!=修改+version counter）；`*` 后仅关键字；缺 `dispatch:` = CompositeImplicitAutograd（纯 aten 组合则前反向全免费；混裸指针/外部库则反向静默错误）
-    - kernel 骨架四步：错误检查（TORCH_CHECK / TensorArg）→ 分配输出（三变体）→ dtype 派发（AT_DISPATCH 家族）→ 计算
-    - 数据访问梯子：裸 data_ptr（连续性假设，危）< TensorAccessor + parallel_for（stride 安全）< TensorIterator（广播/类型提升/分配/维度折叠/并行/SIMD 六件脏活）
-  - **§5 高效工作流**
-    - #include = 文本复制：改头文件（哪怕注释）= 重编所有包含者；越靠 c10 越接近全量；ccache 按预处理后代码哈希，可救注释场景
-    - 本地基线：`USE_CUDA=0 DEBUG=0 python setup.py develop`；改动尽量落 .cpp
-    - 内环（本地跑相关测试，快迭代）/ 外环（CI 全量 + 当作硬件机队采样器：芯片体质 / 驱动问题在此暴露）
-    - expecttest：`EXPECTTEST_ACCEPT=1` 自动重写预期输出，人只审 diff
+    - 调用路径：Autograd kernel 判断是否需要记录，再 redispatch 到 backend
+    - 内存：saved tensors 是激活显存的重要组成；重计算以算力换显存，version counter 检测部分非法 in-place 修改
+  - **$\S$ 3 代码结构**
+    - 简化依赖：c10 提供底层基础设施，ATen 提供算子库，torch/csrc 包含 autograd 与 C++ 前端，torch 提供 Python 包
+    - `torch.add` 的代表路径：Python 绑定 → C++ API → dispatcher → Autograd kernel → redispatch → backend kernel → dtype 分派
+    - autograd 可以复用后端已有算子，但反向依赖的算子、dtype 与 layout 都必须被后端覆盖
+  - **$\S$ 4 编写算子**
+    - `native_functions.yaml` 声明内置算子接口与 dispatch，`derivatives.yaml` 提供一部分内置算子的反向公式
+    - yaml 语法：functional / in-place / out 三种变体；`_` 是命名约定，`(a!)` 描述 alias 与 mutation，`*` 之后是关键字参数
+    - kernel 常见结构：错误检查 → 输出准备 → dtype 分派 → 数值计算
+    - 数据访问层级：`data_ptr` 需要明确连续性或 stride；TensorAccessor 支持按 stride 索引；TensorIterator 统一处理常见迭代语义
+  - **$\S$ 5 高效工作流**
+    - 公共头文件变化可能触发大量翻译单元重编；ccache 是否生效需要查看实际命中率
+    - 我们当前分支的构建基线：`USE_CUDA=0 DEBUG=0 python setup.py develop`；其他版本以对应构建文档为准
+    - 本地运行相关测试，CI 覆盖完整配置矩阵和硬件差异；测试范围按改动风险决定
+    - expecttest：`EXPECTTEST_ACCEPT=1` 更新预期输出，随后人工审查 diff
 
 ## 后续预告
 
-- **依旧迷惑的问题**（本文学习中挂账、待后续资料验证）：
-  1. **Storage 是否已经降格**：2019 年原文里 Storage 是实打实的独立层；现代 PyTorch 中它是否已退化为 TensorImpl 的附属细节？`untyped_storage()` 这条 API 线索待查（§1.2 坑）。
-  2. **`__torch_dispatch__` 的真实能力边界**：作为 Python 层拦截所有算子调用的标准挂点，它能否承接我们的两个真实需求——影子执行式自动对拍（〔过往经验〕的展望）和轻量布局扩展（回顾 Q7 的展望）？（§1.4 坑）
-  3. **复数 / 稀疏这类"真扩展"的源码落点**：新 dispatch key + 新 TensorImpl 子类在源码里具体长什么样、注册面有多大？找一个现成实现走读（§1.4 坑）。
-  4. **structured kernels**：§4.1 和 §4.3 两次提及未展开——它把"错误检查 + 输出分配"从 kernel 骨架里抽成声明式的 meta 函数，能省多少样板代码？（对应学习指引 §H）
-- **由此延伸出的想法**（正文挖的坑，值得单开一篇）：
-  - 低精度数据类型全景（int8 / int4 / fp8 / fp4，§1.1 挖坑）
-  - 高层并行语言能否统一算子实现（Triton / TileLang + 编译器，回顾 Q13 挖坑）
-- **下一节博文预告**：文章 2《从 `torch.add` 追到 kernel》——本文 §3.2 的七步链是"纸上谈兵"版，下一篇进真实源码逐帧验证这条链，顺路把 dispatcher 的 key 计算细节（Ezyang dispatcher 博客，学习指引 #6）补上。上面第 1、4 两个坑预计在源码走读中顺手核销。
+- **需要继续验证的问题**：
+  1. **现代 Storage 的接口边界**：2019 年原文中的 Storage 与当前 `untyped_storage()`、TensorImpl 和 allocator 之间是什么关系？
+  2. **`__torch_dispatch__` 的能力边界**：它能否稳定支持影子执行式对拍和轻量布局扩展？需要具体测试递归、别名和设备语义。
+  3. **复数与稀疏实现的源码位置**：选取当前实现，确认它们分别使用哪些 TensorImpl、layout 与 dispatch 机制。
+  4. **structured kernel**：继续分析 meta 与 impl 的职责，以及它对 functional、out 和 in-place 变体的复用方式。
+- **可以单独展开的主题**：
+  - 低精度数据类型：int8、int4、fp8、fp4
+  - Triton、TileLang 与编译器能否减少多后端算子实现的重复工作
+  - 梯度下降中的二阶项、descent lemma、学习率上限和自然梯度
+- **下一篇预告**：文章 2《从 `torch.add` 追到 kernel》将以一个确定的 PyTorch 版本为基准，逐步核对本文 $\S$ 3.2 的代表调用路径，并补充 dispatcher 的 key 计算细节。

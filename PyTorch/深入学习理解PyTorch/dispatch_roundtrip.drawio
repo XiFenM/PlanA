@@ -1,0 +1,106 @@
+<mxfile host="app.diagrams.net" agent="codex">
+  <diagram name="dispatch-roundtrip" id="dispatch-roundtrip-1">
+    <mxGraphModel dx="1200" dy="1100" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1200" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+
+        <mxCell id="title" value="一次算子调用如何穿过调度层并返回" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;fontSize=24;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="300" y="20" width="600" height="36" as="geometry"/>
+        </mxCell>
+        <mxCell id="subtitle" value="简化路径：左侧逐层 redispatch，底部执行 kernel，右侧沿调用栈逐层返回" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;fontSize=13;fontColor=#475569;" vertex="1" parent="1">
+          <mxGeometry x="250" y="58" width="700" height="24" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="call" value="&lt;b&gt;torch.add(a, b)&lt;/b&gt;&lt;br&gt;&lt;font color=&quot;#334155&quot;&gt;Python/C++ 绑定后进入 dispatcher&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#eff6ff;strokeColor=#2563eb;strokeWidth=2;fontSize=14;shadow=1;" vertex="1" parent="1">
+          <mxGeometry x="60" y="110" width="350" height="70" as="geometry"/>
+        </mxCell>
+        <mxCell id="result" value="&lt;b&gt;返回 Python Tensor&lt;/b&gt;&lt;br&gt;&lt;font color=&quot;#334155&quot;&gt;绑定层封装后交回用户代码&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff7ed;strokeColor=#d97706;strokeWidth=2;fontSize=14;shadow=1;" vertex="1" parent="1">
+          <mxGeometry x="790" y="110" width="350" height="70" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="left-header" value="调用下行（call / redispatch）" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=14;fontStyle=1;fontColor=#2563eb;" vertex="1" parent="1">
+          <mxGeometry x="60" y="205" width="350" height="24" as="geometry"/>
+        </mxCell>
+        <mxCell id="middle-header" value="当前处理层" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=14;fontStyle=1;fontColor=#64748b;" vertex="1" parent="1">
+          <mxGeometry x="445" y="205" width="310" height="24" as="geometry"/>
+        </mxCell>
+        <mxCell id="right-header" value="结果上行（return）" style="text;html=1;strokeColor=none;fillColor=none;align=center;fontSize=14;fontStyle=1;fontColor=#d97706;" vertex="1" parent="1">
+          <mxGeometry x="790" y="205" width="350" height="24" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="dispatcher-down" value="&lt;b&gt;计算 DispatchKeySet&lt;/b&gt;&lt;br&gt;查找当前最高优先级的 kernel&lt;br&gt;并进入对应处理函数" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#eff6ff;strokeColor=#93c5fd;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="60" y="250" width="350" height="84" as="geometry"/>
+        </mxCell>
+        <mxCell id="dispatcher-layer" value="&lt;b&gt;Dispatcher&lt;/b&gt;&lt;br&gt;&lt;font color=&quot;#475569&quot;&gt;每次只选择当前的一个 key&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8fafc;strokeColor=#94a3b8;fontSize=14;" vertex="1" parent="1">
+          <mxGeometry x="445" y="250" width="310" height="84" as="geometry"/>
+        </mxCell>
+        <mxCell id="dispatcher-up" value="&lt;b&gt;Dispatcher 调用帧返回&lt;/b&gt;&lt;br&gt;没有待处理的 wrapper 后&lt;br&gt;把结果交回绑定层" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff7ed;strokeColor=#fdba74;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="790" y="250" width="350" height="84" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="wrapper-down" value="&lt;b&gt;处理输入与当前语义&lt;/b&gt;&lt;br&gt;排除当前 key 后 redispatch&lt;br&gt;继续选择下一个 key" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#eff6ff;strokeColor=#93c5fd;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="60" y="370" width="350" height="84" as="geometry"/>
+        </mxCell>
+        <mxCell id="wrapper-layer" value="&lt;b&gt;可选 wrapper key&lt;/b&gt;&lt;br&gt;&lt;font color=&quot;#475569&quot;&gt;如 Functionalize、vmap、Autocast&lt;br&gt;实际出现与顺序由 keyset 决定&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f5f3ff;strokeColor=#8b5cf6;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="445" y="370" width="310" height="84" as="geometry"/>
+        </mxCell>
+        <mxCell id="wrapper-up" value="&lt;b&gt;执行该层的输出处理&lt;/b&gt;&lt;br&gt;恢复包装、转换或其他语义&lt;br&gt;再返回上一层" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff7ed;strokeColor=#fdba74;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="790" y="370" width="350" height="84" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="autograd-down" value="&lt;b&gt;判断是否需要记录梯度&lt;/b&gt;&lt;br&gt;准备反向上下文，排除 Autograd key&lt;br&gt;然后 redispatch" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#eff6ff;strokeColor=#93c5fd;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="60" y="490" width="350" height="84" as="geometry"/>
+        </mxCell>
+        <mxCell id="autograd-layer" value="&lt;b&gt;Autograd wrapper&lt;/b&gt;&lt;br&gt;&lt;font color=&quot;#475569&quot;&gt;处理反向传播所需的记录&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fdf2f8;strokeColor=#db2777;fontSize=14;" vertex="1" parent="1">
+          <mxGeometry x="445" y="490" width="310" height="84" as="geometry"/>
+        </mxCell>
+        <mxCell id="autograd-up" value="&lt;b&gt;完成输出的 autograd 记录&lt;/b&gt;&lt;br&gt;关联 grad_fn、next_edges&lt;br&gt;以及 backward 所需的数据" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff7ed;strokeColor=#fdba74;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="790" y="490" width="350" height="84" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="backend-down" value="&lt;b&gt;根据 device 与 layout&lt;/b&gt;&lt;br&gt;进入已注册的 backend kernel&lt;br&gt;CPU / CUDA / PrivateUse1 / Sparse…" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#eff6ff;strokeColor=#93c5fd;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="60" y="610" width="350" height="84" as="geometry"/>
+        </mxCell>
+        <mxCell id="backend-layer" value="&lt;b&gt;Backend key&lt;/b&gt;&lt;br&gt;&lt;font color=&quot;#475569&quot;&gt;选择实际计算所在的后端实现&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f0fdf4;strokeColor=#16a34a;fontSize=14;" vertex="1" parent="1">
+          <mxGeometry x="445" y="610" width="310" height="84" as="geometry"/>
+        </mxCell>
+        <mxCell id="backend-up" value="&lt;b&gt;backend kernel 返回&lt;/b&gt;&lt;br&gt;把输出 Tensor 交回&lt;br&gt;外层 wrapper" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff7ed;strokeColor=#fdba74;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="790" y="610" width="350" height="84" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="dtype-down" value="&lt;b&gt;读取 scalar_type&lt;/b&gt;&lt;br&gt;在 kernel 内进入 dtype switch&lt;br&gt;选择对应的类型实例" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#eff6ff;strokeColor=#93c5fd;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="60" y="730" width="350" height="84" as="geometry"/>
+        </mxCell>
+        <mxCell id="dtype-layer" value="&lt;b&gt;dtype 分支（kernel 内部）&lt;/b&gt;&lt;br&gt;&lt;font color=&quot;#475569&quot;&gt;AT_DISPATCH_* / switch&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fffbeb;strokeColor=#eab308;fontSize=14;" vertex="1" parent="1">
+          <mxGeometry x="445" y="730" width="310" height="84" as="geometry"/>
+        </mxCell>
+        <mxCell id="dtype-up" value="&lt;b&gt;类型实例返回结果&lt;/b&gt;&lt;br&gt;回到 backend kernel&lt;br&gt;结束内部 dtype 分支" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#fff7ed;strokeColor=#fdba74;fontSize=13;" vertex="1" parent="1">
+          <mxGeometry x="790" y="730" width="350" height="84" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="kernel" value="&lt;b&gt;执行选定的计算 kernel&lt;/b&gt;&lt;br&gt;&lt;font color=&quot;#334155&quot;&gt;读取输入、完成数值计算并生成输出 Tensor&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ecfdf5;strokeColor=#059669;strokeWidth=2;fontSize=15;shadow=1;" vertex="1" parent="1">
+          <mxGeometry x="320" y="875" width="560" height="88" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="note" value="wrapper key 是条件性的；一次调用未必经过图中的全部示例层，实际顺序由当前 DispatchKeySet 与 key 优先级决定。" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#f8fafc;strokeColor=none;fontSize=12;fontColor=#475569;" vertex="1" parent="1">
+          <mxGeometry x="140" y="1000" width="920" height="36" as="geometry"/>
+        </mxCell>
+
+        <mxCell id="d0" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2563eb;strokeWidth=2;endArrow=classic;endFill=1;" edge="1" parent="1" source="call" target="dispatcher-down"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="d1" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2563eb;strokeWidth=2;endArrow=classic;endFill=1;" edge="1" parent="1" source="dispatcher-down" target="wrapper-down"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="d2" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2563eb;strokeWidth=2;endArrow=classic;endFill=1;" edge="1" parent="1" source="wrapper-down" target="autograd-down"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="d3" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2563eb;strokeWidth=2;endArrow=classic;endFill=1;" edge="1" parent="1" source="autograd-down" target="backend-down"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="d4" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2563eb;strokeWidth=2;endArrow=classic;endFill=1;" edge="1" parent="1" source="backend-down" target="dtype-down"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="d5" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#2563eb;strokeWidth=2;endArrow=classic;endFill=1;" edge="1" parent="1" source="dtype-down" target="kernel"><mxGeometry relative="1" as="geometry"/></mxCell>
+
+        <mxCell id="u5" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#d97706;strokeWidth=2;endArrow=classic;endFill=1;" edge="1" parent="1" source="kernel" target="dtype-up"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="u4" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#d97706;strokeWidth=2;endArrow=classic;endFill=1;" edge="1" parent="1" source="dtype-up" target="backend-up"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="u3" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#d97706;strokeWidth=2;endArrow=classic;endFill=1;" edge="1" parent="1" source="backend-up" target="autograd-up"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="u2" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#d97706;strokeWidth=2;endArrow=classic;endFill=1;" edge="1" parent="1" source="autograd-up" target="wrapper-up"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="u1" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#d97706;strokeWidth=2;endArrow=classic;endFill=1;" edge="1" parent="1" source="wrapper-up" target="dispatcher-up"><mxGeometry relative="1" as="geometry"/></mxCell>
+        <mxCell id="u0" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#d97706;strokeWidth=2;endArrow=classic;endFill=1;" edge="1" parent="1" source="dispatcher-up" target="result"><mxGeometry relative="1" as="geometry"/></mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

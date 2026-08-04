@@ -1,0 +1,144 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="1100" viewBox="0 0 1200 1100" role="img" aria-labelledby="title desc">
+  <title id="title">一次 PyTorch 算子调用的调度与返回路径</title>
+  <desc id="desc">左侧展示算子调用逐层向下 redispatch，右侧展示 kernel 执行完成后逐层返回。中间依次标出 Dispatcher、可选 wrapper key、Autograd、backend kernel 与 dtype 分支。</desc>
+
+  <defs>
+    <filter id="shadow" x="-10%" y="-10%" width="120%" height="130%">
+      <feDropShadow dx="0" dy="3" stdDeviation="5" flood-color="#0f172a" flood-opacity="0.10"/>
+    </filter>
+    <marker id="arrow-down" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L10,5 L0,10 Z" fill="#2563eb"/>
+    </marker>
+    <marker id="arrow-up" markerWidth="10" markerHeight="10" refX="8" refY="5" orient="auto" markerUnits="strokeWidth">
+      <path d="M0,0 L10,5 L0,10 Z" fill="#d97706"/>
+    </marker>
+    <style>
+      .text { font-family: Inter, "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif; fill: #0f172a; }
+      .title { font-size: 30px; font-weight: 700; }
+      .subtitle { font-size: 16px; fill: #475569; }
+      .column-title { font-size: 17px; font-weight: 700; }
+      .node-title { font-size: 18px; font-weight: 700; }
+      .node-body { font-size: 15px; fill: #334155; }
+      .layer-title { font-size: 18px; font-weight: 700; }
+      .layer-body { font-size: 14px; fill: #475569; }
+      .note { font-size: 14px; fill: #475569; }
+    </style>
+  </defs>
+
+  <rect width="1200" height="1100" fill="#ffffff"/>
+
+  <text class="text title" x="600" y="50" text-anchor="middle">一次算子调用如何穿过调度层并返回</text>
+  <text class="text subtitle" x="600" y="82" text-anchor="middle">简化路径：左侧逐层 redispatch，底部执行 kernel，右侧沿调用栈逐层返回</text>
+
+  <rect x="60" y="118" width="350" height="78" rx="14" fill="#eff6ff" stroke="#2563eb" stroke-width="2" filter="url(#shadow)"/>
+  <text class="text node-title" x="235" y="148" text-anchor="middle">torch.add(a, b)</text>
+  <text class="text node-body" x="235" y="175" text-anchor="middle">Python/C++ 绑定后进入 dispatcher</text>
+
+  <rect x="790" y="118" width="350" height="78" rx="14" fill="#fff7ed" stroke="#d97706" stroke-width="2" filter="url(#shadow)"/>
+  <text class="text node-title" x="965" y="148" text-anchor="middle">返回 Python Tensor</text>
+  <text class="text node-body" x="965" y="175" text-anchor="middle">绑定层封装后交回用户代码</text>
+
+  <text class="text column-title" x="235" y="230" text-anchor="middle" fill="#2563eb">调用下行（call / redispatch）</text>
+  <text class="text column-title" x="600" y="230" text-anchor="middle" fill="#64748b">当前处理层</text>
+  <text class="text column-title" x="965" y="230" text-anchor="middle" fill="#d97706">结果上行（return）</text>
+
+  <!-- Dispatcher -->
+  <rect x="60" y="260" width="350" height="92" rx="12" fill="#eff6ff" stroke="#93c5fd" stroke-width="1.5"/>
+  <text class="text node-title" x="235" y="291" text-anchor="middle">计算 DispatchKeySet</text>
+  <text class="text node-body" x="235" y="319" text-anchor="middle">查找当前最高优先级的 kernel</text>
+  <text class="text node-body" x="235" y="340" text-anchor="middle">并进入对应处理函数</text>
+
+  <rect x="445" y="260" width="310" height="92" rx="12" fill="#f8fafc" stroke="#94a3b8" stroke-width="1.5"/>
+  <text class="text layer-title" x="600" y="298" text-anchor="middle">Dispatcher</text>
+  <text class="text layer-body" x="600" y="325" text-anchor="middle">每次只选择当前的一个 key</text>
+
+  <rect x="790" y="260" width="350" height="92" rx="12" fill="#fff7ed" stroke="#fdba74" stroke-width="1.5"/>
+  <text class="text node-title" x="965" y="291" text-anchor="middle">Dispatcher 调用帧返回</text>
+  <text class="text node-body" x="965" y="319" text-anchor="middle">没有待处理的 wrapper 后</text>
+  <text class="text node-body" x="965" y="340" text-anchor="middle">把结果交回绑定层</text>
+
+  <!-- Optional wrapper keys -->
+  <rect x="60" y="390" width="350" height="92" rx="12" fill="#eff6ff" stroke="#93c5fd" stroke-width="1.5"/>
+  <text class="text node-title" x="235" y="421" text-anchor="middle">处理输入与当前语义</text>
+  <text class="text node-body" x="235" y="449" text-anchor="middle">排除当前 key 后 redispatch</text>
+  <text class="text node-body" x="235" y="470" text-anchor="middle">继续选择下一个 key</text>
+
+  <rect x="445" y="390" width="310" height="92" rx="12" fill="#f5f3ff" stroke="#8b5cf6" stroke-width="1.5"/>
+  <text class="text layer-title" x="600" y="424" text-anchor="middle">可选 wrapper key</text>
+  <text class="text layer-body" x="600" y="451" text-anchor="middle">如 Functionalize、vmap、Autocast</text>
+  <text class="text layer-body" x="600" y="472" text-anchor="middle">实际出现与顺序由 keyset 决定</text>
+
+  <rect x="790" y="390" width="350" height="92" rx="12" fill="#fff7ed" stroke="#fdba74" stroke-width="1.5"/>
+  <text class="text node-title" x="965" y="421" text-anchor="middle">执行该层的输出处理</text>
+  <text class="text node-body" x="965" y="449" text-anchor="middle">恢复包装、转换或其他语义</text>
+  <text class="text node-body" x="965" y="470" text-anchor="middle">再返回上一层</text>
+
+  <!-- Autograd -->
+  <rect x="60" y="520" width="350" height="92" rx="12" fill="#eff6ff" stroke="#93c5fd" stroke-width="1.5"/>
+  <text class="text node-title" x="235" y="551" text-anchor="middle">判断是否需要记录梯度</text>
+  <text class="text node-body" x="235" y="579" text-anchor="middle">准备反向上下文，排除 Autograd key</text>
+  <text class="text node-body" x="235" y="600" text-anchor="middle">然后 redispatch</text>
+
+  <rect x="445" y="520" width="310" height="92" rx="12" fill="#fdf2f8" stroke="#db2777" stroke-width="1.5"/>
+  <text class="text layer-title" x="600" y="558" text-anchor="middle">Autograd wrapper</text>
+  <text class="text layer-body" x="600" y="585" text-anchor="middle">处理反向传播所需的记录</text>
+
+  <rect x="790" y="520" width="350" height="92" rx="12" fill="#fff7ed" stroke="#fdba74" stroke-width="1.5"/>
+  <text class="text node-title" x="965" y="551" text-anchor="middle">完成输出的 autograd 记录</text>
+  <text class="text node-body" x="965" y="579" text-anchor="middle">关联 grad_fn、next_edges</text>
+  <text class="text node-body" x="965" y="600" text-anchor="middle">以及 backward 所需的数据</text>
+
+  <!-- Backend -->
+  <rect x="60" y="650" width="350" height="92" rx="12" fill="#eff6ff" stroke="#93c5fd" stroke-width="1.5"/>
+  <text class="text node-title" x="235" y="681" text-anchor="middle">根据 device 与 layout</text>
+  <text class="text node-body" x="235" y="709" text-anchor="middle">进入已注册的 backend kernel</text>
+  <text class="text node-body" x="235" y="730" text-anchor="middle">CPU / CUDA / PrivateUse1 / Sparse…</text>
+
+  <rect x="445" y="650" width="310" height="92" rx="12" fill="#f0fdf4" stroke="#16a34a" stroke-width="1.5"/>
+  <text class="text layer-title" x="600" y="688" text-anchor="middle">Backend key</text>
+  <text class="text layer-body" x="600" y="715" text-anchor="middle">选择实际计算所在的后端实现</text>
+
+  <rect x="790" y="650" width="350" height="92" rx="12" fill="#fff7ed" stroke="#fdba74" stroke-width="1.5"/>
+  <text class="text node-title" x="965" y="681" text-anchor="middle">backend kernel 返回</text>
+  <text class="text node-body" x="965" y="709" text-anchor="middle">把输出 Tensor 交回</text>
+  <text class="text node-body" x="965" y="730" text-anchor="middle">外层 wrapper</text>
+
+  <!-- dtype -->
+  <rect x="60" y="780" width="350" height="92" rx="12" fill="#eff6ff" stroke="#93c5fd" stroke-width="1.5"/>
+  <text class="text node-title" x="235" y="811" text-anchor="middle">读取 scalar_type</text>
+  <text class="text node-body" x="235" y="839" text-anchor="middle">在 kernel 内进入 dtype switch</text>
+  <text class="text node-body" x="235" y="860" text-anchor="middle">选择对应的类型实例</text>
+
+  <rect x="445" y="780" width="310" height="92" rx="12" fill="#fffbeb" stroke="#eab308" stroke-width="1.5"/>
+  <text class="text layer-title" x="600" y="818" text-anchor="middle">dtype 分支（kernel 内部）</text>
+  <text class="text layer-body" x="600" y="845" text-anchor="middle">AT_DISPATCH_* / switch</text>
+
+  <rect x="790" y="780" width="350" height="92" rx="12" fill="#fff7ed" stroke="#fdba74" stroke-width="1.5"/>
+  <text class="text node-title" x="965" y="811" text-anchor="middle">类型实例返回结果</text>
+  <text class="text node-body" x="965" y="839" text-anchor="middle">回到 backend kernel</text>
+  <text class="text node-body" x="965" y="860" text-anchor="middle">结束内部 dtype 分支</text>
+
+  <!-- Kernel execution -->
+  <rect x="320" y="930" width="560" height="96" rx="16" fill="#ecfdf5" stroke="#059669" stroke-width="2" filter="url(#shadow)"/>
+  <text class="text node-title" x="600" y="967" text-anchor="middle">执行选定的计算 kernel</text>
+  <text class="text node-body" x="600" y="996" text-anchor="middle">读取输入、完成数值计算并生成输出 Tensor</text>
+
+  <!-- Downward call arrows -->
+  <path d="M235 196 L235 252" fill="none" stroke="#2563eb" stroke-width="3" marker-end="url(#arrow-down)"/>
+  <path d="M235 352 L235 382" fill="none" stroke="#2563eb" stroke-width="3" marker-end="url(#arrow-down)"/>
+  <path d="M235 482 L235 512" fill="none" stroke="#2563eb" stroke-width="3" marker-end="url(#arrow-down)"/>
+  <path d="M235 612 L235 642" fill="none" stroke="#2563eb" stroke-width="3" marker-end="url(#arrow-down)"/>
+  <path d="M235 742 L235 772" fill="none" stroke="#2563eb" stroke-width="3" marker-end="url(#arrow-down)"/>
+  <path d="M235 872 L235 978 Q235 996 253 996 L312 996" fill="none" stroke="#2563eb" stroke-width="3" marker-end="url(#arrow-down)"/>
+
+  <!-- Upward return arrows -->
+  <path d="M888 996 L947 996 Q965 996 965 978 L965 880" fill="none" stroke="#d97706" stroke-width="3" marker-end="url(#arrow-up)"/>
+  <path d="M965 780 L965 750" fill="none" stroke="#d97706" stroke-width="3" marker-end="url(#arrow-up)"/>
+  <path d="M965 650 L965 620" fill="none" stroke="#d97706" stroke-width="3" marker-end="url(#arrow-up)"/>
+  <path d="M965 520 L965 490" fill="none" stroke="#d97706" stroke-width="3" marker-end="url(#arrow-up)"/>
+  <path d="M965 390 L965 360" fill="none" stroke="#d97706" stroke-width="3" marker-end="url(#arrow-up)"/>
+  <path d="M965 260 L965 204" fill="none" stroke="#d97706" stroke-width="3" marker-end="url(#arrow-up)"/>
+
+  <rect x="140" y="1052" width="920" height="32" rx="8" fill="#f8fafc"/>
+  <text class="text note" x="600" y="1073" text-anchor="middle">wrapper key 是条件性的；一次调用未必经过图中的全部示例层，实际顺序由当前 DispatchKeySet 与 key 优先级决定。</text>
+</svg>
