@@ -1,0 +1,61 @@
+{
+  "schemaVersion": 1,
+  "slug": "pytorch-internals-overview",
+  "type": "article",
+  "status": "draft",
+  "title": "深入学习理解 PyTorch 第 1 节：基本内部机制",
+  "summary": "按照 Tensor、自动微分、代码结构、算子开发和工程工作流五个主题整理 PyTorch 内部机制的学习过程，并保留学习前的判断、读后修正和后续问题。",
+  "language": "zh-CN",
+  "journeyAt": "2026-07-03",
+  "authors": [
+    {
+      "id": "xifenm",
+      "name": "XiFenM",
+      "roles": ["author"]
+    }
+  ],
+  "topics": ["pytorch", "ai-infrastructure", "learning-process"],
+  "rights": {
+    "basis": "original",
+    "holder": "XiFenM",
+    "license": {
+      "kind": "all-rights-reserved"
+    }
+  },
+  "reviews": {
+    "content": {
+      "status": "pending",
+      "note": "发布前需要复核现代 PyTorch 实现相关描述，并确定实践部分的处理方式。"
+    },
+    "rights": {
+      "status": "pending",
+      "note": "发布前需要分别检查正文、原创 SVG 和第三方截图的权利状态。"
+    },
+    "sensitive": {
+      "status": "pending",
+      "note": "发布前需要检查工作经历和自研硬件相关内容。"
+    }
+  },
+  "series": {
+    "key": "pytorch-internals",
+    "title": "深入学习理解 PyTorch",
+    "position": 2
+  },
+  "resources": [
+    {
+      "kind": "source",
+      "label": "原始学习文章",
+      "repositoryPath": "PyTorch/深入学习理解PyTorch/1-Internal-Overview.md"
+    },
+    {
+      "kind": "source",
+      "label": "文章收口学习记录",
+      "repositoryPath": "PyTorch/log/2026-07-03-文章1收口.md"
+    }
+  ],
+  "validation": {
+    "status": "not-run",
+    "summary": "尚未针对准备公开的版本执行事实、链接、公式和 MDX 渲染检查。"
+  },
+  "featured": false
+}
