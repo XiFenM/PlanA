@@ -1,0 +1,678 @@
+<!doctype html>
+<!-- 本文件仅为可视化版本；简历内容的唯一真源为 CV.md，请勿单独维护事实口径。 -->
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="模型部署与 LLM 推理框架优化工程师简历">
+  <title>xxx｜模型部署与推理框架优化工程师</title>
+  <style>
+    :root {
+      --ink: #17242f;
+      --muted: #5b6975;
+      --navy: #173b57;
+      --navy-deep: #102b40;
+      --teal: #2a7a78;
+      --teal-soft: #eaf4f3;
+      --line: #d7e0e5;
+      --paper: #ffffff;
+      --canvas: #e9eef1;
+      --soft: #f4f7f8;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      background: var(--canvas);
+      color: var(--ink);
+      font-family: "Noto Sans CJK SC", "Source Han Sans SC", "Microsoft YaHei", "PingFang SC", Arial, sans-serif;
+      font-size: 10pt;
+      line-height: 1.52;
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+    }
+
+    body {
+      margin: 0;
+      padding: 18mm 0;
+      background:
+        radial-gradient(circle at 15% 5%, rgba(42, 122, 120, 0.11), transparent 28%),
+        var(--canvas);
+    }
+
+    button,
+    input {
+      font: inherit;
+    }
+
+    .print-actions {
+      position: fixed;
+      z-index: 10;
+      top: 18px;
+      right: 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 10px 8px 14px;
+      border: 1px solid rgba(23, 59, 87, 0.12);
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.94);
+      box-shadow: 0 8px 24px rgba(16, 43, 64, 0.12);
+      color: var(--muted);
+      font-size: 8.5pt;
+      backdrop-filter: blur(8px);
+    }
+
+    .print-actions button {
+      border: 0;
+      border-radius: 999px;
+      padding: 7px 15px;
+      background: var(--navy);
+      color: #fff;
+      cursor: pointer;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+    }
+
+    .print-actions button:hover {
+      background: var(--teal);
+    }
+
+    .page {
+      position: relative;
+      width: 210mm;
+      height: 297mm;
+      margin: 0 auto 14mm;
+      padding: 13mm 15mm 12mm;
+      overflow: hidden;
+      background: var(--paper);
+      box-shadow: 0 18px 46px rgba(18, 42, 59, 0.16);
+    }
+
+    .page::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      right: 0;
+      left: 0;
+      height: 4.5mm;
+      background: linear-gradient(90deg, var(--navy-deep) 0 66%, var(--teal) 66% 100%);
+    }
+
+    .page-header {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 14mm;
+      align-items: end;
+      padding: 5mm 0 6mm;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .identity h1 {
+      margin: 0;
+      color: var(--navy-deep);
+      font-size: 27pt;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      line-height: 1.05;
+    }
+
+    .identity .role {
+      margin: 2.4mm 0 0;
+      color: var(--teal);
+      font-size: 11.5pt;
+      font-weight: 700;
+      letter-spacing: 0.03em;
+    }
+
+    .tech-strip {
+      display: flex;
+      align-items: center;
+      gap: 3mm;
+      margin-top: 2.6mm;
+      padding: 1.6mm 3mm;
+      border-left: 2mm solid var(--teal);
+      background: var(--soft);
+      color: var(--muted);
+      font-size: 8.1pt;
+      font-weight: 650;
+      letter-spacing: 0.015em;
+      white-space: nowrap;
+    }
+
+    .tech-strip strong {
+      color: var(--navy);
+      font-weight: 800;
+    }
+
+    .contact {
+      display: grid;
+      gap: 1.4mm;
+      min-width: 68mm;
+      color: var(--muted);
+      font-size: 8.8pt;
+      text-align: right;
+    }
+
+    .contact-row {
+      display: flex;
+      justify-content: flex-end;
+      gap: 3mm;
+      white-space: nowrap;
+    }
+
+    .contact-label {
+      color: var(--navy);
+      font-weight: 700;
+    }
+
+    .section {
+      margin-top: 5.2mm;
+    }
+
+    .section-title {
+      display: flex;
+      align-items: center;
+      gap: 3mm;
+      margin: 0 0 3.2mm;
+      color: var(--navy-deep);
+      font-size: 13.5pt;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      line-height: 1.2;
+    }
+
+    .section-title::before {
+      content: "";
+      width: 3.2mm;
+      height: 3.2mm;
+      border-radius: 1mm;
+      background: var(--teal);
+      transform: rotate(45deg);
+      flex: 0 0 auto;
+    }
+
+    .section-title::after {
+      content: "";
+      height: 1px;
+      flex: 1;
+      background: linear-gradient(90deg, var(--line), transparent);
+    }
+
+    .summary-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2.3mm 4mm;
+    }
+
+    .summary-item {
+      position: relative;
+      padding: 2.5mm 3mm 2.5mm 8mm;
+      border: 1px solid #e0e7ea;
+      border-radius: 2mm;
+      background: linear-gradient(145deg, #fff, var(--soft));
+      color: #31414d;
+      font-size: 8.65pt;
+    }
+
+    .summary-item::before {
+      content: attr(data-index);
+      position: absolute;
+      top: 2.5mm;
+      left: 2.6mm;
+      display: grid;
+      width: 4mm;
+      height: 4mm;
+      place-items: center;
+      border-radius: 50%;
+      background: var(--teal-soft);
+      color: var(--teal);
+      font-size: 7.2pt;
+      font-weight: 800;
+    }
+
+    .experience {
+      margin-top: 3.7mm;
+    }
+
+    .experience-head {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 6mm;
+      align-items: baseline;
+      margin-bottom: 2.4mm;
+    }
+
+    .experience-head h3 {
+      margin: 0;
+      color: var(--navy);
+      font-size: 11.4pt;
+      line-height: 1.25;
+    }
+
+    .experience-head h3 span {
+      color: var(--muted);
+      font-size: 9.2pt;
+      font-weight: 650;
+    }
+
+    .period {
+      color: var(--muted);
+      font-size: 8.5pt;
+      font-weight: 650;
+      white-space: nowrap;
+    }
+
+    .impact-list {
+      display: grid;
+      gap: 2.25mm;
+    }
+
+    .impact {
+      position: relative;
+      padding-left: 5.2mm;
+      color: #273844;
+      font-size: 8.75pt;
+      line-height: 1.54;
+      break-inside: avoid;
+    }
+
+    .impact::before {
+      content: "";
+      position: absolute;
+      top: 0.58em;
+      left: 0;
+      width: 2.2mm;
+      height: 2.2mm;
+      border: 1.1px solid var(--teal);
+      border-radius: 50%;
+      background: #fff;
+    }
+
+    .impact strong {
+      color: var(--navy-deep);
+      font-weight: 800;
+    }
+
+    .metric {
+      display: inline-block;
+      margin: 0 0.45mm;
+      padding: 0 1.2mm;
+      border-radius: 1mm;
+      background: var(--teal-soft);
+      color: #176b69;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+
+    .skill-matrix {
+      display: grid;
+      gap: 2.5mm;
+    }
+
+    .skill-row {
+      display: grid;
+      grid-template-columns: 37mm 1fr;
+      gap: 4.5mm;
+      padding: 2.8mm 3.2mm;
+      border-left: 2.2mm solid var(--teal);
+      background: var(--soft);
+      break-inside: avoid;
+    }
+
+    .skill-row h3 {
+      margin: 0;
+      color: var(--navy);
+      font-size: 9.5pt;
+      line-height: 1.35;
+    }
+
+    .skill-row ul {
+      display: grid;
+      gap: 1.1mm;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .skill-row li {
+      position: relative;
+      padding-left: 3.6mm;
+      color: #33444f;
+      font-size: 8.1pt;
+      line-height: 1.43;
+    }
+
+    .skill-row li::before {
+      content: "";
+      position: absolute;
+      top: 0.55em;
+      left: 0;
+      width: 1.4mm;
+      height: 1.4mm;
+      border-radius: 50%;
+      background: var(--teal);
+    }
+
+    .skill-row strong {
+      color: var(--navy-deep);
+    }
+
+    code {
+      padding: 0;
+      background: transparent;
+      color: inherit;
+      font-family: inherit;
+      font-size: inherit;
+      font-weight: 700;
+    }
+
+    .bottom-grid {
+      display: grid;
+      grid-template-columns: 0.9fr 1.1fr;
+      gap: 6mm;
+      margin-top: 4.4mm;
+    }
+
+    .education-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .education-grid .education-list {
+      grid-template-columns: 1fr 1fr;
+      gap: 6mm;
+    }
+
+    .education-grid .education-item + .education-item {
+      border-top: 0;
+      border-left: 1px dashed var(--line);
+      padding-top: 0;
+      padding-left: 6mm;
+    }
+
+    .compact-card {
+      padding: 3mm 3.5mm;
+      border: 1px solid var(--line);
+      border-radius: 2mm;
+      background: #fff;
+      break-inside: avoid;
+    }
+
+    .compact-card h2 {
+      margin: 0 0 2.4mm;
+      color: var(--navy-deep);
+      font-size: 11pt;
+      line-height: 1.2;
+    }
+
+    .compact-card h3 {
+      margin: 0;
+      color: var(--navy);
+      font-size: 9.1pt;
+      line-height: 1.3;
+    }
+
+    .compact-card .period {
+      display: block;
+      margin: 0.8mm 0 1.6mm;
+    }
+
+    .compact-card p,
+    .compact-card li {
+      margin: 0;
+      color: #3d4d58;
+      font-size: 7.9pt;
+      line-height: 1.42;
+    }
+
+    .compact-card ul {
+      margin: 1.2mm 0 0;
+      padding-left: 4mm;
+    }
+
+    .education-list {
+      display: grid;
+      gap: 2.5mm;
+    }
+
+    .education-item + .education-item {
+      padding-top: 2.5mm;
+      border-top: 1px dashed var(--line);
+    }
+
+    .degree-line {
+      color: var(--muted);
+      font-size: 7.8pt;
+    }
+
+    .degree-line strong {
+      color: var(--navy);
+    }
+
+    .page-footer {
+      position: absolute;
+      right: 15mm;
+      bottom: 6.2mm;
+      left: 15mm;
+      display: flex;
+      justify-content: space-between;
+      border-top: 1px solid var(--line);
+      padding-top: 1.8mm;
+      color: #82909a;
+      font-size: 7pt;
+      letter-spacing: 0.04em;
+    }
+
+    @media (max-width: 900px) {
+      body {
+        padding: 0;
+      }
+
+      .print-actions {
+        top: auto;
+        right: 12px;
+        bottom: 12px;
+      }
+
+      .print-actions span {
+        display: none;
+      }
+
+      .page {
+        width: 100%;
+        height: auto;
+        min-height: 100vh;
+        margin: 0;
+        padding: 13mm 8mm 16mm;
+        overflow: visible;
+        box-shadow: none;
+      }
+
+      .page-header,
+      .summary-grid,
+      .bottom-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .contact {
+        min-width: 0;
+        text-align: left;
+      }
+
+      .contact-row {
+        justify-content: flex-start;
+      }
+
+      .skill-row {
+        grid-template-columns: 1fr;
+        gap: 1.5mm;
+      }
+
+      .page-footer {
+        display: none;
+      }
+    }
+
+    @page {
+      size: A4;
+      margin: 0;
+    }
+
+    @media print {
+      html,
+      body {
+        width: 210mm;
+        margin: 0;
+        padding: 0;
+        background: #fff;
+        print-color-adjust: exact;
+        -webkit-print-color-adjust: exact;
+      }
+
+      .print-actions {
+        display: none !important;
+      }
+
+      .page {
+        width: 210mm;
+        height: 297mm;
+        margin: 0;
+        box-shadow: none;
+        break-after: page;
+        page-break-after: always;
+      }
+
+      .page:last-of-type {
+        break-after: auto;
+        page-break-after: auto;
+      }
+    }
+  </style>
+</head>
+<body>
+  <aside class="print-actions" aria-label="打印操作">
+    <span>A4 · 两页 · 建议开启背景图形</span>
+    <button type="button" onclick="window.print()">打印 / 导出 PDF</button>
+  </aside>
+
+  <main aria-label="个人简历">
+    <article class="page" data-page="1">
+      <header class="page-header">
+        <div class="identity">
+          <h1>xxx</h1>
+          <p class="role">模型部署 · LLM 推理框架优化 · AI 框架性能优化</p>
+        </div>
+        <div class="contact" aria-label="联系方式">
+          <div class="contact-row"><span class="contact-label">手机</span><span>待填写</span></div>
+          <div class="contact-row"><span class="contact-label">邮箱</span><span>待填写</span></div>
+        </div>
+      </header>
+      <div class="tech-strip"><strong>核心技术栈</strong><span>Python · C/C++ · PyTorch · vLLM · SGLang · Triton · TileLang · DeepSpeed · Megatron-LM</span></div>
+
+      <section class="section" aria-labelledby="summary-title">
+        <h2 class="section-title" id="summary-title">个人概述</h2>
+        <div class="summary-grid">
+          <div class="summary-item" data-index="01">具备 3 年以上软件开发经验，近 2 年专注国产非 CUDA 架构加速芯片上的大模型部署、推理框架适配和性能优化，长期工作在 <code>PyTorch</code>、<code>vLLM</code>、通信库与高性能算子的交叉层。</div>
+          <div class="summary-item" data-index="02">具备 <code>vLLM</code> 源码级二次开发经验，参与 Qwen、Llama、DeepSeek、Ernie 等模型及多模态、Omni 模型的端到端适配，能够从模型执行链路定位到算子、通信库和运行时。</div>
+          <div class="summary-item" data-index="03">擅长以 Profile、算子级对比、控制变量实验和 Replay 回归定位性能及精度问题，能够处理异步拷贝竞态、混合精度误差、内存排布、跨卡通信和硬件稳定性等复杂问题。</div>
+          <div class="summary-item" data-index="04">具备跨团队交付经验，可协同模型、算子、通信、运行时、硬件及云服务团队完成模型上线、客户支持和第三方测评。</div>
+        </div>
+      </section>
+
+      <section class="section" aria-labelledby="experience-title">
+        <h2 class="section-title" id="experience-title">工作经历</h2>
+        <div class="experience">
+          <div class="experience-head">
+            <h3>中昊芯英/上海泰则 <span>｜AI 框架开发工程师</span></h3>
+            <span class="period">2024.06 — 至今</span>
+          </div>
+          <div class="impact-list">
+            <div class="impact"><strong>推理框架与模型适配：</strong>负责 <code>vLLM</code>、<code>PyTorch</code> 在自研加速芯片上的适配和演进，完成 Qwen2.5/3-VL、Ernie4.5-VL、Qwen3-Omni、Llama、DeepSeek 等模型的功能接入、精度对齐、性能调优与部署支持，覆盖文本、图像、视频和语音链路。</div>
+            <div class="impact"><strong>多模态链路优化：</strong>统一多模态 Fused Rotary Embedding 接口，推进 M-RoPE、Tile 级 Col-major Matmul 等框架能力；通过异构调度、内存排布调整和算子融合减少 Host-Device 拷贝及非连续访存。</div>
+            <div class="impact"><strong>算子与端到端性能优化：</strong>围绕 Conv3d、RoPE、Matmul、Attention 等热点开展 Profile、形状分析、调度调整和算子组协同；在 Qwen3-VL 链路完成 Conv3d 优化与验证，显著降低显存占用并使首 Token 延迟下降 <span class="metric">40%</span>。</div>
+            <div class="impact"><strong>客户模型部署：</strong>负责 ECG 多模态模型的环境搭建、重复输出问题修复和端到端性能优化，通过 Col-major Matmul、热点算子优化与服务链路调整，将端到端推理耗时从 <span class="metric">40 秒以上</span>降低至 <span class="metric">10–15 秒</span>，并交付云服务部署。</div>
+            <div class="impact"><strong>复杂精度与稳定性调试：</strong>针对 <code>vLLM V1</code> 异步 H2D/D2D 拷贝引发的低概率精度异常，建立全链路控制开关、统一 Replay、Copy/Consumer Trace、回读校验和分层控制变量实验，将随机问题逐步收敛至高风险拷贝与运行时可见性路径，目前根因闭环中。</div>
+            <div class="impact"><strong>分布式生态适配：</strong>参与 <code>DeepSpeed ZeRO-3</code>、<code>Megatron-LM Tensor Parallel</code> 与自研通信库适配，定位并修复数据类型、Padding、ReduceScatter、AllGather、Broadcast、同步和流语义相关问题，将关键用例纳入 CI。</div>
+            <div class="impact"><strong>测评与跨团队交付：</strong>对接支撑信通院国测、上海 AI Lab、绛溪实验室等外部测评，负责环境、流程、精度验证、性能分析和问题闭环；协同算子、通信、运行时、硬件、销售及云服务团队，将模型侧问题转化为可复现 Case 和可执行的优化需求。</div>
+            <div class="impact"><strong>工程沉淀：</strong>建设 Profile Point、模型压测与异常分析工具，沉淀 Col-major Matmul 流程和模型压测文档；完成 Col-major Matmul 相关专利申请并获受理。</div>
+          </div>
+        </div>
+
+        <div class="experience">
+          <div class="experience-head">
+            <h3>国药控股数字科技 <span>｜助理架构师</span></h3>
+            <span class="period">2023.04 — 2024.04（2023.04 — 2023.06 为实习）</span>
+          </div>
+          <div class="impact-list">
+            <div class="impact">参与数据质量监控平台建设，打通数据入湖、质量规则、异常监控和可视化链路，并开发数据看板解析工具辅助指标血缘追踪与异常定位。</div>
+          </div>
+        </div>
+      </section>
+
+      <footer class="page-footer">
+        <span>模型部署与推理框架优化工程师</span>
+        <span>01 / 02</span>
+      </footer>
+    </article>
+
+    <article class="page" data-page="2">
+      <section class="section" aria-labelledby="skills-title">
+        <h2 class="section-title" id="skills-title">专业技能</h2>
+        <div class="skill-matrix">
+          <div class="skill-row">
+            <h3>推理框架与<br>模型部署</h3>
+            <ul>
+              <li><strong>框架开发：</strong>深入理解 <code>vLLM</code> 模型执行、调度、KV Cache 与 PagedAttention，具备 V0/V1 框架适配、模型接入、功能扩展、性能分析和稳定性调试经验；熟悉 <code>SGLang</code> 的 RadixAttention、结构化输出与调度机制。</li>
+              <li><strong>推理优化：</strong>掌握 Continuous Batching、Chunked Prefill、Prefix Cache、Speculative Decoding、PD 分离、量化和多模态推理，可围绕 TTFT、TPOT、吞吐、显存和并发扩展性设计优化方案。</li>
+              <li><strong>模型架构：</strong>熟悉 Qwen、Llama、DeepSeek、Ernie，以及 MHA/MQA/GQA/MLA、RoPE/M-RoPE、MoE、MTP；有图像、视频、语音等多模态模型部署经验。</li>
+            </ul>
+          </div>
+
+          <div class="skill-row">
+            <h3>PyTorch 与<br>分布式系统</h3>
+            <ul>
+              <li><strong>PyTorch Internals：</strong>理解 Tensor、Storage、Stride、Dispatcher、Autograd、Caching Allocator 和 <code>PrivateUse1</code> 后端接入，具备自定义算子注册、数据拷贝链路和框架级调试经验。</li>
+              <li><strong>分布式训练与推理：</strong>熟悉 <code>DeepSpeed</code>、<code>Megatron-LM</code>、FSDP，理解 ZeRO、TP、SP、PP、EP 等并行策略及通信时序。</li>
+              <li><strong>集合通信：</strong>理解 Ring/Tree AllReduce、ReduceScatter、AllGather，具备自研通信后端接口适配、精度排查、同步语义分析和多卡性能定位经验。</li>
+            </ul>
+          </div>
+
+          <div class="skill-row">
+            <h3>高性能计算与<br>工程能力</h3>
+            <ul>
+              <li><strong>算子开发：</strong>具备自研加速芯片 Kernel 开发与调优经验，理解线程组织、存储层次、访存合并、Double Buffer、软件流水线、算子融合和数值稳定性；熟悉 <code>Triton</code>、<code>TileLang</code> Tile 级编程及 FlashAttention 原理。</li>
+              <li><strong>性能分析：</strong>能够使用框架 Profiler、Trace、Nsight Systems/Compute 和 Roofline 拆解 Host 调度、计算、访存、通信与框架开销，建立可重复的 Benchmark 与回归测试。</li>
+              <li><strong>软件工程：</strong>熟练使用 Python、C/C++、Linux、Git 和 Bash，具备跨仓库开发、CI 测试、问题复现、技术文档及客户交付环境建设经验。</li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <div class="bottom-grid education-grid">
+        <section class="compact-card" aria-labelledby="education-title">
+          <h2 id="education-title">教育背景</h2>
+          <div class="education-list">
+            <div class="education-item">
+              <h3>复旦大学｜应用统计 硕士</h3>
+              <div class="degree-line">大数据学院｜2021.09 — 2023.06</div>
+              <p>研究方向：图深度学习与强化学习智能体</p>
+            </div>
+            <div class="education-item">
+              <h3>上海大学｜数学与应用数学 学士</h3>
+              <div class="degree-line">理学院｜2017.09 — 2021.06</div>
+              <p>学业优秀一等奖学金</p>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <footer class="page-footer">
+        <span>模型部署与推理框架优化工程师</span>
+        <span>02 / 02</span>
+      </footer>
+    </article>
+  </main>
+</body>
+</html>

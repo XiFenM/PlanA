@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What this repo is
 
-Not a code project. This is a Markdown personal knowledge vault used by an AI Infra engineer (PyTorch PrivateUse1 backend + custom NCCL on a non-NV accelerator) for a 5-month / 20-week interview sprint plus long-term notes. All content is Chinese Markdown; English is preserved for proper nouns (FlashAttention, PagedAttention, etc.). There is no build system, no tests, and no code to run — your work is reading, writing, and editing Markdown.
+Not a code project. This is a Markdown personal knowledge vault used by an AI Infra engineer working on PyTorch/vLLM adaptation, communication, and performance optimization for a non-NV accelerator, for a 5-month / 20-week interview sprint plus long-term notes. All content is Chinese Markdown; English is preserved for proper nouns (FlashAttention, PagedAttention, etc.). There is no build system, no tests, and no code to run — your work is reading, writing, and editing Markdown.
 
 The README (`README.md`) is the canonical entry point and source-of-truth for the resource subscription list (`§5`). When the README and a module's `学习指引.md §长期订阅` disagree, README wins.
 

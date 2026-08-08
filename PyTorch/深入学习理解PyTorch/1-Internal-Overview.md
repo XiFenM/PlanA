@@ -722,7 +722,7 @@ torch/      ← Python 包：.py + 生成的 _C 绑定
 
 c10 提供多个后端共同依赖的设备无关抽象，例如 `TensorImpl`、`DispatchKey` 和 `Dispatcher`。这些类型不能依赖某个具体设备实现，否则 CPU、CUDA、移动端和 PrivateUse1 等后端就难以共享同一套调度基础设施。
 
-这也解释了我的工作为什么会涉及多个目录：PrivateUse1 的 `DispatchKey` 定义在 `c10/core/DispatchKey.h`，算子 kernel 通过 ATen 相关代码注册到 dispatcher，自定义 ProcessGroup 则位于 `torch/csrc/distributed/c10d`。
+第三方加速器适配通常会涉及多个目录：PrivateUse1 的 `DispatchKey` 定义在 `c10/core/DispatchKey.h`，算子 kernel 通过 ATen 相关代码注册到 dispatcher，自定义 ProcessGroup 则位于 `torch/csrc/distributed/c10d`。
 
 “kernel 实现位于哪里”和“kernel 是否已注册”是两个问题。函数体可以位于 `aten/native/`，但 dispatcher 还需要建立 `(算子, DispatchKey) → kernel` 的映射。这个映射可以由 codegen 生成，也可以通过 `TORCH_LIBRARY_IMPL` 等接口显式注册，$\S$ 4.1 会继续讨论。
 

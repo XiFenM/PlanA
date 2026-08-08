@@ -49,7 +49,7 @@
 | P0 | MoE Expert Parallelism | routing、dispatch/combine、all-to-all、EPLB、8–64 GPU | EP 部署图、真实源码契约、MORI-EP/AITER 插入点和自研通信适配方案 |
 | P0 | PD 分离与 KV 传输 | prefill/decode 调度、KV ownership、MORI-IO、UMBP | PD 状态机、connector 契约、自研传输/存储改造卡和故障矩阵 |
 | P0 | MORI 运行时边界 | SHMEM/IR、symmetric memory、EP/IO 与 UMBP 的分层关系 | MORI 组件图、buffer/device state 生命周期和已实现/WIP 矩阵 |
-| P0 | 混合语言扩展 | Python/C++/HIP、PyTorch custom operator | 真实 op 注册调用链、CUDA/ROCm/自研后端迁移矩阵和既有项目证据 |
+| P0 | 混合语言扩展 | Python/C++/HIP、PyTorch custom operator | 真实 op 注册调用链、CUDA/ROCm/自研后端迁移矩阵和既有源码/调试证据 |
 | P0 | 性能工程 | throughput、TTFT、ITL、profiling、优化归因 | 有环境时做真实 baseline/trace；无环境时交可执行 benchmark、公开结果审计和理论下限 |
 | P0 | 开源协作 | upstream PR、review、跨团队维护 | 直接支撑 Change Card 的上游验证锚点；条件合适时再升级为 patch/PR |
 | P1 | GPU 通信 | RDMA、QP/CQ/MR、IBGDA、NCCL/RCCL/MPI | 数据路径图、通信量模型、测试设计；有环境时再做 collective 实验 |
@@ -347,7 +347,7 @@ ep-pd-porting-dossier/
 - 同一指引资料 4：vLLM V1 Engine 架构与当前源码；本周源码走读和对应实践产出共用一笔时间。
 - 资料 4b、[vLLM v0.25.0 Release](https://github.com/vllm-project/vllm/releases/tag/v0.25.0)及当前源码：厘清 **V1 Engine 不等于“vLLM V2 Engine”**。MRV2 是 V1 Engine 内部的新 model runner，并已成为 dense model 的默认路径；目标模型实际走 MRV1 还是 MRV2，必须以固定版本的运行日志和 fallback 原因为准。
 - [vLLM-ATOM 接入案例](https://rocm.blogs.amd.com/software-tools-optimization/vllm-atom/README.html)与 [SGLang-ATOM 接入案例](https://rocm.blogs.amd.com/software-tools-optimization/atom-sglang-inference/README.html)：合计不超过 2h，只抽取 `serving framework → ATOM → AITER / MORI / RCCL` 的注册、调用和 ownership 边界。
-- [PyTorch 学习指引](../PyTorch/学习指引.md)中 custom op、Dispatcher、PrivateUse1 相关资料，复用已有 Ezyang 和真实后端经验；只追一个当前 vLLM/AITER op 的 schema → fake/meta → C++/HIP registration → DeviceGuard/stream → build/test 调用链，不再实现独立 reference op。
+- [PyTorch 学习指引](../PyTorch/学习指引.md)中 custom op、Dispatcher、PrivateUse1 相关资料，复用已有 Ezyang 学习与框架调试经验；只追一个当前 vLLM/AITER op 的 schema → fake/meta → C++/HIP registration → DeviceGuard/stream → build/test 调用链，不再实现独立 reference op。
 - vLLM 当前源码；启动当天固定稳定 release/tag 或 commit SHA，不按本文创建日期预设目录或行为。
 
 选读：

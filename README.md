@@ -8,7 +8,7 @@
 
 ## 1. 仓库定位
 
-我是一名 AI Infra 框架开发工程师，主战场是**自研非 NV 加速芯片**的 PyTorch PrivateUse1 后端 + 改造过的 NCCL 通信库。这个仓库有两层用途：
+我是一名 AI Infra 框架开发工程师，主要从事**自研非 NV 加速芯片**上的 PyTorch/vLLM 适配、通信与性能优化。这个仓库有两层用途：
 
 - **冲刺层（W1–W20）**：5 个月内进入面试窗口，主攻**推理框架 > 训练框架 > 算子开发**三条路线，详见 [计划/主计划.md](计划/主计划.md)。
 - **长期层（W20 之后）**：作为持续学习的根目录——周报会一直生成，新资料会沉淀到对应板块，自己的实践结果 / 复盘 / 论文笔记 / 工程踩坑都会进来。仓库会比"求职项目"活得长。
@@ -131,7 +131,7 @@ PlanA/
 | PyTorch 官方博客 | https://pytorch.org/blog/ | release / OpenReg / FSDP2 / TorchTitan |
 | Ezyang Blog | https://blog.ezyang.com/ | Dispatcher/Dynamo/Inductor/Autograd 维护者本人 |
 | PyTorch Dev-Discuss | https://dev-discuss.pytorch.org/ | RFC、设计讨论、`hardware-backends` 分类对自研芯片后端尤其重要 |
-| Accelerator Integration WG | https://github.com/pytorch-fdn/accelerator-integration-wg | RFC-0045 / RFC-0050 出处，对本职最高价值 |
+| Accelerator Integration WG | https://github.com/pytorch-fdn/accelerator-integration-wg | RFC-0045 / RFC-0050 出处，第三方加速器接入重点资料 |
 | Horace He "Thonking" | https://www.thonking.ai/ | torch.compile / GPT-Fast / batch-invariance 视角 |
 | PyTorch Conference YouTube | 每年 10 月 | accelerator abstraction / torch.compile 主线 |
 | Key Issues 订阅 | #166205（PrivateUse1 graph capture）/ #158917（OpenReg）/ RFC-0050 | |
