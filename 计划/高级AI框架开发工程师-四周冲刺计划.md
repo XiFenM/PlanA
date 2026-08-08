@@ -3,7 +3,7 @@
 > - 创建日期：2026-08-08
 > - 最近审阅：2026-08-08（依据 2026-W32 扩展周更，并按自研芯片实务背景重排）
 > - 状态：**候选方案（未启动）**
-> - 对应岗位：[高级AI框架开发工程师.md](高级AI框架开发工程师.md)
+> - 对应岗位：[英文原文](<../Job Description/AI框架方向/高级AI框架开发工程师.md>) / [中文翻译](<../Job Description/AI框架方向/高级AI框架开发工程师（中文）.md>)
 > - 周期：4 周；毛预算 130h，JD 专项净投入约 109h
 > - 主框架：vLLM；vLLM/SGLang 的 ATOM、MORI 接入做窄范围必读对照
 > - 核心工件：`EP/PD 自研芯片适配设计与验证包`
@@ -15,8 +15,8 @@
 
 这是一份针对特定 JD 的**临时旁路冲刺方案**，不是新的全局主计划。
 
-- [主计划](../../计划/主计划.md)仍是仓库唯一长期主计划。
-- 创建本文件不代表冲刺已经开始，也不修改[学习断点](../../计划/学习断点.md)、模块进度或累计工时。
+- [主计划](主计划.md)仍是仓库唯一长期主计划。
+- 创建本文件不代表冲刺已经开始，也不修改[学习断点](学习断点.md)、模块进度或累计工时。
 - 只有用户明确说“开始执行 JD 冲刺”“按这份计划开始学习”或同义指令后，才进入执行状态。
 - 本文件整体属于一个 JD 专项，但全局断点的“模块”必须指向当天实际任务所属模块；做 vLLM/PD 时写“推理框架”，做 custom op 时写“PyTorch”，做 RDMA/DeepEP 通信时写“训练框架与分布式”。各模块按实际学习归属更新 `进度.md`，不建立第二套累计账。
 - 启动前必须把当时的模块、断点类型、已完成内容和返回位置抄入 §16.1“启动前返回快照”。
@@ -76,7 +76,7 @@
 
 ### 2.1 可以直接复用的经历
 
-[现有自我介绍](../../面试准备/self-introduction.md)已经记录了四类高度相关经验：
+[现有自我介绍](../面试准备/self-introduction.md)已经记录了四类高度相关经验：
 
 - 非 NV 自研芯片上的 PyTorch 后端与 vLLM 适配。
 - KV Cache 合并机制带来约 30% 吞吐提升。
@@ -283,7 +283,7 @@ ep-pd-porting-dossier/
 
 ## 5. 时间预算与日常节奏
 
-沿用[主计划](../../计划/主计划.md)的工作日 4.5h、周末一个学习日 10h 节奏。主计划中的 Leetcode 保留，因此 32.5h 不是全部投入 JD。
+沿用[主计划](主计划.md)的工作日 4.5h、周末一个学习日 10h 节奏。主计划中的 Leetcode 保留，因此 32.5h 不是全部投入 JD。
 
 | 项目 | 每周 | 四周 |
 |---|---:|---:|
@@ -343,11 +343,11 @@ ep-pd-porting-dossier/
 
 必读：
 
-- [推理框架学习指引](../../推理框架/学习指引.md) §B 资料 3：只复习 page-based KV、block table、分配与复用等概念。当前 vLLM 已删除 legacy `PagedAttention` 实现，不能再把旧类名或旧文件路径当作源码入口。
+- [推理框架学习指引](../推理框架/学习指引.md) §B 资料 3：只复习 page-based KV、block table、分配与复用等概念。当前 vLLM 已删除 legacy `PagedAttention` 实现，不能再把旧类名或旧文件路径当作源码入口。
 - 同一指引资料 4：vLLM V1 Engine 架构与当前源码；本周源码走读和对应实践产出共用一笔时间。
 - 资料 4b、[vLLM v0.25.0 Release](https://github.com/vllm-project/vllm/releases/tag/v0.25.0)及当前源码：厘清 **V1 Engine 不等于“vLLM V2 Engine”**。MRV2 是 V1 Engine 内部的新 model runner，并已成为 dense model 的默认路径；目标模型实际走 MRV1 还是 MRV2，必须以固定版本的运行日志和 fallback 原因为准。
 - [vLLM-ATOM 接入案例](https://rocm.blogs.amd.com/software-tools-optimization/vllm-atom/README.html)与 [SGLang-ATOM 接入案例](https://rocm.blogs.amd.com/software-tools-optimization/atom-sglang-inference/README.html)：合计不超过 2h，只抽取 `serving framework → ATOM → AITER / MORI / RCCL` 的注册、调用和 ownership 边界。
-- [PyTorch 学习指引](../../PyTorch/学习指引.md)中 custom op、Dispatcher、PrivateUse1 相关资料，复用已有 Ezyang 和真实后端经验；只追一个当前 vLLM/AITER op 的 schema → fake/meta → C++/HIP registration → DeviceGuard/stream → build/test 调用链，不再实现独立 reference op。
+- [PyTorch 学习指引](../PyTorch/学习指引.md)中 custom op、Dispatcher、PrivateUse1 相关资料，复用已有 Ezyang 和真实后端经验；只追一个当前 vLLM/AITER op 的 schema → fake/meta → C++/HIP registration → DeviceGuard/stream → build/test 调用链，不再实现独立 reference op。
 - vLLM 当前源码；启动当天固定稳定 release/tag 或 commit SHA，不按本文创建日期预设目录或行为。
 
 选读：
@@ -404,8 +404,8 @@ rg -n "register_fake|TORCH_LIBRARY|torch\.library" vllm
 
 必读：
 
-- [推理框架学习指引](../../推理框架/学习指引.md) §F 资料 16：只抽取 DeepSeek-V3 的 top-k routing、expert/rank 映射和负载倾斜；资料 19：当前 vLLM Fused MoE 入口。
-- 同一指引资料 17 与[训练框架与分布式学习指引](../../训练框架与分布式/学习指引.md) §J.1：只读 DeepEP README、Normal/Low-Latency 路径、IBGDA 与 symmetric heap 的最小概念。NIXL 移到 W3，不再作为 EP 前置。
+- [推理框架学习指引](../推理框架/学习指引.md) §F 资料 16：只抽取 DeepSeek-V3 的 top-k routing、expert/rank 映射和负载倾斜；资料 19：当前 vLLM Fused MoE 入口。
+- 同一指引资料 17 与[训练框架与分布式学习指引](../训练框架与分布式/学习指引.md) §J.1：只读 DeepEP README、Normal/Low-Latency 路径、IBGDA 与 symmetric heap 的最小概念。NIXL 移到 W3，不再作为 EP 前置。
 - [MORI 官方仓库](https://github.com/ROCm/mori)：启动当天固定 commit，按 `MORI-SHMEM/IR 最小基础 → MORI-EP dispatch/combine → Python API/tests/benchmark` 的顺序走读；重点记录 symmetric allocation、地址转换、device state、buffer ownership 和同步边界。
 - [vLLM MORI-EP 接入 PR](https://github.com/vllm-project/vllm/pull/28664)：确认实际组合是 `MoriPrepareAndFinalize + AiterExperts`，区分通信侧的 prepare/finalize 与专家计算侧的 AITER，不把两者混成一个组件。
 - [MoonEP 官方仓库](https://github.com/MoonshotAI/MoonEP)与 [Kimi K3 技术报告](https://arxiv.org/abs/2607.24653) §5.2.1，合计不超过 1h；只比较在线冗余专家、权重预取、固定 `S×K` shape、zero-copy 和高 skew 行为。
@@ -458,7 +458,7 @@ DeepEP 在两个模块中重复出现，只学习一次并按主要产出归属�
 
 必读：
 
-- [推理框架学习指引](../../推理框架/学习指引.md) §G 资料 21：DistServe，只抽取 PD 的资源隔离、调度和指标动机，不重做全文精读。
+- [推理框架学习指引](../推理框架/学习指引.md) §G 资料 21：DistServe，只抽取 PD 的资源隔离、调度和指标动机，不重做全文精读。
 - [vLLM Disaggregated Prefilling 官方文档](https://docs.vllm.ai/en/stable/features/disagg_prefill/)、当前 `vllm/distributed/kv_transfer` 源码和 [ExampleConnector](https://docs.vllm.ai/en/latest/examples/disaggregated/example_connector/)：先建立实际 connector ownership、scheduler/worker 边界与生命周期。
 - [vLLM × TileRT KVConnector 案例](https://vllm.ai/blog/2026-07-14-vllm-tilert-pd)：作为真实 `KVConnectorBase_V1` 接入样本，关注接口、metadata、状态流转与测试，而不是 TileRT 的全部实现。
 - [vLLM MORI-IO 接入 PR](https://github.com/vllm-project/vllm/pull/29304)与 [MORI 官方仓库](https://github.com/ROCm/mori)：先理解 read/pull，再理解 write/push 的 layer-wise 异步重叠；按当前代码区分 MORI-SHMEM、MORI-IO 与 UMBP。
@@ -468,7 +468,7 @@ DeepEP 在两个模块中重复出现，只学习一次并按主要产出归属�
 
 选读：
 
-- [推理框架学习指引](../../推理框架/学习指引.md) §G 的 Mooncake、NIXL 和工业回顾，只用作 transport/connector 对照，不同时精读三份。
+- [推理框架学习指引](../推理框架/学习指引.md) §G 的 Mooncake、NIXL 和工业回顾，只用作 transport/connector 对照，不同时精读三份。
 - [RCCL 官方文档](https://rocm.docs.amd.com/projects/rccl/en/develop/)和 [HIP 编程模型](https://rocm.docs.amd.com/projects/HIP/en/develop/understand/programming_model.html)，只有 AMD 环境需要定位实际 API 时才查阅。
 - MORI-UMBP 的 cost model、策略与上游集成；产出只区分“已实现 / WIP / roadmap”，不把 roadmap 当作当前能力。
 
@@ -752,10 +752,10 @@ rocprofv3 --hip-trace --kernel-trace --memory-copy-trace -- ./your_app
 
 ### 15.1 资料与工时
 
-- vLLM、PagedAttention、MoE、PD 资料记入[推理框架/进度.md](../../推理框架/进度.md)。
-- RDMA、IBGDA、DeepEP 通信路径记入[训练框架与分布式/进度.md](../../训练框架与分布式/进度.md)。
-- PyTorch backend/custom op 的源码审查按实际资料记入[PyTorch/进度.md](../../PyTorch/进度.md)；只有选做并真正编码时才记实践工时。除非同时满足 `PrivateUse1HooksInterface`、设备转换和 `aten::add` 注册等原任务全部条件，否则不能把实践任务 3 标为 ✅。
-- HIP/kernel/profiling 只在实际完成对应内容时记入[并行计算编程/进度.md](../../并行计算编程/进度.md)。
+- vLLM、PagedAttention、MoE、PD 资料记入[推理框架/进度.md](../推理框架/进度.md)。
+- RDMA、IBGDA、DeepEP 通信路径记入[训练框架与分布式/进度.md](../训练框架与分布式/进度.md)。
+- PyTorch backend/custom op 的源码审查按实际资料记入[PyTorch/进度.md](../PyTorch/进度.md)；只有选做并真正编码时才记实践工时。除非同时满足 `PrivateUse1HooksInterface`、设备转换和 `aten::add` 注册等原任务全部条件，否则不能把实践任务 3 标为 ✅。
+- HIP/kernel/profiling 只在实际完成对应内容时记入[并行计算编程/进度.md](../并行计算编程/进度.md)。
 - 自研芯片适配矩阵按所分析的框架、通信或 Kernel 归入对应模块，不建立虚构的“项目实现工时”；公司内部已完成的历史工作也不补记为本次学习时间。
 - 同一份 DeepEP、MORI 或 vLLM 源码只记一次实际工时；跨模块只建立链接，不重复累计。
 - 提前完成的主计划资料以后不重复学习，回到原周次时直接做验收或补缺口。
