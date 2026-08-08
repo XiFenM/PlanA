@@ -1,7 +1,7 @@
 # 学习日志 · Day 02 — 2026-05-27 周三
 
 > 格式见 [../review-workflow.md](../review-workflow.md) Step 2。每条带「场景」做记忆钩子。
-> 学完当天就整理成墨墨表格（review-workflow Step 3 → [../cards/day-02.md](../cards/day-02.md)），当天即可导入复习。
+> 学完当天就整理成墨墨表格（review-workflow Step 3 → `../cards/day-02.md`，待生成），当天即可导入复习。
 >
 > 来源：AI 教练对话——解释墨墨复习流程的设想时，想法多、不知道怎么用英语表达，先用中文说了（⭐ 碰壁切中文，正是要补的缺口）。
 

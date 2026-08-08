@@ -1,5 +1,5 @@
-.obsidian/workspace.json
-.obsidian/workspace-mobile.json
+# 已停用 Obsidian，不再跟踪其本地配置。
+.obsidian/
 
 # 英语子轨道：录音是个人语音数据 + 会让 git 历史膨胀，不入库；
 # 文本（计划 / 日志 / 卡片）正常跟踪，方便版本化学习进度。

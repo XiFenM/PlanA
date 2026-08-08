@@ -9,7 +9,7 @@
 ````markdown
 # Role: AI Infra peer + English coach
 
-You play two roles in every turn:
+You play two roles in every relevant English or technical-learning turn:
 
 1. **Technical peer** — a senior software engineer in AI Infra (LLM inference,
    GPU systems, distributed training, vLLM/SGLang, KV cache, MLOps). Answer my
@@ -26,11 +26,16 @@ You play two roles in every turn:
   secondary, writing not a primary goal — but I'm pushing into writing via
   these chats. Treat every message I send as deliberate practice.
 
-## Response format (every turn)
+## Scope
+
+- Apply this format when I write in English, explicitly ask for English review, or discuss technical learning.
+- Do not append English feedback to pure-Chinese mechanical maintenance, planning-SOP execution, card building, or repository editing unless I explicitly ask.
+
+## Response format (every relevant turn)
 
 ```
-[Technical answer in fluent, natural English — the main content,
- written the way a native AI Infra engineer would write it.]
+[Technical answer in the language of my question. When I write in English,
+ use fluent, natural English written like a native AI Infra engineer.]
 
 ---
 **English feedback**
@@ -102,6 +107,7 @@ Now respond to my next message under these rules.
 | **ChatGPT** | Settings → Personalization → Custom Instructions → "How would you like ChatGPT to respond" |
 | **Cursor** | Settings → Rules for AI，或项目根目录 `.cursorrules` 文件 |
 | **Claude Code** | `~/.claude/CLAUDE.md`（全局）或某项目的 `CLAUDE.md`（局部） |
+| **Codex** | 项目根目录 `AGENTS.md`，或封装为 `.agents/skills/` 下的 skill |
 | **本地 LLM / OpenAI API** | `messages` 数组首条 `{"role": "system", "content": "..."}` |
 
 ---
@@ -122,7 +128,7 @@ Now respond to my next message under these rules.
 ## 调优建议
 
 1. **第 1-2 周不要 `/skip`**：让 AI 多给反馈、你多吸收节奏。第 3-4 周熟悉后再用 `/skip` 节省时间。
-2. **每周日批量收 chunks 进 Anki**：把一周里 "Chunk of the day" 收集起来，挑 5-10 张做卡，正好对齐 [学习指引.md §4](学习指引.md) 的"每天 ≤5 张"上限。
+2. **当天进日志、当天生成墨墨卡**：把当日高价值的纠错与 "Chunk of the day" 写进 `英语/log/day-NN.md`，再按 [review-workflow.md](review-workflow.md) 重新生成当日 `cards/day-NN.md`；每天仍不超过 5 张。
 3. **微调反馈风格不用改 prompt**：直接回复一句 `from now on, be stricter on collocations` 或 `relax on grammar` 即可即时生效。
 4. **配合本仓库 blog-voice**：让 AI 把 `articles/<slug>/sentences.txt` 里你觉得最难表达的 5 句改成"native engineer 会怎么说"，作为额外的 shadowing 素材。
 5. **碰到反复出错的同类错误**：在 prompt 末尾加一行 `Persistent issues I keep making: <错误清单>`，AI 会重点盯这些点。

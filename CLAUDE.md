@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What this repo is
 
-Not a code project. This is an Obsidian-backed personal knowledge vault used by an AI Infra engineer (PyTorch PrivateUse1 backend + custom NCCL on a non-NV accelerator) for a 5-month / 20-week interview sprint plus long-term notes. All content is Chinese Markdown; English is preserved for proper nouns (FlashAttention, PagedAttention, etc.). There is no build system, no tests, and no code to run — your work is reading, writing, and editing Markdown.
+Not a code project. This is a Markdown personal knowledge vault used by an AI Infra engineer (PyTorch PrivateUse1 backend + custom NCCL on a non-NV accelerator) for a 5-month / 20-week interview sprint plus long-term notes. All content is Chinese Markdown; English is preserved for proper nouns (FlashAttention, PagedAttention, etc.). There is no build system, no tests, and no code to run — your work is reading, writing, and editing Markdown.
 
 The README (`README.md`) is the canonical entry point and source-of-truth for the resource subscription list (`§5`). When the README and a module's `学习指引.md §长期订阅` disagree, README wins.
 
@@ -15,7 +15,7 @@ Each lives in its own top-level dir (Chinese names) and **always contains exactl
 - `学习指引.md` — stable curriculum: graded resource list (🟥 必读 / 🟨 选读 / 🟩 背景), long-term subscriptions, self-test bank. Edited only at month-end review.
 - `进度.md` — progress tracker: 📊 summary table + per-section rows. Updated daily, every 0.5h of study.
 
-Modules: `推理框架/` `Pytorch/` `训练框架与分布式/` `并行计算编程/` `模型理论/` `Leetcode/` `编译器/` `TPUs/`. Module dirs may also accumulate ad-hoc `.md` files (paper notes, retros, kernel demos) over time — that's expected; only the two anchor files are mandatory.
+Modules: `推理框架/` `PyTorch/` `训练框架与分布式/` `并行计算编程/` `模型理论/` `Leetcode/` `编译器/` `TPUs/`. Module dirs may also accumulate ad-hoc `.md` files (paper notes, retros, kernel demos) over time — that's expected; only the two anchor files are mandatory.
 
 ## The 英语/ parallel track (listening + speaking)
 
@@ -29,21 +29,21 @@ Modules: `推理框架/` `Pytorch/` `训练框架与分布式/` `并行计算编
 
 ## Skills（功能路由）
 
-The recurring workflows live as skills under `.claude/skills/`. Each SKILL.md holds the operative rules (triggers, roles, persist contracts, hard rules) and points to its vault SOP doc for full detail — the vault docs stay the human-readable source of truth; the skills are the agent-facing layer. Route by trigger and invoke the skill:
+The recurring workflows live as skills under `.claude/skills/`, which is the canonical tree. `.agents/skills/` is a complete discovery mirror; update both together and verify with `diff -qr .claude/skills .agents/skills`. Each SKILL.md holds the operative rules (triggers, roles, persist contracts, hard rules) and points to its vault SOP doc for full detail — the vault docs stay the human-readable source of truth; the skills are the agent-facing layer. Route by trigger and invoke the skill:
 
 | Trigger | Skill |
 |---|---|
-| `开始学习` / `继续学习` / `今天学什么` … until `收工` / `结束学习` | `study-companion` — daily study-execution loop: resume cursor, 讲→问→派→盯, three-stage persist, `/成文`. Controls: `/暂停 /继续 /卡住 /快 /状态 /成文` |
+| `开始学习` / `继续学习` / `今天学什么` … until `收工` / `结束学习` | `study-companion` — daily study-execution loop: resume cursor, 讲→问→挖→派→盯, three-stage persist, `/成文`. Controls: `/暂停 /继续 /卡住 /快 /状态 /成文` |
 | 英语回顾 / "用英语回顾今天学的" (primary venue, post-study); or the user writes in English / technical discussion (ambient) | `english-coach` — 英语回顾 mock-dialogue over the day's study record, plus turn-end English feedback; persists to `英语/log/` and that day's cards. Controls: `/skip /deep /中文 /shadow /quiz` |
 | 制卡 / "读 `英语/log/day-NN.md` … 整理成墨墨表格，写到 `英语/cards/day-NN.md`" / turning article 〔面试问题Q&A〕 or 学习记录 into cards | `memo-cards` — Markji table-import TSV; accepts English daily logs and technical Q&A material |
-| 整理学习记录 / 提取对话记录 / 把今天的学习对话存档 | `study-log` — extract Claude Code transcripts (bundled script), filter the technical-learning turns, write a structured 学习记录 to `{module}/log/` (process-side material for `memo-cards`) |
+| 整理学习记录 / 提取对话记录 / 把今天的学习对话存档 | `study-log` — extract Claude Code or Codex transcripts (bundled script), filter the technical-learning turns, write a structured 学习记录 to `{module}/log/` (process-side material for `memo-cards`) |
 | "请严格按 `计划/周更流程.md` 的规范，为本周执行一次全板块资料周更。" | `resource-planning` (周更 mode) |
 | "请严格按 `计划/月底晋级评审.md` 的规范，对本月（YYYY-MM）做一次晋级评审。" | `resource-planning` (月底评审 mode) |
 
 How the skills chain into the full study pipeline (each arrow is an explicit handoff written into the skills):
 
 ```
-resource-planning(周更→周报晋级候选 →月底评审→学习指引) ──选定资料──▶ study-companion(断点续接→讲问派盯→收尾三Stage)
+resource-planning(周更→周报晋级候选 →月底评审→学习指引) ──选定资料──▶ study-companion(断点续接→讲问挖派盯→收尾三Stage)
                                                                         │
                                               ┌─────────────────────────┼──────────────────────┐
                                               ▼                         ▼                      ▼
@@ -77,10 +77,10 @@ Two ambient rules that live here because they're cross-skill:
 
 - **Resource grading and status icons**: 🟥/🟨/🟩 (priority) and ⬜/🟡/✅/⏭/🔖 (status). Don't introduce new symbols; the README §4 table is the registry.
 - **ID stability**: numeric IDs in `学习指引.md` are referenced by `进度.md` and 周报 cross-links. Insert with `19a`, `19b` suffixes; never renumber.
-- **Cross-references use relative paths** (e.g. `[../面试准备/projects.md]`) so the Obsidian graph stays intact. Preserve them when moving files.
+- **Cross-references use relative paths** (e.g. `[../面试准备/projects.md]`) so the vault stays portable. Preserve them when moving files.
 - **Date format**: convert relative dates to absolute (`本周日` → `2026-05-10`) when writing into files that will be re-read months later. Today's date is available in the harness context.
 - **CJK filenames**: many files have Chinese names with no ASCII fallback. When using Bash, quote them (`"Job Description"`, `"训练框架与分布式"`).
-- **`.obsidian/`** is the vault config; don't edit it. `.gitignore` already excludes the workspace state files inside it.
+- **`.obsidian/` is retired**; `.gitignore` excludes the whole directory. Do not add it back.
 
 ## Things to avoid
 

@@ -1,7 +1,7 @@
 # 学习日志 · Day 03 — 2026-05-31 周日
 
 > 格式见 [../review-workflow.md](../review-workflow.md) Step 2。每条带「场景」做记忆钩子。
-> 学完当天就整理成墨墨表格（review-workflow Step 3 → [../cards/day-03.md](../cards/day-03.md)），当天即可导入复习。
+> 学完当天就整理成墨墨表格（review-workflow Step 3 → `../cards/day-03.md`，待生成），当天即可导入复习。
 >
 > 来源：AI 教练对话——汇报 init.sh 的两个 bug（bun 装包缺 unzip、复用 Cloudflare 隧道时本机凭据文件丢失）让教练修，随后让教练把今日对话整理成日志。下面是这轮对话里的纠错点与词块。
 

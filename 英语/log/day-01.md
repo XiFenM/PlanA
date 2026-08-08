@@ -1,9 +1,9 @@
 # 学习日志 · Day 01 — 2026-05-25 周一
 
 > 格式见 [../review-workflow.md](../review-workflow.md) Step 2。每条带「场景」做记忆钩子。
-> 学完当天就整理成墨墨表格（review-workflow Step 3 → [../cards/day-01.md](../cards/day-01.md)），当天即可导入复习。
+> 学完当天就整理成墨墨表格（review-workflow Step 3 → `../cards/day-01.md`，待生成），当天即可导入复习。
 >
-> 来源：早期 AI 英语反馈——在做 blog-voice 项目、用英文讨论 verify / split-text 流程时写的句子，原始反馈存为 [../anki-grammar-feedback-2026-05-25.tsv](../anki-grammar-feedback-2026-05-25.tsv)（Anki Cloze 格式）。下面转成本日志格式，便于整理进墨墨。
+> 来源：早期 AI 英语反馈——在做 blog-voice 项目、用英文讨论 verify / split-text 流程时写的句子。原始 Anki Cloze 文件 `../anki-grammar-feedback-2026-05-25.tsv` 未随仓库存档；下面已转成本日志格式，便于整理进墨墨。
 
 ## 冠词 (a / the)
 

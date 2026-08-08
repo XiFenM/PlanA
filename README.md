@@ -34,7 +34,7 @@ PlanA/
 ├── 推理框架/                       ← Track A 第一优先级
 ├── 训练框架与分布式/               ← Track A 第二优先级（含 §J GPU 通信子专题）
 ├── 并行计算编程/                   ← Track A 第三优先级（GPU 算子）
-├── Pytorch/                        ← PyTorch Internals
+├── PyTorch/                        ← PyTorch Internals
 ├── 模型理论/                       ← Attention / MoE / 量化 / RL 后训练
 ├── Leetcode/                       ← 250 题，贯穿全程（并行子轨道）
 ├── 英语/                           ← 听力/口语训练，22 周贯穿全程（并行子轨道）
@@ -59,7 +59,8 @@ PlanA/
 │   ├── AI框架方向/
 │   ├── 推理/算子/编译器/通信/集群优化/AI 应用/对外（共 7 个子方向）
 │
-└── .claude/skills/                 ← AI 学习工作流（6 个 skill，见 §3 末尾）
+├── .claude/skills/                 ← skill 事实源（6 个，见 §3 末尾）
+└── .agents/skills/                 ← agent 发现镜像，与 .claude/skills 保持同步
 ```
 
 ---
@@ -77,12 +78,12 @@ PlanA/
 
 **两条全程并行子轨道**：[Leetcode/](Leetcode/) 和 [英语/](英语/) 都不占主线板块周次，而是每天用独立时间块推进、贯穿全程，各自同样用 `学习指引.md` + `进度.md` 双锚文件管理。英语轨 22 周（比冲刺多 2 周到 W22），其每日 60–75 min **不计入** 650h 主预算；音频教材由同级工具仓库 `../blog-voice` 生产。
 
-**AI 学习工作流（6 个 skills）**：日常执行由 Claude Code skill 驱动（定义在 [.claude/skills/](.claude/skills/)，agent 侧路由表与管线图见 [CLAUDE.md](CLAUDE.md)）。skill 只承载触发条件与操作契约，流程细节的事实源仍是 `计划/` 与 `英语/` 里的 SOP 文档：
+**AI 学习工作流（6 个 skills）**：`.claude/skills/` 是 skill 事实源，`.agents/skills/` 是供其他 agent 发现的完整镜像，两处应保持一致。agent 侧路由表与管线图见 [CLAUDE.md](CLAUDE.md)。skill 只承载触发条件与操作契约，流程细节的事实源仍是 `计划/` 与 `英语/` 里的 SOP 文档：
 
 | Skill | 流程站位 | 触发 |
 |---|---|---|
 | `resource-planning` | **供给侧**：周更搜集 / 月底晋级评审 双模式 | 「按 周更流程/月底晋级评审 规范执行…」 |
-| `study-companion` | **主干**：断点续接 → 讲问派盯带练 → 收工三段落盘 → `/成文` | 「开始学习/继续学习」…「收工」 |
+| `study-companion` | **主干**：断点续接 → 讲问挖派盯带练 → 收工三段落盘 → `/成文` | 「开始学习/继续学习」…「收工」 |
 | `study-log` | **收工后**：会话对话记录 → 筛选 → `{板块}/log/` 学习记录 | 「整理学习记录」 |
 | `memo-cards` | **记忆侧**：学习记录 / 文章面试Q&A / 英语日志 → 墨墨 TSV 卡 | 「制卡」 |
 | `english-coach` | **英语轨**：学后「英语回顾」专项（主）+ 技术对话轮末反馈（辅） | 「英语回顾」/ 直接写英文 |
@@ -272,7 +273,7 @@ PlanA/
 | 想看本周新出的资料 | [计划/周报/](计划/周报/) 最新一份 |
 | 想看我的英语听说训练计划 | [英语/学习指引.md](英语/学习指引.md)（进度见 [英语/进度.md](英语/进度.md)）|
 | 想看面试故事素材 | [面试准备/](面试准备/) |
-| 想看 AI 怎么带我学 | [CLAUDE.md](CLAUDE.md) 路由表 + [.claude/skills/](.claude/skills/) 各 SKILL.md |
+| 想看 AI 怎么带我学 | [CLAUDE.md](CLAUDE.md) 路由表 + [.claude/skills/](.claude/skills/) 各 SKILL.md（[.agents/skills/](.agents/skills/) 为镜像） |
 | 想看学习过程记录 / 记忆卡 | 各板块 `log/`（学习记录）与 `cards/`（墨墨 TSV），如 [PyTorch/log/](PyTorch/log/) |
 | 想看具体的论文笔记 / 实战复盘 | 各板块目录下后续会陆续追加的 `.md` 文件 |
 
@@ -291,7 +292,7 @@ PlanA/
 
 ---
 
-## 8. 起步状态（2026-04-29）
+## 8. 起步快照（2026-04-29，历史）
 
 - ✅ 8 个板块的稳定版 `学习指引.md` 全部 2025Q4-2026Q1 资料审计完成
 - ✅ 8 份 `进度.md` + 全局 `进度总表.md` 已搭好

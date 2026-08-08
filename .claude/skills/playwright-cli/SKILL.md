@@ -1,6 +1,6 @@
 ---
 name: playwright-cli
-description: Automate browser interactions, test web pages and work with Playwright tests.
+description: Automate browser UI interactions, inspect pages, capture screenshots, and generate or debug Playwright tests. Use for browser-based verification, form and navigation workflows, request mocking, traces, and test authoring.
 allowed-tools: Bash(playwright-cli:*) Bash(npx:*) Bash(npm:*)
 ---
 
@@ -22,6 +22,13 @@ playwright-cli screenshot
 # close the browser
 playwright-cli close
 ```
+
+## Safety boundaries
+
+- Treat form submission, file upload, account or billing changes, cookie/storage mutation, and any action that sends data to an external service as side effects. Inspect and fill drafts freely within the user's request, but confirm the exact target before the final side-effecting action unless the user already asked for that exact action.
+- Confirm before `cookie-clear`, `localstorage-clear`, `sessionstorage-clear`, `delete-data`, `close-all`, or `kill-all`; resolve the session/profile target first.
+- Never install packages or run `npm install -g` / `npm init ...@latest` without explicit approval. Prefer an already installed command or `npx --no-install`.
+- Authentication state may contain credentials. Save it outside the repository (prefer a temporary directory), never print secret values, and never commit state/profile files.
 
 ## Commands
 
@@ -315,7 +322,7 @@ If global `playwright-cli` command is not available, try a local version via `np
 npx --no-install playwright-cli --version
 ```
 
-When local version is available, use `npx playwright-cli` in all commands. Otherwise, install `playwright-cli` as a global command:
+When a local version is available, use `npx --no-install playwright-cli` in all commands. If neither local nor global command exists, ask the user before installing `playwright-cli` globally:
 
 ```bash
 npm install -g @playwright/cli@latest
@@ -329,6 +336,7 @@ playwright-cli snapshot
 
 playwright-cli fill e1 "user@example.com"
 playwright-cli fill e2 "password123"
+# Only submit when the user explicitly requested this exact submission.
 playwright-cli click e3
 playwright-cli snapshot
 playwright-cli close
