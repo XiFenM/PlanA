@@ -1,0 +1,12 @@
+[submodule "vllm"]
+	path = 推理框架/references/vllm
+	url = https://github.com/vllm-project/vllm.git
+	shallow = true
+[submodule "sglang"]
+	path = 推理框架/references/sglang
+	url = https://github.com/sgl-project/sglang.git
+	shallow = true
+[submodule "pytorch"]
+	path = PyTorch/references/pytorch
+	url = https://github.com/pytorch/pytorch.git
+	shallow = true
