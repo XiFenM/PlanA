@@ -63,6 +63,41 @@ PlanA/
 └── .agents/skills/                 ← agent 发现镜像，与 .claude/skills 保持同步
 ```
 
+### 2.1 固定源码子模块
+
+仓库使用 Git submodule 保存本轮学习所依据的上游源码快照。它们是少数板块下的参考源码，不属于每个板块都必须具备的双锚文件；`英语/references/` 等普通资料目录也不是子模块。
+
+| 子模块 | 本地路径 | 当前固定版本 | 固定提交 |
+|---|---|---|---|
+| vLLM | [`推理框架/references/vllm`](推理框架/references/vllm) | `v0.26.0` | `568afb3a13806beb53bb2e6bd518269357b237c0` |
+| SGLang | [`推理框架/references/sglang`](推理框架/references/sglang) | `v0.5.17` | `29481685462732237d80d86076d6563e1f658102` |
+| PyTorch | [`PyTorch/references/pytorch`](PyTorch/references/pytorch) | `v2.11.0` | `70d99e998b4955e0049d13a98d77ae1b14db1f45` |
+
+根目录 [`.gitmodules`](.gitmodules) 登记了上游地址，并为三个子模块启用浅克隆。父仓库记录的 gitlink 才是精确版本事实源；上述基线的选择理由与用途见 [EP-PD 自研芯片适配设计与验证包](推理框架/EP-PD自研芯片适配设计与验证包.md)。
+
+首次克隆（Windows 建议先启用长路径，以免 PyTorch 的深层目录检出失败）：
+
+```powershell
+git config --global core.longpaths true
+git clone --recurse-submodules --shallow-submodules git@github.com:XiFenM/PlanA.git
+```
+
+如果已经克隆了父仓库，但子模块目录还是空的：
+
+```powershell
+git submodule sync --recursive
+git submodule update --init --recursive
+```
+
+以后拉取父仓库更新时，同时把子模块恢复到父仓库固定的提交：
+
+```powershell
+git pull --recurse-submodules
+git submodule update --init --recursive
+```
+
+子模块处于 `detached HEAD` 是固定版本时的正常状态。日常学习不要在子模块内直接 `pull`，也不要执行 `git submodule update --remote`；需要升级上游版本时，应显式修改父仓库记录的 gitlink，并同步更新本节基线。
+
 ---
 
 ## 3. 学习计划体系（四件套）
