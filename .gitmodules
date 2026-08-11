@@ -10,3 +10,6 @@
 	path = PyTorch/references/pytorch
 	url = https://github.com/pytorch/pytorch.git
 	shallow = true
+[submodule ".agent-skills"]
+	path = .agent-skills
+	url = ../agent-skills.git

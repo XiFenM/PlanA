@@ -59,6 +59,8 @@ PlanA/
 │   ├── AI框架方向/
 │   ├── 推理/算子/编译器/通信/集群优化/AI 应用/对外（共 7 个子方向）
 │
+├── .agent-skills/                   ← 中央 Agent Skills 子模块（固定迁移版本）
+├── .agent-skills.json               ← 中央 Skill 选择；M2 阶段保持空配置
 ├── .claude/skills/                 ← skill 事实源（6 个，见 §3 末尾）
 └── .agents/skills/                 ← agent 发现镜像，与 .claude/skills 保持同步
 ```
@@ -97,6 +99,27 @@ git submodule update --init --recursive
 ```
 
 子模块处于 `detached HEAD` 是固定版本时的正常状态。日常学习不要在子模块内直接 `pull`，也不要执行 `git submodule update --remote`；需要升级上游版本时，应显式修改父仓库记录的 gitlink，并同步更新本节基线。
+
+### 2.2 Skill 中央管线（M2 空接入）
+
+中央规范源以 [`.agent-skills`](.agent-skills) 子模块固定在
+`b2afd92854d57a375fdf990028c31561118cf8ec`。当前 [`.agent-skills.json`](.agent-skills.json)
+中的 `skills` 为空，因此现有 `.claude/skills/` 与 `.agents/skills/` 两棵受跟踪发现树仍保持原样，
+M2 不会新增、删除或覆盖任何 Skill 入口。
+
+已有 checkout 只需初始化中央子模块及其官方依赖：
+
+```powershell
+git submodule sync --recursive
+git submodule update --init --recursive .agent-skills
+```
+
+在真正切换 Skill 前，可以验证空配置不会产生复制或删除计划：
+
+```powershell
+uv run --no-project python .agent-skills/tools/materialize_skills.py --repo . --dry-run
+uv run --no-project python .agent-skills/tools/materialize_skills.py --repo . --check
+```
 
 ---
 

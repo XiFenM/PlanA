@@ -13,3 +13,10 @@
 # 面试材料：原始绩效附件与工作日志可能包含个人/公司敏感信息
 面试准备/**/*.xlsx
 面试准备/private/
+
+# 中央 Agent Skill 生成视图与同步状态
+/.agents/skills/
+/.claude/skills/
+/.agent-skills.state.json
+/.agent-skills.state.json.tmp-*
+/.agent-skills.lock
