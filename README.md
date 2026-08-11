@@ -59,7 +59,7 @@ PlanA/
 │   ├── AI框架方向/
 │   ├── 推理/算子/编译器/通信/集群优化/AI 应用/对外（共 7 个子方向）
 │
-├── .agent-skills/                   ← 中央 Agent Skills 子模块（固定迁移版本）
+├── .agent-skills/                   ← 中央 Agent Skills 子模块（固定中央版本）
 ├── .agent-skills.json               ← 中央 Skill 选择（Codex + Claude）
 ├── .claude/skills/                 ← materializer 生成的 Claude 发现视图
 └── .agents/skills/                 ← materializer 生成的 Codex 发现视图
@@ -100,10 +100,10 @@ git submodule update --init --recursive
 
 子模块处于 `detached HEAD` 是固定版本时的正常状态。日常学习不要在子模块内直接 `pull`，也不要执行 `git submodule update --remote`；需要升级上游版本时，应显式修改父仓库记录的 gitlink，并同步更新本节基线。
 
-### 2.2 Skill 中央管线（M4 已切换）
+### 2.2 Skill 中央管线（M5 已升级）
 
 中央规范源以 [`.agent-skills`](.agent-skills) 子模块固定在
-`b2afd92854d57a375fdf990028c31561118cf8ec`。[`.agent-skills.json`](.agent-skills.json) 为 Codex 与 Claude
+`4ce419ced337b15937af03a93f26468c0ea2ddeb`。[`.agent-skills.json`](.agent-skills.json) 为 Codex 与 Claude
 同时选择 `guide-learning`、`study-log`、`english-coach`、`memo-cards`、
 `resource-planning` 和 `playwright-cli`。
 
