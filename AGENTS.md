@@ -39,23 +39,26 @@ Quote CJK paths in shell commands, for example `"训练框架与分布式/进度
 
 - `计划/主计划.md` is the 20-week schedule and weekly cadence. Do not modify it during routine work.
 - `计划/进度总表.md` is the global dashboard. It is normally updated on Sunday or during approved SOP flows.
-- `计划/周更流程.md` is the weekly resource update SOP, run via `.claude/skills/resource-planning/SKILL.md`.
-- `计划/月底晋级评审.md` is the month-end promotion review SOP, run via the same skill.
+- `计划/周更流程.md` is the weekly resource update SOP, run via `resource-planning`.
+- `计划/月底晋级评审.md` is the month-end promotion review SOP, run via the same Skill.
 - `计划/周报/YYYY-Wxx.md` files are append-only history. Do not edit a past weekly report after the next week starts, except for status annotations during month-end review.
-- `计划/陪学流程.md` defines the daily study-companion workflow, run via `.claude/skills/study-companion/SKILL.md`.
-- `计划/学习断点.md` is the global resume cursor. It is safe to overwrite only inside the study-companion workflow.
+- `计划/陪学流程.md` maps the central `guide-learning` workflow onto this vault's Program, Lesson, event, and Checkpoint facts.
+- `计划/学习断点.md` is the single sparse Checkpoint. Overwrite it only at a semantic session boundary or durable recovery change.
 
-## Recurring Workflows Are Skills
+## Central Agent Skills
 
-The five recurring workflows are defined under `.claude/skills/`; `.agents/skills/` is a complete discovery mirror. Treat `.claude/skills/` as canonical, update both trees together, and verify them with `diff -qr .claude/skills .agents/skills`. Each `SKILL.md` holds the operative rules (trigger, roles, persist contract, hard rules) and points to the vault SOP doc for full detail. If your tool does not auto-discover skills, read the relevant `SKILL.md` before acting:
+The canonical Skill source is the pinned `.agent-skills` submodule. `.agent-skills.json` selects six active Skills for both Codex and Claude; `.agents/skills/` and `.claude/skills/` are ignored, materialized discovery views. Never edit either generated tree or copy a Skill back into this repository. Initialize and verify the pipeline with the commands documented in `README.md §2.2`.
 
-- `.claude/skills/study-companion/SKILL.md` — daily study-execution loop. Active from `开始学习` / `继续学习` / `今天学什么` until `收工` / `结束学习`. Full SOP: `计划/陪学流程.md`.
-- `.claude/skills/english-coach/SKILL.md` — two modes: the primary 英语回顾 post-study mock dialogue over the day's `{module}/log/` study record, and ambient turn-end English feedback during English or technical discussion; both persist to `英语/log/` and that day's cards. Full prompt: `英语/ai-chat-prompt.md`; flow: `英语/review-workflow.md`.
-- `.claude/skills/memo-cards/SKILL.md` — Markji table-import TSV card building; accepts English daily logs (`英语/log/day-NN.md` → `英语/cards/day-NN.md`) and technical Q&A material (article 〔面试问题Q&A〕 or `{module}/log/` study records → `{module}/cards/`).
-- `.claude/skills/study-log/SKILL.md` — extract Claude Code or Codex session transcripts via the bundled script, filter the technical-learning turns, and write a structured study record to `{module}/log/`.
-- `.claude/skills/resource-planning/SKILL.md` — dual mode: weekly resource update (`计划/周更流程.md`) and month-end promotion review (`计划/月底晋级评审.md`).
+Route work by intent:
 
-Cross-skill rules: english-coach is scope-triggered (English or engineer-to-engineer content), and stays off for pure-Chinese mechanical vault maintenance; during study sessions in English, english-coach owns turn-end feedback while study-companion owns the session ritual — never both.
+- `guide-learning` — source-grounded explanation, adaptive post-explanation checks, evidence-gap-driven practice, review, mastery, and sparse recovery. PlanA mapping: `计划/陪学流程.md`.
+- `english-coach` — post-study English review and scoped turn-end English feedback. Prompt: `英语/ai-chat-prompt.md`; flow: `英语/review-workflow.md`.
+- `memo-cards` — Markji table-import cards from English logs, technical Q&A, or structured study records.
+- `study-log` — user-requested structured process records or privacy-reviewed visible-text raw archives. Structured PlanA output stays under `{module}/log/`; raw archives do not.
+- `resource-planning` — weekly resource update (`计划/周更流程.md`) and month-end promotion review (`计划/月底晋级评审.md`).
+- `playwright-cli` — browser automation; it is a tool Skill, not part of the learning-state pipeline.
+
+Cross-skill rules: broad resource governance stays with `resource-planning`; dialogue extraction stays with `study-log`; card generation stays with `memo-cards`. During English study, `english-coach` owns turn-end language feedback while `guide-learning` owns the learning flow. Articles, logs, cards, raw archives, and English review are explicit handoffs, never automatic wrap-up side effects.
 
 ## English Track Notes
 
@@ -69,6 +72,7 @@ Validation is review-based:
 - Run `git diff --check`.
 - Confirm links are relative.
 - For SOP work, verify that only the files allowed by the SOP changed.
+- After changing Skill selection, run the central materializer and require `--check` to report current; do not compare or hand-maintain the two discovery trees.
 
 ## Commit And PR Guidance
 

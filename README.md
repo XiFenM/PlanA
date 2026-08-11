@@ -25,9 +25,9 @@ PlanA/
 │   ├── 进度总表.md                 ← 全局 sprint 进度（甘特 + 模块汇总）
 │   ├── 周更流程.md                 ← 资料周报的 SOP
 │   ├── 月底晋级评审.md             ← 月底晋级评审的 SOP
-│   ├── 陪学流程.md                 ← AI 陪学（每日学习执行）的 SOP
+│   ├── 陪学流程.md                 ← guide-learning 的 PlanA 状态与路径映射
 │   ├── 文章模版.md                 ← 学习产出文章的 8 段式模版
-│   ├── 学习断点.md                 ← 全局续接光标（陪学收尾覆盖写）
+│   ├── 学习断点.md                 ← 唯一稀疏 Checkpoint（仅语义变化时覆盖）
 │   └── 周报/                       ← 每周一份，YYYY-Wxx.md
 │       └── 2026-W18.md             ← 第一份（DeepSeek V4 周）
 │
@@ -60,9 +60,9 @@ PlanA/
 │   ├── 推理/算子/编译器/通信/集群优化/AI 应用/对外（共 7 个子方向）
 │
 ├── .agent-skills/                   ← 中央 Agent Skills 子模块（固定迁移版本）
-├── .agent-skills.json               ← 中央 Skill 选择；M2 阶段保持空配置
-├── .claude/skills/                 ← skill 事实源（6 个，见 §3 末尾）
-└── .agents/skills/                 ← agent 发现镜像，与 .claude/skills 保持同步
+├── .agent-skills.json               ← 中央 Skill 选择（Codex + Claude）
+├── .claude/skills/                 ← materializer 生成的 Claude 发现视图
+└── .agents/skills/                 ← materializer 生成的 Codex 发现视图
 ```
 
 ### 2.1 固定源码子模块
@@ -100,12 +100,15 @@ git submodule update --init --recursive
 
 子模块处于 `detached HEAD` 是固定版本时的正常状态。日常学习不要在子模块内直接 `pull`，也不要执行 `git submodule update --remote`；需要升级上游版本时，应显式修改父仓库记录的 gitlink，并同步更新本节基线。
 
-### 2.2 Skill 中央管线（M2 空接入）
+### 2.2 Skill 中央管线（M4 已切换）
 
 中央规范源以 [`.agent-skills`](.agent-skills) 子模块固定在
-`b2afd92854d57a375fdf990028c31561118cf8ec`。当前 [`.agent-skills.json`](.agent-skills.json)
-中的 `skills` 为空，因此现有 `.claude/skills/` 与 `.agents/skills/` 两棵受跟踪发现树仍保持原样，
-M2 不会新增、删除或覆盖任何 Skill 入口。
+`b2afd92854d57a375fdf990028c31561118cf8ec`。[`.agent-skills.json`](.agent-skills.json) 为 Codex 与 Claude
+同时选择 `guide-learning`、`study-log`、`english-coach`、`memo-cards`、
+`resource-planning` 和 `playwright-cli`。
+
+`.agents/skills/` 与 `.claude/skills/` 是被 Git 忽略的生成发现视图，不是事实源。不要手工修改、复制或
+同步这两棵树；只修改中央仓库的规范源或本仓库的选择配置。
 
 已有 checkout 只需初始化中央子模块及其官方依赖：
 
@@ -114,10 +117,11 @@ git submodule sync --recursive
 git submodule update --init --recursive .agent-skills
 ```
 
-在真正切换 Skill 前，可以验证空配置不会产生复制或删除计划：
+初始化后生成两个宿主的发现视图，并验证生成状态：
 
 ```powershell
 uv run --no-project python .agent-skills/tools/materialize_skills.py --repo . --dry-run
+uv run --no-project python .agent-skills/tools/materialize_skills.py --repo .
 uv run --no-project python .agent-skills/tools/materialize_skills.py --repo . --check
 ```
 
@@ -136,18 +140,21 @@ uv run --no-project python .agent-skills/tools/materialize_skills.py --repo . --
 
 **两条全程并行子轨道**：[Leetcode/](Leetcode/) 和 [英语/](英语/) 都不占主线板块周次，而是每天用独立时间块推进、贯穿全程，各自同样用 `学习指引.md` + `进度.md` 双锚文件管理。英语轨 22 周（比冲刺多 2 周到 W22），其每日 60–75 min **不计入** 650h 主预算；音频教材由同级工具仓库 `../blog-voice` 生产。
 
-**AI 学习工作流（6 个 skills）**：`.claude/skills/` 是 skill 事实源，`.agents/skills/` 是供其他 agent 发现的完整镜像，两处应保持一致。agent 侧路由表与管线图见 [CLAUDE.md](CLAUDE.md)。skill 只承载触发条件与操作契约，流程细节的事实源仍是 `计划/` 与 `英语/` 里的 SOP 文档：
+**AI 学习工作流（6 个 Skills）**：中央 [`.agent-skills`](.agent-skills) 是 Skill 规范源，
+`.agents/skills/` 与 `.claude/skills/` 只是生成的宿主发现视图。Agent 侧路由表与管线图见
+[CLAUDE.md](CLAUDE.md)；[计划/陪学流程.md](计划/陪学流程.md) 只定义 PlanA 的状态映射和人类可读流程：
 
 | Skill | 流程站位 | 触发 |
 |---|---|---|
 | `resource-planning` | **供给侧**：周更搜集 / 月底晋级评审 双模式 | 「按 周更流程/月底晋级评审 规范执行…」 |
-| `study-companion` | **主干**：断点续接 → 讲问挖派盯带练 → 收工三段落盘 → `/成文` | 「开始学习/继续学习」…「收工」 |
-| `study-log` | **收工后**：会话对话记录 → 筛选 → `{板块}/log/` 学习记录 | 「整理学习记录」 |
+| `guide-learning` | **主干**：来源化教学 → 讲后检查 → 按证据缺口练习 → mastery → 稀疏恢复 | 教我／带我学／继续或恢复 Lesson |
+| `study-log` | **按需交接**：结构化过程记录，或经边界与隐私确认的 raw 可见文本存档 | 「整理学习记录／保存原始对话」 |
 | `memo-cards` | **记忆侧**：学习记录 / 文章面试Q&A / 英语日志 → 墨墨 TSV 卡 | 「制卡」 |
 | `english-coach` | **英语轨**：学后「英语回顾」专项（主）+ 技术对话轮末反馈（辅） | 「英语回顾」/ 直接写英文 |
 | `playwright-cli` | 工具件，不占流程位 | 浏览器自动化 |
 
-一天的理想动线：**继续学习 → 收工 → 整理学习记录 → 制卡 → 英语回顾**。一次学习自动沉淀四类资产：文章（结果）、学习记录（过程）、记忆卡（复习）、英语日志（表达）——全部服务同一个终点：面试。
+学习、文章、结构化记录、原始对话、卡片和英语回顾是六个可独立授权的动作。学习收尾不自动生成后五者；
+有价值时 Agent 可以提议，用户确认后才交给对应 Skill。
 
 ---
 
@@ -331,7 +338,7 @@ uv run --no-project python .agent-skills/tools/materialize_skills.py --repo . --
 | 想看本周新出的资料 | [计划/周报/](计划/周报/) 最新一份 |
 | 想看我的英语听说训练计划 | [英语/学习指引.md](英语/学习指引.md)（进度见 [英语/进度.md](英语/进度.md)）|
 | 想看面试故事素材 | [面试准备/](面试准备/) |
-| 想看 AI 怎么带我学 | [CLAUDE.md](CLAUDE.md) 路由表 + [.claude/skills/](.claude/skills/) 各 SKILL.md（[.agents/skills/](.agents/skills/) 为镜像） |
+| 想看 AI 怎么带我学 | [计划/陪学流程.md](计划/陪学流程.md) 的 PlanA 适配 + [中央 `guide-learning`](.agent-skills/skills/guide-learning/SKILL.md) |
 | 想看学习过程记录 / 记忆卡 | 各板块 `log/`（学习记录）与 `cards/`（墨墨 TSV），如 [PyTorch/log/](PyTorch/log/) |
 | 想看具体的论文笔记 / 实战复盘 | 各板块目录下后续会陆续追加的 `.md` 文件 |
 
@@ -346,7 +353,7 @@ uv run --no-project python .agent-skills/tools/materialize_skills.py --repo . --
 5. **新资料先入周报、再入稳定版**：避免"看到啥都塞进去"导致清单膨胀。
 6. **过时资料**：发现某条目被淘汰（如 EAGLE-2 → EAGLE-3），保留老条目位置，行内加 "（替代自 X，YYYY-MM-DD）" 注解。不删，留作历史。
 7. **Changelog**：每次稳定版指引发生晋级，在该指引顶部 Changelog 节加一行记录晋级事件。
-8. **AI 产物有固定归宿**：学习记录只进 `{板块}/log/`、记忆卡只进 `{板块}/cards/`（同天同主题覆盖重写，幂等）；文章 Q&A 卡为主牌，学习记录卡只保留纠错与文章未收录的过程细节。SOP 文档是流程事实源，skill 只承载触发与契约——改流程动 SOP，改触发动 skill。
+8. **AI 产物与行为各有事实源**：结构化学习记录只进 `{板块}/log/`，更新已有记录时先展示 diff 并确认；raw 对话默认放在 Git 工作树外。记忆卡只进 `{板块}/cards/`，文章 Q&A 卡为主牌，学习记录卡只保留纠错与文章未收录的过程细节。中央 Skill 拥有 Agent 行为规范；本仓库 SOP 只拥有 PlanA 路径、事实职责与各领域的人类可读流程。
 
 ---
 

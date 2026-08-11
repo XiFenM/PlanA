@@ -1,5 +1,12 @@
 {
   "version": 1,
   "source": ".agent-skills",
-  "skills": {}
+  "skills": {
+    "english-coach": ["codex", "claude"],
+    "guide-learning": ["codex", "claude"],
+    "memo-cards": ["codex", "claude"],
+    "playwright-cli": ["codex", "claude"],
+    "resource-planning": ["codex", "claude"],
+    "study-log": ["codex", "claude"]
+  }
 }
