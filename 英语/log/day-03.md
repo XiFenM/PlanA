@@ -1,60 +1,29 @@
 # 学习日志 · Day 03 — 2026-05-31 周日
 
-> 格式见 [../review-workflow.md](../review-workflow.md) Step 2。每条带「场景」做记忆钩子。
-> 学完当天就整理成墨墨表格（review-workflow Step 3 → `../cards/day-03.md`，待生成），当天即可导入复习。
->
-> 来源：AI 教练对话——汇报 init.sh 的两个 bug（bun 装包缺 unzip、复用 Cloudflare 隧道时本机凭据文件丢失）让教练修，随后让教练把今日对话整理成日志。下面是这轮对话里的纠错点与词块。
+> 记录性质：`legacy-derived` 学习记录。内容来自历史 AI 教练对话：汇报 init.sh 的两个问题（Bun 安装缺少 unzip、复用 Cloudflare 隧道时本机凭据文件缺失），随后整理了当时的纠错和表达。
+> 来源限制：旧文件没有保留可核验的 provider、会话或消息边界；下列原表达和场景沿用历史记录，本次迁移不补造来源标识。
+> 交接边界：只有用户明确要求时，才把已核验条目交给 `memo-cards` 预览；整理日志不会自动触发制卡、导入或其他收尾动作。
 
-## 报告"踩坑"的说法
+## 报告“踩坑”
 
-- [纠错] ❌ Today, I find two small problem → ✅ Today I **ran into** two small **problems**
-  - 场景：开头汇报"今天发现 init.sh 有两个小问题"
-  - 为什么：发现/遇到问题用 run into（撞上），过去时 ran；两个 → 复数 problems
-- [词块] run into a problem / a bug / an issue = 撞上、碰到一个问题
-  - 场景：想说"今天遇到两个小问题"，比 find / meet a problem 地道
-  - 为什么：工程师报告"踩坑"的默认动词，口语书面都常用
+- [纠错] 场景：开头汇报“今天发现 init.sh 有两个小问题”。我写“Today, I find two small problem” → 最小正确表达：`Today, I found two small problems.`；更贴近“踩坑”的表达：`Today, I ran into two small problems.` 原因：回顾当天已发生的事要用过去时，`two` 后接复数名词；`ran into` 是可选的语义升级，不是修复语法所必需。
+- [要点] 工程师怎样表达“遇到一个问题”？——`run into a problem / bug / issue`，例如 `I ran into two small problems today.`
 
-## 报错的固定搭配
+## 描述报错
 
-- [纠错] ❌ reusing tunnel results in error → ✅ reusing **the** tunnel **throws an** error
-  - 场景：描述"复用已有隧道会报错"
-  - 为什么：报错的固定搭配是 throw an error（也可 raise / hit an error）；可数单数 the tunnel / an error 要带冠词
+- [纠错] 场景：描述“复用已有隧道会报错”。我写“reusing tunnel results in error” → 正确：`Reusing the tunnel results in an error`；也可说 `Reusing the tunnel throws an error.` 原因：这里的特定隧道需要 `the`，可数单数 `error` 需要 `an`；`results in` 本身并没有错，`throws` 只是更直接的工程表达。
 
-## help sb do sth（反复写 to）
+## `help someone (to) do something`
 
-- [纠错] ❌ Please help me **to** fix it / help me **to** generate → ✅ Help me **fix** it / help me **generate**
-  - 场景：这轮对话里两次让教练帮忙（帮我修 bug、帮我生成日志），两次都加了 to
-  - 为什么：help sb do sth，help 后面直接跟动词原形，不加 to，更口语；这是我反复犯的点
+- [要点] `help me to fix it` 必须删掉 `to` 吗？——不必；`help someone do` 和 `help someone to do` 都合乎语法。工程对话中 `Help me fix it` / `Help me generate the log` 更简洁，原形式不是语法错误。
 
-## 第三人称单数 + 名词选词
+## 第三人称单数与名词选择
 
-- [语法] ❌ bun installation need unzip → ✅ the bun **install needs** unzip
-  - 场景：说"bun 的安装步骤需要 unzip"
-  - 为什么：单数主语第三人称现在时用 needs；口语里 install（名词）比 installation 更常说
+- [纠错] 场景：表达“Bun 的安装步骤需要 unzip”。我写“bun installation need unzip” → 正确：`The Bun installation requires unzip.` 原因：单数主语需要第三人称单数谓语；在该工程语境中也要限定具体安装步骤。`install` 可作非正式名词，`installation` 并非原句的问题所在。
 
-## 平级对话的口头禅
+## 平级协作语气
 
-- [选择] Very good / Then … vs **Nice / Perfect / Looks good** + **Next / Now** …
-  - 场景：开头想说"很好，那么接下来帮我生成日志"，我写成 "Very good. Then, please…"
-  - 为什么：Very good 像老师批改评语；平级（engineer-to-engineer）夸"搞定了"用 Nice / Perfect / Looks good。承接下一步用 Next / Now 比 Then 自然，Then 更偏"那(逻辑结果)就…"
-
-## 指给别人看文档的说法
-
-- [选择] as reference vs **for reference**
-  - 场景：想说"你可以读 markji 文档和这个目录里的其他文件作参考"，我写 "… and other documents as reference"
-  - 为什么：for reference = 供参考（固定短语，最常用）；as a reference 只在"把某物当成那一份参考资料"时用，且要加冠词 a
-- [词块] for reference = 供参考、作参考用
-  - 场景：让同事去看支撑文档，又不强制照搬时
-  - 为什么：工程师指人看 doc/ticket/example 的默认说法
-
-## 语气：祈使句别老挂 please
-
-- [选择] Please add … vs **Add …**（祈使句去掉 please 更像工程师）
-  - 场景：给 AI / 同事派活"把上面的反馈加到日志里"，我习惯写 "Please add the feedback…"
-  - 为什么：平级协作里直接用祈使句（Add… / Let's… / Can you…）更干脆；please 偏正式、偏请求，多了会显得拘谨。非对错问题，是 register（语域）
-
-## 承认对方发现了遗漏
-
-- [词块] good catch = 发现得好、亏你看到了
-  - 场景：对方指出我漏了一个点（漏写、漏改、漏 case），想说"对，这个点抓得好"
-  - 为什么：code review / PR 评论里承认队友抓到 bug 或缺口的高频回应
+- [要点] 完成一步后怎样自然承接下一步？——平级工程对话中可用 `Nice / Perfect / Looks good. Next, ...`。`Very good. Then, ...` 并非语法错误，但可能带有评价式或较书面的语气，是否替换取决于关系和场景。
+- [要点] 怎样表达“供参考”？——通常用 `for reference`，例如 `Read these documents for reference.`；`as a reference` 表示把某个具体对象当作一份参考资料，需要冠词。
+- [要点] 给 AI 或同事派活时必须去掉 `please` 吗？——不必。`Add ...` 更直接，`Please add ...` 更礼貌或正式，`Can you add ...?` 更像协作请求；这是语域选择，不是正误区别。
+- [要点] 怎样承认对方发现了遗漏？——`Good catch.` 常用于 code review、PR 评论或调试中，表示“这个缺口发现得好”。

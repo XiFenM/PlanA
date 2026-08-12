@@ -1,66 +1,39 @@
 # 学习日志 · Day 02 — 2026-05-27 周三
 
-> 格式见 [../review-workflow.md](../review-workflow.md) Step 2。每条带「场景」做记忆钩子。
-> 学完当天就整理成墨墨表格（review-workflow Step 3 → `../cards/day-02.md`，待生成），当天即可导入复习。
->
-> 来源：AI 教练对话——解释墨墨复习流程的设想时，想法多、不知道怎么用英语表达，先用中文说了（⭐ 碰壁切中文，正是要补的缺口）。
+> 记录性质：`legacy-derived` 学习记录。内容来自历史 AI 教练对话，主要记录当时主动表达受阻、工程沟通纠错和可复用表达。
+> 来源限制：旧文件没有保留可核验的 provider、会话或消息边界；下列原表达和场景沿用历史记录，本次迁移不补造来源标识，也不把 AI 示例当成学习者原话或掌握证据。
+> 交接边界：只有用户明确要求时，才把已核验条目交给 `memo-cards` 预览；整理日志、制卡和 Markji 导入互不自动触发。
 
-英文版（可做 shadowing）：
+## 主动表达受阻：解释复习流程
 
-> "I've got a lot of ideas here and I'm not sure how to **put** them **in English**, so let me explain in Chinese first. Here's the workflow I **have in mind**: ① **Spot the issue** — while I'm studying I hit something **worth memorizing** that isn't just a plain vocab word. ② **Jot it down** — I (or you, the AI coach) log it in that day's notes, in loose natural language, not strict card format."
+当时想法较多，不知道怎样用英语表达，先切换为中文说明。这次语言切换本身是过程证据：需要的是更小的表达支架，而不是默认获得完整翻译。
 
-## 词块
+- [要点] 怎样表达“把这些想法用英语说出来”？——`put these ideas in English`；`put ... in English` 比较口语化。
+- [要点] 怎样表达“我设想中的流程”？——`the workflow I have in mind`；`have in mind` 表示心里已有的设想。
+- [要点] 怎样表达“值得记忆的东西”？——`something worth memorizing`；`worth` 后接动名词。
+- [要点] 怎样表达“随手记下”？——`jot it down`；它比 `write it down` 更突出快速、非正式地记一笔。
 
-- [词块] ⭐ put sth in English = 把某事用英语表达（比 express in English 更口语）
-  - 场景：想说"我不知道怎么用英语表达这些想法"
-- [词块] ⭐ I have in mind = 我设想的 / 我心里想的（the workflow I have in mind）
-  - 场景：想说"我设想中的流程是这样的"
-- [词块] ⭐ something worth memorizing = 值得记的东西（worth + 动名词）
-  - 场景：想说"遇到某个值得记忆的点"
-- [词块] ⭐ jot it down = 随手记下（比 write it down 更轻、更口语）
-  - 场景：想说"把它记进当天的文档"
+### 历史可选 shadowing 参考
+
+下面是旧记录保留的 AI 生成范本，只可在用户需要时作为跟读参考；它不是学习者原话、会话边界证据或掌握证据：
+
+> I've got a lot of ideas here and I'm not sure how to **put** them **in English**, so let me explain in Chinese first. Here's the workflow I **have in mind**: ① **Spot the issue** — while I'm studying, I come across something **worth memorizing** that isn't just a plain vocab word. ② **Jot it down** — I (or you, the AI coach) log it in that day's notes, in loose, natural language rather than in a strict card format.
 
 ## 复现 benchmark 结果 / 找现成工具
 
-来源：AI 教练对话——讨论在多个 benchmark 上复现结果、想找现成的评测工具（提到 HMMT 2026 Feb）
+- [纠错] 场景：表达“在四个 benchmark 上复现结果”。我写“reproduce the result of four datasets” → 正确：`reproduce results on four benchmarks`。原因：该历史场景讨论的是 benchmark，常用搭配是 `results on a benchmark`，多个结果和对象也应使用复数。
+- [要点] 怎样简洁询问“有没有现成工具可以跑这些 benchmark”？——`I'm not sure if there are off-the-shelf tools I can use to run these benchmarks.` 原来的 `software packages or libraries` 可以理解，但 `off-the-shelf tools` 更集中地表达“现成可用”，不是单纯语法纠错。
+- [要点] 怎样自然地请对方推荐工具？——`Can you point me to any tools that would work?`；`point someone to ...` 是工程协作中常见的请求表达。
+- [要点] `off-the-shelf` 与什么概念相对？——它表示现成的、开箱即用的工具或方案，常与 `in-house` 对照，例如 `We built it in-house rather than using an off-the-shelf tool.`
 
-- [纠错] ❌ reproduce the result of four datasets → ✅ reproduce **results on** four **benchmarks**
-  - 场景：想说"在四个 benchmark 上复现结果"
-  - 为什么：results **on** a benchmark 是标准搭配（不是 of）；而且这些是 benchmark，不只是 dataset
-- [纠错] ❌ I don't know if I can use some software packages or libraries to test it → ✅ I'm not sure if there are **off-the-shelf tools** I can use to run these
-  - 场景：想问"有没有现成的工具/库可以拿来跑"
-  - 为什么：更地道；off-the-shelf 一个词就顶 "some software packages or libraries" 一长串
-- [纠错] ❌ Please help me find if there is a tool I can use → ✅ Can you **point me to** any tools that would work?
-  - 场景：想请对方推荐能用的工具
-  - 为什么：point me to X 是地道的请求方式；"find if there is" 是中式英语腔
-- [词块] ⭐ off-the-shelf = 现成的 / 开箱即用的（工具、库）
-  - 场景："Is there an off-the-shelf harness for HMMT 2026 Feb?" / "We can't use off-the-shelf vLLM yet — the CSA kernels aren't upstreamed."
-  - 为什么：infra 对话里在"用现成工具 vs 自己造"之间抉择时高频；反义词 in-house（we built it in-house ↔ we used off-the-shelf）
+## 带新人上手 CUDA / C++
 
-## 带新人上手 CUDA / C++（设计学习路径）
+- [纠错] 场景：表达“一个刚毕业的同事”。我写“fresh graduated colleague” → 正确：`a new-grad colleague` 或 `a colleague who just graduated`。原因：`fresh graduated` 不是英语中的正常搭配。
+- [纠错] 场景：表达“他们懂一些基础，但不系统、不扎实”。我写“they know some basics, but not systematic and solid” → 正确：`They know some basics, but their foundation isn't solid` 或 `... but their knowledge isn't structured.` 原因：原句后半段缺少被形容的名词或完整谓语，含义关系不清。
+- [要点] 怎样表达“给他们设计一条系统学习路径”？——`I want to put together a structured learning path for them.` 原来的 `give a systematic learning path for them` 能猜到含义，但 `put together` 更准确地表示设计和组织材料。
+- [要点] 怎样表达“让新人快速达到可工作的理解程度”？——`get someone up to speed on ...`，也可说 `ramp someone up on ...`，例如 `get a new grad up to speed on CUDA and C++`。
 
-来源：AI 教练对话——说要给一个刚毕业的同事准备 tutorial，帮他系统地上手 CUDA 和 C++
+## 口语中的随口确认
 
-- [纠错] ❌ fresh graduated colleague → ✅ **new grad** colleague / a colleague who **just graduated**
-  - 场景：想说"一个刚毕业的同事"
-  - 为什么："fresh graduated" 不是真实搭配；"new grad" 才是标准说法
-- [纠错] ❌ they know some basics, but not systematic and solid → ✅ ... but **nothing structured** / but their **foundation isn't solid**
-  - 场景：想说"他们懂点基础，但不系统、不扎实"
-  - 为什么：英语里形容词不能这样悬空，要接名词或用完整从句（nothing structured / foundation isn't solid）
-- [纠错] ❌ I hope I can give a systematic learning path for them → ✅ I want to **put together** a learning path **for** them
-  - 场景：想说"我想给他们设计一条系统的学习路径"
-  - 为什么：give X for them 介词错；put together 是工程师"设计课程/文档"的地道动词
-- [词块] ⭐ get someone up to speed（兄弟说法 ramp someone up）= 让某人快速上手 / 跟上进度
-  - 场景："I'm preparing this tutorial to get a new grad up to speed on CUDA and C++." / "we need to ramp him up on the inference stack before the next release" / "are you up to speed on the new TMA stuff?"
-  - 为什么：AI Infra 团队带新人/onboarding 的标准说法，替代 "make them reach the level" / "help them become familiar" 这种中式翻译
-
-## 口语：随口确认用 right?
-
-来源：AI 教练对话——想确认"其他的都是免费的吧？"
-
-- [纠错] ❌ Others are free, aren't they? → ✅ **The rest** are free, **right?** / **Everything else** is free, right?
-  - 场景：想说"其他的都免费吧？"求个确认
-  - 为什么：两点——① 母语者用 the rest / everything else 而不是光秃秃的 others；② 随口确认用 right?，而 aren't they? / isn't it? 这类 tag question 很书面、口语/聊天里几乎没人用
-- [词块] ⭐ ..., right?（句尾随口确认的 tag）= ……对吧？
-  - 场景："The KV cache lives in HBM, right?" / "We're still on CUDA 12.4 in prod, right?"
-  - 为什么：工程师英语里万能的确认 tag，替代 isn't it / aren't they / don't you 这类几乎没人说的书面 tag question；句尾一挂，友好、低风险，方便对方顺手纠正你
+- [要点] 怎样随口确认“其他的都是免费的吧”？——轻松对话中可说 `The rest are free, right?` 或 `Everything else is free, right?`。历史原句 `Others are free, aren't they?` 在指代清楚时也合乎语法；前者只是更适合当时想要的随口确认语气，不能把 tag question 一概判为错误。
+- [要点] 工程沟通中怎样用 `right?` 做低成本确认？——把它放在陈述句末，例如 `The KV cache lives in HBM, right?`。它便于对方直接确认或纠正，但在需要正式或精确确认时仍应完整提问。
