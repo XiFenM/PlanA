@@ -23,13 +23,14 @@ PlanA/
 ├── 计划/                           ← 学习计划与进度的中枢
 │   ├── 主计划.md                   ← 20 周排程总表 + 时间预算
 │   ├── 进度总表.md                 ← 全局 sprint 进度（甘特 + 模块汇总）
-│   ├── 周更流程.md                 ← 资料周报的 SOP
-│   ├── 月底晋级评审.md             ← 月底晋级评审的 SOP
+│   ├── 周更流程.md                 ← 已退役入口（保留路径供历史链接跳转）
+│   ├── 月底晋级评审.md             ← 已退役入口（保留路径供历史链接跳转）
 │   ├── 学习断点.md                 ← 唯一稀疏 Checkpoint（仅语义变化时覆盖）
-│   └── 周报/                       ← 按需 refresh 的不可变历史快照，沿用 YYYY-Wxx.md
-│       └── 2026-W18.md             ← 第一份（DeepSeek V4 周）
+│   ├── 周报/                       ← W18/W26/W32 等只读 legacy 快照
+│   │   └── 2026-W18.md             ← 第一份 legacy 报告（DeepSeek V4 周）
+│   └── 资源治理/                   ← 新 registry、不可变 reports/ 与按需 briefs/
 │
-├── .agent-skills-config/           ← 四个已适配学习 Skill 的 version 2 公共环境配置
+├── .agent-skills-config/           ← 五个学习 Skill 的 version 2 公共环境配置
 │   └── guide-learning-profile.md   ← PlanA 状态路径、单写者、时长归属与领域透镜
 ├── 推理框架/                       ← Track A 第一优先级
 ├── 训练框架与分布式/               ← Track A 第二优先级（含 §J GPU 通信子专题）
@@ -105,14 +106,14 @@ git submodule update --init --recursive
 中央规范源以 [`.agent-skills`](.agent-skills) 子模块固定在
 `f6abbdf5a1acd00ba6d5e45a92456605b603b392`。[`.agent-skills.json`](.agent-skills.json) 为 Codex 与 Claude
 同时选择 `guide-learning`、`study-log`、`english-coach`、`memo-cards`、
-`resource-planning` 和 `playwright-cli`，并为前四个已适配的 first-party Skill 引用
-[`.agent-skills-config/`](.agent-skills-config/) 下的 Git-tracked 公共配置。`resource-planning` 已使用最新版中央核心，
-但本轮不挂载持久上下文；它当前仅可进行无配置、纯对话、零写入的专题 `research`。
+`resource-planning` 和 `playwright-cli`，并为五个学习 Skill 引用
+[`.agent-skills-config/`](.agent-skills-config/) 下的 Git-tracked 公共配置。`playwright-cli` 无需仓库配置。
 
 materializer 会为有配置的 Skill 在两个宿主副本中生成逐字节一致的 `.agent-skills-context.json`。它只提供
 仓库事实定位、已验证的 tracked 输入 collection 和机械写入上限，不授予读取未跟踪文件、保存、覆盖、
-制卡、发布、提交或推送。`resource-planning` 当前没有 `.agent-skills-context.json`；source/query 目录、
-portfolio slot 和 registry bootstrap 尚未迁移，因此不得运行持久 refresh/review 或保存 research brief。
+制卡、发布、提交或推送。`resource-planning` 的 context 只声明 source/query 静态范围、只读事实、存储位置与
+八个课程空槽；首次 refresh、任何 research brief 和逐项 review 仍分别需要当次预览与明确确认。旧周报
+不属于新 registry，也不会因配置存在而被接管或改写。
 
 `.agents/skills/` 与 `.claude/skills/` 是被 Git 忽略的生成发现视图，不是事实源。不要手工修改、复制或
 同步这两棵树；只修改中央仓库的规范源或本仓库的选择配置。
@@ -143,11 +144,12 @@ uv run --no-project python .agent-skills/tools/materialize_skills.py --repo . --
 | [{板块}/进度.md](推理框架/进度.md) | 模块进度与用户确认的实际学习时长 | 有可归属的实质进展且时长经确认时 |
 | [计划/进度总表.md](计划/进度总表.md) | 全局派生 dashboard，20 周甘特与模块汇总 | 经批准的周期触点，不裁决活动状态 |
 
-**资源快照独立成线**：[计划/周更流程.md](计划/周更流程.md) 与 [计划/月底晋级评审.md](计划/月底晋级评审.md)
-暂时保留为 legacy 人类 SOP。它们不构成 version 2 的机器配置；在后续将 source/query 目录、portfolio
-slot 与 registry bootstrap 作为一个整体完成并评审前，`resource-planning` 仅进行无配置、纯对话、零写入
-的专题 `research`，不执行持久 refresh/review。未来 refresh 按需计算自上次成功运行后的补缺窗口；周日／
-月末只可作为提醒，不构成运行或评审前置。
+**资源治理独立成线**：静态 source/query 与模块 slot 由
+[`.agent-skills-config/resource-planning.json`](.agent-skills-config/resource-planning.json) 唯一拥有；
+动态 identity、candidate、coverage、cursor 与决策事件只由新 registry 拥有。W18/W26/W32 保持只读 legacy
+快照，既不是 backlog，也不提供 cursor。未来 refresh 按需计算自上次成功运行后的补缺窗口；周日／月末只可
+作为提醒，不构成运行或评审前置。[周更流程](计划/周更流程.md) 与
+[月底晋级评审](计划/月底晋级评审.md) 仅保留退役入口，行为以中央 `resource-planning` 为准。
 
 **两条全程并行子轨道**：[Leetcode/](Leetcode/) 和 [英语/](英语/) 都不占主线板块周次，而是每天用独立时间块推进、贯穿全程，各自同样用 `学习指引.md` + `进度.md` 双锚文件管理。英语轨 22 周（比冲刺多 2 周到 W22），其每日 60–75 min **不计入** 650h 主预算；音频教材由同级工具仓库 `../blog-voice` 生产。
 
@@ -158,7 +160,7 @@ slot 与 registry bootstrap 作为一个整体完成并评审前，`resource-pla
 
 | Skill | 流程站位 | 触发 |
 |---|---|---|
-| `resource-planning` | **供给侧**：最新版核心已启用，持久上下文未挂载 | 「研究／比较这些资料」时仅纯对话、零写入；refresh/review 暂时阻断 |
+| `resource-planning` | **供给侧**：research → refresh → review 的受管资源生命周期 | 「研究／比较资料」；持久动作须精确预览与当次确认 |
 | `guide-learning` | **主干**：来源化教学 → 讲后检查 → 按证据缺口练习 → mastery → 稀疏恢复 | 教我／带我学／继续或恢复 Lesson |
 | `study-log` | **按需交接**：结构化过程记录，或经边界与隐私确认的 raw 可见文本存档 | 「整理学习记录／保存原始对话」 |
 | `memo-cards` | **记忆侧**：学习记录 / 文章面试Q&A / 英语日志 → 墨墨 TSV 卡 | 「制卡」 |
@@ -184,8 +186,10 @@ slot 与 registry bootstrap 作为一个整体完成并评审前，`resource-pla
 
 ## 5. 资料搜集来源
 
-> 这是仓库知识流入的总入口。每个源都是**人工挑选的一线信息源**——不收营销软文、不收无信息增量的转载。
-> 各板块 `学习指引.md §长期订阅` 是这里的子集投影；冲突以本节为准。
+> 本节是资源目录的人类可读投影与导航。机器可执行的 source/query 静态范围以
+> [`.agent-skills-config/resource-planning.json`](.agent-skills-config/resource-planning.json) 为准；动态状态只在
+> registry 中。这里出现但尚未进入配置的渠道仍只能作为人工线索，不能被自动扫描或视为联网授权。
+> 各板块 `学习指引.md §长期订阅` 是本节的模块投影；发现漂移时应先修正静态配置，再同步人类投影。
 
 ### 5.1 推理框架（每周必扫）
 
@@ -347,7 +351,8 @@ slot 与 registry bootstrap 作为一个整体完成并评审前，`resource-pla
 | 想看我五个月的整体规划 | [计划/主计划.md](计划/主计划.md) |
 | 想看某板块要读什么资料 | [{板块}/学习指引.md](推理框架/学习指引.md) |
 | 想看我学到哪了 | [计划/进度总表.md](计划/进度总表.md) |
-| 想看本周新出的资料 | [计划/周报/](计划/周报/) 最新一份 |
+| 想看旧资源快照 | [计划/周报/](计划/周报/) 中的 W18/W26/W32 legacy 报告 |
+| 想看新受管资源运行 | [计划/资源治理/reports/](计划/资源治理/reports/) 的不可变报告；当前状态以 registry 为准 |
 | 想看我的英语听说训练计划 | [英语/学习指引.md](英语/学习指引.md)（进度见 [英语/进度.md](英语/进度.md)）|
 | 想看面试故事素材 | [面试准备/](面试准备/) |
 | 想看 AI 怎么带我学 | [中央 `guide-learning`](.agent-skills/skills/guide-learning/SKILL.md) + [PlanA 配置层](.agent-skills-config/guide-learning-profile.md) |
@@ -358,13 +363,13 @@ slot 与 registry bootstrap 作为一个整体完成并评审前，`resource-pla
 
 ## 7. 维护规则（防腐手册）
 
-1. **不让稳定版被周报污染**：周报是高频流入；稳定版指引只在月底人工"晋级"时才动。
-2. **进度颗粒度足够细**：每学 0.5h 就在 `进度.md` 填一次，正反馈靠小颗粒打勾建立。
-3. **写复盘**：每周末必须输出一篇"自己讲给自己听"的复盘笔记（< 1000 字），落到对应板块目录。这些是面试故事的弹药。
+1. **资源事实分层**：静态 source/query 在配置中，动态 identity/candidate/cursor 在 registry 中，报告只作不可变快照；旧周报不反推当前状态。
+2. **进度颗粒度足够细**：实际学习时长只写入对应模块 `进度.md`，并且必须来自用户提供或确认；0.5h 是记录颗粒，不是自动写入频率。
+3. **复盘按需授权**：有实际证据且值得沉淀时可以提议复盘或文章；只有用户确认素材范围与目标后才创建，不把周末当自动产物触发器。
 4. **资料分级保持纪律**：🟥 必读 / 🟨 选读 / 🟩 背景 三级一旦定下来，不要随意上调。预算不够时砍数量，不降优先级。
-5. **新资料先入周报、再入稳定版**：避免"看到啥都塞进去"导致清单膨胀。
-6. **过时资料**：发现某条目被淘汰（如 EAGLE-2 → EAGLE-3），保留老条目位置，行内加 "（替代自 X，YYYY-MM-DD）" 注解。不删，留作历史。
-7. **Changelog**：每次稳定版指引发生晋级，在该指引顶部 Changelog 节加一行记录晋级事件。
+5. **新资料先治理、再编辑课程**：refresh 只产生证据、候选与不可变报告；只有通过门槛并经逐项 review 确认的 decision unit 才进入精确课程 slot。
+6. **替代是课程动作**：资源关系使用 version/update/successor/conflict 等可证明关系；只有用户确认的 review 才执行 replace，不从标题相似或旧周报自动推断。
+7. **审计由事务拥有**：registry 事件与 Git 历史记录变更；不再要求在每份课程文件里维护另一套手写晋级 Changelog。
 8. **AI 产物与行为各有事实源**：结构化学习记录只进 `{板块}/log/`，更新已有记录时先展示 diff 并确认；raw 对话默认放在 Git 工作树外。记忆卡只进 `{板块}/cards/`，文章 Q&A 卡为主牌，学习记录卡只保留纠错与文章未收录的过程细节。中央 Skill 拥有 Agent 行为规范；本仓库配置层只保存 PlanA 路径、事实职责、时长归属与领域透镜。
 
 ---

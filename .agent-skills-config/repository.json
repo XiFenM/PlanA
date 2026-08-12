@@ -37,6 +37,11 @@
       "path": "计划/主计划.md",
       "description": "长期目标、范围与唯一总预算事实源"
     },
+    "resource-ranking-profile": {
+      "path": ".agent-skills-config/resource-planning-profile.md",
+      "section": "JD 四周冲刺排序投影",
+      "description": "当前临时 Program 的资源排序投影；不拥有 Program 状态或授权"
+    },
     "repository-guidelines": {
       "path": "AGENTS.md",
       "description": "仓库结构、写入边界与验证约定"
@@ -44,7 +49,11 @@
     "source-catalog": {
       "path": "README.md",
       "section": "5. 资料搜集来源",
-      "description": "迁移前的人类可读资料目录，仅作 bootstrap 证据"
+      "description": "资源目录的人类可读投影与导航；机器静态定义由 resource-planning 配置拥有"
+    },
+    "resource-legacy-reports": {
+      "path": "计划/周报",
+      "description": "W18、W26、W32 等只读 legacy 资源报告，仅作 bootstrap 证据"
     }
   }
 }

@@ -1,0 +1,818 @@
+{
+  "schema": "agent-skills.resource-planning/v1",
+  "skill": "resource-planning",
+  "storage": {
+    "registry_path": "计划/资源治理/registry.json",
+    "report_directory": "计划/资源治理/reports",
+    "research_brief_directory": "计划/资源治理/briefs",
+    "journal_path": "计划/.resource-planning-journal.json"
+  },
+  "preferences": {
+    "bootstrap_days": 30,
+    "decision_unit_soft_target": 5,
+    "timezone": "Asia/Shanghai",
+    "report_naming": "run-id"
+  },
+  "sources": [
+    {
+      "source_id": "accelerator-integration-wg",
+      "kind": "repository",
+      "locator": "https://github.com/pytorch-fdn/accelerator-integration-wg",
+      "modules": ["pytorch"],
+      "role_hint": "normative-primary",
+      "enabled": true,
+      "cadence": "weekly",
+      "resource_types": ["documentation", "code"]
+    },
+    {
+      "source_id": "anthropic-engineering",
+      "kind": "web",
+      "locator": "https://www.anthropic.com/engineering",
+      "modules": ["inference-framework", "model-theory"],
+      "role_hint": "first-party-engineering",
+      "enabled": true,
+      "cadence": "weekly",
+      "resource_types": ["article"]
+    },
+    {
+      "source_id": "arxiv-sanity-lite",
+      "kind": "paper-index",
+      "locator": "http://arxiv-sanity-lite.com/",
+      "modules": ["compiler", "inference-framework", "model-theory", "parallel-computing", "pytorch", "tpu", "training-distributed"],
+      "role_hint": "discovery-index",
+      "enabled": false,
+      "cadence": "weekly",
+      "resource_types": ["paper"]
+    },
+    {
+      "source_id": "character-ai-blog",
+      "kind": "web",
+      "locator": "https://blog.character.ai/",
+      "modules": ["inference-framework"],
+      "role_hint": "first-party-engineering",
+      "enabled": true,
+      "cadence": "weekly",
+      "resource_types": ["article"]
+    },
+    {
+      "source_id": "colfax-research",
+      "kind": "web",
+      "locator": "https://research.colfax-intl.com/",
+      "modules": ["parallel-computing"],
+      "role_hint": "teaching-review",
+      "enabled": true,
+      "cadence": "weekly",
+      "resource_types": ["article", "course"]
+    },
+    {
+      "source_id": "cuda-tile-releases",
+      "kind": "repository",
+      "locator": "https://github.com/NVIDIA/cuda-tile/releases",
+      "modules": ["compiler"],
+      "role_hint": "normative-primary",
+      "enabled": true,
+      "cadence": "weekly",
+      "resource_types": ["code", "documentation"]
+    },
+    {
+      "source_id": "cutlass-changelog",
+      "kind": "web",
+      "locator": "https://docs.nvidia.com/cutlass/latest/CHANGELOG.html",
+      "modules": ["parallel-computing"],
+      "role_hint": "normative-primary",
+      "enabled": true,
+      "cadence": "weekly",
+      "resource_types": ["documentation"]
+    },
+    {
+      "source_id": "deepgemm-repository",
+      "kind": "repository",
+      "locator": "https://github.com/deepseek-ai/DeepGEMM",
+      "modules": ["parallel-computing", "training-distributed"],
+      "role_hint": "normative-primary",
+      "enabled": true,
+      "cadence": "weekly",
+      "resource_types": ["code", "documentation"]
+    },
+    {
+      "source_id": "deepep-repository",
+      "kind": "repository",
+      "locator": "https://github.com/deepseek-ai/DeepEP",
+      "modules": ["inference-framework", "training-distributed"],
+      "role_hint": "normative-primary",
+      "enabled": true,
+      "cadence": "weekly",
+      "resource_types": ["code", "documentation"]
+    },
+    {
+      "source_id": "dualpipe-repository",
+      "kind": "repository",
+      "locator": "https://github.com/deepseek-ai/DualPipe",
+      "modules": ["training-distributed"],
+      "role_hint": "normative-primary",
+      "enabled": true,
+      "cadence": "weekly",
+      "resource_types": ["code", "documentation"]
+    },
+    {
+      "source_id": "flashmla-repository",
+      "kind": "repository",
+      "locator": "https://github.com/deepseek-ai/FlashMLA",
+      "modules": ["inference-framework", "parallel-computing"],
+      "role_hint": "normative-primary",
+      "enabled": true,
+      "cadence": "weekly",
+      "resource_types": ["code", "documentation"]
+    },
+    {
+      "source_id": "deepseek-github",
+      "kind": "repository",
+      "locator": "https://github.com/deepseek-ai",
+      "modules": ["model-theory", "parallel-computing", "training-distributed"],
+      "role_hint": "normative-primary",
+      "enabled": false,
+      "cadence": "weekly",
+      "resource_types": ["code", "documentation", "paper"]
+    },
+    {
+      "source_id": "deepseek-huggingface",
+      "kind": "web",
+      "locator": "https://huggingface.co/deepseek-ai",
+      "modules": ["model-theory"],
+      "role_hint": "first-party-engineering",
+      "enabled": true,
+      "cadence": "weekly",
+      "resource_types": ["documentation", "paper"]
+    },
+    {
+      "source_id": "deepspeed-site",
+      "kind": "web",
+      "locator": "https://www.deepspeed.ai/",
+      "modules": ["training-distributed"],
+      "role_hint": "first-party-engineering",
+      "enabled": true,
+      "cadence": "weekly",
+      "resource_types": ["article", "documentation"]
+    },
+    {
+      "source_id": "ezyang-blog",
+      "kind": "web",
+      "locator": "https://blog.ezyang.com/",
+      "modules": ["pytorch"],
+      "role_hint": "first-party-engineering",
+      "enabled": true,
+      "cadence": "weekly",
+      "resource_types": ["article"]
+    },
+    {
+      "source_id": "flashinfer-blog",
+      "kind": "web",
+      "locator": "https://flashinfer.ai/",
+      "modules": ["inference-framework", "parallel-computing"],
+      "role_hint": "first-party-engineering",
+      "enabled": true,
+      "cadence": "weekly",
+      "resource_types": ["article", "documentation"]
+    },
+    {
+      "source_id": "flashinfer-releases",
+      "kind": "repository",
+      "locator": "https://github.com/flashinfer-ai/flashinfer/releases",
+      "modules": ["inference-framework", "parallel-computing"],
+      "role_hint": "normative-primary",
+      "enabled": true,
+      "cadence": "weekly",
+      "resource_types": ["code", "documentation"]
+    },
+    {
+      "source_id": "google-cloud-ai-blog",
+      "kind": "web",
+      "locator": "https://cloud.google.com/blog/products/ai-machine-learning",
+      "modules": ["tpu"],
+      "role_hint": "first-party-engineering",
+      "enabled": true,
+      "cadence": "monthly",
+      "resource_types": ["article"]
+    },
+    {
+      "source_id": "gpu-mode-lectures",
+      "kind": "repository",
+      "locator": "https://github.com/gpu-mode/lectures",
+      "modules": ["parallel-computing"],
+      "role_hint": "teaching-review",
+      "enabled": true,
+      "cadence": "weekly",
+      "resource_types": ["course", "code", "video"]
+    },
+    {
+      "source_id": "hao-ai-lab",
+      "kind": "web",
+      "locator": "https://haoailab.com/blogs/",
+      "modules": ["inference-framework", "training-distributed"],
+      "role_hint": "first-party-engineering",
+      "enabled": true,
+      "cadence": "weekly",
+      "resource_types": ["article", "paper"]
+    },
+    {
+      "source_id": "hazy-research",
+      "kind": "web",
+      "locator": "https://hazyresearch.stanford.edu/",
+      "modules": ["model-theory", "parallel-computing"],
+      "role_hint": "first-party-engineering",
+      "enabled": true,
+      "cadence": "weekly",
+      "resource_types": ["article", "paper"]
+    },
+    {
+      "source_id": "helion-releases",
+      "kind": "repository",
+      "locator": "https://github.com/pytorch/helion/releases",
+      "modules": ["parallel-computing", "pytorch"],
+      "role_hint": "normative-primary",
+      "enabled": true,
+      "cadence": "weekly",
+      "resource_types": ["code", "documentation"]
+    },
+    {
+      "source_id": "hiascend-community",
+      "kind": "web",
+      "locator": "https://www.hiascend.com/",
+      "modules": ["compiler", "tpu"],
+      "role_hint": "discovery-index",
+      "enabled": true,
+      "cadence": "monthly",
+      "resource_types": ["article", "documentation"]
+    },
+    {
+      "source_id": "huggingface-blog",
+      "kind": "web",
+      "locator": "https://huggingface.co/blog",
+      "modules": ["model-theory", "training-distributed"],
+      "role_hint": "first-party-engineering",
+      "enabled": true,
+      "cadence": "weekly",
+      "resource_types": ["article", "paper"]
+    },
+    {
+      "source_id": "inference-max",
+      "kind": "web",
+      "locator": "https://inferencemax.semianalysis.com/",
+      "modules": ["inference-framework"],
+      "role_hint": "independent-validation",
+      "enabled": true,
+      "cadence": "daily",
+      "resource_types": ["dataset", "article"]
+    },
+    {
+      "source_id": "interviewing-io-blog",
+      "kind": "web",
+      "locator": "https://interviewing.io/blog",
+      "modules": ["leetcode"],
+      "role_hint": "independent-validation",
+      "enabled": true,
+      "cadence": "monthly",
+      "resource_types": ["article"]
+    },
+    {
+      "source_id": "jane-street-tech-talks",
+      "kind": "web",
+      "locator": "https://www.janestreet.com/tech-talks/",
+      "modules": ["compiler", "training-distributed"],
+      "role_hint": "teaching-review",
+      "enabled": true,
+      "cadence": "monthly",
+      "resource_types": ["video", "article"]
+    },
+    {
+      "source_id": "jax-releases",
+      "kind": "repository",
+      "locator": "https://github.com/jax-ml/jax/releases",
+      "modules": ["tpu"],
+      "role_hint": "normative-primary",
+      "enabled": true,
+      "cadence": "weekly",
+      "resource_types": ["code", "documentation"]
+    },
+    {
+      "source_id": "jax-scaling-book",
+      "kind": "web",
+      "locator": "https://jax-ml.github.io/scaling-book/",
+      "modules": ["inference-framework", "tpu", "training-distributed"],
+      "role_hint": "teaching-review",
+      "enabled": true,
+      "cadence": "monthly",
+      "resource_types": ["book", "documentation"]
+    },
+    {
+      "source_id": "latent-space",
+      "kind": "web",
+      "locator": "https://www.latent.space/",
+      "modules": ["compiler", "inference-framework", "model-theory", "parallel-computing", "pytorch", "tpu", "training-distributed"],
+      "role_hint": "discovery-index",
+      "enabled": false,
+      "cadence": "weekly",
+      "resource_types": ["article", "video"]
+    },
+    {
+      "source_id": "leetcode-cn",
+      "kind": "web",
+      "locator": "https://leetcode.cn/",
+      "modules": ["leetcode"],
+      "role_hint": "discovery-index",
+      "enabled": true,
+      "cadence": "weekly",
+      "resource_types": ["course", "other"]
+    },
+    {
+      "source_id": "leetgpu",
+      "kind": "web",
+      "locator": "https://leetgpu.com/",
+      "modules": ["leetcode", "parallel-computing"],
+      "role_hint": "teaching-review",
+      "enabled": true,
+      "cadence": "monthly",
+      "resource_types": ["course"]
+    },
+    {
+      "source_id": "llvm-weekly",
+      "kind": "web",
+      "locator": "https://llvmweekly.org/",
+      "modules": ["compiler"],
+      "role_hint": "discovery-index",
+      "enabled": true,
+      "cadence": "weekly",
+      "resource_types": ["article", "documentation"]
+    },
+    {
+      "source_id": "lmcache-blog",
+      "kind": "web",
+      "locator": "https://blog.lmcache.ai/",
+      "modules": ["inference-framework"],
+      "role_hint": "first-party-engineering",
+      "enabled": true,
+      "cadence": "weekly",
+      "resource_types": ["article"]
+    },
+    {
+      "source_id": "lmsys-blog",
+      "kind": "web",
+      "locator": "https://lmsys.org/blog/",
+      "modules": ["inference-framework"],
+      "role_hint": "first-party-engineering",
+      "enabled": true,
+      "cadence": "weekly",
+      "resource_types": ["article", "paper"]
+    },
+    {
+      "source_id": "maxtext-commits",
+      "kind": "repository",
+      "locator": "https://github.com/AI-Hypercomputer/maxtext/commits",
+      "modules": ["tpu", "training-distributed"],
+      "role_hint": "normative-primary",
+      "enabled": true,
+      "cadence": "weekly",
+      "resource_types": ["code", "documentation"]
+    },
+    {
+      "source_id": "meta-ai-blog",
+      "kind": "web",
+      "locator": "https://ai.meta.com/blog/",
+      "modules": ["model-theory"],
+      "role_hint": "first-party-engineering",
+      "enabled": true,
+      "cadence": "weekly",
+      "resource_types": ["article", "paper"]
+    },
+    {
+      "source_id": "mlir-discourse",
+      "kind": "web",
+      "locator": "https://discourse.llvm.org/c/mlir/",
+      "modules": ["compiler"],
+      "role_hint": "first-party-engineering",
+      "enabled": true,
+      "cadence": "weekly",
+      "resource_types": ["article", "documentation"]
+    },
+    {
+      "source_id": "moonshot-blog",
+      "kind": "web",
+      "locator": "https://moonshotai.github.io/Kimi/",
+      "modules": ["model-theory"],
+      "role_hint": "first-party-engineering",
+      "enabled": true,
+      "cadence": "weekly",
+      "resource_types": ["article", "paper"]
+    },
+    {
+      "source_id": "neetcode",
+      "kind": "web",
+      "locator": "https://www.youtube.com/@NeetCode",
+      "modules": ["leetcode"],
+      "role_hint": "teaching-review",
+      "enabled": true,
+      "cadence": "monthly",
+      "resource_types": ["course", "video"]
+    },
+    {
+      "source_id": "nvidia-developer-blog",
+      "kind": "web",
+      "locator": "https://developer.nvidia.com/blog",
+      "modules": ["inference-framework", "model-theory", "parallel-computing", "training-distributed"],
+      "role_hint": "first-party-engineering",
+      "enabled": true,
+      "cadence": "weekly",
+      "resource_types": ["article", "documentation"]
+    },
+    {
+      "source_id": "papers-with-code",
+      "kind": "paper-index",
+      "locator": "https://paperswithcode.com/",
+      "modules": ["compiler", "inference-framework", "model-theory", "parallel-computing", "pytorch", "tpu", "training-distributed"],
+      "role_hint": "discovery-index",
+      "enabled": false,
+      "cadence": "weekly",
+      "resource_types": ["code", "paper"]
+    },
+    {
+      "source_id": "pytorch-blog",
+      "kind": "web",
+      "locator": "https://pytorch.org/blog/",
+      "modules": ["pytorch", "training-distributed"],
+      "role_hint": "normative-primary",
+      "enabled": true,
+      "cadence": "weekly",
+      "resource_types": ["article", "documentation"]
+    },
+    {
+      "source_id": "pytorch-dev-discuss",
+      "kind": "web",
+      "locator": "https://dev-discuss.pytorch.org/",
+      "modules": ["pytorch", "training-distributed"],
+      "role_hint": "first-party-engineering",
+      "enabled": true,
+      "cadence": "weekly",
+      "resource_types": ["article", "documentation"]
+    },
+    {
+      "source_id": "qwen-blog",
+      "kind": "web",
+      "locator": "https://qwenlm.github.io/blog/",
+      "modules": ["model-theory"],
+      "role_hint": "first-party-engineering",
+      "enabled": true,
+      "cadence": "weekly",
+      "resource_types": ["article", "paper"]
+    },
+    {
+      "source_id": "semianalysis",
+      "kind": "web",
+      "locator": "https://semianalysis.com/",
+      "modules": ["inference-framework", "tpu"],
+      "role_hint": "independent-validation",
+      "enabled": true,
+      "cadence": "weekly",
+      "resource_types": ["article"]
+    },
+    {
+      "source_id": "sglang-releases",
+      "kind": "repository",
+      "locator": "https://github.com/sgl-project/sglang/releases",
+      "modules": ["inference-framework"],
+      "role_hint": "normative-primary",
+      "enabled": true,
+      "cadence": "weekly",
+      "resource_types": ["code", "documentation"]
+    },
+    {
+      "source_id": "tensara",
+      "kind": "web",
+      "locator": "https://tensara.org/",
+      "modules": ["leetcode", "parallel-computing"],
+      "role_hint": "teaching-review",
+      "enabled": true,
+      "cadence": "monthly",
+      "resource_types": ["course"]
+    },
+    {
+      "source_id": "thonking",
+      "kind": "web",
+      "locator": "https://www.thonking.ai/",
+      "modules": ["pytorch"],
+      "role_hint": "first-party-engineering",
+      "enabled": true,
+      "cadence": "weekly",
+      "resource_types": ["article"]
+    },
+    {
+      "source_id": "tilekernels-repository",
+      "kind": "repository",
+      "locator": "https://github.com/deepseek-ai/TileKernels",
+      "modules": ["parallel-computing"],
+      "role_hint": "normative-primary",
+      "enabled": true,
+      "cadence": "weekly",
+      "resource_types": ["code", "documentation"]
+    },
+    {
+      "source_id": "tilelang-repository",
+      "kind": "repository",
+      "locator": "https://github.com/tile-ai/tilelang",
+      "modules": ["compiler", "parallel-computing"],
+      "role_hint": "normative-primary",
+      "enabled": true,
+      "cadence": "weekly",
+      "resource_types": ["code", "documentation"]
+    },
+    {
+      "source_id": "tri-dao-blog",
+      "kind": "web",
+      "locator": "https://tridao.me/",
+      "modules": ["model-theory", "parallel-computing"],
+      "role_hint": "first-party-engineering",
+      "enabled": true,
+      "cadence": "weekly",
+      "resource_types": ["article", "paper"]
+    },
+    {
+      "source_id": "triton-releases",
+      "kind": "repository",
+      "locator": "https://github.com/triton-lang/triton/releases",
+      "modules": ["compiler", "parallel-computing"],
+      "role_hint": "normative-primary",
+      "enabled": true,
+      "cadence": "weekly",
+      "resource_types": ["code", "documentation"]
+    },
+    {
+      "source_id": "vllm-blog",
+      "kind": "web",
+      "locator": "https://vllm.ai/blog/",
+      "modules": ["inference-framework"],
+      "role_hint": "first-party-engineering",
+      "enabled": true,
+      "cadence": "weekly",
+      "resource_types": ["article", "documentation"]
+    },
+    {
+      "source_id": "vllm-releases",
+      "kind": "repository",
+      "locator": "https://github.com/vllm-project/vllm/releases",
+      "modules": ["inference-framework"],
+      "role_hint": "normative-primary",
+      "enabled": true,
+      "cadence": "weekly",
+      "resource_types": ["code", "documentation"]
+    }
+  ],
+  "queries": [
+    {
+      "query_id": "compiler-research",
+      "all_terms": ["GPU compiler"],
+      "any_terms": ["MLIR", "tensor IR", "tile IR", "dialect", "autotuning"],
+      "exclude_terms": ["marketing"],
+      "domains": ["arxiv.org"],
+      "resource_types": ["paper"],
+      "modules": ["compiler"],
+      "enabled": true
+    },
+    {
+      "query_id": "distributed-training-research",
+      "all_terms": ["large model training"],
+      "any_terms": ["FSDP", "Megatron", "expert parallel", "pipeline schedule", "fault tolerance"],
+      "exclude_terms": ["survey-only"],
+      "domains": ["arxiv.org"],
+      "resource_types": ["paper"],
+      "modules": ["training-distributed"],
+      "enabled": true
+    },
+    {
+      "query_id": "inference-research",
+      "all_terms": ["LLM inference"],
+      "any_terms": ["serving", "KV cache", "speculative decoding", "disaggregation", "scheduling"],
+      "exclude_terms": ["marketing"],
+      "domains": ["arxiv.org"],
+      "resource_types": ["paper"],
+      "modules": ["inference-framework"],
+      "enabled": true
+    },
+    {
+      "query_id": "kernel-research",
+      "all_terms": ["GPU kernel"],
+      "any_terms": ["Triton", "FlashAttention", "TMA", "warp specialization", "CuTe DSL", "NVFP4"],
+      "exclude_terms": ["marketing"],
+      "domains": ["arxiv.org"],
+      "resource_types": ["paper"],
+      "modules": ["parallel-computing"],
+      "enabled": true
+    },
+    {
+      "query_id": "leetcode-interview-trends",
+      "all_terms": ["software engineering interview"],
+      "any_terms": ["algorithm", "concurrency", "GPU", "systems"],
+      "exclude_terms": ["advertisement"],
+      "domains": ["github.com", "interviewing.io", "leetcode.cn", "leetcode.com"],
+      "resource_types": ["article", "course", "other"],
+      "modules": ["leetcode"],
+      "enabled": true
+    },
+    {
+      "query_id": "model-architecture-research",
+      "all_terms": ["language model architecture"],
+      "any_terms": ["sparse attention", "MoE routing", "MTP", "NVFP4", "RoPE", "VLM"],
+      "exclude_terms": ["marketing"],
+      "domains": ["arxiv.org"],
+      "resource_types": ["paper"],
+      "modules": ["model-theory"],
+      "enabled": true
+    },
+    {
+      "query_id": "pytorch-internals-research",
+      "all_terms": ["PyTorch"],
+      "any_terms": ["dispatcher", "autograd", "torch.compile", "accelerator backend", "distributed"],
+      "exclude_terms": ["beginner tutorial"],
+      "domains": ["dev-discuss.pytorch.org", "github.com", "pytorch.org"],
+      "resource_types": ["article", "code", "documentation"],
+      "modules": ["pytorch"],
+      "enabled": true
+    },
+    {
+      "query_id": "tpu-jax-research",
+      "all_terms": ["JAX TPU"],
+      "any_terms": ["MaxText", "SPMD", "sharding", "collective", "accelerator"],
+      "exclude_terms": ["marketing"],
+      "domains": ["arxiv.org", "github.com"],
+      "resource_types": ["code", "paper"],
+      "modules": ["tpu"],
+      "enabled": true
+    }
+  ],
+  "fact_refs": [
+    {
+      "fact_id": "main-plan",
+      "kind": "file",
+      "required": true,
+      "modules": ["compiler", "inference-framework", "leetcode", "model-theory", "parallel-computing", "pytorch", "tpu", "training-distributed"]
+    },
+    {
+      "fact_id": "resource-legacy-reports",
+      "kind": "collection",
+      "required": false,
+      "modules": ["compiler", "inference-framework", "leetcode", "model-theory", "parallel-computing", "pytorch", "tpu", "training-distributed"]
+    },
+    {
+      "fact_id": "resource-ranking-profile",
+      "kind": "file",
+      "required": false,
+      "modules": ["compiler", "inference-framework", "parallel-computing", "pytorch", "tpu", "training-distributed"]
+    },
+    {
+      "fact_id": "source-catalog",
+      "kind": "file",
+      "required": false,
+      "modules": ["compiler", "inference-framework", "leetcode", "model-theory", "parallel-computing", "pytorch", "tpu", "training-distributed"]
+    }
+  ],
+  "overlays": [
+    {
+      "overlay_id": "jd-four-week-sprint",
+      "fact_refs": ["resource-ranking-profile"],
+      "modules": ["compiler", "inference-framework", "parallel-computing", "pytorch", "tpu", "training-distributed"],
+      "source_ids": [],
+      "query_ids": [],
+      "priority": 20,
+      "valid_from": "2026-08-09",
+      "valid_until": "2026-09-05"
+    }
+  ],
+  "modules": [
+    {
+      "module_id": "compiler",
+      "display_name": "编译器",
+      "aliases": ["GPU compiler", "MLIR", "Triton compiler"],
+      "portfolio_path": "编译器/学习指引.md",
+      "report_group": "track-b",
+      "adapter": {
+        "adapter_id": "markdown-curriculum",
+        "version": 1,
+        "anchor": "## 2. 资料清单（校准至 2026-04）",
+        "id_policy": "section-local-suffix",
+        "allowed_actions": ["add"],
+        "status_terms": ["⬜", "🟡", "✅", "⏭", "🔖"],
+        "priority_terms": ["🟥", "🟨", "🟩"]
+      }
+    },
+    {
+      "module_id": "inference-framework",
+      "display_name": "推理框架",
+      "aliases": ["LLM serving", "SGLang", "vLLM"],
+      "portfolio_path": "推理框架/学习指引.md",
+      "report_group": "track-a",
+      "adapter": {
+        "adapter_id": "markdown-curriculum",
+        "version": 1,
+        "anchor": "## 2. 资料清单（按优先级排）",
+        "id_policy": "section-local-suffix",
+        "allowed_actions": ["add"],
+        "status_terms": ["⬜", "🟡", "✅", "⏭", "🔖"],
+        "priority_terms": ["🟥", "🟨", "🟩"]
+      }
+    },
+    {
+      "module_id": "leetcode",
+      "display_name": "Leetcode",
+      "aliases": ["algorithm interview", "concurrency interview"],
+      "portfolio_path": "Leetcode/学习指引.md",
+      "report_group": "parallel-track",
+      "adapter": {
+        "adapter_id": "problem-curriculum",
+        "version": 1,
+        "anchor": "## 3. 题单（分 20 周）",
+        "id_policy": "stable-id",
+        "allowed_actions": ["add"],
+        "status_terms": ["⬜", "🟡", "✅", "⏭", "🔖"],
+        "priority_terms": ["🟥", "🟨", "🟩"]
+      }
+    },
+    {
+      "module_id": "model-theory",
+      "display_name": "模型理论",
+      "aliases": ["Attention", "MoE", "quantization"],
+      "portfolio_path": "模型理论/学习指引.md",
+      "report_group": "track-a",
+      "adapter": {
+        "adapter_id": "markdown-curriculum",
+        "version": 1,
+        "anchor": "## 2. 资料清单（按优先级排）",
+        "id_policy": "section-local-suffix",
+        "allowed_actions": ["add"],
+        "status_terms": ["⬜", "🟡", "✅", "⏭", "🔖"],
+        "priority_terms": ["🟥", "🟨", "🟩"]
+      }
+    },
+    {
+      "module_id": "parallel-computing",
+      "display_name": "并行计算编程",
+      "aliases": ["CUDA", "GPU kernel", "Triton"],
+      "portfolio_path": "并行计算编程/学习指引.md",
+      "report_group": "track-a",
+      "adapter": {
+        "adapter_id": "markdown-curriculum",
+        "version": 1,
+        "anchor": "## 2. 资料清单（按优先级排）",
+        "id_policy": "section-local-suffix",
+        "allowed_actions": ["add"],
+        "status_terms": ["⬜", "🟡", "✅", "⏭", "🔖"],
+        "priority_terms": ["🟥", "🟨", "🟩"]
+      }
+    },
+    {
+      "module_id": "pytorch",
+      "display_name": "PyTorch Internals",
+      "aliases": ["PrivateUse1", "PyTorch", "torch.compile"],
+      "portfolio_path": "PyTorch/学习指引.md",
+      "report_group": "track-a",
+      "adapter": {
+        "adapter_id": "markdown-curriculum",
+        "version": 1,
+        "anchor": "## 2. 资料清单（按优先级排）",
+        "id_policy": "section-local-suffix",
+        "allowed_actions": ["add"],
+        "status_terms": ["⬜", "🟡", "✅", "⏭", "🔖"],
+        "priority_terms": ["🟥", "🟨", "🟩"]
+      }
+    },
+    {
+      "module_id": "tpu",
+      "display_name": "TPUs",
+      "aliases": ["JAX", "MaxText", "non-NVIDIA accelerator"],
+      "portfolio_path": "TPUs/学习指引.md",
+      "report_group": "track-b",
+      "adapter": {
+        "adapter_id": "markdown-curriculum",
+        "version": 1,
+        "anchor": "## 2. 资料清单（校准至 2026-04）",
+        "id_policy": "section-local-suffix",
+        "allowed_actions": ["add"],
+        "status_terms": ["⬜", "🟡", "✅", "⏭", "🔖"],
+        "priority_terms": ["🟥", "🟨", "🟩"]
+      }
+    },
+    {
+      "module_id": "training-distributed",
+      "display_name": "训练框架与分布式",
+      "aliases": ["FSDP", "Megatron", "NCCL"],
+      "portfolio_path": "训练框架与分布式/学习指引.md",
+      "report_group": "track-a",
+      "adapter": {
+        "adapter_id": "markdown-curriculum",
+        "version": 1,
+        "anchor": "## 2. 资料清单（按优先级排）",
+        "id_policy": "section-local-suffix",
+        "allowed_actions": ["add"],
+        "status_terms": ["⬜", "🟡", "✅", "⏭", "🔖"],
+        "priority_terms": ["🟥", "🟨", "🟩"]
+      }
+    }
+  ]
+}

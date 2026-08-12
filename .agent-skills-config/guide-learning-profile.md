@@ -61,7 +61,7 @@ JSON 的 `record_mappings` 只登记当前已确认的活动 Program、Lesson、
 ## 4. 配置边界
 
 - 本文件只提供静态仓库事实，不保存教学步骤或当前状态正文。
-- 周报是历史资源报告；`resource-planning` 的 PlanA 持久配置尚未接管。
+- W18/W26/W32 是只读 legacy 资源报告；新的静态目录、动态 registry 与课程 slot 由 `resource-planning` 独立拥有，不进入教学状态。
 
 ## 5. 文章产物适配
 

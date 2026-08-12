@@ -20,3 +20,6 @@
 /.agent-skills.state.json
 /.agent-skills.state.json.tmp-*
 /.agent-skills.lock
+
+# resource-planning 原子发布事务日志（失败恢复用，不入库）
+/计划/.resource-planning-journal.json
