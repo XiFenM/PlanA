@@ -11,7 +11,7 @@
 我是一名 AI Infra 框架开发工程师，主要从事**自研非 NV 加速芯片**上的 PyTorch/vLLM 适配、通信与性能优化。这个仓库有两层用途：
 
 - **冲刺层（W1–W20）**：5 个月内进入面试窗口，主攻**推理框架 > 训练框架 > 算子开发**三条路线，详见 [计划/主计划.md](计划/主计划.md)。
-- **长期层（W20 之后）**：作为持续学习的根目录——周报会一直生成，新资料会沉淀到对应板块，自己的实践结果 / 复盘 / 论文笔记 / 工程踩坑都会进来。仓库会比"求职项目"活得长。
+- **长期层（W20 之后）**：作为持续学习的根目录——资料 refresh 按需形成可追溯快照，获批资料再沉淀到对应板块；自己的实践结果、复盘、论文笔记和工程经验也持续积累。仓库会比"求职项目"活得长。
 
 ---
 
@@ -25,13 +25,12 @@ PlanA/
 │   ├── 进度总表.md                 ← 全局 sprint 进度（甘特 + 模块汇总）
 │   ├── 周更流程.md                 ← 资料周报的 SOP
 │   ├── 月底晋级评审.md             ← 月底晋级评审的 SOP
-│   ├── 陪学流程.md                 ← guide-learning 的 PlanA 状态与路径映射
-│   ├── 文章模版.md                 ← 学习产出文章的 8 段式模版
 │   ├── 学习断点.md                 ← 唯一稀疏 Checkpoint（仅语义变化时覆盖）
-│   └── 周报/                       ← 每周一份，YYYY-Wxx.md
+│   └── 周报/                       ← 按需 refresh 的不可变历史快照，沿用 YYYY-Wxx.md
 │       └── 2026-W18.md             ← 第一份（DeepSeek V4 周）
 │
 ├── .agent-skills-config/           ← 四个已适配学习 Skill 的 version 2 公共环境配置
+│   └── guide-learning-profile.md   ← PlanA 状态路径、单写者、时长归属与领域透镜
 ├── 推理框架/                       ← Track A 第一优先级
 ├── 训练框架与分布式/               ← Track A 第二优先级（含 §J GPU 通信子专题）
 ├── 并行计算编程/                   ← Track A 第三优先级（GPU 算子）
@@ -104,7 +103,7 @@ git submodule update --init --recursive
 ### 2.2 Skill 中央管线（version 2 受管配置）
 
 中央规范源以 [`.agent-skills`](.agent-skills) 子模块固定在
-`f69403037443058518adce61e17f2983b99f38b8`。[`.agent-skills.json`](.agent-skills.json) 为 Codex 与 Claude
+`c3ae66a5e3722664fb10ff4b69145262d3f51b20`。[`.agent-skills.json`](.agent-skills.json) 为 Codex 与 Claude
 同时选择 `guide-learning`、`study-log`、`english-coach`、`memo-cards`、
 `resource-planning` 和 `playwright-cli`，并为前四个已适配的 first-party Skill 引用
 [`.agent-skills-config/`](.agent-skills-config/) 下的 Git-tracked 公共配置。`resource-planning` 已使用最新版中央核心，
@@ -139,21 +138,23 @@ uv run --no-project python .agent-skills/tools/materialize_skills.py --repo . --
 
 | 文件 | 作用 | 更新频率 |
 |---|---|---|
-| [计划/主计划.md](计划/主计划.md) | 20 周排程 + 每周节奏模板（32.5h/周）+ 5 篇博客产出物 | 季度级，不轻改 |
-| [{板块}/学习指引.md](推理框架/学习指引.md) | 每板块的资料清单（🟥 必读 / 🟨 选读 / 🟩 背景）+ 长期订阅源 + 自测题库 | 月度晋级 |
-| [{板块}/进度.md](推理框架/进度.md) | Sprint 进度表，每学 0.5h 就填一次"已用"列 | 每天 |
-| [计划/进度总表.md](计划/进度总表.md) | 全局 dashboard，20 周甘特 + 8 个模块汇总 + checkpoint 自测 | 每周 |
+| [计划/主计划.md](计划/主计划.md) | 20 周候选排程、计划预算与可选文章目标 | 季度级，不轻改 |
+| [{板块}/学习指引.md](推理框架/学习指引.md) | 每板块的稳定资料组合（🟥 必读 / 🟨 选读 / 🟩 背景）与自测题库 | 仅在资料评审获批后更新 |
+| [{板块}/进度.md](推理框架/进度.md) | 模块进度与用户确认的实际学习时长 | 有可归属的实质进展且时长经确认时 |
+| [计划/进度总表.md](计划/进度总表.md) | 全局派生 dashboard，20 周甘特与模块汇总 | 经批准的周期触点，不裁决活动状态 |
 
-**周报独立成线**：[计划/周更流程.md](计划/周更流程.md) 与 [计划/月底晋级评审.md](计划/月底晋级评审.md)
+**资源快照独立成线**：[计划/周更流程.md](计划/周更流程.md) 与 [计划/月底晋级评审.md](计划/月底晋级评审.md)
 暂时保留为 legacy 人类 SOP。它们不构成 version 2 的机器配置；在后续将 source/query 目录、portfolio
 slot 与 registry bootstrap 作为一个整体完成并评审前，`resource-planning` 仅进行无配置、纯对话、零写入
-的专题 `research`，不执行持久 refresh/review。
+的专题 `research`，不执行持久 refresh/review。未来 refresh 按需计算自上次成功运行后的补缺窗口；周日／
+月末只可作为提醒，不构成运行或评审前置。
 
 **两条全程并行子轨道**：[Leetcode/](Leetcode/) 和 [英语/](英语/) 都不占主线板块周次，而是每天用独立时间块推进、贯穿全程，各自同样用 `学习指引.md` + `进度.md` 双锚文件管理。英语轨 22 周（比冲刺多 2 周到 W22），其每日 60–75 min **不计入** 650h 主预算；音频教材由同级工具仓库 `../blog-voice` 生产。
 
 **AI 学习工作流（6 个 Skills）**：中央 [`.agent-skills`](.agent-skills) 是 Skill 规范源，
 `.agents/skills/` 与 `.claude/skills/` 只是生成的宿主发现视图。Agent 侧路由表与管线图见
-[CLAUDE.md](CLAUDE.md)；[计划/陪学流程.md](计划/陪学流程.md) 只定义 PlanA 的状态映射和人类可读流程：
+[CLAUDE.md](CLAUDE.md)；[`.agent-skills-config/guide-learning-profile.md`](.agent-skills-config/guide-learning-profile.md)
+只定义 PlanA 的状态路径、单写者、时长归属与领域透镜，不复制中央教学流程：
 
 | Skill | 流程站位 | 触发 |
 |---|---|---|
@@ -349,7 +350,7 @@ slot 与 registry bootstrap 作为一个整体完成并评审前，`resource-pla
 | 想看本周新出的资料 | [计划/周报/](计划/周报/) 最新一份 |
 | 想看我的英语听说训练计划 | [英语/学习指引.md](英语/学习指引.md)（进度见 [英语/进度.md](英语/进度.md)）|
 | 想看面试故事素材 | [面试准备/](面试准备/) |
-| 想看 AI 怎么带我学 | [计划/陪学流程.md](计划/陪学流程.md) 的 PlanA 适配 + [中央 `guide-learning`](.agent-skills/skills/guide-learning/SKILL.md) |
+| 想看 AI 怎么带我学 | [中央 `guide-learning`](.agent-skills/skills/guide-learning/SKILL.md) + [PlanA 配置层](.agent-skills-config/guide-learning-profile.md) |
 | 想看学习过程记录 / 记忆卡 | 各板块 `log/`（学习记录）与 `cards/`（墨墨 TSV），如 [PyTorch/log/](PyTorch/log/) |
 | 想看具体的论文笔记 / 实战复盘 | 各板块目录下后续会陆续追加的 `.md` 文件 |
 
@@ -364,7 +365,7 @@ slot 与 registry bootstrap 作为一个整体完成并评审前，`resource-pla
 5. **新资料先入周报、再入稳定版**：避免"看到啥都塞进去"导致清单膨胀。
 6. **过时资料**：发现某条目被淘汰（如 EAGLE-2 → EAGLE-3），保留老条目位置，行内加 "（替代自 X，YYYY-MM-DD）" 注解。不删，留作历史。
 7. **Changelog**：每次稳定版指引发生晋级，在该指引顶部 Changelog 节加一行记录晋级事件。
-8. **AI 产物与行为各有事实源**：结构化学习记录只进 `{板块}/log/`，更新已有记录时先展示 diff 并确认；raw 对话默认放在 Git 工作树外。记忆卡只进 `{板块}/cards/`，文章 Q&A 卡为主牌，学习记录卡只保留纠错与文章未收录的过程细节。中央 Skill 拥有 Agent 行为规范；本仓库 SOP 只拥有 PlanA 路径、事实职责与各领域的人类可读流程。
+8. **AI 产物与行为各有事实源**：结构化学习记录只进 `{板块}/log/`，更新已有记录时先展示 diff 并确认；raw 对话默认放在 Git 工作树外。记忆卡只进 `{板块}/cards/`，文章 Q&A 卡为主牌，学习记录卡只保留纠错与文章未收录的过程细节。中央 Skill 拥有 Agent 行为规范；本仓库配置层只保存 PlanA 路径、事实职责、时长归属与领域透镜。
 
 ---
 

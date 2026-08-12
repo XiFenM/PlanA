@@ -2,12 +2,39 @@
 
 > - 创建日期：2026-08-08
 > - 最近审阅：2026-08-08（依据 2026-W32 扩展周更，并按自研芯片实务背景重排）
-> - 状态：**进行中（2026-08-09 启动；当前处于 W1 D1 preflight）**
+> - Program 状态：[见唯一状态区](#program-plana-jd-ai-framework-4w)；精确学习位置只由[唯一学习断点](学习断点.md)裁决
 > - 对应岗位：[英文原文](<../Job Description/AI框架方向/高级AI框架开发工程师.md>) / [中文翻译](<../Job Description/AI框架方向/高级AI框架开发工程师（中文）.md>)
 > - 周期：4 周；毛预算 130h，JD 专项净投入约 109h
 > - 主框架：vLLM；vLLM/SGLang 的 ATOM、MORI 接入做窄范围必读对照
 > - 核心工件：`EP/PD 自研芯片适配设计与验证包`
 > - 可选加深：`mini-ep-pd-serving` 的一个最小切片，不进入核心验收
+
+---
+
+<a id="program-plana-jd-ai-framework-4w"></a>
+## Program 状态（guide-learning）
+
+- **Program ID**：`plana-jd-ai-framework-4w`
+- **状态**：`active`。
+- **目标范围**：以 vLLM 的 EP/PD 主链为中心，以 SGLang/ATOM 为窄对照，完成可公开、可核验的国产自研芯片适配设计与验证证据；详细包含范围、条件验收和排除项见 [§3](#3-冲刺目标与范围)。
+- **候选 Lessons**：
+
+| 顺序 | Lesson ID | 能力标题 |
+|---:|---|---|
+| 1 | `plana-jd-w1-vllm-execution-boundaries` | vLLM 执行链与扩展边界 |
+| 2 | `plana-jd-w2-moe-ep` | MoE EP 与通信数据面 |
+| 3 | `plana-jd-w3-pd-kv-rdma` | PD 分离、KV Cache 与 RDMA |
+| 4 | `plana-jd-w4-validation-interview` | 性能归因、开源协作与面试闭环 |
+
+- **已授权 Lesson 引用**：[W1「vLLM 执行链与扩展边界」](../推理框架/EP-PD自研芯片适配设计与验证包.md#lesson-plana-jd-w1-vllm-execution-boundaries)。
+- **前台 Lesson 引用**：同上。W2–W4 仍是候选，不因排在后面而自动获得授权。
+- **Checkpoint 引用**：[学习断点](学习断点.md)。Program 不复制 Pass、检查题或下一动作。
+- **预算引用**：[§5 时间预算与日常节奏](#5-时间预算与日常节奏)。
+- **父 Program**：[主计划](主计划.md#program-plana-ai-infra-interview-20w)。
+- **返回引用**：[§16.1 启动前返回快照](#161-启动前返回快照)。
+- **连续推进边界**：未授予。每个 Lesson 的目标、mastery 维度和关闭均需按实际证据与用户确认处理。
+
+本节是本专项唯一 Program control plane。下文的 JD 分析、四周日程、问题清单和验收材料是规划或参考正文，不保存当前 Lesson stage、精确游标或 final mastery。
 
 ---
 
@@ -18,10 +45,10 @@
 - [主计划](主计划.md)仍是仓库唯一长期主计划。
 - 创建本文件不代表冲刺已经开始，也不修改[学习断点](学习断点.md)、模块进度或累计工时。
 - 只有用户明确说“开始执行 JD 冲刺”“按这份计划开始学习”或同义指令后，才进入执行状态。
-- 本文件整体属于一个 JD 专项，但全局断点的“模块”必须指向当天实际任务所属模块；做 vLLM/PD 时写“推理框架”，做 custom op 时写“PyTorch”，做 RDMA/DeepEP 通信时写“训练框架与分布式”。各模块按实际学习归属更新 `进度.md`，不建立第二套累计账。
+- 本文件整体属于一个 JD 专项；实际学习资料与工时仍按任务归属写入对应模块 `进度.md`，不在 Program 或 Checkpoint 建立第二套累计账。
 - 启动前必须把当时的模块、断点类型、已完成内容和返回位置抄入 §16.1“启动前返回快照”。
 - 每个阶段结束时先展示产出和验收结果，由用户确认是否进入下一阶段。计划中的后续周次是候选顺序，不等于已经启动下一份资料。
-- 如果学习断在任务内部，断点必须记录先前学习内容、完成程度和下一微动作；如果阶段已完成而下一阶段未开始，则只记录完成状态，等待用户决定，不自动指定下一份资料。
+- 如果学习断在任务内部，Checkpoint 只保存精确语义位置、恰好一个可执行动作和前进门槛；完成内容与 evidence 留在 Lesson ledger。阶段完成而下一阶段未授权时，Checkpoint 只指向“等待下一 Lesson 授权”。
 - 冲刺结束后，依据 §16.1 保存的返回快照回到原位置，由用户决定继续原主线、延长本专项或选择其他资料。
 - 当周核心任务和验收完成前不启动 `mini-ep-pd-serving`；四周内完全不做该项目也不影响冲刺完成。
 - 自研芯片相关内容只记录可公开的抽象能力、接口语义和脱敏结论，不把公司代码、内部 API、未公开硬件参数或性能数据写入本仓库。
@@ -147,6 +174,8 @@
 ---
 
 ## 4. 核心工件：EP/PD 自研芯片适配设计与验证包
+
+> 本节保存核心工件的目标规格，不是当前 Lesson 状态。实际 Lesson 状态、Session event、设计正文与 evidence 统一由[EP/PD 自研芯片适配设计与验证包](../推理框架/EP-PD自研芯片适配设计与验证包.md#lesson-plana-jd-w1-vllm-execution-boundaries)承载；两处不双写当前位置或 mastery。
 
 核心问题不是重新实现 serving 系统，而是基于固定版本的真实源码回答：
 
@@ -332,6 +361,8 @@ ep-pd-porting-dossier/
 “测试追踪/验证锚点”以源码测试审查、fixture/断言设计和 reproducer 为主；实际编码四周累计不超过 8h。`mini-ep-pd-serving` 不占上表，只能使用核心任务提前完成后的余量。
 
 ---
+
+> **候选 Lesson 边界**：以下 W1–W4 是本 Program 的候选规划展开。当前只授权了 W1；后续周次、资料和验收条目不构成自动启动或连续推进许可。
 
 ## 6. 第 1 周：vLLM 执行链与扩展边界
 
@@ -748,7 +779,7 @@ rocprofv3 --hip-trace --kernel-trace --memory-copy-trace -- ./your_app
 
 ---
 
-## 15. 进度落盘规则
+## 15. 仓库事实源映射
 
 ### 15.1 资料与工时
 
@@ -760,31 +791,17 @@ rocprofv3 --hip-trace --kernel-trace --memory-copy-trace -- ./your_app
 - 同一份 DeepEP、MORI 或 vLLM 源码只记一次实际工时；跨模块只建立链接，不重复累计。
 - 提前完成的主计划资料以后不重复学习，回到原周次时直接做验收或补缺口。
 
-### 15.2 每日学习记录
+### 15.2 Session event 与过程记录
 
-每天至少记录：
-
-```text
-学习对象：仓库 / commit / 文件 / 函数
-今天解决的问题：
-当前接口契约：
-目标芯片能力或缺口：
-决策：保持不变 / adapter / core patch / 替换
-修改原因与验证方法：
-已完成：
-证据：代码、测试、图、原始数据、trace
-仍不确定：
-结果类型：实测 / 模拟 / 理论推导 / 尚未验证
-下一微动作：仅在当前任务尚未完成时填写
-```
+- `guide-learning` 只在耐久事实变化或会话边界追加一条紧凑 Session event；当前 W1 event 归入[核心工件的 Lesson 状态区](../推理框架/EP-PD自研芯片适配设计与验证包.md#lesson-plana-jd-w1-vllm-execution-boundaries)。
+- 逐轮问答、误解、纠错和转折只有在用户明确要求时才交给 `study-log`；不把过程日志反向当作 Lesson stage 或 mastery。
+- 当前精确位置和恰好一个下一动作只写入[学习断点](学习断点.md)，不在本文件或工件正文重复维护。
 
 ### 15.3 阶段边界
 
-每周验收通过后：
-
-- 记录本阶段完成内容、产出与未解决问题。
-- 如果下一周尚未启动，断点写“阶段边界，等待用户决定”。
-- 不因为本文件列出了下一周内容，就在断点中自动指定下一份资料。
+- Lesson ledger 保存目标、来源、stage、evidence 与实际发生的验收结果；模块 `进度.md` 保存实际资料与用户确认的工时。
+- Checkpoint 只保存唯一恢复位置。下一 Lesson 尚未授权时，其唯一动作是等待用户选择，不因本文件列出候选顺序而自动推进。
+- [进度总表](进度总表.md)只是周期性派生视图，不反向裁决 Lesson、Checkpoint 或实际工时。
 
 ---
 
@@ -792,7 +809,7 @@ rocprofv3 --hip-trace --kernel-trace --memory-copy-trace -- ./your_app
 
 ### 16.1 启动前返回快照
 
-本表在用户明确启动冲刺时填写。保存的是**启动当日的真实断点**，不能预先用创建本文档时的状态代替。
+本表是 **2026-08-09 启动事务的历史返回 capsule**。它保存启动当日的真实断点，只用于专项结束后的返回选择，不裁决当前学习位置。
 
 | 字段 | 启动时填写 |
 |---|---|
@@ -818,11 +835,13 @@ rocprofv3 --hip-trace --kernel-trace --memory-copy-trace -- ./your_app
 - [ ] 在当前 vLLM 为一张 Change Card 确定唯一上游验证锚点；实际编码预算上限为 8h，不作为启动前提。（按 W1 D5 在 source map 建立后选择。）
 - [x] 建立源码、能力矩阵、Change Card、风险和验证证据的记录位置。
 - [x] 不预先启动 `mini-ep-pd-serving`；只有核心周验收提前通过后再决定是否选做一个切片。
-- [x] 通过陪学流程把断点切换到本专项的第一个实际任务。
+- [x] 按中央 `guide-learning` 的状态边界，把唯一 Checkpoint 切换到本专项的第一个实际任务。
 
 ---
 
 ## 17. 完成清单
+
+> 本节是 Program 级交付物投影，不等于任一 Lesson 的 final mastery。只有各 Lesson 的 required 维度经确认、证据充分且用户确认关闭后，才能据此讨论 Program 关闭。
 
 ### 17.1 核心完成
 

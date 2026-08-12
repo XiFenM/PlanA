@@ -16,13 +16,22 @@
       "path": "计划/进度总表.md",
       "description": "周期性派生的全局进度视图"
     },
-    "learner-preferences": {
-      "path": "计划/记忆/peixue-learning-style.md",
-      "description": "跨会话稳定陪学偏好"
+    "inference-progress": {
+      "path": "推理框架/进度.md",
+      "description": "当前推理框架 Lesson 经用户确认的实际时长与模块进度事实"
     },
-    "learning-workflow": {
-      "path": "计划/陪学流程.md",
-      "description": "PlanA 学习状态与路径职责适配"
+    "guide-learning-profile": {
+      "path": ".agent-skills-config/guide-learning-profile.md",
+      "description": "PlanA 的学习状态路径、单写者、时长归属与领域透镜"
+    },
+    "article-profile": {
+      "path": ".agent-skills-config/guide-learning-profile.md",
+      "section": "5. 文章产物适配",
+      "description": "PlanA 学习文章的既有目录、语言、语气与领域表达边界"
+    },
+    "vllm-learning-articles": {
+      "path": "推理框架/深入学习理解vLLM",
+      "description": "vLLM 学习文章 collection"
     },
     "main-plan": {
       "path": "计划/主计划.md",

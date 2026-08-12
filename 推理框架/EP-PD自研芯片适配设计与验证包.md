@@ -1,9 +1,56 @@
 # EP/PD 自研芯片适配设计与验证包
 
 > 启动日期：2026-08-09
-> 状态：进行中 · W1 D1 preflight
-> 执行计划：[高级 AI 框架开发工程师 JD 四周冲刺](../计划/高级AI框架开发工程师-四周冲刺计划.md)
+> 所属临时 Program：[高级 AI 框架开发工程师 JD 四周冲刺](../计划/高级AI框架开发工程师-四周冲刺计划.md#program-plana-jd-ai-framework-4w)
+> 逻辑职责：下方 `Lesson 状态` 是当前 W1 Lesson 的唯一 ledger；其余章节是设计工件与历史 evidence，不拥有精确游标。
+> 唯一恢复游标：[学习断点](../计划/学习断点.md)
 > 证据边界：个人隐私敏感信息（如手机号）不公开，邮箱可公开；不记录公司代码、内部 API、未公开硬件参数、性能数据或原始日志。
+
+<a id="lesson-plana-jd-w1-vllm-execution-boundaries"></a>
+## Lesson 状态（guide-learning）
+
+- **Lesson ID**：`plana-jd-w1-vllm-execution-boundaries`
+- **能力标题**：vLLM 执行链与扩展边界。
+- **Program 引用**：[临时 Program `plana-jd-ai-framework-4w`](../计划/高级AI框架开发工程师-四周冲刺计划.md#program-plana-jd-ai-framework-4w)。
+- **当前 stage**：`teaching`。Pass A–B 已形成学习者 evidence；Pass C-1 尚未产生学习者回答，不能据导师预核对外推掌握。
+- **授权边界**：本节只迁移已经启动并位于前台的 W1 Lesson，不扩展到 W2–W4、optional 实现、正式练习或新的写入范围。
+
+### 来源与版本锚点
+
+| 来源 | 角色 | 版本锚点 | 本 Lesson 使用范围 |
+|---|---|---|---|
+| vLLM | teaching spine；实现事实权威 | `v0.26.0` / `568afb3a13806beb53bb2e6bd518269357b237c0` | 仓库地图、进程与组件、请求生命周期、执行和扩展边界 |
+| 同 revision 的 vLLM 官方文档与测试 | 公开承诺与测试证据 | 同上 | 部署语义、已有 invariant、实现结论的交叉核验 |
+| SGLang / MORI | 后续窄对照来源 | 见 [§0.2](#02-固定源码基线) | 只在 vLLM 主线建立后核对对应接入边界，不与 vLLM 等量展开 |
+
+### 能力范围与 evidence 目标
+
+| 目标 ID | 可观察目标 | 本 Lesson 的 evidence 目标 |
+|---|---|---|
+| `w1-o1-repository-process-map` | 独立解释仓库、进程边界和主要组件的状态所有权 | Pass A–B 的学习者回答、结果文章与源码锚点 |
+| `w1-o2-request-lifecycle` | 把普通 chat 请求从 OpenAI 协议对象映射到 `EngineCoreRequest`，并说明不会跨越 IPC 的信息 | Pass C 的学习者映射、request sequence 与 8–12 文件 source map |
+| `w1-o3-extension-boundaries` | 基于源码契约判断保持不变、adapter、core patch 与替换的边界 | 适配矩阵、Change Card 前置判断与可核验依据 |
+
+旧记录没有逐目标保存用户确认的 `conceptual / practical / empirical` required 值；本次迁移不猜测、不补写。进入正式练习或 mastery gate 前必须另行确认这些维度。当前没有 `final_mastery`。
+
+- **核心工件**：本文件 [§0–§6](#0-范围版本与披露边界)。
+- **最近结构化 evidence**：[Pass A–B 阶段材料收口](#pass-ab--阶段材料收口已完成)。
+- **Checkpoint 引用**：[唯一学习断点](../计划/学习断点.md)。
+
+### Session event 索引
+
+#### `plana-jd-w1-20260809-pass-ab`
+
+- **日期**：2026-08-09
+- **Lesson 引用**：`plana-jd-w1-vllm-execution-boundaries`
+- **覆盖范围**：vLLM 仓库地图、进程边界、DP 路由与 Worker/ModelRunner 职责边界。
+- **已完成动作**：完成 Pass A–B 的学习者问答验收并收束结果材料。
+- **Evidence 引用**：[结果文章](深入学习理解vLLM/1-Repository-and-Process-Architecture.md)、[结构化过程记录](log/2026-08-09-vllm-repository-and-process-architecture.md)、[技术记忆卡](cards/vllm-repository-and-process-architecture.md)。
+- **开放问题**：Pass C 的请求生命周期尚无学习者回答证据；精确恢复动作只见 Checkpoint。
+
+---
+
+> 以下章节保存设计工件、来源锚点和历史 evidence。章节内的历史推进记录不裁决当前 Lesson stage、唯一下一动作或 final mastery。
 
 ## 0. 范围、版本与披露边界
 
@@ -36,11 +83,11 @@
 
 三项由仓库根目录 [`.gitmodules`](../.gitmodules) 登记，并建议后续 clone 时保持 shallow。MORI 当前仍使用固定远程源码链接，不在本轮本地 clone 范围内。
 
-### 0.3 时间与节奏
+### 0.3 计划预算与实际工时边界
 
-- 启动日期：2026-08-09；连续四周可用。
-- 今日主线可用时长：4h；实际学习工时在收工时登记。
-- 计时口径：本专项计划时间只计算主线；Leetcode 与英语均作为额外时间，不计入专项计划时间。
+- Program 的计划预算与节奏只见[四周冲刺计划 §5](../计划/高级AI框架开发工程师-四周冲刺计划.md#5-时间预算与日常节奏)。
+- 实际学习工时只按真实归属写入对应模块 `进度.md`；本 Lesson ledger、Session event 和 Checkpoint 不复制工时。
+- 2026-08-09 的启动日期与返回 capsule 由临时 Program 保存；本文件不把计划可用时长冒充实际投入。
 
 ### 0.4 环境与能力 preflight
 
@@ -70,7 +117,7 @@
 
 一个请求怎样从 vLLM 控制面到达设备与通信层？迁移到自研芯片时，哪些边界保持不变，哪些需要 adapter、framework core patch 或替换？
 
-### 1.2 当前记录
+### 1.2 2026-08-09 启动与 Pass A–B 历史记录
 
 - 学习对象：上述固定源码基线。
 - 今天解决的问题：完成启动配置与证据边界，并开始拆解 request → device kernel 的框架边界。
@@ -84,7 +131,6 @@
 - 用户初始猜测：`HTTP 服务接收 → KV Cache 等资源调度 → 模型运行调度 → 模型代码执行 → device kernel`；初判 HTTP 保持不变、资源调度做 adapter、ModelRunner 做 core patch、kernel 替换，模型代码视情况适配。
 - 导师第一轮纠偏（待后续回看）：遗漏了 `AsyncLLM / EngineCore` 跨进程边界；逻辑 KV 分配属于 scheduler 的一次调度，不是独立于“模型运行调度”的第二个 scheduler；模型 forward 与 device kernel 之间还存在 attention/custom op/backend 边界。
 - 结果类型：宿主机基础环境已实测；第一轮源码结论为 B 级，但尚未通过用户理解验收；框架运行尚未验证。
-- 下一微动作：Pass A 与 Pass B 已完成；进入 Pass C-1，只追一条普通 `/v1/chat/completions` 请求在前端进程内如何由 OpenAI 协议对象变为 `EngineCoreRequest`，以及哪些信息不会跨越 IPC 边界。
 
 ### 1.3 运行路径指纹
 
@@ -145,7 +191,7 @@ vLLM 仓库
 - 检查题：把 `vllm/v1/engine/core.py`、`vllm/model_executor/`、`csrc/`、`tests/`、`benchmarks/`、`docs/` 分为 Python 运行时、原生实现/构建、验证评测/说明材料。
 - 用户回答：Python 运行时为前两项；原生构建为 `csrc/`；其余三项为验证、评测与说明材料。
 - 结果：全部正确。已建立“源码目录结构不等于运行时调用层次”的第一层认识。
-- 下一步：Pass A-2，展开 `vllm/` 包的三圈地图。
+- 历史推进结果：随后进入 Pass A-2，展开 `vllm/` 包的三圈地图；该步骤现已完成。
 
 #### Pass A-2 · `vllm/` 包三圈地图（已通过）
 
@@ -159,7 +205,7 @@ vllm/
 - 核心区别：`vllm/v1/executor/` 决定工作发到哪里执行；`vllm/model_executor/` 定义执行什么模型、层和算子。
 - 定位题结果：用户正确把服务入口、token 调度、模型/Linear、平台识别、TP 通信与 kernel 分别定位到 `entrypoints/`、`v1/core/`、`model_executor/`、`platforms/`、`distributed/`、`kernels/` 或 `csrc/`。
 - 结果：六项全部正确；已具备按职责缩小源码搜索范围的能力。
-- 下一步：Pass A-3，展开 `vllm/v1/` 的四个主干目录。
+- 历史推进结果：随后进入 Pass A-3，展开 `vllm/v1/` 的四个主干目录；该步骤现已完成。
 
 #### Pass A-3 · `vllm/v1/` 四个主干所有权（已通过）
 
@@ -249,7 +295,8 @@ vllm/
 - 技术记忆卡：[`cards/vllm-repository-and-process-architecture.md`](cards/vllm-repository-and-process-architecture.md)，共 25 张原子卡。
 - 边界：以上材料只收录已通过的 Pass A–B；Pass C 的导师预讲不计入已掌握内容。
 
-#### Pass C-1 · OpenAI 请求到 `EngineCoreRequest`（待开始）
+<a id="pass-c1-openai-to-engine-core-request"></a>
+#### Pass C-1 · OpenAI 请求到 `EngineCoreRequest`
 
 > 以下是导师为下一阶段准备的固定源码预核对。用户尚未完成 Pass C-1 的问答验收，不计入当前学习进度。
 
@@ -263,7 +310,7 @@ vllm/
 - 流式边界：`request.stream` 一方面决定 API 层最终选择 SSE generator 还是一次性 JSON response，另一方面会被投影为 `SamplingParams.output_kind`（`DELTA` 或 `FINAL_ONLY`）并进入核心；但原始 `stream` 字段、FastAPI `Request` 和 HTTP 连接本身都留在前端。
 - 设计动机：EngineCore 不理解 OpenAI chat schema、chat template 或 HTTP 生命周期，同一个 token 级核心因此可以复用于 chat、completion、离线调用等不同入口。
 - 证据：[`/v1/chat/completions` 路由](https://github.com/vllm-project/vllm/blob/568afb3a13806beb53bb2e6bd518269357b237c0/vllm/entrypoints/openai/chat_completion/api_router.py#L40-L61)；[chat render、参数归一化与 `AsyncLLM.generate`](https://github.com/vllm-project/vllm/blob/568afb3a13806beb53bb2e6bd518269357b237c0/vllm/entrypoints/openai/chat_completion/serving.py#L255-L384)；[`AsyncLLM` 先注册 collector 再跨进程发送](https://github.com/vllm-project/vllm/blob/568afb3a13806beb53bb2e6bd518269357b237c0/vllm/v1/engine/async_llm.py#L333-L412)；[`InputProcessor` 构造 `EngineCoreRequest`](https://github.com/vllm-project/vllm/blob/568afb3a13806beb53bb2e6bd518269357b237c0/vllm/v1/engine/input_processor.py#L242-L385)。
-- 下一检查：分别说明 `messages`、`temperature/top_p/max_tokens`、`stream=true + HTTP connection` 在跨入 EngineCore 前被放到哪里或留在哪里，并解释为什么不直接把 `ChatCompletionRequest` 发给 EngineCore。
+- 检查题（尚无学习者证据）：分别说明 `messages`、`temperature/top_p/max_tokens`、`stream=true + HTTP connection` 在跨入 EngineCore 前被放到哪里或留在哪里，并解释为什么不直接把 `ChatCompletionRequest` 发给 EngineCore。当前唯一执行动作仍只由 Checkpoint 保存。
 
 ### 2.1 vLLM request sequence
 

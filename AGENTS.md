@@ -10,10 +10,11 @@ There is no application build, dependency install, or automated test suite.
 
 ## Project Structure
 
-- `计划/` is the planning control plane: `主计划.md`, `进度总表.md`, `周更流程.md`, `月底晋级评审.md`, `陪学流程.md`, `学习断点.md`, and weekly reports in `计划/周报/YYYY-Wxx.md`.
+- `计划/` is the planning control plane: `主计划.md`, `进度总表.md`, `周更流程.md`, `月底晋级评审.md`, `学习断点.md`, and weekly reports in `计划/周报/YYYY-Wxx.md`.
 - Core study modules live at the top level: `推理框架/`, `PyTorch/`, `训练框架与分布式/`, `并行计算编程/`, `模型理论/`, `Leetcode/`, `编译器/`, and `TPUs/`.
 - Each core module must keep two anchor files: `学习指引.md` for stable curriculum and `进度.md` for progress tracking. Extra ad-hoc Markdown notes in module directories are expected.
 - `英语/` is a 22-week parallel listening/speaking sub-track. It has `学习指引.md`, `进度.md`, `review-workflow.md`, plus `log/`, `cards/`, and `references/`. Central `english-coach` owns coaching behavior; this vault no longer keeps a parallel system prompt.
+- `.agent-skills-config/guide-learning-profile.md` contains only PlanA state paths, single-writer ownership, duration attribution, and domain lenses. Central `guide-learning` owns teaching behavior.
 - `面试准备/` holds interview materials. `Job Description/` stores role descriptions by direction.
 - Assets should stay near the notes that reference them, for example `TPUs/pointwise-product.gif`.
 
@@ -41,7 +42,7 @@ Quote CJK paths in shell commands, for example `"训练框架与分布式/进度
 - `计划/进度总表.md` is the global dashboard. It is normally updated on Sunday or during approved SOP flows.
 - `计划/周更流程.md` and `计划/月底晋级评审.md` remain legacy human SOPs. Persistent `resource-planning` refresh/review is blocked until the source/query catalog, portfolio slots, and registry bootstrap are migrated and reviewed together.
 - `计划/周报/YYYY-Wxx.md` files are append-only history. Do not edit a past weekly report after the next week starts, except for status annotations during month-end review.
-- `计划/陪学流程.md` maps the central `guide-learning` workflow onto this vault's Program, Lesson, event, and Checkpoint facts.
+- `.agent-skills-config/guide-learning-profile.md` maps PlanA's Program, Lesson, event, Checkpoint, duration, and domain facts without duplicating the central workflow.
 - `计划/学习断点.md` is the single sparse Checkpoint. Overwrite it only at a semantic session boundary or durable recovery change.
 
 ## Central Agent Skills
@@ -50,7 +51,7 @@ The canonical Skill source is the pinned `.agent-skills` submodule. `.agent-skil
 
 Route work by intent:
 
-- `guide-learning` — source-grounded explanation, adaptive post-explanation checks, evidence-gap-driven practice, review, mastery, and sparse recovery. PlanA mapping: `计划/陪学流程.md`.
+- `guide-learning` — source-grounded explanation, adaptive post-explanation checks, evidence-gap-driven practice, review, mastery, and sparse recovery. PlanA facts: `.agent-skills-config/guide-learning-profile.md`.
 - `english-coach` — post-study English review and scoped turn-end English feedback. PlanA paths and handoffs: `英语/review-workflow.md`.
 - `memo-cards` — Markji table-import cards from English logs, technical Q&A, or structured study records.
 - `study-log` — user-requested structured process records or privacy-reviewed visible-text raw archives. Structured PlanA output stays under `{module}/log/`; raw archives do not.

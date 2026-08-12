@@ -3,17 +3,17 @@
   "skill": "guide-learning",
   "repository_fact_refs": [
     {
-      "fact_id": "global-progress",
+      "fact_id": "article-profile",
+      "role": "article-profile",
+      "kind": "file"
+    },
+    {
+      "fact_id": "inference-progress",
       "role": "progress-source",
       "kind": "file"
     },
     {
-      "fact_id": "learner-preferences",
-      "role": "learner-preferences",
-      "kind": "file"
-    },
-    {
-      "fact_id": "learning-workflow",
+      "fact_id": "guide-learning-profile",
       "role": "validation-instructions",
       "kind": "file"
     },
@@ -31,12 +31,71 @@
       "fact_id": "source-catalog",
       "role": "source-catalog",
       "kind": "file"
+    },
+    {
+      "fact_id": "vllm-learning-articles",
+      "role": "knowledge-artifacts",
+      "kind": "collection"
     }
   ],
   "record_mappings": {
     "checkpoint": {
       "path": "计划/学习断点.md",
       "kind": "file"
+    },
+    "lesson": {
+      "path": "推理框架/EP-PD自研芯片适配设计与验证包.md",
+      "kind": "file",
+      "section": "Lesson 状态（guide-learning）"
+    },
+    "program": {
+      "path": "计划/高级AI框架开发工程师-四周冲刺计划.md",
+      "kind": "file",
+      "section": "Program 状态（guide-learning）"
+    },
+    "session-events": {
+      "path": "推理框架/EP-PD自研芯片适配设计与验证包.md",
+      "kind": "file",
+      "section": "Session event 索引"
     }
+  },
+  "article_profile": {
+    "language": "zh-CN",
+    "tone_profile": "peer-explanatory",
+    "sections": {
+      "required": [
+        "source-and-scope",
+        "question-or-goal",
+        "thematic-understanding"
+      ],
+      "optional": [
+        "retrospective",
+        "practice-evidence",
+        "downstream-application",
+        "question-and-answer",
+        "summary",
+        "open-items"
+      ]
+    },
+    "domain_lenses": [
+      "engineering-practice",
+      "source-code",
+      "interview-transfer",
+      "historical-experience",
+      "quantitative-example",
+      "counterexample"
+    ],
+    "targets": [
+      {
+        "id": "pytorch-learning-articles",
+        "collection": "PyTorch/深入学习理解PyTorch",
+        "filename_policy": "yyyy-mm-dd-topic"
+      },
+      {
+        "id": "vllm-learning-articles",
+        "collection": "推理框架/深入学习理解vLLM",
+        "filename_policy": "sequence-topic"
+      }
+    ]
   }
 }
