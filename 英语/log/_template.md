@@ -1,9 +1,10 @@
 # 学习日志模板（每日）
 
-> 用法见 [review-workflow.md](../review-workflow.md) Step 2。
+> 路径、授权与 Skill 交接见 [review-workflow.md](../review-workflow.md)。
 > 复制本文件 → 重命名为 `day-NN.md`（NN = 学习日序号，只有真正学习的那天才建文件，跳过的日子不占号）→ 当天追加。
 > **自然语言记录即可，不要求卡片格式。每条尽量带「场景」——那是复习时唤起记忆的钩子。**
-> 学完当天就让 AI 教练把本日日志整理成墨墨表格（见 review-workflow Step 3），当天即可导入复习。
+> 需要从对话生成结构化记录时，明确交给 `study-log`；需要制卡时，再明确交给 `memo-cards` 预览，
+> 并另行授权保存。记录完成、学习收尾或位于 `log/` 中都不会自动触发制卡或 Markji 导入。
 
 ---
 

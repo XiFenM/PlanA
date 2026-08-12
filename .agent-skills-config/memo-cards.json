@@ -1,0 +1,65 @@
+{
+  "schema": "agent-skills.memo-cards/v1",
+  "skill": "memo-cards",
+  "adapter": {
+    "id": "markji",
+    "client_version": "3.8.00",
+    "profile": "plana-markji"
+  },
+  "input_collections": [
+    {
+      "id": "english-study-logs",
+      "kind": "structured-log",
+      "patterns": [
+        "英语/log/day-*.md"
+      ]
+    },
+    {
+      "id": "inference-study-logs",
+      "kind": "structured-log",
+      "patterns": [
+        "推理框架/log/*.md"
+      ]
+    },
+    {
+      "id": "pytorch-study-logs",
+      "kind": "structured-log",
+      "patterns": [
+        "PyTorch/log/*.md"
+      ]
+    }
+  ],
+  "output_collections": [
+    {
+      "id": "english-cards",
+      "patterns": [
+        "英语/cards/day-*.md"
+      ],
+      "inventory_patterns": [
+        "英语/cards/day-*.md"
+      ],
+      "soft_target": {
+        "minimum": 8,
+        "maximum": 12
+      }
+    },
+    {
+      "id": "inference-cards",
+      "patterns": [
+        "推理框架/cards/*.md"
+      ],
+      "inventory_patterns": [
+        "推理框架/cards/*.md"
+      ]
+    },
+    {
+      "id": "pytorch-cards",
+      "patterns": [
+        "PyTorch/cards/*.md"
+      ],
+      "inventory_patterns": [
+        "PyTorch/cards/*.md"
+      ]
+    }
+  ]
+}

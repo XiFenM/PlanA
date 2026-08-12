@@ -1,0 +1,42 @@
+{
+  "schema": "agent-skills.study-log/v1",
+  "skill": "study-log",
+  "structured_targets": [
+    {
+      "id": "compiler-log",
+      "path": "编译器/log"
+    },
+    {
+      "id": "distributed-training-log",
+      "path": "训练框架与分布式/log"
+    },
+    {
+      "id": "english-log",
+      "path": "英语/log"
+    },
+    {
+      "id": "inference-framework-log",
+      "path": "推理框架/log"
+    },
+    {
+      "id": "leetcode-log",
+      "path": "Leetcode/log"
+    },
+    {
+      "id": "model-theory-log",
+      "path": "模型理论/log"
+    },
+    {
+      "id": "parallel-computing-log",
+      "path": "并行计算编程/log"
+    },
+    {
+      "id": "pytorch-log",
+      "path": "PyTorch/log"
+    },
+    {
+      "id": "tpus-log",
+      "path": "TPUs/log"
+    }
+  ]
+}

@@ -1,0 +1,41 @@
+{
+  "schema": "agent-skills.repository/v1",
+  "repository_id": "plana",
+  "language": "zh-CN",
+  "timezone": "Asia/Shanghai",
+  "facts": {
+    "english-learning-plan": {
+      "path": "英语/学习指引.md",
+      "description": "英语子轨道目标、阶段与训练环境事实"
+    },
+    "english-progress": {
+      "path": "英语/进度.md",
+      "description": "英语子轨道当前进度事实"
+    },
+    "global-progress": {
+      "path": "计划/进度总表.md",
+      "description": "周期性派生的全局进度视图"
+    },
+    "learner-preferences": {
+      "path": "计划/记忆/peixue-learning-style.md",
+      "description": "跨会话稳定陪学偏好"
+    },
+    "learning-workflow": {
+      "path": "计划/陪学流程.md",
+      "description": "PlanA 学习状态与路径职责适配"
+    },
+    "main-plan": {
+      "path": "计划/主计划.md",
+      "description": "长期目标、范围与唯一总预算事实源"
+    },
+    "repository-guidelines": {
+      "path": "AGENTS.md",
+      "description": "仓库结构、写入边界与验证约定"
+    },
+    "source-catalog": {
+      "path": "README.md",
+      "section": "5. 资料搜集来源",
+      "description": "迁移前的人类可读资料目录，仅作 bootstrap 证据"
+    }
+  }
+}

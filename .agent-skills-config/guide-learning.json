@@ -1,0 +1,42 @@
+{
+  "schema": "agent-skills.guide-learning/v1",
+  "skill": "guide-learning",
+  "repository_fact_refs": [
+    {
+      "fact_id": "global-progress",
+      "role": "progress-source",
+      "kind": "file"
+    },
+    {
+      "fact_id": "learner-preferences",
+      "role": "learner-preferences",
+      "kind": "file"
+    },
+    {
+      "fact_id": "learning-workflow",
+      "role": "validation-instructions",
+      "kind": "file"
+    },
+    {
+      "fact_id": "main-plan",
+      "role": "budget-source",
+      "kind": "file"
+    },
+    {
+      "fact_id": "repository-guidelines",
+      "role": "repository-instructions",
+      "kind": "file"
+    },
+    {
+      "fact_id": "source-catalog",
+      "role": "source-catalog",
+      "kind": "file"
+    }
+  ],
+  "record_mappings": {
+    "checkpoint": {
+      "path": "计划/学习断点.md",
+      "kind": "file"
+    }
+  }
+}

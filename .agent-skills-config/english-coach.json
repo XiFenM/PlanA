@@ -1,0 +1,49 @@
+{
+  "schema": "agent-skills.english-coach/v1",
+  "skill": "english-coach",
+  "learner": {
+    "cefr": "B2",
+    "first_language": "zh-CN"
+  },
+  "target_registers": [
+    "general-conversation",
+    "interview",
+    "presentation",
+    "technical",
+    "workplace"
+  ],
+  "feedback_focus": [
+    "collocation",
+    "fluency",
+    "idiomaticity",
+    "precision",
+    "rhythm",
+    "technical-clarity"
+  ],
+  "repository_fact_refs": [
+    "english-learning-plan",
+    "english-progress"
+  ],
+  "record_files": [],
+  "record_collections": [
+    {
+      "id": "english-study-logs",
+      "record_type": "structured-study-log",
+      "path": "英语/log",
+      "format": "markdown"
+    },
+    {
+      "id": "inference-study-logs",
+      "record_type": "structured-study-log",
+      "path": "推理框架/log",
+      "format": "markdown"
+    },
+    {
+      "id": "pytorch-study-logs",
+      "record_type": "structured-study-log",
+      "path": "PyTorch/log",
+      "format": "markdown"
+    }
+  ],
+  "save_targets": []
+}

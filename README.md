@@ -31,6 +31,7 @@ PlanA/
 │   └── 周报/                       ← 每周一份，YYYY-Wxx.md
 │       └── 2026-W18.md             ← 第一份（DeepSeek V4 周）
 │
+├── .agent-skills-config/           ← 四个已适配学习 Skill 的 version 2 公共环境配置
 ├── 推理框架/                       ← Track A 第一优先级
 ├── 训练框架与分布式/               ← Track A 第二优先级（含 §J GPU 通信子专题）
 ├── 并行计算编程/                   ← Track A 第三优先级（GPU 算子）
@@ -39,7 +40,7 @@ PlanA/
 ├── Leetcode/                       ← 250 题，贯穿全程（并行子轨道）
 ├── 英语/                           ← 听力/口语训练，22 周贯穿全程（并行子轨道）
 │   学习指引.md + 进度.md（同样的"稳定版/进度"双锚文件）
-│   外加 review-workflow.md（墨墨复习流程）、ai-chat-prompt.md、log/ cards/ references/
+│   外加 review-workflow.md（路径、授权与交接适配）、log/ cards/ references/
 │   音频教材由同级工具仓库 ../blog-voice 生产
 ├── 编译器/                         ← Track B（offer 后或 Track A 余力推进）
 ├── TPUs/                           ← Track B
@@ -100,12 +101,19 @@ git submodule update --init --recursive
 
 子模块处于 `detached HEAD` 是固定版本时的正常状态。日常学习不要在子模块内直接 `pull`，也不要执行 `git submodule update --remote`；需要升级上游版本时，应显式修改父仓库记录的 gitlink，并同步更新本节基线。
 
-### 2.2 Skill 中央管线（M5 已升级）
+### 2.2 Skill 中央管线（version 2 受管配置）
 
 中央规范源以 [`.agent-skills`](.agent-skills) 子模块固定在
-`4ce419ced337b15937af03a93f26468c0ea2ddeb`。[`.agent-skills.json`](.agent-skills.json) 为 Codex 与 Claude
+`f69403037443058518adce61e17f2983b99f38b8`。[`.agent-skills.json`](.agent-skills.json) 为 Codex 与 Claude
 同时选择 `guide-learning`、`study-log`、`english-coach`、`memo-cards`、
-`resource-planning` 和 `playwright-cli`。
+`resource-planning` 和 `playwright-cli`，并为前四个已适配的 first-party Skill 引用
+[`.agent-skills-config/`](.agent-skills-config/) 下的 Git-tracked 公共配置。`resource-planning` 已使用最新版中央核心，
+但本轮不挂载持久上下文；它当前仅可进行无配置、纯对话、零写入的专题 `research`。
+
+materializer 会为有配置的 Skill 在两个宿主副本中生成逐字节一致的 `.agent-skills-context.json`。它只提供
+仓库事实定位、已验证的 tracked 输入 collection 和机械写入上限，不授予读取未跟踪文件、保存、覆盖、
+制卡、发布、提交或推送。`resource-planning` 当前没有 `.agent-skills-context.json`；source/query 目录、
+portfolio slot 和 registry bootstrap 尚未迁移，因此不得运行持久 refresh/review 或保存 research brief。
 
 `.agents/skills/` 与 `.claude/skills/` 是被 Git 忽略的生成发现视图，不是事实源。不要手工修改、复制或
 同步这两棵树；只修改中央仓库的规范源或本仓库的选择配置。
@@ -136,7 +144,10 @@ uv run --no-project python .agent-skills/tools/materialize_skills.py --repo . --
 | [{板块}/进度.md](推理框架/进度.md) | Sprint 进度表，每学 0.5h 就填一次"已用"列 | 每天 |
 | [计划/进度总表.md](计划/进度总表.md) | 全局 dashboard，20 周甘特 + 8 个模块汇总 + checkpoint 自测 | 每周 |
 
-**周报独立成线**：[计划/周更流程.md](计划/周更流程.md) 规定每周日扫订阅源 → 写 [计划/周报/](计划/周报/)；月底按 [计划/月底晋级评审.md](计划/月底晋级评审.md) 人工"晋级"高分条目到稳定版 `学习指引.md`。两个 SOP 均由 `resource-planning` skill 执行。
+**周报独立成线**：[计划/周更流程.md](计划/周更流程.md) 与 [计划/月底晋级评审.md](计划/月底晋级评审.md)
+暂时保留为 legacy 人类 SOP。它们不构成 version 2 的机器配置；在后续将 source/query 目录、portfolio
+slot 与 registry bootstrap 作为一个整体完成并评审前，`resource-planning` 仅进行无配置、纯对话、零写入
+的专题 `research`，不执行持久 refresh/review。
 
 **两条全程并行子轨道**：[Leetcode/](Leetcode/) 和 [英语/](英语/) 都不占主线板块周次，而是每天用独立时间块推进、贯穿全程，各自同样用 `学习指引.md` + `进度.md` 双锚文件管理。英语轨 22 周（比冲刺多 2 周到 W22），其每日 60–75 min **不计入** 650h 主预算；音频教材由同级工具仓库 `../blog-voice` 生产。
 
@@ -146,7 +157,7 @@ uv run --no-project python .agent-skills/tools/materialize_skills.py --repo . --
 
 | Skill | 流程站位 | 触发 |
 |---|---|---|
-| `resource-planning` | **供给侧**：周更搜集 / 月底晋级评审 双模式 | 「按 周更流程/月底晋级评审 规范执行…」 |
+| `resource-planning` | **供给侧**：最新版核心已启用，持久上下文未挂载 | 「研究／比较这些资料」时仅纯对话、零写入；refresh/review 暂时阻断 |
 | `guide-learning` | **主干**：来源化教学 → 讲后检查 → 按证据缺口练习 → mastery → 稀疏恢复 | 教我／带我学／继续或恢复 Lesson |
 | `study-log` | **按需交接**：结构化过程记录，或经边界与隐私确认的 raw 可见文本存档 | 「整理学习记录／保存原始对话」 |
 | `memo-cards` | **记忆侧**：学习记录 / 文章面试Q&A / 英语日志 → 墨墨 TSV 卡 | 「制卡」 |
@@ -323,7 +334,7 @@ uv run --no-project python .agent-skills/tools/materialize_skills.py --repo . --
 | 4（工程师语速）| TWIML、Kubernetes Podcast（LLM-D）、Software Engineering Daily | 硬核 infra |
 | 5（产出）| Dwarkesh（Dylan Patel）、No Priors（Jensen Huang）| 难集 |
 
-**工具栈**（固定不换）：Anki / 墨墨记忆卡（间隔重复）、Language Reactor（双语字幕）、YouGlish（真实发音）、Cambridge Dictionary（查词）、多邻国（streak）。**自产教材**：同级 `../blog-voice` 把 AI Infra 博客转成"喜欢音色 + 双语 LRC"的音频，每 2–3 周 1 篇。
+**工具栈**（固定不换）：墨墨记忆卡（间隔重复）、Language Reactor（双语字幕）、YouGlish（真实发音）、Cambridge Dictionary（查词）、多邻国（streak）。合格英语素材制卡时以每个学习日新增 8–12 张逻辑卡为软目标，不是硬上限，也不构成自动制卡或写入授权。**自产教材**：同级 `../blog-voice` 把 AI Infra 博客转成"喜欢音色 + 双语 LRC"的音频，每 2–3 周 1 篇。
 
 ---
 
