@@ -1,0 +1,1099 @@
+{
+  "candidates": [],
+  "coverage": [],
+  "generation": 1,
+  "resources": [
+    {
+      "aliases": [],
+      "canonical_locator": "https://arxiv.org/abs/2602.06036",
+      "claims": [],
+      "first_seen_run": "legacy-bootstrap-20260812-v1",
+      "last_seen_runs": [
+        "legacy-bootstrap-20260812-v1"
+      ],
+      "module_ids": [
+        "inference-framework"
+      ],
+      "relations": [],
+      "revision_key": "unspecified",
+      "title": "DFlash",
+      "work_id": "arxiv:2602.06036"
+    },
+    {
+      "aliases": [],
+      "canonical_locator": "https://arxiv.org/abs/2607.05147",
+      "claims": [],
+      "first_seen_run": "legacy-bootstrap-20260812-v1",
+      "last_seen_runs": [
+        "legacy-bootstrap-20260812-v1"
+      ],
+      "module_ids": [
+        "inference-framework"
+      ],
+      "relations": [
+        {
+          "kind": "successor_to",
+          "target_revision_key": "unspecified",
+          "target_work_id": "arxiv:2602.06036"
+        }
+      ],
+      "revision_key": "unspecified",
+      "title": "DSpark",
+      "work_id": "arxiv:2607.05147"
+    },
+    {
+      "aliases": [],
+      "canonical_locator": "https://arxiv.org/abs/2607.24653",
+      "claims": [],
+      "first_seen_run": "legacy-bootstrap-20260812-v1",
+      "last_seen_runs": [
+        "legacy-bootstrap-20260812-v1"
+      ],
+      "module_ids": [
+        "inference-framework",
+        "model-theory",
+        "training-distributed"
+      ],
+      "relations": [],
+      "revision_key": "unspecified",
+      "title": "Kimi K3: Open Frontier Intelligence",
+      "work_id": "arxiv:2607.24653"
+    },
+    {
+      "aliases": [
+        "https://github.com/ascend/pytorch"
+      ],
+      "canonical_locator": "https://github.com/Ascend/pytorch/tags",
+      "claims": [],
+      "first_seen_run": "legacy-bootstrap-20260812-v1",
+      "last_seen_runs": [
+        "legacy-bootstrap-20260812-v1"
+      ],
+      "module_ids": [
+        "tpu"
+      ],
+      "relations": [],
+      "revision_key": "v26.0.0",
+      "title": "torch_npu v26.0.0",
+      "work_id": "github:ascend/pytorch"
+    },
+    {
+      "aliases": [
+        "https://github.com/ascend/pytorch"
+      ],
+      "canonical_locator": "https://github.com/Ascend/pytorch/tags",
+      "claims": [],
+      "first_seen_run": "legacy-bootstrap-20260812-v1",
+      "last_seen_runs": [
+        "legacy-bootstrap-20260812-v1"
+      ],
+      "module_ids": [
+        "tpu"
+      ],
+      "relations": [],
+      "revision_key": "v26.1.0-beta.1",
+      "title": "torch_npu v26.1.0-beta.1",
+      "work_id": "github:ascend/pytorch"
+    },
+    {
+      "aliases": [
+        "https://github.com/dao-ailab/flash-attention"
+      ],
+      "canonical_locator": "https://github.com/Dao-AILab/flash-attention/releases/tag/fa4-v4.0.0.beta10",
+      "claims": [],
+      "first_seen_run": "legacy-bootstrap-20260812-v1",
+      "last_seen_runs": [
+        "legacy-bootstrap-20260812-v1"
+      ],
+      "module_ids": [
+        "parallel-computing"
+      ],
+      "relations": [],
+      "revision_key": "fa4-v4.0.0.beta10",
+      "title": "FlashAttention 4.0.0 beta10",
+      "work_id": "github:dao-ailab/flash-attention"
+    },
+    {
+      "aliases": [
+        "https://github.com/dao-ailab/flash-attention"
+      ],
+      "canonical_locator": "https://github.com/Dao-AILab/flash-attention/releases/tag/fa4-v4.0.0.beta25",
+      "claims": [],
+      "first_seen_run": "legacy-bootstrap-20260812-v1",
+      "last_seen_runs": [
+        "legacy-bootstrap-20260812-v1"
+      ],
+      "module_ids": [
+        "parallel-computing"
+      ],
+      "relations": [],
+      "revision_key": "fa4-v4.0.0.beta25",
+      "title": "FlashAttention-4 beta25",
+      "work_id": "github:dao-ailab/flash-attention"
+    },
+    {
+      "aliases": [
+        "https://github.com/deepseek-ai/deepep"
+      ],
+      "canonical_locator": "https://github.com/deepseek-ai/DeepEP/pull/605",
+      "claims": [],
+      "first_seen_run": "legacy-bootstrap-20260812-v1",
+      "last_seen_runs": [
+        "legacy-bootstrap-20260812-v1"
+      ],
+      "module_ids": [
+        "training-distributed"
+      ],
+      "relations": [],
+      "revision_key": "pr-605",
+      "title": "DeepEP V2 PR #605",
+      "work_id": "github:deepseek-ai/deepep"
+    },
+    {
+      "aliases": [
+        "https://github.com/deepseek-ai/tilekernels"
+      ],
+      "canonical_locator": "https://github.com/deepseek-ai/TileKernels",
+      "claims": [],
+      "first_seen_run": "legacy-bootstrap-20260812-v1",
+      "last_seen_runs": [
+        "legacy-bootstrap-20260812-v1"
+      ],
+      "module_ids": [
+        "model-theory",
+        "parallel-computing"
+      ],
+      "relations": [],
+      "revision_key": "unspecified",
+      "title": "DeepSeek TileKernels",
+      "work_id": "github:deepseek-ai/tilekernels"
+    },
+    {
+      "aliases": [
+        "https://github.com/flashinfer-ai/flashinfer"
+      ],
+      "canonical_locator": "https://github.com/flashinfer-ai/flashinfer/releases/tag/v0.6.16",
+      "claims": [],
+      "first_seen_run": "legacy-bootstrap-20260812-v1",
+      "last_seen_runs": [
+        "legacy-bootstrap-20260812-v1"
+      ],
+      "module_ids": [
+        "parallel-computing",
+        "training-distributed"
+      ],
+      "relations": [],
+      "revision_key": "v0.6.16",
+      "title": "FlashInfer v0.6.16",
+      "work_id": "github:flashinfer-ai/flashinfer"
+    },
+    {
+      "aliases": [
+        "https://github.com/flashinfer-ai/flashinfer"
+      ],
+      "canonical_locator": "https://github.com/flashinfer-ai/flashinfer/releases/tag/v0.6.9",
+      "claims": [],
+      "first_seen_run": "legacy-bootstrap-20260812-v1",
+      "last_seen_runs": [
+        "legacy-bootstrap-20260812-v1"
+      ],
+      "module_ids": [
+        "parallel-computing"
+      ],
+      "relations": [],
+      "revision_key": "v0.6.9",
+      "title": "FlashInfer v0.6.9",
+      "work_id": "github:flashinfer-ai/flashinfer"
+    },
+    {
+      "aliases": [
+        "https://github.com/nvidia/megatron-lm"
+      ],
+      "canonical_locator": "https://github.com/NVIDIA/Megatron-LM/releases",
+      "claims": [],
+      "first_seen_run": "legacy-bootstrap-20260812-v1",
+      "last_seen_runs": [
+        "legacy-bootstrap-20260812-v1"
+      ],
+      "module_ids": [
+        "training-distributed"
+      ],
+      "relations": [],
+      "revision_key": "0.18.0",
+      "title": "Megatron Core 0.18.0",
+      "work_id": "github:nvidia/megatron-lm"
+    },
+    {
+      "aliases": [
+        "https://github.com/nvidia/megatron-lm"
+      ],
+      "canonical_locator": "https://github.com/NVIDIA/Megatron-LM/releases/tag/26.04-alpha.rc1",
+      "claims": [],
+      "first_seen_run": "legacy-bootstrap-20260812-v1",
+      "last_seen_runs": [
+        "legacy-bootstrap-20260812-v1"
+      ],
+      "module_ids": [
+        "training-distributed"
+      ],
+      "relations": [],
+      "revision_key": "26.04-alpha.rc1",
+      "title": "NVIDIA Megatron Core 26.04-alpha.rc1",
+      "work_id": "github:nvidia/megatron-lm"
+    },
+    {
+      "aliases": [
+        "https://github.com/nvidia/nccl"
+      ],
+      "canonical_locator": "https://github.com/NVIDIA/nccl/releases",
+      "claims": [],
+      "first_seen_run": "legacy-bootstrap-20260812-v1",
+      "last_seen_runs": [
+        "legacy-bootstrap-20260812-v1"
+      ],
+      "module_ids": [
+        "training-distributed"
+      ],
+      "relations": [],
+      "revision_key": "v2.30.4-1",
+      "title": "NVIDIA NCCL v2.30.4-1",
+      "work_id": "github:nvidia/nccl"
+    },
+    {
+      "aliases": [
+        "https://github.com/nvidia/nccl"
+      ],
+      "canonical_locator": "https://github.com/NVIDIA/nccl/releases",
+      "claims": [],
+      "first_seen_run": "legacy-bootstrap-20260812-v1",
+      "last_seen_runs": [
+        "legacy-bootstrap-20260812-v1"
+      ],
+      "module_ids": [
+        "training-distributed"
+      ],
+      "relations": [],
+      "revision_key": "v2.30.7-1",
+      "title": "NVIDIA NCCL v2.30.7-1",
+      "work_id": "github:nvidia/nccl"
+    },
+    {
+      "aliases": [
+        "https://github.com/pytorch/pytorch"
+      ],
+      "canonical_locator": "https://github.com/pytorch/pytorch/releases/tag/v2.13.0",
+      "claims": [],
+      "first_seen_run": "legacy-bootstrap-20260812-v1",
+      "last_seen_runs": [
+        "legacy-bootstrap-20260812-v1"
+      ],
+      "module_ids": [
+        "compiler",
+        "pytorch"
+      ],
+      "relations": [],
+      "revision_key": "v2.13.0",
+      "title": "PyTorch 2.13",
+      "work_id": "github:pytorch/pytorch"
+    },
+    {
+      "aliases": [
+        "https://github.com/tile-ai/tilelang"
+      ],
+      "canonical_locator": "https://github.com/tile-ai/tilelang/releases/tag/v0.1.13",
+      "claims": [],
+      "first_seen_run": "legacy-bootstrap-20260812-v1",
+      "last_seen_runs": [
+        "legacy-bootstrap-20260812-v1"
+      ],
+      "module_ids": [
+        "compiler",
+        "parallel-computing"
+      ],
+      "relations": [],
+      "revision_key": "v0.1.13",
+      "title": "TileLang v0.1.13",
+      "work_id": "github:tile-ai/tilelang"
+    },
+    {
+      "aliases": [
+        "https://github.com/tile-ai/tilelang"
+      ],
+      "canonical_locator": "https://github.com/tile-ai/tilelang/releases/tag/v0.1.9",
+      "claims": [],
+      "first_seen_run": "legacy-bootstrap-20260812-v1",
+      "last_seen_runs": [
+        "legacy-bootstrap-20260812-v1"
+      ],
+      "module_ids": [
+        "compiler",
+        "parallel-computing",
+        "pytorch"
+      ],
+      "relations": [],
+      "revision_key": "v0.1.9",
+      "title": "TileLang v0.1.9",
+      "work_id": "github:tile-ai/tilelang"
+    },
+    {
+      "aliases": [
+        "https://github.com/triton-lang/triton"
+      ],
+      "canonical_locator": "https://github.com/triton-lang/triton/releases/tag/v3.7.0",
+      "claims": [],
+      "first_seen_run": "legacy-bootstrap-20260812-v1",
+      "last_seen_runs": [
+        "legacy-bootstrap-20260812-v1"
+      ],
+      "module_ids": [
+        "compiler",
+        "parallel-computing"
+      ],
+      "relations": [],
+      "revision_key": "v3.7.0",
+      "title": "Triton 3.7.0",
+      "work_id": "github:triton-lang/triton"
+    },
+    {
+      "aliases": [
+        "https://github.com/vllm-project/vllm"
+      ],
+      "canonical_locator": "https://github.com/vllm-project/vllm/releases/tag/v0.20.0",
+      "claims": [],
+      "first_seen_run": "legacy-bootstrap-20260812-v1",
+      "last_seen_runs": [
+        "legacy-bootstrap-20260812-v1"
+      ],
+      "module_ids": [
+        "inference-framework"
+      ],
+      "relations": [],
+      "revision_key": "v0.20.0",
+      "title": "vLLM v0.20.0",
+      "work_id": "github:vllm-project/vllm"
+    },
+    {
+      "aliases": [
+        "https://github.com/vllm-project/vllm"
+      ],
+      "canonical_locator": "https://github.com/vllm-project/vllm/releases/tag/v0.23.0",
+      "claims": [],
+      "first_seen_run": "legacy-bootstrap-20260812-v1",
+      "last_seen_runs": [
+        "legacy-bootstrap-20260812-v1"
+      ],
+      "module_ids": [
+        "inference-framework"
+      ],
+      "relations": [],
+      "revision_key": "v0.23.0",
+      "title": "vLLM v0.23.0",
+      "work_id": "github:vllm-project/vllm"
+    },
+    {
+      "aliases": [
+        "https://github.com/vllm-project/vllm"
+      ],
+      "canonical_locator": "https://github.com/vllm-project/vllm/releases/tag/v0.25.0",
+      "claims": [],
+      "first_seen_run": "legacy-bootstrap-20260812-v1",
+      "last_seen_runs": [
+        "legacy-bootstrap-20260812-v1"
+      ],
+      "module_ids": [
+        "inference-framework"
+      ],
+      "relations": [],
+      "revision_key": "v0.25.0",
+      "title": "vLLM v0.25.0",
+      "work_id": "github:vllm-project/vllm"
+    },
+    {
+      "aliases": [
+        "https://github.com/vllm-project/vllm"
+      ],
+      "canonical_locator": "https://github.com/vllm-project/vllm/releases/tag/v0.26.0",
+      "claims": [],
+      "first_seen_run": "legacy-bootstrap-20260812-v1",
+      "last_seen_runs": [
+        "legacy-bootstrap-20260812-v1"
+      ],
+      "module_ids": [
+        "inference-framework"
+      ],
+      "relations": [],
+      "revision_key": "v0.26.0",
+      "title": "vLLM v0.26.0",
+      "work_id": "github:vllm-project/vllm"
+    },
+    {
+      "aliases": [
+        "https://github.com/vllm-project/vllm-ascend"
+      ],
+      "canonical_locator": "https://github.com/vllm-project/vllm-ascend/releases",
+      "claims": [],
+      "first_seen_run": "legacy-bootstrap-20260812-v1",
+      "last_seen_runs": [
+        "legacy-bootstrap-20260812-v1"
+      ],
+      "module_ids": [
+        "tpu"
+      ],
+      "relations": [],
+      "revision_key": "v0.21.0rc1",
+      "title": "vllm-ascend v0.21.0rc1",
+      "work_id": "github:vllm-project/vllm-ascend"
+    },
+    {
+      "aliases": [],
+      "canonical_locator": "https://docs.jax.dev/en/latest/pallas/CHANGELOG.html",
+      "claims": [],
+      "first_seen_run": "legacy-bootstrap-20260812-v1",
+      "last_seen_runs": [
+        "legacy-bootstrap-20260812-v1"
+      ],
+      "module_ids": [
+        "tpu"
+      ],
+      "relations": [],
+      "revision_key": "0.10.2",
+      "title": "JAX 0.10.2 Pallas / Mosaic changelog",
+      "work_id": "url:https://docs.jax.dev/en/latest/pallas/CHANGELOG.html"
+    },
+    {
+      "aliases": [],
+      "canonical_locator": "https://docs.jax.dev/en/latest/pallas/CHANGELOG.html",
+      "claims": [],
+      "first_seen_run": "legacy-bootstrap-20260812-v1",
+      "last_seen_runs": [
+        "legacy-bootstrap-20260812-v1"
+      ],
+      "module_ids": [
+        "compiler",
+        "tpu"
+      ],
+      "relations": [],
+      "revision_key": "0.11.0",
+      "title": "JAX 0.11.0 Pallas / Mosaic changelog",
+      "work_id": "url:https://docs.jax.dev/en/latest/pallas/CHANGELOG.html"
+    },
+    {
+      "aliases": [],
+      "canonical_locator": "https://huggingface.co/deepseek-ai/DeepSeek-V4-Pro/blob/main/DeepSeek_V4.pdf",
+      "claims": [],
+      "first_seen_run": "legacy-bootstrap-20260812-v1",
+      "last_seen_runs": [
+        "legacy-bootstrap-20260812-v1"
+      ],
+      "module_ids": [
+        "inference-framework",
+        "model-theory",
+        "training-distributed"
+      ],
+      "relations": [],
+      "revision_key": "unspecified",
+      "title": "DeepSeek V4 technical report",
+      "work_id": "url:https://huggingface.co/deepseek-ai/DeepSeek-V4-Pro/blob/main/DeepSeek_V4.pdf"
+    },
+    {
+      "aliases": [],
+      "canonical_locator": "https://pytorch.org/blog/pytorch-2-12-release-blog",
+      "claims": [],
+      "first_seen_run": "legacy-bootstrap-20260812-v1",
+      "last_seen_runs": [
+        "legacy-bootstrap-20260812-v1"
+      ],
+      "module_ids": [
+        "compiler",
+        "pytorch"
+      ],
+      "relations": [],
+      "revision_key": "unspecified",
+      "title": "PyTorch 2.12 Release Blog",
+      "work_id": "url:https://pytorch.org/blog/pytorch-2-12-release-blog"
+    }
+  ],
+  "runs": [
+    {
+      "active_overlays": [],
+      "coverage": [
+        {
+          "basis": "bootstrap",
+          "covered_from": "2026-08-08T16:24:00+08:00",
+          "covered_to": "2026-08-08T16:24:00+08:00",
+          "detail": "Legacy identity adoption only: no network/source/query coverage was executed; do not advance this scope cursor.",
+          "scope_id": "compiler-research",
+          "scope_kind": "query",
+          "status": "skipped"
+        },
+        {
+          "basis": "bootstrap",
+          "covered_from": "2026-08-08T16:24:00+08:00",
+          "covered_to": "2026-08-08T16:24:00+08:00",
+          "detail": "Legacy identity adoption only: no network/source/query coverage was executed; do not advance this scope cursor.",
+          "scope_id": "distributed-training-research",
+          "scope_kind": "query",
+          "status": "skipped"
+        },
+        {
+          "basis": "bootstrap",
+          "covered_from": "2026-08-08T16:24:00+08:00",
+          "covered_to": "2026-08-08T16:24:00+08:00",
+          "detail": "Legacy identity adoption only: no network/source/query coverage was executed; do not advance this scope cursor.",
+          "scope_id": "inference-research",
+          "scope_kind": "query",
+          "status": "skipped"
+        },
+        {
+          "basis": "bootstrap",
+          "covered_from": "2026-08-08T16:24:00+08:00",
+          "covered_to": "2026-08-08T16:24:00+08:00",
+          "detail": "Legacy identity adoption only: no network/source/query coverage was executed; do not advance this scope cursor.",
+          "scope_id": "kernel-research",
+          "scope_kind": "query",
+          "status": "skipped"
+        },
+        {
+          "basis": "bootstrap",
+          "covered_from": "2026-08-08T16:24:00+08:00",
+          "covered_to": "2026-08-08T16:24:00+08:00",
+          "detail": "Legacy identity adoption only: no network/source/query coverage was executed; do not advance this scope cursor.",
+          "scope_id": "leetcode-interview-trends",
+          "scope_kind": "query",
+          "status": "skipped"
+        },
+        {
+          "basis": "bootstrap",
+          "covered_from": "2026-08-08T16:24:00+08:00",
+          "covered_to": "2026-08-08T16:24:00+08:00",
+          "detail": "Legacy identity adoption only: no network/source/query coverage was executed; do not advance this scope cursor.",
+          "scope_id": "model-architecture-research",
+          "scope_kind": "query",
+          "status": "skipped"
+        },
+        {
+          "basis": "bootstrap",
+          "covered_from": "2026-08-08T16:24:00+08:00",
+          "covered_to": "2026-08-08T16:24:00+08:00",
+          "detail": "Legacy identity adoption only: no network/source/query coverage was executed; do not advance this scope cursor.",
+          "scope_id": "pytorch-internals-research",
+          "scope_kind": "query",
+          "status": "skipped"
+        },
+        {
+          "basis": "bootstrap",
+          "covered_from": "2026-08-08T16:24:00+08:00",
+          "covered_to": "2026-08-08T16:24:00+08:00",
+          "detail": "Legacy identity adoption only: no network/source/query coverage was executed; do not advance this scope cursor.",
+          "scope_id": "tpu-jax-research",
+          "scope_kind": "query",
+          "status": "skipped"
+        },
+        {
+          "basis": "bootstrap",
+          "covered_from": "2026-08-08T16:24:00+08:00",
+          "covered_to": "2026-08-08T16:24:00+08:00",
+          "detail": "Legacy identity adoption only: no network/source/query coverage was executed; do not advance this scope cursor.",
+          "scope_id": "accelerator-integration-wg",
+          "scope_kind": "source",
+          "status": "skipped"
+        },
+        {
+          "basis": "bootstrap",
+          "covered_from": "2026-08-08T16:24:00+08:00",
+          "covered_to": "2026-08-08T16:24:00+08:00",
+          "detail": "Legacy identity adoption only: no network/source/query coverage was executed; do not advance this scope cursor.",
+          "scope_id": "anthropic-engineering",
+          "scope_kind": "source",
+          "status": "skipped"
+        },
+        {
+          "basis": "bootstrap",
+          "covered_from": "2026-08-08T16:24:00+08:00",
+          "covered_to": "2026-08-08T16:24:00+08:00",
+          "detail": "Legacy identity adoption only: no network/source/query coverage was executed; do not advance this scope cursor.",
+          "scope_id": "arxiv-sanity-lite",
+          "scope_kind": "source",
+          "status": "skipped"
+        },
+        {
+          "basis": "bootstrap",
+          "covered_from": "2026-08-08T16:24:00+08:00",
+          "covered_to": "2026-08-08T16:24:00+08:00",
+          "detail": "Legacy identity adoption only: no network/source/query coverage was executed; do not advance this scope cursor.",
+          "scope_id": "character-ai-blog",
+          "scope_kind": "source",
+          "status": "skipped"
+        },
+        {
+          "basis": "bootstrap",
+          "covered_from": "2026-08-08T16:24:00+08:00",
+          "covered_to": "2026-08-08T16:24:00+08:00",
+          "detail": "Legacy identity adoption only: no network/source/query coverage was executed; do not advance this scope cursor.",
+          "scope_id": "colfax-research",
+          "scope_kind": "source",
+          "status": "skipped"
+        },
+        {
+          "basis": "bootstrap",
+          "covered_from": "2026-08-08T16:24:00+08:00",
+          "covered_to": "2026-08-08T16:24:00+08:00",
+          "detail": "Legacy identity adoption only: no network/source/query coverage was executed; do not advance this scope cursor.",
+          "scope_id": "cuda-tile-releases",
+          "scope_kind": "source",
+          "status": "skipped"
+        },
+        {
+          "basis": "bootstrap",
+          "covered_from": "2026-08-08T16:24:00+08:00",
+          "covered_to": "2026-08-08T16:24:00+08:00",
+          "detail": "Legacy identity adoption only: no network/source/query coverage was executed; do not advance this scope cursor.",
+          "scope_id": "cutlass-changelog",
+          "scope_kind": "source",
+          "status": "skipped"
+        },
+        {
+          "basis": "bootstrap",
+          "covered_from": "2026-08-08T16:24:00+08:00",
+          "covered_to": "2026-08-08T16:24:00+08:00",
+          "detail": "Legacy identity adoption only: no network/source/query coverage was executed; do not advance this scope cursor.",
+          "scope_id": "deepep-repository",
+          "scope_kind": "source",
+          "status": "skipped"
+        },
+        {
+          "basis": "bootstrap",
+          "covered_from": "2026-08-08T16:24:00+08:00",
+          "covered_to": "2026-08-08T16:24:00+08:00",
+          "detail": "Legacy identity adoption only: no network/source/query coverage was executed; do not advance this scope cursor.",
+          "scope_id": "deepgemm-repository",
+          "scope_kind": "source",
+          "status": "skipped"
+        },
+        {
+          "basis": "bootstrap",
+          "covered_from": "2026-08-08T16:24:00+08:00",
+          "covered_to": "2026-08-08T16:24:00+08:00",
+          "detail": "Legacy identity adoption only: no network/source/query coverage was executed; do not advance this scope cursor.",
+          "scope_id": "deepseek-github",
+          "scope_kind": "source",
+          "status": "skipped"
+        },
+        {
+          "basis": "bootstrap",
+          "covered_from": "2026-08-08T16:24:00+08:00",
+          "covered_to": "2026-08-08T16:24:00+08:00",
+          "detail": "Legacy identity adoption only: no network/source/query coverage was executed; do not advance this scope cursor.",
+          "scope_id": "deepseek-huggingface",
+          "scope_kind": "source",
+          "status": "skipped"
+        },
+        {
+          "basis": "bootstrap",
+          "covered_from": "2026-08-08T16:24:00+08:00",
+          "covered_to": "2026-08-08T16:24:00+08:00",
+          "detail": "Legacy identity adoption only: no network/source/query coverage was executed; do not advance this scope cursor.",
+          "scope_id": "deepspeed-site",
+          "scope_kind": "source",
+          "status": "skipped"
+        },
+        {
+          "basis": "bootstrap",
+          "covered_from": "2026-08-08T16:24:00+08:00",
+          "covered_to": "2026-08-08T16:24:00+08:00",
+          "detail": "Legacy identity adoption only: no network/source/query coverage was executed; do not advance this scope cursor.",
+          "scope_id": "dualpipe-repository",
+          "scope_kind": "source",
+          "status": "skipped"
+        },
+        {
+          "basis": "bootstrap",
+          "covered_from": "2026-08-08T16:24:00+08:00",
+          "covered_to": "2026-08-08T16:24:00+08:00",
+          "detail": "Legacy identity adoption only: no network/source/query coverage was executed; do not advance this scope cursor.",
+          "scope_id": "ezyang-blog",
+          "scope_kind": "source",
+          "status": "skipped"
+        },
+        {
+          "basis": "bootstrap",
+          "covered_from": "2026-08-08T16:24:00+08:00",
+          "covered_to": "2026-08-08T16:24:00+08:00",
+          "detail": "Legacy identity adoption only: no network/source/query coverage was executed; do not advance this scope cursor.",
+          "scope_id": "flashinfer-blog",
+          "scope_kind": "source",
+          "status": "skipped"
+        },
+        {
+          "basis": "bootstrap",
+          "covered_from": "2026-08-08T16:24:00+08:00",
+          "covered_to": "2026-08-08T16:24:00+08:00",
+          "detail": "Legacy identity adoption only: no network/source/query coverage was executed; do not advance this scope cursor.",
+          "scope_id": "flashinfer-releases",
+          "scope_kind": "source",
+          "status": "skipped"
+        },
+        {
+          "basis": "bootstrap",
+          "covered_from": "2026-08-08T16:24:00+08:00",
+          "covered_to": "2026-08-08T16:24:00+08:00",
+          "detail": "Legacy identity adoption only: no network/source/query coverage was executed; do not advance this scope cursor.",
+          "scope_id": "flashmla-repository",
+          "scope_kind": "source",
+          "status": "skipped"
+        },
+        {
+          "basis": "bootstrap",
+          "covered_from": "2026-08-08T16:24:00+08:00",
+          "covered_to": "2026-08-08T16:24:00+08:00",
+          "detail": "Legacy identity adoption only: no network/source/query coverage was executed; do not advance this scope cursor.",
+          "scope_id": "google-cloud-ai-blog",
+          "scope_kind": "source",
+          "status": "skipped"
+        },
+        {
+          "basis": "bootstrap",
+          "covered_from": "2026-08-08T16:24:00+08:00",
+          "covered_to": "2026-08-08T16:24:00+08:00",
+          "detail": "Legacy identity adoption only: no network/source/query coverage was executed; do not advance this scope cursor.",
+          "scope_id": "gpu-mode-lectures",
+          "scope_kind": "source",
+          "status": "skipped"
+        },
+        {
+          "basis": "bootstrap",
+          "covered_from": "2026-08-08T16:24:00+08:00",
+          "covered_to": "2026-08-08T16:24:00+08:00",
+          "detail": "Legacy identity adoption only: no network/source/query coverage was executed; do not advance this scope cursor.",
+          "scope_id": "hao-ai-lab",
+          "scope_kind": "source",
+          "status": "skipped"
+        },
+        {
+          "basis": "bootstrap",
+          "covered_from": "2026-08-08T16:24:00+08:00",
+          "covered_to": "2026-08-08T16:24:00+08:00",
+          "detail": "Legacy identity adoption only: no network/source/query coverage was executed; do not advance this scope cursor.",
+          "scope_id": "hazy-research",
+          "scope_kind": "source",
+          "status": "skipped"
+        },
+        {
+          "basis": "bootstrap",
+          "covered_from": "2026-08-08T16:24:00+08:00",
+          "covered_to": "2026-08-08T16:24:00+08:00",
+          "detail": "Legacy identity adoption only: no network/source/query coverage was executed; do not advance this scope cursor.",
+          "scope_id": "helion-releases",
+          "scope_kind": "source",
+          "status": "skipped"
+        },
+        {
+          "basis": "bootstrap",
+          "covered_from": "2026-08-08T16:24:00+08:00",
+          "covered_to": "2026-08-08T16:24:00+08:00",
+          "detail": "Legacy identity adoption only: no network/source/query coverage was executed; do not advance this scope cursor.",
+          "scope_id": "hiascend-community",
+          "scope_kind": "source",
+          "status": "skipped"
+        },
+        {
+          "basis": "bootstrap",
+          "covered_from": "2026-08-08T16:24:00+08:00",
+          "covered_to": "2026-08-08T16:24:00+08:00",
+          "detail": "Legacy identity adoption only: no network/source/query coverage was executed; do not advance this scope cursor.",
+          "scope_id": "huggingface-blog",
+          "scope_kind": "source",
+          "status": "skipped"
+        },
+        {
+          "basis": "bootstrap",
+          "covered_from": "2026-08-08T16:24:00+08:00",
+          "covered_to": "2026-08-08T16:24:00+08:00",
+          "detail": "Legacy identity adoption only: no network/source/query coverage was executed; do not advance this scope cursor.",
+          "scope_id": "inference-max",
+          "scope_kind": "source",
+          "status": "skipped"
+        },
+        {
+          "basis": "bootstrap",
+          "covered_from": "2026-08-08T16:24:00+08:00",
+          "covered_to": "2026-08-08T16:24:00+08:00",
+          "detail": "Legacy identity adoption only: no network/source/query coverage was executed; do not advance this scope cursor.",
+          "scope_id": "interviewing-io-blog",
+          "scope_kind": "source",
+          "status": "skipped"
+        },
+        {
+          "basis": "bootstrap",
+          "covered_from": "2026-08-08T16:24:00+08:00",
+          "covered_to": "2026-08-08T16:24:00+08:00",
+          "detail": "Legacy identity adoption only: no network/source/query coverage was executed; do not advance this scope cursor.",
+          "scope_id": "jane-street-tech-talks",
+          "scope_kind": "source",
+          "status": "skipped"
+        },
+        {
+          "basis": "bootstrap",
+          "covered_from": "2026-08-08T16:24:00+08:00",
+          "covered_to": "2026-08-08T16:24:00+08:00",
+          "detail": "Legacy identity adoption only: no network/source/query coverage was executed; do not advance this scope cursor.",
+          "scope_id": "jax-releases",
+          "scope_kind": "source",
+          "status": "skipped"
+        },
+        {
+          "basis": "bootstrap",
+          "covered_from": "2026-08-08T16:24:00+08:00",
+          "covered_to": "2026-08-08T16:24:00+08:00",
+          "detail": "Legacy identity adoption only: no network/source/query coverage was executed; do not advance this scope cursor.",
+          "scope_id": "jax-scaling-book",
+          "scope_kind": "source",
+          "status": "skipped"
+        },
+        {
+          "basis": "bootstrap",
+          "covered_from": "2026-08-08T16:24:00+08:00",
+          "covered_to": "2026-08-08T16:24:00+08:00",
+          "detail": "Legacy identity adoption only: no network/source/query coverage was executed; do not advance this scope cursor.",
+          "scope_id": "latent-space",
+          "scope_kind": "source",
+          "status": "skipped"
+        },
+        {
+          "basis": "bootstrap",
+          "covered_from": "2026-08-08T16:24:00+08:00",
+          "covered_to": "2026-08-08T16:24:00+08:00",
+          "detail": "Legacy identity adoption only: no network/source/query coverage was executed; do not advance this scope cursor.",
+          "scope_id": "leetcode-cn",
+          "scope_kind": "source",
+          "status": "skipped"
+        },
+        {
+          "basis": "bootstrap",
+          "covered_from": "2026-08-08T16:24:00+08:00",
+          "covered_to": "2026-08-08T16:24:00+08:00",
+          "detail": "Legacy identity adoption only: no network/source/query coverage was executed; do not advance this scope cursor.",
+          "scope_id": "leetgpu",
+          "scope_kind": "source",
+          "status": "skipped"
+        },
+        {
+          "basis": "bootstrap",
+          "covered_from": "2026-08-08T16:24:00+08:00",
+          "covered_to": "2026-08-08T16:24:00+08:00",
+          "detail": "Legacy identity adoption only: no network/source/query coverage was executed; do not advance this scope cursor.",
+          "scope_id": "llvm-weekly",
+          "scope_kind": "source",
+          "status": "skipped"
+        },
+        {
+          "basis": "bootstrap",
+          "covered_from": "2026-08-08T16:24:00+08:00",
+          "covered_to": "2026-08-08T16:24:00+08:00",
+          "detail": "Legacy identity adoption only: no network/source/query coverage was executed; do not advance this scope cursor.",
+          "scope_id": "lmcache-blog",
+          "scope_kind": "source",
+          "status": "skipped"
+        },
+        {
+          "basis": "bootstrap",
+          "covered_from": "2026-08-08T16:24:00+08:00",
+          "covered_to": "2026-08-08T16:24:00+08:00",
+          "detail": "Legacy identity adoption only: no network/source/query coverage was executed; do not advance this scope cursor.",
+          "scope_id": "lmsys-blog",
+          "scope_kind": "source",
+          "status": "skipped"
+        },
+        {
+          "basis": "bootstrap",
+          "covered_from": "2026-08-08T16:24:00+08:00",
+          "covered_to": "2026-08-08T16:24:00+08:00",
+          "detail": "Legacy identity adoption only: no network/source/query coverage was executed; do not advance this scope cursor.",
+          "scope_id": "maxtext-commits",
+          "scope_kind": "source",
+          "status": "skipped"
+        },
+        {
+          "basis": "bootstrap",
+          "covered_from": "2026-08-08T16:24:00+08:00",
+          "covered_to": "2026-08-08T16:24:00+08:00",
+          "detail": "Legacy identity adoption only: no network/source/query coverage was executed; do not advance this scope cursor.",
+          "scope_id": "meta-ai-blog",
+          "scope_kind": "source",
+          "status": "skipped"
+        },
+        {
+          "basis": "bootstrap",
+          "covered_from": "2026-08-08T16:24:00+08:00",
+          "covered_to": "2026-08-08T16:24:00+08:00",
+          "detail": "Legacy identity adoption only: no network/source/query coverage was executed; do not advance this scope cursor.",
+          "scope_id": "mlir-discourse",
+          "scope_kind": "source",
+          "status": "skipped"
+        },
+        {
+          "basis": "bootstrap",
+          "covered_from": "2026-08-08T16:24:00+08:00",
+          "covered_to": "2026-08-08T16:24:00+08:00",
+          "detail": "Legacy identity adoption only: no network/source/query coverage was executed; do not advance this scope cursor.",
+          "scope_id": "moonshot-blog",
+          "scope_kind": "source",
+          "status": "skipped"
+        },
+        {
+          "basis": "bootstrap",
+          "covered_from": "2026-08-08T16:24:00+08:00",
+          "covered_to": "2026-08-08T16:24:00+08:00",
+          "detail": "Legacy identity adoption only: no network/source/query coverage was executed; do not advance this scope cursor.",
+          "scope_id": "neetcode",
+          "scope_kind": "source",
+          "status": "skipped"
+        },
+        {
+          "basis": "bootstrap",
+          "covered_from": "2026-08-08T16:24:00+08:00",
+          "covered_to": "2026-08-08T16:24:00+08:00",
+          "detail": "Legacy identity adoption only: no network/source/query coverage was executed; do not advance this scope cursor.",
+          "scope_id": "nvidia-developer-blog",
+          "scope_kind": "source",
+          "status": "skipped"
+        },
+        {
+          "basis": "bootstrap",
+          "covered_from": "2026-08-08T16:24:00+08:00",
+          "covered_to": "2026-08-08T16:24:00+08:00",
+          "detail": "Legacy identity adoption only: no network/source/query coverage was executed; do not advance this scope cursor.",
+          "scope_id": "papers-with-code",
+          "scope_kind": "source",
+          "status": "skipped"
+        },
+        {
+          "basis": "bootstrap",
+          "covered_from": "2026-08-08T16:24:00+08:00",
+          "covered_to": "2026-08-08T16:24:00+08:00",
+          "detail": "Legacy identity adoption only: no network/source/query coverage was executed; do not advance this scope cursor.",
+          "scope_id": "pytorch-blog",
+          "scope_kind": "source",
+          "status": "skipped"
+        },
+        {
+          "basis": "bootstrap",
+          "covered_from": "2026-08-08T16:24:00+08:00",
+          "covered_to": "2026-08-08T16:24:00+08:00",
+          "detail": "Legacy identity adoption only: no network/source/query coverage was executed; do not advance this scope cursor.",
+          "scope_id": "pytorch-dev-discuss",
+          "scope_kind": "source",
+          "status": "skipped"
+        },
+        {
+          "basis": "bootstrap",
+          "covered_from": "2026-08-08T16:24:00+08:00",
+          "covered_to": "2026-08-08T16:24:00+08:00",
+          "detail": "Legacy identity adoption only: no network/source/query coverage was executed; do not advance this scope cursor.",
+          "scope_id": "qwen-blog",
+          "scope_kind": "source",
+          "status": "skipped"
+        },
+        {
+          "basis": "bootstrap",
+          "covered_from": "2026-08-08T16:24:00+08:00",
+          "covered_to": "2026-08-08T16:24:00+08:00",
+          "detail": "Legacy identity adoption only: no network/source/query coverage was executed; do not advance this scope cursor.",
+          "scope_id": "semianalysis",
+          "scope_kind": "source",
+          "status": "skipped"
+        },
+        {
+          "basis": "bootstrap",
+          "covered_from": "2026-08-08T16:24:00+08:00",
+          "covered_to": "2026-08-08T16:24:00+08:00",
+          "detail": "Legacy identity adoption only: no network/source/query coverage was executed; do not advance this scope cursor.",
+          "scope_id": "sglang-releases",
+          "scope_kind": "source",
+          "status": "skipped"
+        },
+        {
+          "basis": "bootstrap",
+          "covered_from": "2026-08-08T16:24:00+08:00",
+          "covered_to": "2026-08-08T16:24:00+08:00",
+          "detail": "Legacy identity adoption only: no network/source/query coverage was executed; do not advance this scope cursor.",
+          "scope_id": "tensara",
+          "scope_kind": "source",
+          "status": "skipped"
+        },
+        {
+          "basis": "bootstrap",
+          "covered_from": "2026-08-08T16:24:00+08:00",
+          "covered_to": "2026-08-08T16:24:00+08:00",
+          "detail": "Legacy identity adoption only: no network/source/query coverage was executed; do not advance this scope cursor.",
+          "scope_id": "thonking",
+          "scope_kind": "source",
+          "status": "skipped"
+        },
+        {
+          "basis": "bootstrap",
+          "covered_from": "2026-08-08T16:24:00+08:00",
+          "covered_to": "2026-08-08T16:24:00+08:00",
+          "detail": "Legacy identity adoption only: no network/source/query coverage was executed; do not advance this scope cursor.",
+          "scope_id": "tilekernels-repository",
+          "scope_kind": "source",
+          "status": "skipped"
+        },
+        {
+          "basis": "bootstrap",
+          "covered_from": "2026-08-08T16:24:00+08:00",
+          "covered_to": "2026-08-08T16:24:00+08:00",
+          "detail": "Legacy identity adoption only: no network/source/query coverage was executed; do not advance this scope cursor.",
+          "scope_id": "tilelang-repository",
+          "scope_kind": "source",
+          "status": "skipped"
+        },
+        {
+          "basis": "bootstrap",
+          "covered_from": "2026-08-08T16:24:00+08:00",
+          "covered_to": "2026-08-08T16:24:00+08:00",
+          "detail": "Legacy identity adoption only: no network/source/query coverage was executed; do not advance this scope cursor.",
+          "scope_id": "tri-dao-blog",
+          "scope_kind": "source",
+          "status": "skipped"
+        },
+        {
+          "basis": "bootstrap",
+          "covered_from": "2026-08-08T16:24:00+08:00",
+          "covered_to": "2026-08-08T16:24:00+08:00",
+          "detail": "Legacy identity adoption only: no network/source/query coverage was executed; do not advance this scope cursor.",
+          "scope_id": "triton-releases",
+          "scope_kind": "source",
+          "status": "skipped"
+        },
+        {
+          "basis": "bootstrap",
+          "covered_from": "2026-08-08T16:24:00+08:00",
+          "covered_to": "2026-08-08T16:24:00+08:00",
+          "detail": "Legacy identity adoption only: no network/source/query coverage was executed; do not advance this scope cursor.",
+          "scope_id": "vllm-blog",
+          "scope_kind": "source",
+          "status": "skipped"
+        },
+        {
+          "basis": "bootstrap",
+          "covered_from": "2026-08-08T16:24:00+08:00",
+          "covered_to": "2026-08-08T16:24:00+08:00",
+          "detail": "Legacy identity adoption only: no network/source/query coverage was executed; do not advance this scope cursor.",
+          "scope_id": "vllm-releases",
+          "scope_kind": "source",
+          "status": "skipped"
+        }
+      ],
+      "decision_unit_ids": [],
+      "operation_kind": "refresh",
+      "prepared_at": "2026-08-12T15:20:00+08:00",
+      "report": {
+        "path": "计划/资源治理/reports/legacy-bootstrap-20260812-v1.md",
+        "sha256": "5a33c2e6f21d9f52daa5338fb7b8dbab6b62b45a0b03ce587715460897da987e"
+      },
+      "run_id": "legacy-bootstrap-20260812-v1"
+    }
+  ],
+  "schema": "agent-skills.resource-registry/v1"
+}
