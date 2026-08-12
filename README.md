@@ -103,7 +103,7 @@ git submodule update --init --recursive
 ### 2.2 Skill 中央管线（version 2 受管配置）
 
 中央规范源以 [`.agent-skills`](.agent-skills) 子模块固定在
-`c3ae66a5e3722664fb10ff4b69145262d3f51b20`。[`.agent-skills.json`](.agent-skills.json) 为 Codex 与 Claude
+`f6abbdf5a1acd00ba6d5e45a92456605b603b392`。[`.agent-skills.json`](.agent-skills.json) 为 Codex 与 Claude
 同时选择 `guide-learning`、`study-log`、`english-coach`、`memo-cards`、
 `resource-planning` 和 `playwright-cli`，并为前四个已适配的 first-party Skill 引用
 [`.agent-skills-config/`](.agent-skills-config/) 下的 Git-tracked 公共配置。`resource-planning` 已使用最新版中央核心，

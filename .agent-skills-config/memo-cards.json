@@ -8,6 +8,14 @@
   },
   "input_collections": [
     {
+      "id": "inference-study-article",
+      "kind": "article",
+      "patterns": [
+        "推理框架/深入学习理解vLLM/1-Repository-and-Process-Architecture.md"
+      ],
+      "producer": "guide-learning"
+    },
+    {
       "id": "english-study-logs",
       "kind": "structured-log",
       "patterns": [
@@ -27,6 +35,14 @@
       "patterns": [
         "PyTorch/log/*.md"
       ]
+    },
+    {
+      "id": "pytorch-study-article",
+      "kind": "article",
+      "patterns": [
+        "PyTorch/深入学习理解PyTorch/1-Internal-Overview.md"
+      ],
+      "producer": "guide-learning"
     }
   ],
   "output_collections": [
