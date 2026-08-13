@@ -76,30 +76,37 @@ PlanA/
 | SGLang | [`推理框架/references/sglang`](推理框架/references/sglang) | `v0.5.17` | `29481685462732237d80d86076d6563e1f658102` |
 | PyTorch | [`PyTorch/references/pytorch`](PyTorch/references/pytorch) | `v2.11.0` | `70d99e998b4955e0049d13a98d77ae1b14db1f45` |
 
-根目录 [`.gitmodules`](.gitmodules) 登记了上游地址，并为三个子模块启用浅克隆。父仓库记录的 gitlink 才是精确版本事实源；上述基线的选择理由与用途见 [EP-PD 自研芯片适配设计与验证包](推理框架/EP-PD自研芯片适配设计与验证包.md)。
+根目录 [`.gitmodules`](.gitmodules) 登记了上游地址，并为三个源码子模块启用浅克隆。`shallow = true` 只减少这些仓库自身的历史下载量，不会阻止递归初始化它们的下级子模块。父仓库记录的 gitlink 才是精确版本事实源；上述基线的选择理由与用途见 [EP-PD 自研芯片适配设计与验证包](推理框架/EP-PD自研芯片适配设计与验证包.md)。
 
 首次克隆（Windows 建议先启用长路径，以免 PyTorch 的深层目录检出失败）：
 
 ```powershell
 git config --global core.longpaths true
-git clone --recurse-submodules --shallow-submodules git@github.com:XiFenM/PlanA.git
+git clone git@github.com:XiFenM/PlanA.git
+Set-Location PlanA
+git submodule sync
+git submodule update --init -- PyTorch/references/pytorch "推理框架/references/vllm" "推理框架/references/sglang"
+git submodule update --init --recursive -- .agent-skills
 ```
 
-如果已经克隆了父仓库，但子模块目录还是空的：
+如果已经克隆了父仓库，但子模块目录还是空的，可在仓库根目录执行同样的分层初始化：
 
 ```powershell
-git submodule sync --recursive
-git submodule update --init --recursive
+git submodule sync
+git submodule update --init -- PyTorch/references/pytorch "推理框架/references/vllm" "推理框架/references/sglang"
+git submodule update --init --recursive -- .agent-skills
 ```
 
 以后拉取父仓库更新时，同时把子模块恢复到父仓库固定的提交：
 
 ```powershell
-git pull --recurse-submodules
-git submodule update --init --recursive
+git pull --recurse-submodules=no
+git submodule sync
+git submodule update --init -- PyTorch/references/pytorch "推理框架/references/vllm" "推理框架/references/sglang"
+git submodule update --init --recursive -- .agent-skills
 ```
 
-子模块处于 `detached HEAD` 是固定版本时的正常状态。日常学习不要在子模块内直接 `pull`，也不要执行 `git submodule update --remote`；需要升级上游版本时，应显式修改父仓库记录的 gitlink，并同步更新本节基线。
+源码子模块的初始化命令有意不带 `--recursive`，因此只检出 PyTorch、vLLM 和 SGLang 本体；`.agent-skills` 因包含所需的官方依赖而单独递归初始化。不要对整个仓库执行无路径限制的 `git submodule update --init --recursive`。子模块处于 `detached HEAD` 是固定版本时的正常状态。日常学习不要在子模块内直接 `pull`，也不要执行 `git submodule update --remote`；需要升级上游版本时，应显式修改父仓库记录的 gitlink，并同步更新本节基线。
 
 ### 2.2 Skill 中央管线（version 2 受管配置）
 
