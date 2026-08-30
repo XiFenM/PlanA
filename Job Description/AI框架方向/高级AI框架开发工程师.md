@@ -1,6 +1,8 @@
 ## THE ROLE
 
-You will play a critical role in advancing high-performance LLM serving by optimizin Role: Software Engineer / Systems Engineer, GPU Networking & Inference Infrastructure Team: ROCm System Software — Communication Primitives About the Project
+You will play a critical role in advancing high-performance LLM serving by optimizin Role: Software Engineer / Systems Engineer, GPU Networking & Inference Infrastructure Team: ROCm System Software — Communication Primitives
+
+About the Project
 MORI (Modular RDMA Interface) is an open-source framework powering AMD GPU communication in large-scale LLM inference. It provides the RDMA + GPU-direct networking layer for MoE expert parallelism and prefill/decode disaggregation in SGLang and vLLM, and owns the KVCache management and storage layer via MORI-UMBP (Unified Memory & Bandwidth Pool). MORI achieved state-of-the-art results in the SemiAnalysis InferenceX v2 evaluation.
 
 ## What You'll Work On

@@ -1,0 +1,36 @@
+{
+  "id": "9d43dcd8efa14d99b26d08c46f256a2c",
+  "choices": [
+    {
+      "message": {
+        "content": "<redacted:11311 chars>",
+        "role": "assistant",
+        "refusal": null,
+        "reasoning": "<redacted:2572 chars>"
+      },
+      "finish_reason": "stop",
+      "index": 0,
+      "logprobs": null
+    }
+  ],
+  "model": "google/gemini-3.7-flash",
+  "usage": {
+    "completion_tokens": 8671,
+    "prompt_tokens": 58062,
+    "total_tokens": 66733,
+    "completion_tokens_details": {
+      "reasoning_tokens": 1825
+    },
+    "trafficType": "ON_DEMAND",
+    "prompt_tokens_details": {
+      "audio_tokens": 57477,
+      "cached_tokens": 0,
+      "audio_cached_tokens": 0
+    },
+    "web_search": 0,
+    "web_search_queries": 0,
+    "tool_use": 0
+  },
+  "object": "chat.completion",
+  "created": 1787999106
+}

@@ -1,0 +1,721 @@
+{
+  "schemaVersion": 1,
+  "recordingId": "interview-20260813-01",
+  "analysisRunId": "run-20260823-01",
+  "analysisStatus": "complete",
+  "decisionBoundary": "evidence_only_no_employment_decision",
+  "calibrationStatus": "partially_calibrated",
+  "coverage": {
+    "mode": "full",
+    "reviewedRanges": [
+      {
+        "startMs": 0,
+        "endMs": 2378233
+      }
+    ],
+    "notes": "全场录像覆盖完整，音视频同步良好，包含候选人自我介绍、大模型推理架构、算子优化、量化部署、Prefill/Decode调度及反问交流全过程。"
+  },
+  "limitations": [
+    "校准材料处于 partially_calibrated 状态，未提供正式岗位评分锚点与职级规范。",
+    "部分硬件细节候选人受限于前司保密仅作架构级表述。"
+  ],
+  "languages": [
+    "zh-CN"
+  ],
+  "participants": [
+    {
+      "speakerId": "speaker-1",
+      "role": "interviewer",
+      "roleConfidence": 0.98,
+      "notes": "面试官，负责提问与技术深挖，未开启摄像头（使用卡通头像）。"
+    },
+    {
+      "speakerId": "speaker-2",
+      "role": "candidate",
+      "roleConfidence": 0.99,
+      "notes": "候选人，开启摄像头并共享了个人技术总结笔记屏幕。"
+    }
+  ],
+  "evidence": [
+    {
+      "evidenceId": "ev-1",
+      "startMs": 23000,
+      "endMs": 95000,
+      "speakerId": "speaker-2",
+      "modality": "audio",
+      "content": "候选人介绍个人背景：复旦大学大数据学院硕士，上海大学本科数学系，目前在自研ASIC芯片公司担任AI框架工程师，主要基于PyTorch和vLLM做自研芯片的适配、性能优化与模型部署。",
+      "verbatim": false,
+      "confidence": 0.95
+    },
+    {
+      "evidenceId": "ev-2",
+      "startMs": 215000,
+      "endMs": 270000,
+      "speakerId": "speaker-2",
+      "modality": "audio",
+      "content": "候选人说明在大模型部署中遇到FP4/FP8权重时，先借助开源AWQ量化工具将模型转为自研芯片支持的W4A16或W8A16格式，再进行算子拆解与单卡适配。",
+      "verbatim": false,
+      "confidence": 0.9
+    },
+    {
+      "evidenceId": "ev-3",
+      "startMs": 445000,
+      "endMs": 540000,
+      "speakerId": "speaker-2",
+      "modality": "audio",
+      "content": "候选人阐述vLLM的PagedAttention与KV Cache管理机制：自研芯片硬件约束将Block Size固定为256，由Scheduler在Model Runner计算前分配逻辑Block。",
+      "verbatim": false,
+      "confidence": 0.92
+    },
+    {
+      "evidenceId": "ev-4",
+      "startMs": 615000,
+      "endMs": 720000,
+      "speakerId": "speaker-2",
+      "modality": "audio",
+      "content": "候选人详解列优先与分块矩阵乘优化：原矩阵乘切块跳行读取存在硬件Bank Conflict，通过在模型加载期重排权重参数为列优先分块布局，规避运行时开销，获得10%~20%性能提升。",
+      "verbatim": false,
+      "confidence": 0.93
+    },
+    {
+      "evidenceId": "ev-5",
+      "startMs": 780000,
+      "endMs": 835000,
+      "speakerId": "speaker-2",
+      "modality": "audio",
+      "content": "候选人介绍多卡Tensor Parallelism适配：在Attention与MLP的Linear层后插入AllReduce与AllGather通信算子，并验证数值稳定性与Softmax结果一致性。",
+      "verbatim": false,
+      "confidence": 0.9
+    },
+    {
+      "evidenceId": "ev-6",
+      "startMs": 900000,
+      "endMs": 1050000,
+      "speakerId": "speaker-2",
+      "modality": "audio",
+      "content": "候选人分析多模态视觉Encoder（Conv3D/ViT）优化案例：Channel=3被硬件强制Padding对齐至256导致显存膨胀近百倍引发OOM，通过维度合并与算子重排规避无效Padding，显著降低TTFT延时。",
+      "verbatim": false,
+      "confidence": 0.94
+    },
+    {
+      "evidenceId": "ev-7",
+      "startMs": 1235000,
+      "endMs": 1335000,
+      "speakerId": "speaker-2",
+      "modality": "audio",
+      "content": "候选人对比Prefill（计算密集型，采用TP切分提升算力利用率）与Decode（访存密集型，采用MTP投机采样与Chunked Prefill平衡吞吐与延时）的优化重心。",
+      "verbatim": false,
+      "confidence": 0.91
+    },
+    {
+      "evidenceId": "ev-8",
+      "startMs": 1375000,
+      "endMs": 1445000,
+      "speakerId": "speaker-2",
+      "modality": "audio",
+      "content": "面试官提问自回归Decode阶段的Padding机制，候选人初步回答为右Padding，随后在推导自回归生成序列拼接时出现逻辑反复与停顿澄清。",
+      "verbatim": false,
+      "confidence": 0.88
+    },
+    {
+      "evidenceId": "ev-9",
+      "startMs": 1510000,
+      "endMs": 1585000,
+      "speakerId": "speaker-2",
+      "modality": "audio",
+      "content": "候选人介绍针对4路SIMD寄存器的KV Cache交叉排布优化：将K Cache与V Cache连续拼接并按16-bit双通道交错存储，提升硬件连续向量访存效率。",
+      "verbatim": false,
+      "confidence": 0.92
+    },
+    {
+      "evidenceId": "ev-10",
+      "startMs": 1820000,
+      "endMs": 1900000,
+      "speakerId": "speaker-2",
+      "modality": "audio",
+      "content": "候选人说明MOE算子优化：将Top-K路由、Dispatch、GEMM及Reduce融合成单一Fused MOE算子，规避多小算子在自研ASIC上的调度开销。",
+      "verbatim": false,
+      "confidence": 0.9
+    },
+    {
+      "evidenceId": "ev-11",
+      "startMs": 1920000,
+      "endMs": 2040000,
+      "speakerId": "speaker-2",
+      "modality": "audio",
+      "content": "候选人讨论RMSNorm精度溢出问题：因BF16/FP16精度在累加求方差时易溢出产生数值差异，故在RMSNorm计算中强制采用FP32累加后再转回低精度。",
+      "verbatim": false,
+      "confidence": 0.93
+    },
+    {
+      "evidenceId": "ev-12",
+      "startMs": 2260000,
+      "endMs": 2340000,
+      "speakerId": "speaker-2",
+      "modality": "audio",
+      "content": "候选人向面试官了解地平线车端与端侧芯片上的模型部署形态、模型规模（2B~7B及座舱大模型）、编译器及C++运行时框架结构。",
+      "verbatim": false,
+      "confidence": 0.95
+    }
+  ],
+  "timeline": [
+    {
+      "startMs": 0,
+      "endMs": 15000,
+      "speakerId": "speaker-1",
+      "eventType": "question",
+      "summary": "面试开始，面试官邀请候选人进行自我介绍。",
+      "evidenceIds": [],
+      "confidence": 0.95
+    },
+    {
+      "startMs": 15000,
+      "endMs": 210000,
+      "speakerId": "speaker-2",
+      "eventType": "answer",
+      "summary": "候选人介绍教育背景、自研ASIC芯片公司推理框架开发与大模型适配工作经历。",
+      "evidenceIds": ["ev-1"],
+      "confidence": 0.95
+    },
+    {
+      "startMs": 213000,
+      "endMs": 605000,
+      "speakerId": "speaker-2",
+      "eventType": "answer",
+      "summary": "深入探讨基于vLLM的模型部署链路、量化格式转换与KV Cache PagedAttention分块管理。",
+      "evidenceIds": ["ev-2", "ev-3"],
+      "confidence": 0.92
+    },
+    {
+      "startMs": 606000,
+      "endMs": 770000,
+      "speakerId": "speaker-2",
+      "eventType": "answer",
+      "summary": "阐述针对硬件访存特性的矩阵乘列优先分块重排优化。",
+      "evidenceIds": ["ev-4"],
+      "confidence": 0.93
+    },
+    {
+      "startMs": 771000,
+      "endMs": 890000,
+      "speakerId": "speaker-2",
+      "eventType": "answer",
+      "summary": "说明分布式张量并行通信算子（AllReduce/AllGather）验证与调试。",
+      "evidenceIds": ["ev-5"],
+      "confidence": 0.9
+    },
+    {
+      "startMs": 891000,
+      "endMs": 1130000,
+      "speakerId": "speaker-2",
+      "eventType": "answer",
+      "summary": "分析多模态视觉编码器Conv3D/ViT对齐Padding导致的内存膨胀瓶颈与解决方案。",
+      "evidenceIds": ["ev-6"],
+      "confidence": 0.94
+    },
+    {
+      "startMs": 1131000,
+      "endMs": 1720000,
+      "speakerId": "speaker-2",
+      "eventType": "answer",
+      "summary": "讨论Prefill/Decode阶段瓶颈差异、投机采样（MTP）、Chunked Prefill及寄存器级KV Cache交错排布。",
+      "evidenceIds": ["ev-7", "ev-8", "ev-9"],
+      "confidence": 0.91
+    },
+    {
+      "startMs": 1721000,
+      "endMs": 2150000,
+      "speakerId": "speaker-2",
+      "eventType": "answer",
+      "summary": "讨论MOE算子融合、RMSNorm的FP32累加精度调试及Triton/JIT编译工具链体验。",
+      "evidenceIds": ["ev-10", "ev-11"],
+      "confidence": 0.92
+    },
+    {
+      "startMs": 2151000,
+      "endMs": 2378233,
+      "speakerId": "speaker-2",
+      "eventType": "clarification",
+      "summary": "候选人反问环节，了解地平线端侧与车载大模型部署技术栈及推理引擎设计。",
+      "evidenceIds": ["ev-12"],
+      "confidence": 0.95
+    }
+  ],
+  "questions": [
+    {
+      "questionId": "q-1",
+      "startMs": 213000,
+      "askerSpeakerId": "speaker-1",
+      "answererSpeakerIds": [
+        "speaker-2"
+      ],
+      "questionSummary": "请详细介绍在vLLM框架下进行大模型部署的完整流程与KV Cache管理机制。",
+      "intent": "考察候选人对LLM推理框架全链路（模型解析、算子支持、量化、调度及KV Cache分页机制）的掌握深度。",
+      "answerSummary": "候选人梳理了从模型格式解析、AWQ量化格式转换、算子支持度检查、单卡与多卡算子提取，到通过vLLM Block Table管理定长256块KV Cache的完整生命周期。",
+      "approach": "自顶向下按执行阶段（模型解析->量化->单卡算子切分->PagedAttention调度）组织回答。",
+      "interviewerSupport": "面试官多次追问非标准结构（如Linear Attention、动态长度、Prefill/Decode阶段增长）下的细节处理。",
+      "selfCorrections": [],
+      "evidenceIds": [
+        "ev-2",
+        "ev-3"
+      ],
+      "strengths": [
+        {
+          "title": "推理框架链路清晰",
+          "detail": "对vLLM源码级调度逻辑、Block Table机制及硬件约束下的参数设定（Block Size=256）有实际工程落地经验。",
+          "evidenceIds": [
+            "ev-3"
+          ],
+          "confidence": 0.92
+        }
+      ],
+      "gaps": [
+        {
+          "title": "新型注意力机制探索有限",
+          "detail": "在面对面试官关于Linear Attention/Hybrid Attention的KV Cache状态管理的追问时，候选人明确表示未深入研究。",
+          "evidenceIds": [
+            "ev-3"
+          ],
+          "confidence": 0.85
+        }
+      ],
+      "followUps": [
+        {
+          "question": "在跨请求共享前缀（Prefix Caching）场景下，Block Size为256是否会导致较多尾部未对齐浪费？如何权衡内存碎片与硬件访存吞吐？",
+          "rationale": "候选人提到硬件要求Block Size固定为256，但长文本共享前缀时可能引入内部碎片，需确认权衡策略。",
+          "evidenceIds": [
+            "ev-3"
+          ],
+          "confidence": 0.9
+        }
+      ],
+      "confidence": 0.92
+    },
+    {
+      "questionId": "q-2",
+      "startMs": 606000,
+      "askerSpeakerId": "speaker-1",
+      "answererSpeakerIds": [
+        "speaker-2"
+      ],
+      "questionSummary": "请举例说明在算子优化方面做过的具体工作及背后的软硬件机理。",
+      "intent": "评估算子级性能调优、数据布局重排（Layout Transformation）及底层访存冲突优化能力。",
+      "answerSummary": "候选人分享了矩阵乘列优先分块优化案例，通过将权重参数在离线加载阶段转为列优先分块排布，避免了在线计算时跳行读取跨Stride引发的HBM Bank Conflict，提速10%~20%。",
+      "approach": "从硬件瓶颈（跨行访存Bank Conflict）-> 软件方案（离线参数重排）-> 收益验证（提升10%~20%且零运行时额外开销）展开。",
+      "interviewerSupport": "无明显提示，候选人自主完成技术方案与机理陈述。",
+      "selfCorrections": [],
+      "evidenceIds": [
+        "ev-4"
+      ],
+      "strengths": [
+        {
+          "title": "深谙软硬件协同优化",
+          "detail": "能够结合自研芯片访存特性，通过离线修改权重Layout将计算开销前置，取得显著性能收益。",
+          "evidenceIds": [
+            "ev-4"
+          ],
+          "confidence": 0.94
+        }
+      ],
+      "gaps": [],
+      "followUps": [
+        {
+          "question": "该列优先分块格式是否影响激活值的在线转置？如果是动态Shape的GEMM/GEMV，如何保持内存访问连续性？",
+          "rationale": "需要确认该优化是否仅局限于静态权重，还是能通用化支持动态激活与融合算子。",
+          "evidenceIds": [
+            "ev-4"
+          ],
+          "confidence": 0.9
+        }
+      ],
+      "confidence": 0.93
+    },
+    {
+      "questionId": "q-3",
+      "startMs": 891000,
+      "askerSpeakerId": "speaker-1",
+      "answererSpeakerIds": [
+        "speaker-2"
+      ],
+      "questionSummary": "在多模态大模型（如Qwen-VL系列）的端到端性能调优中遇到了哪些瓶颈？如何解决？",
+      "intent": "考察多模态视觉算子（Conv3D/ViT）在专用加速器上的特殊访存与对齐瓶颈排查与调优能力。",
+      "answerSummary": "多模态图像输入通道C=3在自研芯片上被强制Padding对齐至256，导致显存占用暴增85倍引发OOM且严重拖慢TTFT；通过在算子前端将维度合并传入底层Kernel内部解析，规避无效Padding。",
+      "approach": "定位症状（首Token延迟极大/OOM）-> Profiling定位根因（强行对齐Padding）-> 算子与框架协同重构（维度压平并延迟展开）。",
+      "interviewerSupport": "面试官对256对齐约束和85倍膨胀进行了数值核对与确认。",
+      "selfCorrections": [],
+      "evidenceIds": [
+        "ev-6"
+      ],
+      "strengths": [
+        {
+          "title": "端到端系统化瓶颈定位",
+          "detail": "能够结合硬件底层对齐规则快速定位多模态视觉前端非常规算子的显存爆炸问题并设计针对性重构方案。",
+          "evidenceIds": [
+            "ev-6"
+          ],
+          "confidence": 0.94
+        }
+      ],
+      "gaps": [],
+      "followUps": [
+        {
+          "question": "在规避Padding后，视觉Tokens送入LLM Backbone时与文本Tokens的混合拼接如何保持算子高效执行？",
+          "rationale": "进一步考察多模态图文交错场景下的内存规划与多算子流水衔接。",
+          "evidenceIds": [
+            "ev-6"
+          ],
+          "confidence": 0.88
+        }
+      ],
+      "confidence": 0.92
+    },
+    {
+      "questionId": "q-4",
+      "startMs": 1131000,
+      "askerSpeakerId": "speaker-1",
+      "answererSpeakerIds": [
+        "speaker-2"
+      ],
+      "questionSummary": "在LLM Prefill和Decode阶段的性能优化策略上有何不同？针对Decode访存密集型特点采取了哪些优化？",
+      "intent": "考察对LLM双阶段计算/访存特征理解、投机采样（MTP）、批处理调度及寄存器级优化的掌握。",
+      "answerSummary": "Prefill为计算密集型，以TP多分片提算力为主；Decode为访存密集型，采用MTP多Token预测提升并行度，并针对自研芯片4路向量寄存器设计了KV Cache双通道交叉连续存储机制以提升带宽利用率。",
+      "approach": "对比两阶段特征 -> 系统级调度（Chunked Prefill/MTP） -> 寄存器/微架构级KV排布优化。",
+      "interviewerSupport": "面试官在Padding方向（左Padding vs 右Padding）追问时给予了启发式引导。",
+      "selfCorrections": [
+        {
+          "description": "在解释自回归生成序列的KV Cache拼接时，候选人最初提及右Padding，随后在自回归追加生成的场景下重新梳理推导。",
+          "evidenceIds": [
+            "ev-8"
+          ]
+        }
+      ],
+      "evidenceIds": [
+        "ev-7",
+        "ev-8",
+        "ev-9"
+      ],
+      "strengths": [
+        {
+          "title": "深入寄存器级数据排布",
+          "detail": "提出了结合自研芯片SIMD寄存器特性的K/V Cache连续交错排布方案，展现了细粒度访存优化能力。",
+          "evidenceIds": [
+            "ev-9"
+          ],
+          "confidence": 0.92
+        }
+      ],
+      "gaps": [
+        {
+          "title": "Padding机制表述略有混淆",
+          "detail": "在面试官追问Decode阶段与Prefill阶段的输入Padding机制时，对左Padding在自回归生成中的对齐意义表述不够笃定，出现短暂停顿与逻辑纠偏。",
+          "evidenceIds": [
+            "ev-8"
+          ],
+          "confidence": 0.85
+        }
+      ],
+      "followUps": [
+        {
+          "question": "在KV Cache交错存储后，FlashAttention算子内的K/V加载指令是否需要特殊重构？如何保证数值计算正确性？",
+          "rationale": "确认寄存器级存储重排对核心Attention Kernel实现的具体影响。",
+          "evidenceIds": [
+            "ev-9"
+          ],
+          "confidence": 0.9
+        }
+      ],
+      "confidence": 0.9
+    },
+    {
+      "questionId": "q-5",
+      "startMs": 1721000,
+      "askerSpeakerId": "speaker-1",
+      "answererSpeakerIds": [
+        "speaker-2"
+      ],
+      "questionSummary": "MOE架构以及低精度量化（FP8/BF16）在适配过程中有哪些优化点与精度注意事项？",
+      "intent": "考察MOE融合算子实现、数值稳定性（RMSNorm溢出）及低精度量化调试实践。",
+      "answerSummary": "MOE层采用Fused MOE算子整合Top-K与GEMM；针对RMSNorm在低精度累加易下溢/溢出导致精度对齐失败的问题，采用FP32高精度累加规避误差；主要使用BF16保证动态范围。",
+      "approach": "算子融合方案 -> 精度排查根因 -> 混合精度设计。",
+      "interviewerSupport": "面试官对RMSNorm和FP8精度下小数位不足的问题进行了补充探讨。",
+      "selfCorrections": [],
+      "evidenceIds": [
+        "ev-10",
+        "ev-11"
+      ],
+      "strengths": [
+        {
+          "title": "具备数值稳定性排查意识",
+          "detail": "准确定位了RMSNorm算子在BF16/FP16累加时的精度敏感性，并采用FP32中间累加解决精度损失。",
+          "evidenceIds": [
+            "ev-11"
+          ],
+          "confidence": 0.93
+        }
+      ],
+      "gaps": [
+        {
+          "title": "量化算法微调经验相对间接",
+          "detail": "候选人主要负责AWQ工具导出格式的推理侧加载与对齐，对离线校准算法与量化感知训练细节涉及较少。",
+          "evidenceIds": [
+            "ev-2"
+          ],
+          "confidence": 0.87
+        }
+      ],
+      "followUps": [
+        {
+          "question": "在FP8（E4M3 vs E5M2）量化中，如何选择GEMM的缩放系数（Scale Factor）更新粒度（Per-tensor vs Per-block）？",
+          "rationale": "进一步评估其对量化格式与精度调优深度的掌握。",
+          "evidenceIds": [
+            "ev-11"
+          ],
+          "confidence": 0.9
+        }
+      ],
+      "confidence": 0.92
+    }
+  ],
+  "competencyEvidence": [
+    {
+      "dimension": "hif-runtime",
+      "status": "positive",
+      "positiveEvidenceIds": [
+        "ev-3",
+        "ev-7",
+        "ev-9"
+      ],
+      "counterEvidenceIds": [],
+      "notes": "候选人深入理解vLLM执行引擎、PagedAttention调度、Block Table生命周期管理，并能结合硬件寄存器特性定制KV Cache排布与投机采样集成。",
+      "confidence": 0.93
+    },
+    {
+      "dimension": "hif-compiler",
+      "status": "positive",
+      "positiveEvidenceIds": [
+        "ev-2",
+        "ev-4",
+        "ev-6"
+      ],
+      "counterEvidenceIds": [],
+      "notes": "熟悉模型导入、常量折叠与数据布局转换（Layout Transformation），能通过离线重排权重与维度融合解决内存膨胀与访存冲突。",
+      "confidence": 0.9
+    },
+    {
+      "dimension": "hif-operator",
+      "status": "positive",
+      "positiveEvidenceIds": [
+        "ev-4",
+        "ev-6",
+        "ev-10"
+      ],
+      "counterEvidenceIds": [],
+      "notes": "具备算子优化与融合能力，包括列优先分块GEMM、Conv3D对齐规避及Fused MOE算子，注重数据局部性与访存连续性。",
+      "confidence": 0.92
+    },
+    {
+      "dimension": "hif-quantization",
+      "status": "mixed",
+      "positiveEvidenceIds": [
+        "ev-2",
+        "ev-11"
+      ],
+      "counterEvidenceIds": [],
+      "notes": "熟练掌握W4A16/W8A16的AWQ部署与RMSNorm等关键算子的FP32混合精度调试；但量化算法微调与校准阶段主要依赖外部/前序团队提供产物。",
+      "confidence": 0.88
+    },
+    {
+      "dimension": "hif-performance",
+      "status": "positive",
+      "positiveEvidenceIds": [
+        "ev-4",
+        "ev-6",
+        "ev-7",
+        "ev-9"
+      ],
+      "counterEvidenceIds": [],
+      "notes": "具备系统化Profiling分析能力，精准区分Prefill计算密集与Decode访存密集瓶颈，能够以TTFT与Throughput为目标进行多层次优化。",
+      "confidence": 0.93
+    },
+    {
+      "dimension": "hif-heterogeneous",
+      "status": "positive",
+      "positiveEvidenceIds": [
+        "ev-1",
+        "ev-3",
+        "ev-4",
+        "ev-6",
+        "ev-9"
+      ],
+      "counterEvidenceIds": [],
+      "notes": "对非CUDA自研ASIC硬件约束（Block Size固定、256字节对齐、4路向量寄存器、HBM Bank Conflict）有深刻理解与工程化应对方案。",
+      "confidence": 0.94
+    },
+    {
+      "dimension": "hif-cpp",
+      "status": "positive",
+      "positiveEvidenceIds": [
+        "ev-1",
+        "ev-12"
+      ],
+      "counterEvidenceIds": [],
+      "notes": "在底层Runtime与算子层具备C++系统开发背景，在反问中亦关注C++端侧推理引擎与Python工具链的衔接分工。",
+      "confidence": 0.88
+    },
+    {
+      "dimension": "hif-python",
+      "status": "positive",
+      "positiveEvidenceIds": [
+        "ev-1",
+        "ev-2"
+      ],
+      "counterEvidenceIds": [],
+      "notes": "熟练使用PyTorch与vLLM上层框架进行模型结构切分、权重提取、AWQ脚本自动化处理及单卡验证。",
+      "confidence": 0.9
+    },
+    {
+      "dimension": "hif-debugging",
+      "status": "positive",
+      "positiveEvidenceIds": [
+        "ev-5",
+        "ev-6",
+        "ev-11"
+      ],
+      "counterEvidenceIds": [],
+      "notes": "掌握从单卡小模型到全网、逐层Dump比对（Layer-wise Diff）定位数值发散、OOM和通信算子稳定性的分层调试方法论。",
+      "confidence": 0.92
+    },
+    {
+      "dimension": "hif-quality",
+      "status": "positive",
+      "positiveEvidenceIds": [
+        "ev-5",
+        "ev-11"
+      ],
+      "counterEvidenceIds": [],
+      "notes": "在分布式切分与精度调试中采用与CUDA/CPU标准实现进行差分测试和容差核验，保证模型交付稳定性。",
+      "confidence": 0.88
+    },
+    {
+      "dimension": "hif-ml-deployment",
+      "status": "positive",
+      "positiveEvidenceIds": [
+        "ev-1",
+        "ev-2",
+        "ev-6"
+      ],
+      "counterEvidenceIds": [],
+      "notes": "具备主流LLM（Qwen, Llama, DeepSeek）及多模态大模型（Qwen-VL）从权重转换、预处理/视觉编码器适配到服务化部署的端到端经验。",
+      "confidence": 0.94
+    },
+    {
+      "dimension": "hif-communication",
+      "status": "positive",
+      "positiveEvidenceIds": [
+        "ev-4",
+        "ev-6",
+        "ev-8",
+        "ev-12"
+      ],
+      "counterEvidenceIds": [],
+      "notes": "表达逻辑清晰，能够按照“背景-瓶颈-机理-优化-收益”结构阐述方案；对未涉足领域坦诚相告，反问环节针对目标业务场景展现出较强技术敏锐度。",
+      "confidence": 0.92
+    }
+  ],
+  "strengths": [
+    {
+      "title": "软硬件协同性能调优扎实",
+      "detail": "能够将底层ASIC硬件特性（256字节对齐、SIMD向量寄存器、HBM Bank Conflict）转化为框架与算子级优化策略（离线权重重排、KV Cache交错存储），获得明确性能收益。",
+      "evidenceIds": [
+        "ev-4",
+        "ev-6",
+        "ev-9"
+      ],
+      "confidence": 0.94
+    },
+    {
+      "title": "LLM与多模态端到端部署链路完整",
+      "detail": "熟悉vLLM引擎架构、PagedAttention调度、多模态视觉Encoder瓶颈及分布式通信算子适配，具备排查OOM与TTFT延时的系统化定位能力。",
+      "evidenceIds": [
+        "ev-3",
+        "ev-6",
+        "ev-7"
+      ],
+      "confidence": 0.93
+    },
+    {
+      "title": "扎实的数值稳定性调试经验",
+      "detail": "熟练掌握Layer-wise比对方法，能准确识别RMSNorm等敏感算子的FP32混合精度累加需求，保证自研芯片推理结果的一致性。",
+      "evidenceIds": [
+        "ev-5",
+        "ev-11"
+      ],
+      "confidence": 0.92
+    }
+  ],
+  "improvementPriorities": [
+    {
+      "priority": 1,
+      "title": "深化量化算法理论与前沿量化方案",
+      "whyItMatters": "车端与端侧AI推理高度依赖极低比特（INT4/INT8/FP8/FP4）量化，深入理解量化Observer与Scale校准有助于端侧极致性能挖掘。",
+      "action": "系统学习PTQ/QAT算法原理（如SmoothQuant、OmniQuant），实践量化校准集设计及误差反传定位方法。",
+      "evidenceIds": [
+        "ev-2"
+      ],
+      "confidence": 0.88
+    },
+    {
+      "priority": 2,
+      "title": "强化自回归解码阶段Padding与连续批处理调度细节推演",
+      "whyItMatters": "在自回归推理及Continuous Batching中，左右Padding与KV Cache索引计算是保证多请求并发时吞吐与精度的核心。",
+      "action": "在vLLM或自研引擎中深入单步调试PagedAttention对不等长序列输入与动态追加的Block分配、左Padding与Attention Mask构造源码。",
+      "evidenceIds": [
+        "ev-8"
+      ],
+      "confidence": 0.87
+    },
+    {
+      "priority": 3,
+      "title": "拓展端侧/车端BPU异构推理与编译技术上下文",
+      "whyItMatters": "候选人过往经验偏云端ASIC集群，而车端推理更强调超低延迟、低功耗、静态内存规划及BPU与CPU/DSP的异构切分。",
+      "action": "调研车载嵌入式AI芯片架构及推理引擎（如地平线OE/BPU工具链、TensorRT-LLM端侧优化），理解端侧静态内存复用机制。",
+      "evidenceIds": [
+        "ev-12"
+      ],
+      "confidence": 0.9
+    }
+  ],
+  "recommendedFollowUps": [
+    {
+      "question": "在车端实时性要求苛刻（如10ms级）的端到端自动驾驶模型中，如何设计算子融合与零拷贝内存规划以消除框架层调度开销？",
+      "rationale": "候选人熟悉云端vLLM动态调度，需进一步验证其迁移至车端静态确定性推理架构时的系统设计能力。",
+      "evidenceIds": [
+        "ev-12"
+      ],
+      "confidence": 0.9
+    },
+    {
+      "question": "如果在低比特（如INT4/FP4）量化中部分敏感层（如Attention Head或首尾Linear）出现明显精度崩塌，你的混合精度搜索与异常定位策略是什么？",
+      "rationale": "确认候选人在量化精度调试方面的自主排查深度与工程实践体系。",
+      "evidenceIds": [
+        "ev-2",
+        "ev-11"
+      ],
+      "confidence": 0.89
+    }
+  ],
+  "uncertainties": [
+    {
+      "scope": "segment",
+      "description": "候选人在探讨自回归Decode阶段的左右Padding处理时（23:00-24:30）存在口误与停顿，需人工核对其实际编码实现细节。",
+      "reason": "对话中双方对Padding方向在自回归生成中的语境定义存在短暂停顿澄清。",
+      "startMs": 1380000,
+      "endMs": 1470000,
+      "evidenceIds": [
+        "ev-8"
+      ],
+      "impact": "low"
+    }
+  ],
+  "summary": "本次面试全长约39分38秒，候选人展现出优秀的AI推理框架开发与自研ASIC芯片适配调优经验。核心优势体现在深度结合底层硬件约束（对齐、Bank Conflict、向量寄存器）进行算子优化、KV Cache定制排布、多模态视觉算子重构及数值稳定性调试；在量化算法深层调优及新型注意力机制方面经验相对间接。全片证据详实，建议后续在端侧嵌入式架构与静态图编译调度方向进一步深入考察。"
+}

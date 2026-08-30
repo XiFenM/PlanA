@@ -1,7 +1,7 @@
 # EP/PD 自研芯片适配设计与验证包
 
 > 启动日期：2026-08-09
-> 所属临时 Program：[高级 AI 框架开发工程师 JD 四周冲刺](../计划/高级AI框架开发工程师-四周冲刺计划.md#program-plana-jd-ai-framework-4w)
+> 所属临时 Program：[高级 AI 框架开发工程师八周证据冲刺](../计划/高级AI框架开发工程师-八周证据冲刺计划.md#program-plana-jd-ai-framework-4w)
 > 逻辑职责：下方 `Lesson 状态` 是当前 W1 Lesson 的唯一 ledger；其余章节是设计工件与历史 evidence，不拥有精确游标。
 > 唯一恢复游标：[学习断点](../计划/学习断点.md)
 > 证据边界：个人隐私敏感信息（如手机号）不公开，邮箱可公开；不记录公司代码、内部 API、未公开硬件参数、性能数据或原始日志。
@@ -11,7 +11,7 @@
 
 - **Lesson ID**：`plana-jd-w1-vllm-execution-boundaries`
 - **能力标题**：vLLM 执行链与扩展边界。
-- **Program 引用**：[临时 Program `plana-jd-ai-framework-4w`](../计划/高级AI框架开发工程师-四周冲刺计划.md#program-plana-jd-ai-framework-4w)。
+- **Program 引用**：[临时 Program `plana-jd-ai-framework-4w`](../计划/高级AI框架开发工程师-八周证据冲刺计划.md#program-plana-jd-ai-framework-4w)。
 - **当前 stage**：`teaching`。Pass A–B 已形成学习者 evidence；Pass C-1 尚未产生学习者回答，不能据导师预核对外推掌握。
 - **授权边界**：本节只迁移已经启动并位于前台的 W1 Lesson，不扩展到 W2–W4、optional 实现、正式练习或新的写入范围。
 
@@ -85,7 +85,7 @@
 
 ### 0.3 计划预算与实际工时边界
 
-- Program 的计划预算与节奏只见[四周冲刺计划 §5](../计划/高级AI框架开发工程师-四周冲刺计划.md#5-时间预算与日常节奏)。
+- Program 的计划预算与节奏只见[八周证据冲刺计划 §5](../计划/高级AI框架开发工程师-八周证据冲刺计划.md#5-时间预算与日常节奏)。
 - 实际学习工时只按真实归属写入对应模块 `进度.md`；本 Lesson ledger、Session event 和 Checkpoint 不复制工时。
 - 2026-08-09 的启动日期与返回 capsule 由临时 Program 保存；本文件不把计划可用时长冒充实际投入。
 

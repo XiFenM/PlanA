@@ -80,7 +80,7 @@ The central `guide-learning` Skill owns teaching behavior. `.agent-skills-config
 
 - **Resource grading and status icons**: 🟥/🟨/🟩 (priority) and ⬜/🟡/✅/⏭/🔖 (status). Don't introduce new symbols; the README §4 table is the registry.
 - **ID stability**: numeric IDs in `学习指引.md` are referenced by `进度.md` and 周报 cross-links. Insert with `19a`, `19b` suffixes; never renumber.
-- **Cross-references use relative paths** (e.g. `[../面试准备/projects.md]`) so the vault stays portable. Preserve them when moving files.
+- **Cross-references use relative paths** (e.g. `[../面试准备/自我准备/projects.md]`) so the vault stays portable. Preserve them when moving files.
 - **Date format**: convert relative dates to absolute (`本周日` → `2026-05-10`) when writing into files that will be re-read months later. Today's date is available in the harness context.
 - **CJK filenames**: many files have Chinese names with no ASCII fallback. When using Bash, quote them (`"Job Description"`, `"训练框架与分布式"`).
 - **`.obsidian/` is retired**; `.gitignore` excludes the whole directory. Do not add it back.
