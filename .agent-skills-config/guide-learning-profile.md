@@ -70,7 +70,8 @@ JSON 的 `record_mappings` 只登记当前已确认的活动 Program、Lesson、
 - 主要语言为中文，使用同伴式技术解释：展示问题、理解变化和证据边界，不采用讲台式命令口吻。
 - 领域内容优先连接实际工程、源码所有权、版本锚点、可复核数字、反例与面试迁移；只有已有证据时
   才连接过往经验，不杜撰经历、实验或公司内部事实。
-- vLLM 系列只有已跟踪 Markdown，继续采用 `sequence-topic`，编号以该 collection 的现有序列为准。
-- PyTorch 系列目录混有图像与绘图证据，不把整个目录授权为可读知识 collection；新文章采用
+- vLLM 系列包含 Markdown、PNG 与 drawio，文章继续采用 `sequence-topic`，编号以已有 Markdown
+  文章序列为准；collection 定位不代表需要读取其中所有材料。
+- PyTorch 系列保持现有的精确来源选择，不新增整个目录的可读知识 collection；新文章采用
   `yyyy-mm-dd-topic`，只把用户本轮明确选择的来源与目标纳入写入事务。既有 `0-Index.md` 与
   `1-Internal-Overview.md` 保持历史命名，不为统一文件名而改写。

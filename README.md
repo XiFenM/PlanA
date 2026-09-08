@@ -123,13 +123,14 @@ git submodule update --init --recursive -- .agent-skills
 ### 2.2 Skill 中央管线（version 2 受管配置）
 
 中央规范源以 [`.agent-skills`](.agent-skills) 子模块固定在
-`be3b1017767267ff7f7244d1c9d2a77880244625`。[`.agent-skills.json`](.agent-skills.json) 为 Codex 与 Claude
+`424a0a910c362b6dca370fc59d56366c7668bd8f`。[`.agent-skills.json`](.agent-skills.json) 为 Codex 与 Claude
 同时选择 `guide-learning`、`study-log`、`english-coach`、`memo-cards`、
 `resource-planning` 和 `playwright-cli`，并为五个学习 Skill 引用
 [`.agent-skills-config/`](.agent-skills-config/) 下的 Git-tracked 公共配置。`playwright-cli` 无需仓库配置。
 
 materializer 会为有配置的 Skill 在两个宿主副本中生成逐字节一致的 `.agent-skills-context.json`。它只提供
-仓库事实定位、已验证的 tracked 输入 collection 和机械写入上限，不授予读取未跟踪文件、保存、覆盖、
+仓库事实定位、已核验路径的 tracked 输入 collection 和机械写入上限，不读取学习资料正文，也不保证
+资料格式或内容正确；实际类型读取与校验由对应 Skill 按需执行。配置不授予读取未跟踪文件、保存、覆盖、
 制卡、发布、提交或推送。`resource-planning` 的 context 只声明 source/query 静态范围、只读事实、存储位置与
 八个课程空槽；首次 refresh、任何 research brief 和逐项 review 仍分别需要当次预览与明确确认。旧周报
 不属于新 registry，也不会因配置存在而被接管或改写。
