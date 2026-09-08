@@ -39,7 +39,7 @@
     },
     "resource-ranking-profile": {
       "path": ".agent-skills-config/resource-planning-profile.md",
-      "section": "JD 四周冲刺排序投影",
+      "section": "JD 八周证据冲刺排序投影",
       "description": "当前临时 Program 的资源排序投影；不拥有 Program 状态或授权"
     },
     "repository-guidelines": {

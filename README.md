@@ -76,15 +76,17 @@ PlanA/
 
 ### 2.1 固定源码子模块
 
-仓库使用 Git submodule 保存本轮学习所依据的上游源码快照。它们是少数板块下的参考源码，不属于每个板块都必须具备的双锚文件；`英语/references/` 等普通资料目录也不是子模块。
+仓库使用 Git submodule 保存上游源码，并明确区分两种版本角色：父仓库 gitlink 固定**当前本地比较快照**；已经启动的 Lesson 则在各自 ledger 中固定**教学与历史 evidence 基线**。升级 gitlink 不会静默重写已经形成的学习证据。它们是少数板块下的参考源码，不属于每个板块都必须具备的双锚文件；`英语/references/` 等普通资料目录也不是子模块。
 
-| 子模块 | 本地路径 | 当前固定版本 | 固定提交 |
+| 子模块 | 本地路径 | 当前比较位置 | 父仓库 Gitlink |
 |---|---|---|---|
-| vLLM | [`推理框架/references/vllm`](推理框架/references/vllm) | `v0.26.0` | `568afb3a13806beb53bb2e6bd518269357b237c0` |
-| SGLang | [`推理框架/references/sglang`](推理框架/references/sglang) | `v0.5.17` | `29481685462732237d80d86076d6563e1f658102` |
-| PyTorch | [`PyTorch/references/pytorch`](PyTorch/references/pytorch) | `v2.11.0` | `70d99e998b4955e0049d13a98d77ae1b14db1f45` |
+| vLLM | [`推理框架/references/vllm`](推理框架/references/vllm) | 上游 `main` 快照（2026-08-30 更新） | `1dc464d42681d22f38caf1fdc1eb632dc4421c45` |
+| SGLang | [`推理框架/references/sglang`](推理框架/references/sglang) | 上游 `main` 快照（2026-08-30 更新） | `78fa921189e3a66c7278733940c60a1e6fe6e467` |
+| PyTorch | [`PyTorch/references/pytorch`](PyTorch/references/pytorch) | 上游 `main` 快照（2026-08-30 更新） | `460948b96a67002b7257ac4f3d6a192f70d61d27` |
 
-根目录 [`.gitmodules`](.gitmodules) 登记了上游地址，并为三个源码子模块启用浅克隆。`shallow = true` 只减少这些仓库自身的历史下载量，不会阻止递归初始化它们的下级子模块。父仓库记录的 gitlink 才是精确版本事实源；上述基线的选择理由与用途见 [EP-PD 自研芯片适配设计与验证包](推理框架/EP-PD自研芯片适配设计与验证包.md)。
+`main` 是移动引用，表中日期只是核对日；父仓库记录的完整 SHA gitlink 才是当前比较快照的精确版本事实源。W1 已形成 evidence 的教学基线仍是 vLLM `v0.26.0`、SGLang `v0.5.17` 与 PyTorch `v2.11.0`，选择理由、用途和当前快照之间的关系见 [EP-PD 自研芯片适配设计与验证包 §0.2](推理框架/EP-PD自研芯片适配设计与验证包.md#02-固定源码基线)。
+
+根目录 [`.gitmodules`](.gitmodules) 登记了上游地址，并为三个源码子模块启用浅克隆。`shallow = true` 只减少这些仓库自身的历史下载量，不会阻止递归初始化它们的下级子模块。需要复现某个父仓库 revision 时，应先检出该 revision，再按其 gitlink 初始化子模块。
 
 首次克隆（Windows 建议先启用长路径，以免 PyTorch 的深层目录检出失败）：
 
@@ -93,7 +95,7 @@ git config --global core.longpaths true
 git clone git@github.com:XiFenM/PlanA.git
 Set-Location PlanA
 git submodule sync
-git submodule update --init -- PyTorch/references/pytorch "推理框架/references/vllm" "推理框架/references/sglang"
+git submodule update --init --depth 1 --recommend-shallow -- PyTorch/references/pytorch "推理框架/references/vllm" "推理框架/references/sglang"
 git submodule update --init --recursive -- .agent-skills
 ```
 
@@ -101,7 +103,7 @@ git submodule update --init --recursive -- .agent-skills
 
 ```powershell
 git submodule sync
-git submodule update --init -- PyTorch/references/pytorch "推理框架/references/vllm" "推理框架/references/sglang"
+git submodule update --init --depth 1 --recommend-shallow -- PyTorch/references/pytorch "推理框架/references/vllm" "推理框架/references/sglang"
 git submodule update --init --recursive -- .agent-skills
 ```
 
@@ -110,16 +112,18 @@ git submodule update --init --recursive -- .agent-skills
 ```powershell
 git pull --recurse-submodules=no
 git submodule sync
-git submodule update --init -- PyTorch/references/pytorch "推理框架/references/vllm" "推理框架/references/sglang"
+git submodule update --init --depth 1 --recommend-shallow -- PyTorch/references/pytorch "推理框架/references/vllm" "推理框架/references/sglang"
 git submodule update --init --recursive -- .agent-skills
 ```
 
-源码子模块的初始化命令有意不带 `--recursive`，因此只检出 PyTorch、vLLM 和 SGLang 本体；`.agent-skills` 因包含所需的官方依赖而单独递归初始化。不要对整个仓库执行无路径限制的 `git submodule update --init --recursive`。子模块处于 `detached HEAD` 是固定版本时的正常状态。日常学习不要在子模块内直接 `pull`，也不要执行 `git submodule update --remote`；需要升级上游版本时，应显式修改父仓库记录的 gitlink，并同步更新本节基线。
+源码子模块的初始化命令有意不带 `--recursive`，因此只检出 PyTorch、vLLM 和 SGLang 本体；`.agent-skills` 因包含所需的官方依赖而单独递归初始化。不要对整个仓库执行无路径限制的 `git submodule update --init --recursive`。子模块处于 `detached HEAD` 是固定版本时的正常状态。当前 gitlink 的 depth-1 checkout 不保证包含旧教学 tag；历史 evidence 默认依靠固定 commit 链接复查，需要本地旧树时再按需浅取相应 tag，核对后用父仓库的 `git submodule update -- <path>` 恢复当前 gitlink。
+
+日常学习不要在子模块内直接 `pull`，也不要执行 `git submodule update --remote`；需要升级上游版本时，应显式修改父仓库记录的 gitlink，并同步更新本节的当前比较快照。已启动 Lesson 的教学基线只有在单独授权的重基线事务中才会迁移。
 
 ### 2.2 Skill 中央管线（version 2 受管配置）
 
 中央规范源以 [`.agent-skills`](.agent-skills) 子模块固定在
-`b762cb44c191383f23c6d9b6bbab56439333f11e`。[`.agent-skills.json`](.agent-skills.json) 为 Codex 与 Claude
+`be3b1017767267ff7f7244d1c9d2a77880244625`。[`.agent-skills.json`](.agent-skills.json) 为 Codex 与 Claude
 同时选择 `guide-learning`、`study-log`、`english-coach`、`memo-cards`、
 `resource-planning` 和 `playwright-cli`，并为五个学习 Skill 引用
 [`.agent-skills-config/`](.agent-skills-config/) 下的 Git-tracked 公共配置。`playwright-cli` 无需仓库配置。

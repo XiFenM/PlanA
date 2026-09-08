@@ -12,8 +12,10 @@
 - **Lesson ID**：`plana-jd-w1-vllm-execution-boundaries`
 - **能力标题**：vLLM 执行链与扩展边界。
 - **Program 引用**：[临时 Program `plana-jd-ai-framework-4w`](../计划/高级AI框架开发工程师-八周证据冲刺计划.md#program-plana-jd-ai-framework-4w)。
-- **当前 stage**：`teaching`。Pass A–B 已形成学习者 evidence；Pass C-1 尚未产生学习者回答，不能据导师预核对外推掌握。
-- **授权边界**：本节只迁移已经启动并位于前台的 W1 Lesson，不扩展到 W2–W4、optional 实现、正式练习或新的写入范围。
+- **当前 stage**：`synthesis`。固定提交 `568afb3` 的 Pass A–E、KV 账本，以及整段独立文字复述、两轮变式与必要局部补差均已有通过证据；oral-F1／oral-F2／oral-F3 全部关闭，不再追加同类检查。根据用户 2026-09-08 确认的[口头验收新安排](../计划/高级AI框架开发工程师-八周证据冲刺计划.md#53-每周统一验收门)，口头要求移交 W4 及后续 Mock，不再作为 W1 未完成项，也不记为已通过。页对齐与插件旁支保持原证据边界；W1 其余任务及整个 Lesson 尚未关闭，final mastery 未写入。
+- **授权边界**：前台仍为 W1，下述 revision 1 的文字练习已经收口。用户当前只授权登记周末待做实践，不启动 W2–W4、新实践、环境安装、模型／tokenizer 下载或新的实现文件。
+- **待做实践引用**：[W1-P1：运行路径选择与最小输出契约验证](#w1-p1-runtime-output-validation)。该项保持未完成，延期不取消 W1 原有证据要求；本轮可以先处理非实践材料，不为此重复已通过的概念题。
+- **历史契约边界**：下述已完成练习的 revision、digest、原约定和文字证据保持不变；本次只调整后续口头验收的所属周次，不追溯改写历史，也不据此启动 W4。
 
 ### 来源与版本锚点
 
@@ -31,11 +33,59 @@
 | `w1-o2-request-lifecycle` | 把普通 chat 请求从 OpenAI 协议对象映射到 `EngineCoreRequest`，并说明不会跨越 IPC 的信息 | Pass C 的学习者映射、request sequence 与 8–12 文件 source map |
 | `w1-o3-extension-boundaries` | 基于源码契约判断保持不变、adapter、core patch 与替换的边界 | 适配矩阵、Change Card 前置判断与可核验依据 |
 
-旧记录没有逐目标保存用户确认的 `conceptual / practical / empirical` required 值；本次迁移不猜测、不补写。进入正式练习或 mastery gate 前必须另行确认这些维度。当前没有 `final_mastery`。
+旧记录没有逐目标保存用户确认的 `conceptual / practical / empirical` required 值。下述已接受练习只确认概念与独立表达的验收范围，不要求编码或设备实证；不据此改写整个 Lesson 的最终维度要求，进入 Lesson mastery gate 前仍须确认。当前没有 `final_mastery`。
 
 - **核心工件**：本文件 [§0–§6](#0-范围版本与披露边界)。
-- **最近结构化 evidence**：[Pass A–B 阶段材料收口](#pass-ab--阶段材料收口已完成)。
+- **最近结构化 evidence**：[Pass C-1 学习者流程图](深入学习理解vLLM/request_journey.drawio)。
 - **Checkpoint 引用**：[唯一学习断点](../计划/学习断点.md)。
+
+### 已接受练习：vLLM 整段独立讲解
+
+- **练习 ID／revision**：`plana-jd-w1-vllm-oral-20260908`／`1`。
+- **digest**：`sha256:22e19b50414d9f410b2dd1dbf22450f23b3b49ecff7f4dd6bf5c9d4604f3fe19`。
+- **接受事件**：[`plana-jd-w1-20260908-oral-review`](#plana-jd-w1-20260908-oral-review)，绑定上述 revision 与 digest。用户在完整约定展示后直接提交讲解，按前轮“直接开始即接受”的约定生效。
+- **本次维度**：补充三个既有目标的概念与独立表达证据；不要求独立编码或设备实证，不代替整个 Lesson 的最终维度确认或 W1 验收。
+- **规范化契约**：以下只含 digest 所覆盖字段；计算时递归按 key 排序、保留数组顺序、UTF-8、JSON 紧凑分隔符。它是前轮公开约定的持久投影，不新增通过条件。
+
+```json
+{
+  "id": "plana-jd-w1-vllm-oral-20260908",
+  "targets": [
+    {"objective_id":"w1-o1-repository-process-map","missing_dimensions":["conceptual"],"evidence_gap":"已有分段检查；本次补充独立整段表达中的进程与状态归属证据。"},
+    {"objective_id":"w1-o2-request-lifecycle","missing_dimensions":["conceptual"],"evidence_gap":"独立组织单请求完整生命周期，并在两轮追问中解释关键边界。"},
+    {"objective_id":"w1-o3-extension-boundaries","missing_dimensions":["conceptual"],"evidence_gap":"在本次讲解或已学过的边界变式中解释职责与接口，不把局部题通过外推为整段表达已通过。"}
+  ],
+  "task": "固定 vLLM v0.26.0@568afb3a13806beb53bb2e6bd518269357b237c0、V1/MRV1、一个API Server、DP=TP=PP=1、backend=uni；模型已加载、KV pool已初始化。讲解纯文本Chat Completion从接收至返回和资源回收；stream=true、无前缀命中、无投机解码，以max_tokens正常结束。覆盖请求与参数转换、组件职责、调度与KV、prefill/decode、ModelRunner输入与Attention、采样返回和清理；组织顺序由学习者决定。",
+  "deliverables": [
+    {"artifact":"dialogue:plana-jd-w1-vllm-oral-20260908","outcome":"学习者在对话中提交完整讲解并回答两轮追问。目标约15分钟、先约2分钟全景，不机械卡时；允许只看题设和范围清单，不查源码、旧图或笔记。文字提交只证明独立文字复述；实际口述时长须另有证据，自报时长标为自报。"}
+  ],
+  "acceptance": [
+    {"id":"A1","criterion":"主链完整，没有需要导师补出的关键断点。","evidence_method":"独立讲解内容Review，非代码练习，不使用expected red。"},
+    {"id":"A2","criterion":"进程、状态归属和跨边界载荷没有重大混淆。","evidence_method":"固定源码核验与讲解Review；不要求背源码行号，辅助函数名称小误记不单独否决。"},
+    {"id":"A3","criterion":"区分调度与实际计算、输入token与新采样token、输出结束与各层资源清理。","evidence_method":"讲解和边界追问；仅修复实际差距，不要求重复已通过内容。"},
+    {"id":"A4","criterion":"讲解后独立完成两轮已学过范围内的变式追问，涉及取消/抢占、batch/KV映射或适配边界。","evidence_method":"导师先听完，再追问；可自然求助，实质提示只影响对应范围，需一次无提示同构变式恢复独立证据。"}
+  ],
+  "scope": {"learner_owned":[{"artifact":"dialogue:plana-jd-w1-vllm-oral-20260908","operations":["create","modify"]}],"agent_owned":[{"artifact":"推理框架/EP-PD自研芯片适配设计与验证包.md#lesson-plana-jd-w1-vllm-execution-boundaries","operations":["read","modify","record"]},{"artifact":"计划/学习断点.md","operations":["read","modify","record"]}],"read_only":[{"artifact":"推理框架/references/vllm（固定提交568afb3a13806beb53bb2e6bd518269357b237c0）","operations":["read"]},{"artifact":"推理框架/深入学习理解vLLM/request_journey.drawio","operations":["read"]},{"artifact":"推理框架/深入学习理解vLLM/process_component_graph.drawio","operations":["read"]},{"artifact":"dialogue:本课程已引用的学习笔记","operations":["read"]}],"excluded":[{"artifact":"简历、项目稿、Program和其他未列明文件的修改；新文章、过程日志、卡片和原始对话归档","operations":[]},{"artifact":"启动初始化细节、Kernel内部算法、多卡通信实现、独立编码和设备实验；W1整体关闭与后续Lesson启动","operations":[]}]},
+  "optional": []
+}
+```
+
+#### 当前 Review
+
+- **提交**：`dialogue:plana-jd-w1-vllm-oral-20260908`，2026-09-08 用户完整文字讲解；未改写原文，未提供口述时长，不计为已完成 15 分钟口头验收。
+- **已有证据**：能够独立串起双进程、先注册后提交、waiting/running 资源调度、未完成 prefill 不对外输出、前后端输出链及正常结束时归还 KV 引用。第一轮补出了 Executor／Worker／ModelRunner 和 Scheduler 回写职责，并明确物理 KV pool 不在每次 forward 重新申请；第二轮在非流式提前命中 stop string 的新条件下正确判断可以返回最终响应、无需等待第 100 个输出 token，对外原因为 stop。
+- **当前判断**：本次 A1–A4 在独立文字表达与变式范围内通过。R 结束而 S 继续的局部快照中，学习者正确说明最终输出仍可从 Collector 消费、InputBatch 移除 R 而保留 S 并维护映射，以及不能再次减少仍由 S 引用的 block 7 的计数。三项 findings 均关闭，停止补测；不把本次结论写成 15 分钟口头验收或整个 W1 通过。
+- **帮助边界／material assistance**：导师给出过 Worker 初始化／每步执行、Runner 输入与映射维护、FINAL_ONLY 前端过滤，以及 KV 回收归属和前端消费者生命周期的局部讲解，并精确补充 ABORT 名称；影响 oral-F1／oral-F2／oral-F3 对应的 A2／A3，未代写核心讲解。oral-F2 已用第二轮非流式停止变式恢复本题范围的独立证据；oral-F1／oral-F3 已用 R／S 共享块与未消费最终输出的快照变式恢复对应证据，不抹去此前提示事实。
+- **非阻塞表达建议**：开启 chunked prefill 只允许按预算拆分，不保证每个 prompt 都分为多个 chunk；最后一个 prefill chunk 与首个有效输出 token 的关系已有先前学习证据，不为本轮省略再加门槛。Runner 清理还包含自身 cached request state；此处作完整性补充。辅助函数／枚举名称及 `token budge` 等笔误不单独否决；grammar 为用户主动扩展，不追加为必考范围。
+
+<a id="plana-jd-w1-oral-findings"></a>
+#### 当前 findings
+
+| ID | 映射 | 严重度 | owner | 状态 | Evidence | 下一动作 |
+|---|---|---|---|---|---|---|
+| `oral-F1` | A1、A2、A3 | major | learner | closed | 初始混淆物理池分配、Runner 状态与调度侧引用回收；2026-09-08 局部变式中，学习者正确说明从 InputBatch 移除 R、保留 S 并维护映射，拒绝再次扣减 block 7，指出会错误从 1 归零而归还。结合已补齐的执行闭环与 pool 预分配证据，本题范围复核通过。[Scheduler 回收](https://github.com/vllm-project/vllm/blob/568afb3a13806beb53bb2e6bd518269357b237c0/vllm/v1/core/sched/scheduler.py#L2224-L2239)、[Runner 更新](https://github.com/vllm-project/vllm/blob/568afb3a13806beb53bb2e6bd518269357b237c0/vllm/v1/worker/gpu_model_runner.py#L1179-L1193) | — |
+| `oral-F2` | A2、A3 | major | learner | closed | 初始把 FINAL_ONLY 解释为 Core 完整生成后才发送；经前端过滤位置提示后，第二轮在 stream=false、前端提前命中 stop string、Core finished=false 的条件下，独立判断可最终返回且无需等待第 100 个 token，对外为 stop。本题范围的迁移证据通过，不外推其他输出路径。[前端输出过滤](https://github.com/vllm-project/vllm/blob/568afb3a13806beb53bb2e6bd518269357b237c0/vllm/v1/engine/output_processor.py#L273-L287) | — |
+| `oral-F3` | A2、A3 | major | learner | closed | 初始把 RequestState 与 Collector 的清理绑定到 generate 消费之后；2026-09-08 局部变式给出 RequestState 已注销、最终输出仍在 Collector 的快照，学习者正确判断 generate 仍能取出并 yield 最终结果，消费者生命周期边界复核通过。终止控制方向已答对，ABORT 名称为导师精确补充，不以枚举背诵另设门。[输出处理与请求清理](https://github.com/vllm-project/vllm/blob/568afb3a13806beb53bb2e6bd518269357b237c0/vllm/v1/engine/output_processor.py#L676-L717) | — |
 
 ### Session event 索引
 
@@ -47,6 +97,116 @@
 - **已完成动作**：完成 Pass A–B 的学习者问答验收并收束结果材料。
 - **Evidence 引用**：[结果文章](深入学习理解vLLM/1-Repository-and-Process-Architecture.md)、[结构化过程记录](log/2026-08-09-vllm-repository-and-process-architecture.md)、[技术记忆卡](cards/vllm-repository-and-process-architecture.md)。
 - **开放问题**：Pass C 的请求生命周期尚无学习者回答证据；精确恢复动作只见 Checkpoint。
+
+#### `plana-jd-w1-20260904-pass-c1`
+
+- **日期**：2026-09-04
+- **Lesson 引用**：`plana-jd-w1-vllm-execution-boundaries`
+- **覆盖范围**：普通 chat 请求从 OpenAI 协议对象到 `EngineCoreRequest` 的前端 lowering、注册顺序、IPC 边界与简化输出返回链。
+- **已完成动作**：完成 Pass A–B 保持度复习；完成 Pass C-1 讲解、两轮学习者流程图 Review 和边界纠正。
+- **Evidence 引用**：[学习者 Draw.io 流程图](深入学习理解vLLM/request_journey.drawio)、[导出 PNG](深入学习理解vLLM/request_journey.png)。
+- **开放问题**：EngineCore 接收 ADD 后的请求转换、Scheduler admission 与后续 token 生命周期尚未开始；精确恢复动作只见 Checkpoint。
+
+#### `plana-jd-w1-20260904-pass-c2-intake`
+
+- **日期**：2026-09-04
+- **Lesson 引用**：`plana-jd-w1-vllm-execution-boundaries`
+- **覆盖范围**：`ADD` 请求在 EngineCore 内转换为可变 Request、登记到 `requests` 与 waiting／`skipped_waiting`，以及 structured-output grammar 的编译等待与逐 token 约束。
+- **已完成动作**：通过普通请求 waiting 边界题与 structured-output 场景检查，能够区分请求状态、等待队列、Grammar bitmask 和事实语义边界。
+- **开放问题**：waiting 请求如何通过 token budget 与 KV slots 检查进入 `RUNNING` 尚未验收；精确恢复动作只见 Checkpoint。
+
+#### `plana-jd-w1-20260906-pass-c-synthesis`
+
+- **日期**：2026-09-06
+- **Lesson 引用**：`plana-jd-w1-vllm-execution-boundaries`
+- **覆盖范围**：前端文本判停、Core abort 与 Scheduler preemption 的状态对照，以及普通流式 chat 请求从输入到正常结束的全链路综合表达。
+- **已完成动作**：通过 `STOP / FINISHED_ABORTED / PREEMPTED` 对照与全链路复述；经补正区分 IPC 解码与内部 Request 构造，并通过跨 step 变式说明计算载荷与结束通知可以共存、最终输出不等待设备侧状态清理。补充明确普通结束时 KV blocks 已由 Scheduler 归还；导师完成 [12 文件源码索引](#pass-c-source-map)。
+- **源码定位 evidence**：学习者准确定位 `AsyncLLM._add_request()` 的先注册后提交、`Scheduler._update_after_schedule()` 在 `schedule()` 返回前推进计算计数，以及 `OutputProcessor.process_outputs()` 返回待取消列表后由 `AsyncLLM._run_output_handler()` 中的 `output_handler()` 执行 `await engine_core.abort_requests_async(...)`；补正了前端已判停且 Core 未判停的外层条件。Pass C 验收完成。
+- **后续边界**：Pass D 的执行侧状态、输入 tensor 构造与模型调用尚未验收；本记录只裁决 Pass C，不写整个 Lesson 的 final mastery。
+
+#### `plana-jd-w1-20260906-pass-d-input-preparation`
+
+- **日期**：2026-09-06
+- **Lesson 引用**：`plana-jd-w1-vllm-execution-boundaries`
+- **覆盖范围**：固定提交 `568afb3` 的 MRV1 `_update_states()`、`_prepare_inputs()` 与 `BlockTable.compute_slot_mapping()`。
+- **已完成动作**：通过缓存请求与本步 batch 成员区分、抢占恢复时替换块表与普通继续时追加块表的检查；独立推导有效 `input_ids`、`positions`、`query_start_loc` 与 Token 总数；正确解释块映射变化不影响逻辑 Token 位置。槽位变式仅漏写另一请求的不变项，补正完整 batch 后通过。
+- **证据边界**：本段为源码与纸面推导证据；未执行设备实验，未声称已掌握整个 Attention backend 或模型 forward。
+- **开放问题**：Attention metadata 的 Query／KV 长度、因果可见范围及后续模型执行尚待验收。
+
+#### `plana-jd-w1-20260906-pass-d-forward-output`
+
+- **日期**：2026-09-06
+- **Lesson 引用**：`plana-jd-w1-vllm-execution-boundaries`
+- **覆盖范围**：MRV1 Attention metadata 与 ForwardContext、统一 Attention custom op 到 backend 的边界、隐藏状态选行与采样结果返回。
+- **已完成动作**：通过 Query／KV 长度和因果隔离检查；解释静态模型资源与本步 metadata 的复用／更新；区分统一 op、具体 backend 与设备 kernel，并说明 KV 更新依赖的编译作用；正确推导生成 logits 的行号、输入与输出 Token 数，以及 `execute_model()` 返回 `None` 后经 `sample_tokens()` 取得结果。
+- **开放问题**：控制面／执行面契约表与请求重排后的跨字段对应关系尚待综合验收；未据局部检查推断整个 Lesson 已完成。
+
+#### `plana-jd-w1-20260907-pass-d-synthesis`
+
+- **日期**：2026-09-07
+- **Lesson 引用**：`plana-jd-w1-vllm-execution-boundaries`
+- **覆盖范围**：控制面／执行面接口契约，以及同一步请求重排后的输入、Query 分段和 KV 映射。
+- **已完成动作**：学习者提交四条边界的契约表，职责方向正确；独立给出正确的重排后 `input_ids`、`positions`、`query_start_loc` 和完整 `slot_mapping`。导师补充 Q/K/V、物理 KV tensor、显式输入与 ForwardContext、Scheduler 结果回写的职责。
+- **验收结果**：通过。学习者在错误变式中正确指出新 K/V 写入槽位 36，但 D 的上下文被错误对应到第一行 `[7,6]`，能够区分正确写入与错误读取；`d3` 为题中 `d4` 的笔误。结合前面的独立重排计算，Pass D 综合验收完成。
+- **Evidence 引用**：[控制面／执行面契约](#pass-d-execution-contract)。
+- **后续边界**：平台扩展与适配层选择进入 Pass E，尚未验收；本段不写整个 Lesson 的 final mastery。
+
+#### `plana-jd-w1-20260907-pass-e-platform-worker-ops`
+
+- **日期**：2026-09-07
+- **Lesson 引用**：`plana-jd-w1-vllm-execution-boundaries`
+- **覆盖范围**：Platform 插件选择、Worker／Runner 的执行与资源契约、KV 物理布局、CustomOp OOT 注册与原生路径，以及设备 communicator 的 TP 分组语义。
+- **已完成动作**：正确定位 `check_and_update_config()`／`worker_cls`；解释布局差异不必改变调度语义、页大小低报会高估容量，并补正为预算与真实布局不一致；区分注册底层 PyTorch 算子与通过 `register_oot`／`forward_oot` 接入模型路径，明确原生 PyTorch 组合不代表 CPU 执行。
+- **通信检查 evidence**：正确推导两个 TP 子组的结果为 3、3、30、30，将错误的全 world 求和归因于分组契约；指出 TP=1 旁路和单组测试可能遗漏问题，补准为通信组恰好等于 world 时错误可能被掩盖。此为纸面推导，未声称完成多卡实测。
+- **综合表达 evidence**：学习者正确对应 Worker／Runner、KV 布局、OOT 算子与 communicator 接入点，并指出题设差异不构成修改 EngineCore／Scheduler 的充分理由；识别私自回收仍 RUNNING 请求 KV 的契约破坏。导师补齐算子数学／tensor 契约及完整抢占生命周期，整理为 [六层适配矩阵](#pass-e-adaptation-matrix)。
+- **最终复核结果**：通过。学习者将页大小误报归因于插件规格实现，将准确预算下的 KV pool 耗尽交由已有抢占／恢复机制处理；明确上述情况都不足以支持 core patch，需进一步证明现有扩展接口无法表达所需能力。Pass E 综合验收完成。
+- **阶段证据边界**：至此 Pass A–E 的源码教学与对话验收完成；不标记整个 W1 完成，不声称具备本轮未进行的设备运行、实现或性能实证，也不将本段记为整个 Lesson 的 closure。
+
+#### `plana-jd-w1-20260907-kv-unit-and-layout`
+
+- **日期**：2026-09-07
+- **Lesson 引用**：`plana-jd-w1-vllm-execution-boundaries`
+- **覆盖范围**：单层 KV 的 Token／element／byte／block 计账，以及页跨度、搬运粒度、插件布局和页大小接口的区别。
+- **已完成动作**：学习者正确计算 35 Token 对应的 3 blocks、105 KiB 有效数据、39 KiB 未用槽位容量与 48 KiB 页 padding，核对总占用为 192 KiB；结合用户提供的插件快照区分逻辑 tensor 大小与存储预算，并补充了用户向同事求证的 block size 设计理由。
+- **Evidence 引用**：[按本轮授权保存的结构化学习记录](log/2026-09-07-kv-padding-block-size.md)。插件快照与同事转述只支持该记录标明的范围，不替代课程固定源码或设备实验。
+- **开放问题**：在相同全注意力层和无共享假设下，将单层账本扩展到全模型及多个请求的计账尚待检查。
+
+#### `plana-jd-w1-20260907-kv-ledger-synthesis`
+
+- **日期**：2026-09-07
+- **Lesson 引用**：`plana-jd-w1-vllm-execution-boundaries`
+- **覆盖范围**：全模型／多请求 KV 计账、实际前缀共享与引用计数、零引用缓存块的可分配性、逐步增长的块需求，以及 Prefix Cache 与 PagedAttention 的职责区别。
+- **已完成动作**：通过按请求分别取整、共享块按不同 pool block ID 去重、请求结束后的归还与保留、空闲块数为零但末块仍有槽位的检查；结合源码讲解区分前缀查询命中与正式引用，并澄清链式 hash、`cache_salt` 的复用边界和 decode 输入／新采样 token 的先后关系。
+- **综合验收 evidence**：在 TP=1、32 个同规格全注意力层、每块 16 Token、每层页跨度 64 KiB、两请求各需保存 32 Token KV 且首块实际共享的教学题中，学习者独立算出开启／关闭 Prefix Cache 分别引用 3／4 个不同 pool block ID，占用 6／8 MiB；正确解释物理 pool 均为 20 MiB，不意味着前缀共享没有节省池内容量。综合检查通过，无需补测。
+- **导师补充**：预分配按确定的 KV 预算与配置进行，并不保证满足所有未来请求；此措辞补充不记为学习者独立推导。空闲块类别的最终拆分还取决于出队顺序，未将原题缺失的顺序条件记为学习者错误。
+- **源码锚点**：固定提交的 [BlockPool 引用与分配](https://github.com/vllm-project/vllm/blob/568afb3a13806beb53bb2e6bd518269357b237c0/vllm/v1/core/block_pool.py#L647-L740)、[容量检查后建立引用](https://github.com/vllm-project/vllm/blob/568afb3a13806beb53bb2e6bd518269357b237c0/vllm/v1/core/kv_cache_manager.py#L449-L486)。
+- **证据边界**：本段为对话、纸面推导与源码核验证据，不代表设备运行、性能实证或整个 W1／Lesson 完成；未写入 final mastery，未新增文章、过程日志、卡片或学习时长。
+
+#### `plana-jd-w1-20260908-oral-review`
+
+- **日期**：2026-09-08
+- **Lesson 引用**：`plana-jd-w1-vllm-execution-boundaries`
+- **覆盖范围**：既定场景下单请求全生命周期的独立整段讲解与正式 Review。
+- **已完成动作**：用户接受练习 `plana-jd-w1-vllm-oral-20260908` revision 1（digest `sha256:22e19b50414d9f410b2dd1dbf22450f23b3b49ecff7f4dd6bf5c9d4604f3fe19`），完成完整文字讲解、两轮变式与一个必要局部快照补差。非流式停止、前端消费者存续和 Runner／KV 所有权边界经迁移复核通过，oral-F1／oral-F2／oral-F3 全部关闭，本次 A1–A4 收口。
+- **Evidence 引用**：本 Lesson 的“已接受练习”与[当前 findings](#plana-jd-w1-oral-findings)；核心提交保留在对话中，不另存原始全文。
+- **marker**：`practice-closed`。
+- **后续边界**：仅完成本次文字复述练习；未提供口述时长或设备实测证据，未完成整个 W1，不写 final mastery，也不自动启动下一项练习。
+
+#### `plana-jd-w1-20260908-oral-deferral`
+
+- **日期**：2026-09-08
+- **Lesson 引用**：`plana-jd-w1-vllm-execution-boundaries`
+- **覆盖范围**：用户明确调整正式口头验收的时间安排。
+- **已完成动作**：按用户指令，将早期技术周的口头验收移交[冲刺计划 §5.3](../计划/高级AI框架开发工程师-八周证据冲刺计划.md#53-每周统一验收门)与 W4 及后续 Mock；保留已完成文字复述、追问与源码证据，旧练习 revision 1 的规范化内容未变。
+- **证据边界**：移交表示不再阻塞 W1 技术验收，不表示口头已通过、整个 W1 完成或后续 Lesson 已获启动授权；未执行运行路径验证或新测试。
+
+#### `plana-jd-w1-20260908-practice-backlog`
+
+- **日期**：2026-09-08
+- **Lesson 引用**：`plana-jd-w1-vllm-execution-boundaries`
+- **覆盖范围**：用户将运行路径与最小验证安排为周末集中处理的待做实践。
+- **已完成动作**：在既有验证包中登记 [W1-P1](#w1-p1-runtime-output-validation) 的范围、候选验证点、材料与启动边界；更新恢复指针，当前不自动进入实践。
+- **证据边界**：这只是待办登记，不是正式实践契约接受、测试执行或通过记录，不修改既有文字练习结果，也不标记 W1 完成。
 
 ---
 
@@ -64,6 +224,8 @@
 
 ### 0.2 固定源码基线
 
+下表是本 Lesson 的**教学与历史 evidence 基线**。它固定本 Lesson 各 Pass 及相关永久链接所依据的 revision，不随父仓库当前 gitlink 更新。
+
 | 角色 | Tag | Commit | 用途 |
 |---|---|---|---|
 | vLLM 主读 | [`v0.26.0`](https://github.com/vllm-project/vllm/releases/tag/v0.26.0) | [`568afb3`](https://github.com/vllm-project/vllm/commit/568afb3a13806beb53bb2e6bd518269357b237c0) | W1–W3 的执行链、EP/PD 与测试事实源 |
@@ -71,21 +233,21 @@
 | SGLang 窄对照 | [`v0.5.17`](https://github.com/sgl-project/sglang/releases/tag/v0.5.17) | [`2948168`](https://github.com/sgl-project/sglang/commit/29481685462732237d80d86076d6563e1f658102) | ATOM/MoE、PD 与控制面边界对照 |
 | MORI 参考数据面 | [`v1.2.2`](https://github.com/ROCm/mori/releases/tag/v1.2.2) | [`dafdcfc`](https://github.com/ROCm/mori/commit/dafdcfcf1e27b0c981b90903ab198b90d29e6867) | SHMEM/IR、EP、IO、UMBP 契约审查 |
 
-> 这些版本只建立可复查的源码基线，不代表四个组件已经在同一环境完成组合验证。若后续使用本地部署版本，另建对照列，不覆盖本表。
+> 这些版本只建立可复查的源码基线，不代表四个组件已经在同一环境完成组合验证。若后续使用本地部署版本或更新快照，另建对照列，不覆盖本表。
 
-#### 本地源码 submodules
+#### 当前本地 comparison baseline（2026-08-30）
 
-| 组件 | 本地路径 | Gitlink commit | 状态 |
+| 组件 | 本地路径 | 当前父仓库 Gitlink | 状态 |
 |---|---|---|---|
-| vLLM | [`references/vllm`](references/vllm) | `568afb3a13806beb53bb2e6bd518269357b237c0` | 浅克隆、detached HEAD、固定 `v0.26.0` |
-| SGLang | [`references/sglang`](references/sglang) | `29481685462732237d80d86076d6563e1f658102` | 浅克隆、detached HEAD、固定 `v0.5.17` |
-| PyTorch | [`../PyTorch/references/pytorch`](../PyTorch/references/pytorch) | `70d99e998b4955e0049d13a98d77ae1b14db1f45` | 浅克隆、detached HEAD、固定 `v2.11.0`；submodule 内启用 `core.longpaths=true` |
+| vLLM | [`references/vllm`](references/vllm) | `1dc464d42681d22f38caf1fdc1eb632dc4421c45` | 浅克隆、detached HEAD、上游 `main` 比较快照；不替代教学基线 |
+| SGLang | [`references/sglang`](references/sglang) | `78fa921189e3a66c7278733940c60a1e6fe6e467` | 浅克隆、detached HEAD、上游 `main` 比较快照；不替代教学基线 |
+| PyTorch | [`../PyTorch/references/pytorch`](../PyTorch/references/pytorch) | `460948b96a67002b7257ac4f3d6a192f70d61d27` | 浅克隆、detached HEAD、上游 `main` 比较快照；不替代教学基线 |
 
-三项由仓库根目录 [`.gitmodules`](../.gitmodules) 登记，并建议后续 clone 时保持 shallow。MORI 当前仍使用固定远程源码链接，不在本轮本地 clone 范围内。
+三项由仓库根目录 [`.gitmodules`](../.gitmodules) 登记，并建议后续 clone 时保持 shallow。当前快照只用于 old → new drift check；任何新增结论都必须同时标明 revision，不得混读后静默改写历史 evidence。当前父仓库 revision 的 depth-1 clone 不保证包含上表的旧教学 tag，通常通过固定 commit 链接复查，需要本地旧树时再按需 shallow fetch。MORI 当前仍使用固定远程源码链接，不在本轮本地 clone 范围内。
 
 ### 0.3 计划预算与实际工时边界
 
-- Program 的计划预算与节奏只见[八周证据冲刺计划 §5](../计划/高级AI框架开发工程师-八周证据冲刺计划.md#5-时间预算与日常节奏)。
+- Program 的计划预算与节奏只见[八周证据冲刺计划 §5](../计划/高级AI框架开发工程师-八周证据冲刺计划.md#5-时间预算与周节奏)。
 - 实际学习工时只按真实归属写入对应模块 `进度.md`；本 Lesson ledger、Session event 和 Checkpoint 不复制工时。
 - 2026-08-09 的启动日期与返回 capsule 由临时 Program 保存；本文件不把计划可用时长冒充实际投入。
 
@@ -93,7 +255,7 @@
 
 | 槽位 | 可用且获准 | 可公开粒度 | 当前处理 |
 |---|---|---|---|
-| 公开源码与官方文档 | 是 | 公开链接、commit、文件、类、函数 | 当前主分支 |
+| 公开源码与官方文档 | 是 | 公开链接、commit、文件、类、函数 | W1 使用固定教学基线；当前 `main` 只作 revision 标注的漂移核对 |
 | 自研芯片环境 | 否（本轮） | 不适用 | 只做抽象能力槽位与公开源码设计，不推断内部能力 |
 | AMD GPU / ROCm | 否（本轮） | 公开资料 | 仅审查公开实现，不声称 MORI/ROCm 实测 |
 | CUDA GPU | 是，单卡 | 设备型号、driver、显存、算力等级、命令与脱敏结果 | 已完成宿主机只读指纹；框架运行仍待验证 |
@@ -298,7 +460,7 @@ vllm/
 <a id="pass-c1-openai-to-engine-core-request"></a>
 #### Pass C-1 · OpenAI 请求到 `EngineCoreRequest`
 
-> 以下是导师为下一阶段准备的固定源码预核对。用户尚未完成 Pass C-1 的问答验收，不计入当前学习进度。
+> 下列固定源码预核对已用于 2026-09-04 的教学与两轮流程图 Review；Pass C-1 已形成学习者 evidence，但不代表 Pass C 后续节点已经完成。
 
 本节只追请求进入 EngineCore 之前的前端路径，不提前展开 Scheduler 或模型执行：
 
@@ -310,7 +472,7 @@ vllm/
 - 流式边界：`request.stream` 一方面决定 API 层最终选择 SSE generator 还是一次性 JSON response，另一方面会被投影为 `SamplingParams.output_kind`（`DELTA` 或 `FINAL_ONLY`）并进入核心；但原始 `stream` 字段、FastAPI `Request` 和 HTTP 连接本身都留在前端。
 - 设计动机：EngineCore 不理解 OpenAI chat schema、chat template 或 HTTP 生命周期，同一个 token 级核心因此可以复用于 chat、completion、离线调用等不同入口。
 - 证据：[`/v1/chat/completions` 路由](https://github.com/vllm-project/vllm/blob/568afb3a13806beb53bb2e6bd518269357b237c0/vllm/entrypoints/openai/chat_completion/api_router.py#L40-L61)；[chat render、参数归一化与 `AsyncLLM.generate`](https://github.com/vllm-project/vllm/blob/568afb3a13806beb53bb2e6bd518269357b237c0/vllm/entrypoints/openai/chat_completion/serving.py#L255-L384)；[`AsyncLLM` 先注册 collector 再跨进程发送](https://github.com/vllm-project/vllm/blob/568afb3a13806beb53bb2e6bd518269357b237c0/vllm/v1/engine/async_llm.py#L333-L412)；[`InputProcessor` 构造 `EngineCoreRequest`](https://github.com/vllm-project/vllm/blob/568afb3a13806beb53bb2e6bd518269357b237c0/vllm/v1/engine/input_processor.py#L242-L385)。
-- 检查题（尚无学习者证据）：分别说明 `messages`、`temperature/top_p/max_tokens`、`stream=true + HTTP connection` 在跨入 EngineCore 前被放到哪里或留在哪里，并解释为什么不直接把 `ChatCompletionRequest` 发给 EngineCore。当前唯一执行动作仍只由 Checkpoint 保存。
+- 验收结果（2026-09-04）：通过。学习者流程图正确区分 `ChatCompletionRequest`、`EngineInput`、`SamplingParams`、`EngineCoreRequest`、前端 Collector 与 SSE，并明确只有核心请求载荷跨 IPC；request ID 随机化按学习者选择不进入主图。客户端断连属于此前未教学的补充控制路径，不作为本节点通过条件。
 
 ### 2.1 vLLM request sequence
 
@@ -340,7 +502,52 @@ POST /v1/chat/completions
 - [Attention.forward](https://github.com/vllm-project/vllm/blob/568afb3a13806beb53bb2e6bd518269357b237c0/vllm/model_executor/layers/attention/attention.py#L488-L582) 先进入 `torch.ops.vllm.unified_*` 编译图边界，再由注册实现调用 `AttentionImpl`。custom op 不是 device kernel 本身。
 - vLLM 的 [OOT Platform 规范](https://github.com/vllm-project/vllm/blob/568afb3a13806beb53bb2e6bd518269357b237c0/docs/design/plugin_system.md#L100-L117) 要求平台指定 Worker、attention backend 与 communicator；因此自研芯片适配默认从这些扩展面开始。
 
+<a id="pass-d-execution-contract"></a>
+#### Pass D · 控制面／执行面契约
+
+适用范围：`v0.26.0 @ 568afb3`，MRV1 普通单卡生成路径。以下由学习者综合表经源码 Review 补齐；验收证据见 [Pass D 综合表达记录](#plana-jd-w1-20260907-pass-d-synthesis)。
+
+| 边界 | 主要传递内容 | 接收方职责 |
+|---|---|---|
+| Scheduler → Executor／Worker／ModelRunner | `SchedulerOutput`：新／已有请求、本步 Token 数、block IDs，以及结束／恢复等状态信息 | Executor 下发任务；Worker 处理设备／rank 外层调用；ModelRunner 更新本地缓存和 InputBatch，准备有效输入与 metadata |
+| ModelRunner → 模型 | 显式传入 `input_ids`、`positions` 等 tensor；通过本次 `ForwardContext` 提供 Attention metadata 和 slot mapping | 执行模型前向，产生隐藏状态；本步 metadata 与可复用的模型层、物理 KV tensor 保持对应 |
+| 通用 Attention → 具体 backend | Q/K/V、物理 KV tensor、metadata、输出缓冲；独立 KV 更新入口还接收 slot mapping | 按 backend 契约完成 KV 写入与 Attention 计算；两者可在分开的接口内实现，但要保持先写后读依赖 |
+| 执行层 → EngineCore／Scheduler | `ModelRunnerOutput`：请求映射、有效采样 Token IDs、logprobs 等 | Scheduler 回写 Token 历史、检查停止条件并回收资源，组织 `EngineCoreOutputs` 交给前端处理 |
+
+- **重排不变量**：有效输入的 `input_ids`、`positions`、`slot_mapping` 按 Token 一一对应；`query_start_loc` 按本步请求片段重新累计，block table 的行和请求级 metadata 跟随 batch 顺序。请求自己的 block ID 列表无需因单纯 batch 重排而改变。
+- **读写区别**：slot mapping 指定新 K/V 的写入槽位，block table 定位请求上下文。一个映射正确或 tensor shape 合法，都不能替代跨字段的一致性。
+- **采样返回**：模型前向返回隐藏状态，普通生成路径选取每个请求本步片段的最后一行计算 logits；Partial Prefill 的内部采样结果会被过滤。MRV1 `execute_model()` 返回 `None` 时，以 `sample_tokens()` 消费中间状态并取得最终执行输出。
+- **固定源码入口**：[`_update_states / _prepare_inputs`](https://github.com/vllm-project/vllm/blob/568afb3a13806beb53bb2e6bd518269357b237c0/vllm/v1/worker/gpu_model_runner.py#L1169)、[`get_attention_context / unified_attention_with_output`](https://github.com/vllm-project/vllm/blob/568afb3a13806beb53bb2e6bd518269357b237c0/vllm/model_executor/layers/attention/attention.py#L731)、[`EngineCore.step`](https://github.com/vllm-project/vllm/blob/568afb3a13806beb53bb2e6bd518269357b237c0/vllm/v1/engine/core.py#L576)。
+
+<a id="pass-c-source-map"></a>
 ### 2.2 8–12 文件 source map
+
+以下 12 个文件构成 Pass C 的教学定位索引，已按 `v0.26.0 @ 568afb3` 核验；索引由导师准备，学习者源码定位的验收 evidence 见 [Lesson 会话记录](#plana-jd-w1-20260906-pass-c-synthesis)。路径相对 `vllm/`，链接均指向固定提交。本地当前 checkout 仅作比较基线。
+
+| 文件 | 优先定位的类／函数 | 在请求链中回答的问题 |
+|---|---|---|
+| [entrypoints/openai/chat_completion/serving.py](https://github.com/vllm-project/vllm/blob/568afb3a13806beb53bb2e6bd518269357b237c0/vllm/entrypoints/openai/chat_completion/serving.py#L255) | `render_chat_request()`、`_create_chat_completion()`、`chat_completion_stream_generator()` | 组织 chat 渲染、调用采样参数转换和 `generate()`，按 `stream` 选择 SSE 或完整响应。 |
+| [v1/engine/async_llm.py](https://github.com/vllm-project/vllm/blob/568afb3a13806beb53bb2e6bd518269357b237c0/vllm/v1/engine/async_llm.py#L280) | `add_request()`、`_add_request()`、`generate()`、`_run_output_handler()` | 创建 Collector、先注册请求再跨 IPC 提交；接收 Core 输出、消费 Collector，并转发前端 stop string 引发的 abort。 |
+| [v1/engine/input_processor.py](https://github.com/vllm-project/vllm/blob/568afb3a13806beb53bb2e6bd518269357b237c0/vllm/v1/engine/input_processor.py#L242) | `InputProcessor.process_inputs()` | 校验并整理模型输入、采样参数，构造 `EngineCoreRequest`。 |
+| [v1/engine/core_client.py](https://github.com/vllm-project/vllm/blob/568afb3a13806beb53bb2e6bd518269357b237c0/vllm/v1/engine/core_client.py#L1121) | `AsyncMPClient.add_request_async()`、`abort_requests_async()`、`get_output_async()` | 跨进程发送 ADD / ABORT，接收 `EngineCoreOutputs`；传输层不承担调度与模型计算。 |
+| [v1/engine/__init__.py](https://github.com/vllm-project/vllm/blob/568afb3a13806beb53bb2e6bd518269357b237c0/vllm/v1/engine/__init__.py#L88) | `EngineCoreRequest`、`EngineCoreOutput`、`EngineCoreOutputs` | 定义前端与 Core 之间的输入、单请求增量输出和批量输出契约；`finished` 由结束原因派生。 |
+| [v1/engine/core.py](https://github.com/vllm-project/vllm/blob/568afb3a13806beb53bb2e6bd518269357b237c0/vllm/v1/engine/core.py#L576) | `preprocess_add_request()`、`step()`、`abort_requests()` | 把已解码的核心输入转换为内部 Request；组织 `schedule → execute_model → update_from_output`，并接收终止控制。 |
+| [v1/request.py](https://github.com/vllm-project/vllm/blob/568afb3a13806beb53bb2e6bd518269357b237c0/vllm/v1/request.py#L59) | `Request.from_engine_core_request()`、`append_output_token_ids()`、`RequestStatus` | 持有可变请求状态、Token 历史和计算进度；区分队列位置与 `WAITING / RUNNING / PREEMPTED / FINISHED_*` 状态。 |
+| [v1/core/sched/scheduler.py](https://github.com/vllm-project/vllm/blob/568afb3a13806beb53bb2e6bd518269357b237c0/vllm/v1/core/sched/scheduler.py#L425) | `schedule()`、`_update_after_schedule()`、`update_from_output()`、`finish_requests()` | 决定准入与本步计算量，维护在途记账，消费采样结果、处理终止和抢占，并生成设备侧清理通知。 |
+| [v1/core/kv_cache_manager.py](https://github.com/vllm-project/vllm/blob/568afb3a13806beb53bb2e6bd518269357b237c0/vllm/v1/core/kv_cache_manager.py#L283) | `get_computed_blocks()`、`allocate_slots()`、`free()` | 查询前缀命中、分配逻辑 KV slots/blocks、释放请求的块占用；不执行模型 forward。 |
+| [v1/core/sched/output.py](https://github.com/vllm-project/vllm/blob/568afb3a13806beb53bb2e6bd518269357b237c0/vllm/v1/core/sched/output.py#L191) | `NewRequestData`、`CachedRequestData`、`SchedulerOutput` | 定义本步执行计划：新/已有请求、每请求计算量、block IDs，以及 `finished_req_ids` 等清理通知。 |
+| [v1/outputs.py](https://github.com/vllm-project/vllm/blob/568afb3a13806beb53bb2e6bd518269357b237c0/vllm/v1/outputs.py#L234) | `ModelRunnerOutput` | 定义执行侧返回 Scheduler 的结果：请求索引、采样 Token IDs、logprobs 等；区别于发给前端的 `EngineCoreOutput`。 |
+| [v1/engine/output_processor.py](https://github.com/vllm-project/vllm/blob/568afb3a13806beb53bb2e6bd518269357b237c0/vllm/v1/engine/output_processor.py#L45) | `RequestOutputCollector`、`OutputProcessor.add_request()`、`process_outputs()` | 持有前端 RequestState，增量 detokenize、检查 stop string、组织 DELTA/累计输出、向 Collector 投递并清理前端状态。 |
+
+阅读顺序：先识别跨边界载荷的字段，再找到构造／发送它的位置，最后找到消费／更新状态的位置。`SamplingParams.output_kind` 随核心请求携带，但 DELTA 的输出组织由前端 `OutputProcessor` 与 Collector 消费，不决定模型是否逐 Token 执行。
+
+执行侧在 Pass C 保持黑盒，只读 `SchedulerOutput` 和 `ModelRunnerOutput` 两端契约；Worker、ModelRunner 的 batch/tensor 与 forward 内部实现留在 Pass D。
+
+本地复查固定版本可使用：
+
+```bash
+git -C "推理框架/references/vllm" show 568afb3a13806beb53bb2e6bd518269357b237c0:vllm/v1/core/sched/scheduler.py
+```
 
 ### 2.3 vLLM EP/PD 主图
 
@@ -348,7 +555,23 @@ POST /v1/chat/completions
 
 ## 3. 适配设计
 
+<a id="pass-e-adaptation-matrix"></a>
 ### 3.1 六层适配矩阵
+
+本表对应 Pass E 的假想芯片综合题：请求／Token 调度语义不变，可通过既有接口表达设备运行时、KV padding、融合算子与 TP 子组通信差异。由学习者初稿经源码 Review 补齐，作为设计依据；不是该芯片已完成实现或运行验证的声明。
+
+| 层次 | 本场景的处理方式与接入点 | 必须保留的契约 |
+|---|---|---|
+| HTTP／前端 | 保持协议处理不变 | 输入语义、流式输出和取消语义；进程放置不决定是否需要修改协议 |
+| EngineCore／Scheduler | 保持普通请求生命周期与逻辑 KV 调度 | 请求状态、Token budget、逻辑块归属、抢占／恢复与结束清理相互一致 |
+| Platform／Worker／ModelRunner | 平台插件通过 `check_and_update_config()` 设置 `parallel_config.worker_cls`；Worker 构造自定义 Runner，适配或替换设备执行实现 | 消费 `SchedulerOutput` 并返回约定结果；报告真实 KV 规格／可用内存并兑现分配方案；执行与采样的完成语义正确 |
+| KV cache／Attention backend | 使用 `get_kv_cache_shape()`、`get_kv_cache_stride_order()`、`KVCacheSpec.page_size_bytes`，并适配实际分配及读写实现 | padding 后实际字节占用纳入预算；逻辑 Token、block table、slot mapping 与物理布局一致，读取遵守请求边界和注意力语义 |
+| 普通算子 | 注册底层 PyTorch 算子；通过 `register_oot` 替换相应 vLLM 算子类，在 `forward_oot` 调用设备实现 | 保持数学语义、支持的 shape／dtype／device、输入修改／返回值及执行依赖契约；注册动作本身不是正确性契约 |
+| 设备通信 | Platform 的 `get_device_communicator_cls()` 选择自定义 communicator | 正确绑定子组与 rank，保持 collective 数学语义、tensor 行为和后续消费所需的执行依赖 |
+
+core patch 的论证应指出：需要的语义、现有字段／hook 能表达的范围，以及无法表达的信息或执行顺序。页大小漏报或已有抢占流程未被正确使用，首先属于实现／配置或契约遵守问题；不能仅凭换芯片、出现 OOM 或需要自定义 Runner 推断必须修改核心接口。
+
+源码依据：[Worker 执行契约](https://github.com/vllm-project/vllm/blob/568afb3a13806beb53bb2e6bd518269357b237c0/vllm/v1/worker/worker_base.py#L142-L157)、[KV 页大小与 padding](https://github.com/vllm-project/vllm/blob/568afb3a13806beb53bb2e6bd518269357b237c0/vllm/v1/kv_cache_interface.py#L175-L201)、[既有抢占路径](https://github.com/vllm-project/vllm/blob/568afb3a13806beb53bb2e6bd518269357b237c0/vllm/v1/core/sched/scheduler.py#L1212-L1234)。
 
 ### 3.2 既有经验迁移矩阵
 
@@ -364,6 +587,38 @@ POST /v1/chat/completions
 
 ### 4.4 结果与待验证项
 
+### 4.5 待做实践作业
+
+<a id="w1-p1-runtime-output-validation"></a>
+
+#### W1-P1：运行路径选择与最小输出契约验证
+
+- **状态**：⬜ 待启动；当前只登记，尚未接受正式实践契约、准备执行环境或运行测试。
+- **安排**：周末集中实践，暂按最近周末 **2026-09-12～2026-09-13** 记录；具体时段由用户启动时确认，可调整，不是硬截止日期，不自动执行或创建提醒。
+- **目的**：将已经理解的 vLLM 请求链对应到明确配置与真实实现，并用一个小型验证检查已学过的输出契约。
+- **版本与范围**：沿用 `vLLM v0.26.0 @ 568afb3a13806beb53bb2e6bd518269357b237c0`；普通文本、单请求场景。Executor 的 `backend=uni` 与 Attention backend 分别记录，不预设当前设备、模型或实际 backend。
+
+**拟交付内容**
+
+1. 一张“配置条件 → Worker／Runner／Attention backend 与相关 fallback → 源码依据 → 验证状态”的路径表。复核本文件 §1.3 的历史指纹，另行记录实践时的实际环境；不覆盖 2026-08-09 的历史观察，也不把历史 Windows／GPU 配置视为当前可用环境。
+2. 一个最小用例的精确设计，包含输入构造、真实观察接口、断言、依赖条件与证明范围。有获准且兼容的环境时执行并保存结果；受限时采用原计划允许的 B 级设计路径，明确标注未运行。
+3. 简短的结果与局限说明，区分源码推导、上游已有覆盖、本地执行结果和仍未验证的部分。完成判定以正式启动时确认的验收约定为准。
+
+**候选验证点：FINAL_ONLY 与跨输出 stop string**
+
+- 在前端 OutputProcessor 注册普通 `FINAL_ONLY` 请求，配置 stop string、`min_tokens=0` 和足够大的输出上限。
+- 复用上游测试的构造方式，选定 tokenizer 与经核验的 token 序列，让 stop string 跨两次模拟 EngineCore 输出出现；命中时 Core 尚未判停。
+- 检查 stop 出现前不交付中间 RequestOutput，命中后交付最终完整结果、生成对应的 `reqs_to_abort`，并注销前端 RequestState；迟到输出不重复交付。
+- 该用例只验证前端输出过滤、文本判停和取消列表生成，不证明 HTTP／ZMQ 时序、Core 已执行取消或 GPU KV 已安全回收。
+
+**参考材料与环境边界**
+
+- [请求生命周期与输出处理](深入学习理解vLLM/2-Request-Lifecycle-and-Output.md)。
+- 固定版 [test_incremental_detokenization](https://github.com/vllm-project/vllm/blob/568afb3a13806beb53bb2e6bd518269357b237c0/tests/v1/engine/test_output_processor.py#L49-L141) 覆盖 DELTA／FINAL_ONLY；[test_stop_string](https://github.com/vllm-project/vllm/blob/568afb3a13806beb53bb2e6bd518269357b237c0/tests/v1/engine/test_output_processor.py#L761-L883) 当前使用 DELTA。可以参考二者设计交叉用例，不能声称现有测试已直接覆盖上述组合或本地已经通过。
+- 现有 [测试 fixture](https://github.com/vllm-project/vllm/blob/568afb3a13806beb53bb2e6bd518269357b237c0/tests/v1/engine/conftest.py#L29-L45) 涉及 tokenizer 和 vLLM 配置；实践前核对兼容依赖与本地缓存，不承诺无需下载或当前环境直接可运行。
+- 启动时再确认实现／验收文件的归属、允许的环境操作与通过标准；当前不安装依赖、不下载资源、不编写或执行测试，也不修改参考源码子模块。
+- 本作业不扩展为完整服务部署、性能 benchmark、上游 patch 或口头验收；继续使用既有周预算，不另行记入未发生的学习时长。
+
 ## 5. Risk register
 
 ## 6. Upstream validation anchor
@@ -378,9 +633,10 @@ POST /v1/chat/completions
 - 预期契约：[官方 DP 文档](https://github.com/vllm-project/vllm/blob/568afb3a13806beb53bb2e6bd518269357b237c0/docs/serving/data_parallel_deployment.md#L75-L77)称 internal DP 根据各 EngineCore 的 running/waiting 队列做负载均衡；[`VllmConfig.needs_dp_coordinator`](https://github.com/vllm-project/vllm/blob/568afb3a13806beb53bb2e6bd518269357b237c0/vllm/config/vllm.py#L624-L645)也明确说 non-MoE internal/hybrid LB 启动 Coordinator 是为了收集并发布 queue stats。
 - 实现观察：dense DP 在 [`run_engine_core`](https://github.com/vllm-project/vllm/blob/568afb3a13806beb53bb2e6bd518269357b237c0/vllm/v1/engine/core.py#L1287-L1299) 中退回普通 `EngineCoreProc`；实时 `_maybe_publish_request_counts()` 只位于断言 MoE 的 [`DPEngineCoreProc`](https://github.com/vllm-project/vllm/blob/568afb3a13806beb53bb2e6bd518269357b237c0/vllm/v1/engine/core.py#L1844-L1860) 及其 [busy loop](https://github.com/vllm-project/vllm/blob/568afb3a13806beb53bb2e6bd518269357b237c0/vllm/v1/engine/core.py#L2002-L2043)。固定提交中未找到 dense 等价发布路径。
 - 潜在影响：dense 的 [`DPLBAsyncMPClient`](https://github.com/vllm-project/vllm/blob/568afb3a13806beb53bb2e6bd518269357b237c0/vllm/v1/engine/core_client.py#L1413-L1447) 虽执行 `waiting * 4 + running`，但可能缺少来自后端的实时计数，更多依赖前端 optimistic waiting 与同分轮转；在长短请求混合或多 API client 下可能产生负载偏斜。此处仍是待复现假设，不写成已证实性能缺陷。
+- 2026-08-30 current `main` 静态预核对：在 `1dc464d42681d22f38caf1fdc1eb632dc4421c45` 中，internal/hybrid LB 会[启用统计发布](https://github.com/vllm-project/vllm/blob/1dc464d42681d22f38caf1fdc1eb632dc4421c45/vllm/v1/engine/core.py#L1080-L1087)；dense DP [仍走普通 `EngineCoreProc`](https://github.com/vllm-project/vllm/blob/1dc464d42681d22f38caf1fdc1eb632dc4421c45/vllm/v1/engine/core.py#L1327-L1336)，但其基类 busy loop 已在 step 前后[发布 running、waiting 与 KV 使用率](https://github.com/vllm-project/vllm/blob/1dc464d42681d22f38caf1fdc1eb632dc4421c45/vllm/v1/engine/core.py#L1410-L1435)，Coordinator 也会[消费这些统计](https://github.com/vllm-project/vllm/blob/1dc464d42681d22f38caf1fdc1eb632dc4421c45/vllm/v1/engine/coordinator.py#L369-L419)。因此旧提交中的静态缺口在当前快照已不能按原路径复现；尚未核对引入它的 issue/PR、专项回归测试和 dense `DP=2` 运行行为，不能据此写成“已修复”或关闭 U1。
 - 待区分假设：① dense 发布链为实现遗漏，应补齐公共统计上报；②当前行为是有意设计，文档与配置注释需要说明限制；③该问题已在更新版本修复，固定 tag 只适合作为历史回归案例。
 - 上游行动前置：
-  - ⬜ 对比届时最新 `main`，确认代码是否仍存在。
+  - 🟡 对比最新 `main`：已完成 2026-08-30 静态预核对；动态行为、专项测试与变更来源仍待核验。
   - ⬜ 检索已有 issue、PR、讨论与 maintainer 设计意图，避免重复工作。
   - ⬜ 建立 dense `DP=2` 最小复现，观察 Coordinator 与 API client 收到的统计；当前单卡环境不能完成真实双副本测试。
   - ⬜ 先写能暴露缺口的测试，再决定修改代码还是文档。

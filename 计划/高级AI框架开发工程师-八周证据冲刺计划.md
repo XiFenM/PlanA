@@ -1,7 +1,7 @@
 # 高级 AI 框架开发工程师 · 八周证据冲刺计划
 
 > - 创建日期：2026-08-08
-> - 最近审阅：2026-08-29（根据全部面试复盘、PlanA 实际断点和官方岗位样本重基线）
+> - 最近调整：2026-09-08（正式口头验收集中到 W4 及后续 Mock；沿用 2026-08-30 的源码、预算与排序基线）
 > - Program 状态：[见唯一状态区](#program-plana-jd-ai-framework-4w)；精确学习位置只由[唯一学习断点](学习断点.md)裁决
 > - 目标岗位：[本地复合 JD](<../Job Description/AI框架方向/高级AI框架开发工程师.md>) / [市场岗位需求索引](<../Job Description/AI框架方向/市场岗位需求/README.md>)
 > - 诊断依据：[AMD AI 框架开发工程师胜任力诊断](../面试准备/自我准备/AMD-AI框架开发工程师胜任力诊断-2026-08-29.md)
@@ -12,6 +12,7 @@
 ---
 
 <a id="program-plana-jd-ai-framework-4w"></a>
+
 ## Program 状态（guide-learning）
 
 - **Program ID**：`plana-jd-ai-framework-4w`。该 ID 为稳定历史标识，不因计划延长而更改。
@@ -22,21 +23,22 @@
 - **父 Program**：[主计划](主计划.md#program-plana-ai-infra-interview-20w)。
 - **返回位置**：[启动前返回快照](#161-启动前返回快照)。
 - **连续推进边界**：未授予。每周验收后由用户决定继续、暂停、调整或返回主线。
+- **口头验收安排**：按用户 2026-09-08 的确认，统一采用 [§5.3](#53-每周统一验收门) 的分阶段规则；调整后续候选任务不等于启动 W4 或其他 Lesson。
 
 候选 Lessons：
 
-| 顺序 | Lesson ID | 能力标题 | 状态 |
-|---:|---|---|---|
-| 1 | `plana-jd-w1-vllm-execution-boundaries` | vLLM 执行链与扩展边界 | active |
-| 2 | `plana-jd-w2-moe-ep` | MoE EP、并行策略与通信量 | candidate |
-| 3 | `plana-jd-w3-pd-kv-rdma` | PD、KV 生命周期与 RDMA | candidate |
-| 4 | `plana-jd-w4-validation-interview` | 定量性能、案例证据与第一次面试闭环 | candidate |
-| 5 | `plana-jd-w5-pytorch-cpp-runtime` | PyTorch custom op、C++ 与异步 runtime | candidate |
-| 6 | `plana-jd-w6-amd-rocm-upstream` | ROCm/HIP/RCCL 迁移与上游工件 | candidate |
-| 7 | `plana-jd-w7-training-systems-literacy` | 训练框架与分布式训练系统素养 | candidate |
-| 8 | `plana-jd-w8-application-closure` | 证据打包、Mock 与分层投递 | candidate |
-| 9 | `plana-jd-w9-hardware-or-critical-gap` | 硬件验证或唯一关键缺口 | conditional |
-| 10 | `plana-jd-w10-upstream-or-repair` | 上游 review 或未过关项修复 | conditional |
+| 顺序 | Lesson ID                                 | 能力标题                              | 状态        |
+| ---: | ----------------------------------------- | ------------------------------------- | ----------- |
+|    1 | `plana-jd-w1-vllm-execution-boundaries` | vLLM 执行链与扩展边界                 | active      |
+|    2 | `plana-jd-w2-moe-ep`                    | MoE EP、并行策略与通信量              | candidate   |
+|    3 | `plana-jd-w3-pd-kv-rdma`                | PD、KV 生命周期与 RDMA                | candidate   |
+|    4 | `plana-jd-w4-validation-interview`      | 定量性能、案例证据与第一次面试闭环    | candidate   |
+|    5 | `plana-jd-w5-pytorch-cpp-runtime`       | PyTorch custom op、C++ 与异步 runtime | candidate   |
+|    6 | `plana-jd-w6-amd-rocm-upstream`         | ROCm/HIP/RCCL 迁移与上游工件          | candidate   |
+|    7 | `plana-jd-w7-training-systems-literacy` | 训练框架与分布式训练系统素养          | candidate   |
+|    8 | `plana-jd-w8-application-closure`       | 证据打包、Mock 与分层投递             | candidate   |
+|    9 | `plana-jd-w9-hardware-or-critical-gap`  | 硬件验证或唯一关键缺口                | conditional |
+|   10 | `plana-jd-w10-upstream-or-repair`       | 上游 review 或未过关项修复            | conditional |
 
 本节是本专项唯一 Program control plane。Lesson ledger 保存目标、stage 和 evidence；Checkpoint 保存唯一恢复位置；模块 `进度.md` 保存实际资料和工时。本文件的周次、清单和岗位分析只负责规划，不反向伪造完成状态。
 
@@ -60,10 +62,12 @@
 
 - 启动、暂停和恢复以用户指令和[唯一学习断点](学习断点.md)为准。
 - 一个“有效周”由验收门决定，不由星期日或日历日期决定。中断后继续同一周，不把未过关内容标为完成。
-- 每个能力单元最多展开一条主源码链、一个主要证据包增量、一个定量主题和一次 Mock；sequence、账本、测试和 Case Card 可以作为同一证据包的子产物，不等于同时开启多个项目。
+- 每个能力单元最多展开一条主源码链、一个主要证据包增量和一个定量主题；W1–W3 不安排强制口头 Mock，W4 起按既有 Mock 场次整合口头验收。sequence、账本、测试和 Case Card 可以作为同一证据包的子产物，不等于同时开启多个项目。
 - 阅读、实现、测试和复述使用同一源码时只记一次真实工时。
+- 源码子模块的当前 gitlink 只提供最新比较快照；进行中 Lesson 的教学与 evidence revision 由其 ledger 固定，不因子模块升级自动重基线。
 - 每周验收后先展示产物、未过项和下一周候选，再由用户决定是否授权。
 - 生产经历、面试呈现、公开可复现证据和 PlanA 学习进度分别记录，不能相互替代。
+- 当前能力事实以[胜任力诊断](../面试准备/自我准备/AMD-AI框架开发工程师胜任力诊断-2026-08-29.md)、可追溯项目证据与 Lesson evidence 为准；稳定 `学习指引.md` 中的旧周次、预算或“已经会”校准只保留长期课程语境，不得覆盖本轮 P0/P1 诊断。
 - 自研芯片内容只保留可公开的抽象能力、接口语义和脱敏结论，不写公司代码、内部 API、未公开硬件参数或原始日志。
 - 没有 AMD/RDMA 环境时完成 B 级源码、设计和测试证据；不得用模拟或类比冒充实测。
 - 新增真实面试时，先把复盘结论映射到风险表；只有出现新的 P0 证据，才调整后续周次。
@@ -72,11 +76,11 @@
 
 ### 2.1 近期主目标
 
-| 岗位 | 准备定位 | 本轮重点 |
-|---|---|---|
-| AMD 上海 AI Framework Eng. `87545` | 当前有条件可投 | 多模态、vLLM/PyTorch、生产代码，以及多 GPU/多节点计算、内存、通信瓶颈诊断；补 C++、可复算案例和 ROCm 迁移边界 |
-| AMD 上海 AI Framework Eng. `78999` | P0/P1 补强后的进阶主投 | Linux C++、GPU Kernel、PyTorch、训练/推理、多 GPU/多机、开源协作 |
-| AMD 上海 AI Software Engineer `89398` | 专项拉伸；官方 5 年以上经验构成年限筛选风险 | Large-EP、PD、分布式推理、C++/Python、LLVM/ROCm；八周只能缩小技术差距 |
+| 岗位                                   | 准备定位                                    | 本轮重点                                                                                                      |
+| -------------------------------------- | ------------------------------------------- | ------------------------------------------------------------------------------------------------------------- |
+| AMD 上海 AI Framework Eng.`87545`    | 当前有条件可投                              | 多模态、vLLM/PyTorch、生产代码，以及多 GPU/多节点计算、内存、通信瓶颈诊断；补 C++、可复算案例和 ROCm 迁移边界 |
+| AMD 上海 AI Framework Eng.`78999`    | P0/P1 补强后的进阶主投                      | Linux C++、GPU Kernel、PyTorch、训练/推理、多 GPU/多机、开源协作                                              |
+| AMD 上海 AI Software Engineer`89398` | 专项拉伸；官方 5 年以上经验构成年限筛选风险 | Large-EP、PD、分布式推理、C++/Python、LLVM/ROCm；八周只能缩小技术差距                                         |
 
 ### 2.2 拉伸与训练参照
 
@@ -111,18 +115,18 @@
 
 ### 3.2 诊断出的 P0/P1 缺口
 
-| 优先级 | 缺口 | 关闭方式 |
-|---|---|---|
-| P0 | vLLM 当前主链不能稳定脱稿呈现 | 固定 commit source map + 15 分钟白板 + 两轮追问 |
-| P0 | C++/Linux 基础直接失分 | 现场编码、ELF/linking、RAII/lifetime、并发与 sanitizer |
-| P0 | 性能结论缺定量模型 | 一张完整 Roofline + 三张审计 Case Card |
-| P0 | TP/EP 不先固定 shape/bytes | 5 个组合题覆盖 TP/PP/DP/SP/CP/EP，并推导通信时间下界 |
-| P0 | CV claim、数字和 ownership 漂移 | claim-evidence 表逐项审计 |
-| P1 | HIP/ROCm/RCCL 直接证据空白 | 迁移矩阵；有设备时 build/correctness/trace |
-| P1 | MoE EP、PD/KV、RDMA 设计不稳 | worked example、状态机、failure matrix、通信量模型 |
-| P1 | 独立 Kernel/custom op 证据弱 | 一个小型混合栈工件和 profiler 分析 |
-| P1 | 无公开 upstream | issue/reproducer/test/doc/benchmark 任一真实工件 |
-| P1 | 训练只见接触、缺系统表达 | training step、显存账本、并行决策和小型验证 |
+| 优先级 | 缺口                            | 关闭方式                                               |
+| ------ | ------------------------------- | ------------------------------------------------------ |
+| P0     | vLLM 当前主链不能稳定脱稿呈现   | 固定 commit source map 与文字复述；15 分钟口头白板及口头追问由 W4 及后续 Mock 验收 |
+| P0     | C++/Linux 基础直接失分          | 现场编码、ELF/linking、RAII/lifetime、并发与 sanitizer |
+| P0     | 性能结论缺定量模型              | 一张完整 Roofline + 三张审计 Case Card                 |
+| P0     | TP/EP 不先固定 shape/bytes      | 5 个组合题覆盖 TP/PP/DP/SP/CP/EP，并推导通信时间下界   |
+| P0     | CV claim、数字和 ownership 漂移 | claim-evidence 表逐项审计                              |
+| P1     | HIP/ROCm/RCCL 直接证据空白      | 迁移矩阵；有设备时 build/correctness/trace             |
+| P1     | MoE EP、PD/KV、RDMA 设计不稳    | worked example、状态机、failure matrix、通信量模型     |
+| P1     | 独立 Kernel/custom op 证据弱    | 一个小型混合栈工件和 profiler 分析                     |
+| P1     | 无公开 upstream                 | issue/reproducer/test/doc/benchmark 任一真实工件       |
+| P1     | 训练只见接触、缺系统表达        | training step、显存账本、并行决策和小型验证            |
 
 ### 3.3 已有学习状态
 
@@ -169,11 +173,11 @@ AMD AI framework readiness pack
 
 ### 4.2 证据等级
 
-| 等级 | 含义 | 允许声称 |
-|---|---|---|
-| A | 获准环境中的真实运行、代码、测试、trace 或 benchmark | 可说明固定版本和环境已验证；公开时仍需脱敏 |
-| B | 固定 commit 的源码契约、现有测试追踪、reproducer 或精确 test design | 可证明理解和设计；不能声称已在目标硬件跑通 |
-| C | 类比、理论模型或尚未核实的硬件假设 | 只能标为待验证，不能据此下实现或性能结论 |
+| 等级 | 含义                                                                | 允许声称                                   |
+| ---- | ------------------------------------------------------------------- | ------------------------------------------ |
+| A    | 获准环境中的真实运行、代码、测试、trace 或 benchmark                | 可说明固定版本和环境已验证；公开时仍需脱敏 |
+| B    | 固定 commit 的源码契约、现有测试追踪、reproducer 或精确 test design | 可证明理解和设计；不能声称已在目标硬件跑通 |
+| C    | 类比、理论模型或尚未核实的硬件假设                                  | 只能标为待验证，不能据此下实现或性能结论   |
 
 ### 4.3 Change Card 模板
 
@@ -214,7 +218,7 @@ AMD AI framework readiness pack
 → 回归、限制和未完成项
 ```
 
-首批固定为 Conv3D、blocked/Col-major layout、`projects.md` 中 Qwen3-32B/vLLM V1 的低概率 H2D/D2D 异常。第三项必须明确“最终根因仍在闭环”。奕行二面的 Host Padding 竞态另作 F2 回听卡，两者关系未确认，不能互相补证。
+首批固定为 Conv3D、blocked/Col-major layout、`projects.md` 中 Qwen3-32B/vLLM V1 的低概率 H2D/D2D 异常。第三项的当前根因、修复与回归状态由[项目三口述基线](../面试准备/自我准备/projects.md#project3-oral-baseline-20260902)维护；本计划不复制或另行裁决。
 
 ## 5. 时间预算与周节奏
 
@@ -228,29 +232,44 @@ AMD AI framework readiness pack
 
 ### 5.2 每个日历周投入模板
 
-| 类型 | 目标时长 | 规则 |
-|---|---:|---|
-| 主源码链与一手资料 | 6h | 只追一条端到端链，不横向扩读 |
-| 主要工件/实现/测试 | 4h | 每周一个可展示增量 |
-| 定量推导或 benchmark | 2h | 必须落到单位、公式、数据或可执行协议 |
-| C++/算法 | 2h | 每周 3–5 题，至少一题与当前系统主题相连 |
-| 英语与 Mock | 2h | 英文 5 分钟陈述或一次技术追问 |
-| 未分配缓冲 | 2h | 只处理真实编译、环境、源码漂移或复测 |
-| 合计 | 18h | 包含所有专项活动，不再把英语/Leetcode 隐藏在预算外 |
+| 类型                 | 目标时长 | 规则                                               |
+| -------------------- | -------: | -------------------------------------------------- |
+| 主源码链与一手资料   |       6h | 只追一条端到端链，不横向扩读                       |
+| 主要工件/实现/测试   |       4h | 每周一个可展示增量                                 |
+| 定量推导或 benchmark |       2h | 必须落到单位、公式、数据或可执行协议               |
+| C++/算法             |       2h | 每周 3–5 题，至少一题与当前系统主题相连           |
+| 英语与 Mock          |       2h | W1–W3 用于听读、术语和文字材料准备；W4 起在 Mock 内进行中英文口述与追问 |
+| 未分配缓冲           |       2h | 只处理真实编译、环境、源码漂移或复测               |
+| 合计                 |      18h | 包含所有专项活动，不再把英语/Leetcode 隐藏在预算外 |
+
+英语与 Leetcode 的稳定指引继续保存长期目标和训练方法；本 Program `active` 期间只执行上表的“英语与 Mock 2h”和“C++/算法 2h”，不叠加原有每日或每周预算。容量不足时按 §18 缩减范围，不追补缺量。
 
 可使用 `5 × 2h + 周末 8h`，也可按工作实际重排。每次学习结束只记录：完成证据、精确续接点、一个下一动作。
 
 ### 5.3 每周统一验收门
 
-一个主题只有同时满足以下五层才算过关：
+技术学习验收与正式口头验收分开。按用户 2026-09-08 的确认，计时脱稿、中文／英文陈述、项目口述、口头白板和模拟面试追问统一放到 W4 及后续 Mock。W1–W3 不以口述时长或口头表现作为完成门槛，也不因缺少口头记录保持未通过；文字问答、独立推导、源码与代码验证继续保留。
 
-1. **脱稿**：先给 2 分钟全景，再完成 10–15 分钟讲解。
+1. **独立表达**：用文字、图示或代码说明主题主干与关键边界；已有通过证据不重复验收。
 2. **源码**：映射固定 commit 的真实类、函数、状态和测试。
 3. **推导**：至少一个 shape/bytes/latency/memory worked example。
 4. **证据**：一个可运行产物、reproducer、测试、trace、benchmark 或 B 级精确 test design。
-5. **追问**：Mock 中能说明假设、ownership、fallback、限制和反例。
+5. **口头验收（W4 起的 Mock）**：先给约 2 分钟全景，再完成约 10–15 分钟主题讲解，并在口头追问中说明假设、ownership、fallback、限制和反例。它不再作为 W1–W3 的技术学习门槛。
 
-未过门时先修缺口，不通过增加阅读量掩盖。
+W1–W3 按前四项及本周具体技术门验收。口头项目在对应 Mock 中关闭，延期不代表已经通过。所有安排使用既有“英语与 Mock 2h”与周预算；不将前期每周口述累计成 W4 额外场次。长期英语资料体系不改，前期该预算不强制安排口语产出。
+
+未过技术门时先修对应缺口，不通过增加阅读量掩盖；已通过的文字或源码题也不因安排后续 Mock 而自动重考。
+
+#### 项目深挖 Mock
+
+原“每周固定抽一个项目”的口头要求调整为：W1–W3 整理 Case Card、事实证据与书面机制问答，不要求每周口头深挖；从 W4 起，在已授权的 Mock 中抽取一个项目作为深挖环节，不固定同一个项目，也不按预设顺序机械轮换。每次使用既有“英语与 Mock 2h”中的约 25–30 分钟，不在综合 Mock 之外另加一场，也不构成后续 Lesson 的自动授权。
+
+- **选择**：从 [3+1 项目总览](../面试准备/自我准备/projects.md#project-overview-3-plus-1)中选择与本周主题最相关、且仍有重要未知字段的一个项目。同一项目尚未通过时可以连续复测，不为覆盖数量强行换题。
+- **过程**：先做 2 分钟无稿全景，再围绕 `workload、baseline、root cause、ownership、result、regression、limitation` 追问；加入一个与本周主题相关的条件变化或反例，最后重答最薄弱的一问。
+- **结果**：事实或证据缺口回到该项目既有“待核验字段”，按原始资料和验证证据关闭，不要求等待口头 Mock；口头表达缺口在 Mock 中重答，并以不同问法或条件复测。两类结果分别记录。
+- **阶段安排**：W1 准备 vLLM 主链与 Conv3D 材料，W2–W3 准备并行、PD/KV 和异步案例的书面证据；相应口头环节从 W4 综合 Mock 承接。W4 优先 vLLM 主链、Conv3D 和一个分布式题；W5 后续 Mock 可选择异步 Runtime，W6 选择非 CUDA 迁移并纳入英文陈述，W7 使用既定训练 Mock，W8 按目标岗位冷抽或复测最弱项。此处是候选安排，不改变各周授权状态。
+
+项目深挖不是独立的新项目，也不要求每周重写 STAR。每次只处理一个最有价值的事实、机制或表达缺口；只有映射到当前技术验收门的缺口才影响该技术周的通过，已移交后续 Mock 的口头缺口不再阻塞 W1–W3。
 
 ---
 
@@ -264,15 +283,15 @@ AMD AI framework readiness pack
 
 ### 6.2 主任务
 
-| 顺序 | 动作 | 产出 |
-|---:|---|---|
-| 1 | 从[唯一学习断点](学习断点.md)恢复 W1 问答 | Lesson ledger 中的实际问答证据 |
-| 2 | 追 `request → processor → EngineCoreRequest → scheduler → KV manager → model runner → attention backend` | sequence diagram、8–12 个文件 source map |
-| 3 | 说明 V1 与实际 model runner/backend/fallback，以及 DP replica routing/backpressure/DPLB 的选择边界 | 运行路径指纹；无环境时交源码决策树 |
-| 4 | 完成 KV block、Prefix Cache、PagedAttention 的概念与生命周期对照 | 单位严格的 KV 小账本 |
-| 5 | 审计 [CV](../面试准备/自我准备/CV.md)、[projects](../面试准备/自我准备/projects.md) 和[自我介绍](../面试准备/自我准备/self-introduction.md)中的“熟悉/掌握/深入理解” | claim-evidence 矩阵首版 |
-| 6 | 做 C++/Linux 基线测试：RAII、override/name hiding、ELF、shared library、ownership | 红黄绿缺口表 |
-| 7 | 将 Conv3D 案例写成第一张 Case Card | shape、基线、正确性、个人职责和待核数据 |
+| 顺序 | 动作                                                                                                                                                              | 产出                                      |
+| ---: | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------- |
+|    1 | 从[唯一学习断点](学习断点.md)恢复 W1 问答                                                                                                                          | Lesson ledger 中的实际问答证据            |
+|    2 | 追`request → processor → EngineCoreRequest → scheduler → KV manager → model runner → attention backend`                                                   | sequence diagram、8–12 个文件 source map |
+|    3 | 说明 V1 与实际 model runner/backend/fallback，以及 DP replica routing/backpressure/DPLB 的选择边界                                                                | 运行路径指纹；无环境时交源码决策树        |
+|    4 | 完成 KV block、Prefix Cache、PagedAttention 的概念与生命周期对照                                                                                                  | 单位严格的 KV 小账本                      |
+|    5 | 审计[CV](../面试准备/自我准备/CV.md)、[projects](../面试准备/自我准备/projects.md) 和[自我介绍](../面试准备/自我准备/self-introduction.md)中的“熟悉/掌握/深入理解” | claim-evidence 矩阵首版                   |
+|    6 | 做 C++/Linux 基线测试：RAII、override/name hiding、ELF、shared library、ownership                                                                                 | 红黄绿缺口表                              |
+|    7 | 将 Conv3D 案例写成第一张 Case Card                                                                                                                                | shape、基线、正确性、个人职责和待核数据   |
 
 ### 6.3 资料边界
 
@@ -282,7 +301,7 @@ AMD AI framework readiness pack
 
 ### 6.4 验收门
 
-- [ ] 15 分钟脱稿讲清主链，两轮追问无需面试官补全全景。
+- [ ] 独立文字复述覆盖请求主链，并通过必要的文字追问；15 分钟口头讲解与口头追问移交 W4 Mock，不作为 W1 完成门槛。
 - [ ] source map 只有真正进入链路的 8–12 个文件，不是目录罗列。
 - [ ] `messages`、sampling 参数、stream/HTTP 状态等能说明留在哪一层以及原因。
 - [ ] 能说明推理 DP、replica routing、backpressure 与 DPLB 分别在哪一层工作，以及它们与 TP 的区别。
@@ -317,7 +336,7 @@ AMD AI framework readiness pack
 
 ### 7.4 验收门
 
-- [ ] 不看稿恢复 token 原序并验证 send count 总量守恒。
+- [ ] 独立通过书面推导或程序恢复 token 原序，并验证 send count 总量守恒；不附加口头时长要求。
 - [ ] 能区分 EP、EPLB、专家冗余和 placement 的时间尺度与作用。
 - [ ] 5 个并行组合题中至少 4 题无提示正确，六类并行均被覆盖，collective 由切分推导而非背诵。
 - [ ] 推理 DP 不被误写成 tensor 切分；能解释 replica 级负载、queue/backpressure 和 DPLB 观测。
@@ -339,7 +358,7 @@ AMD AI framework readiness pack
 4. 比较同 TP、异 TP 重分片、DCP/PCP 对 metadata 和 bytes 的影响；首版以 P/D 相同布局为基线。
 5. 建立 MR、QP、CQ、WR、doorbell、CPU proxy/GPU initiated、IB/RoCE、GPUDirect 的数据路径。
 6. 给出无 RDMA、仅 host staging、仅 collective 三种 fallback。
-7. 完成 PD/KV Change Card、failure matrix 和一次 15 分钟系统设计 Mock。
+7. 完成 PD/KV Change Card、failure matrix 和书面系统设计说明；原 15 分钟口头系统设计环节并入 W4 综合 Mock 的分布式部分，不作为 W3 完成门槛。
 
 ### 8.3 验收门
 
@@ -361,9 +380,9 @@ AMD AI framework readiness pack
 1. 将 W2 的小型 Roofline 升级为一个 MatMul 或 Conv3D 完整案例：`FLOPs → Bytes → Arithmetic Intensity → attainable performance upper bound / execution-time lower bound → measured efficiency`。
 2. 设计端到端 benchmark packet：模型、版本、shape、dtype、并发、输入/输出长度、warm-up、重复、raw data、正确性。
 3. 读一条 profiler trace，区分 Host、Kernel、copy、collective、allocator 和 idle。
-4. 完成 Conv3D、layout、Qwen3-32B/vLLM V1 异常三张 Case Card；第三张必须保留未闭环项，并与奕行 Host Padding F2 回听卡分开。
+4. 完成 Conv3D、layout、Qwen3-32B/vLLM V1 异常三张 Case Card；第三张按项目档案中的最新口述基线说明根因、修复、回归范围与对外披露边界。
 5. 补 BF16/FP16/FP8、opmath dtype、AWQ/W4A16 的基础推导。
-6. 做第一次综合推理 Mock：vLLM 主链 + 一个性能案例 + 一个分布式题。
+6. 做第一次综合推理 Mock：承接 W1 的约 15 分钟 vLLM 主链口述与口头追问、一个项目／性能案例深挖，以及 W3 的 PD/KV 口头系统设计题。把这些内容作为同一既定 Mock 的题段组织，不额外叠加三场考试，也不将已通过的文字追问重新列为未完成。
 
 ### 9.3 验收门
 
@@ -372,6 +391,7 @@ AMD AI framework readiness pack
 - [ ] 三张 Case Card 都区分“我负责/我参与/他人负责”。
 - [ ] 每个成功结论至少记录一个被否定假设或负结果。
 - [ ] Mock 中先固定配置和单位，不再由面试官帮助收窄问题。
+- [ ] 在既定 Mock 内完成从 W1–W3 移交的口头主链、项目深挖和 PD/KV 系统题；只记录真实口述与追问结果，不用文稿或文字验收代替。
 - [ ] 完成面向 `87545` 的投递门槛复核；满足 §13.1 时可以边投边学。
 
 ## 10. W5：PyTorch custom op、C++ 与异步 Runtime
@@ -386,7 +406,7 @@ AMD AI framework readiness pack
 2. 实现或整理一个最小 custom op/harness；优先与 layout、copy 或异步 lifetime 相关，不另造无关项目。
 3. 明确 DeviceGuard、stream/event、allocator、storage lifetime、error propagation 和 build/ABI。
 4. 用 CPU reference 与可用设备 backend 做 correctness；有 profiler 时记录 trace。
-5. 将 Qwen3-32B/vLLM V1 异步 H2D/D2D 案例映射到 producer-consumer、completion 和 buffer lifetime；奕行 Host Padding 只作对照，不合并根因。
+5. 将 Qwen3-32B/vLLM V1 异步 H2D/D2D 案例映射到 producer-consumer、completion 和 buffer lifetime；只使用用户确认的项目叙述说明根因与修复。
 6. 完成 C++ live coding：RAII 容器、线程同步、错误处理和最小测试。
 
 ### 10.3 验收门
@@ -420,7 +440,7 @@ AMD AI framework readiness pack
 - [ ] 无 AMD 设备时没有任何“已跑通/已提升”措辞。
 - [ ] upstream 工件绑定固定 commit、现有行为、缺口、reproducer/test 和预期结果。
 - [ ] 工件本地自审通过；未 merge 或未提交不等于失败。
-- [ ] 完成一次英文 5 分钟“non-CUDA backend experience → ROCm migration”陈述。
+- [ ] 在本周已授权 Mock 内完成约 5 分钟英文“non-CUDA backend experience → ROCm migration”陈述，不另设独立口头考试或额外场次。
 
 ## 12. W7：训练框架与分布式训练系统素养
 
@@ -454,7 +474,7 @@ AMD AI framework readiness pack
 不必等待 W8 才投递。满足以下条件即可主动投递并继续补强：
 
 - [ ] 简历、项目、自我介绍没有已知数字冲突和 ownership 扩大。
-- [ ] 能脱稿讲清 vLLM 主链和一个多模态案例。
+- [ ] 已在 W4 或后续 Mock 中脱稿讲清 vLLM 主链和一个多模态案例；这是投递能力标准，不回溯为 W1–W3 的口头验收门。
 - [ ] 至少一个性能案例可以完整复算。
 - [ ] C++ 基线没有明显红灯。
 - [ ] 能用一个具体配置解释多 GPU/多节点场景中的计算、内存和通信瓶颈；缺少真实多节点数据时明确证据边界。
@@ -475,7 +495,7 @@ AMD AI framework readiness pack
 3. 校准 [CV](../面试准备/自我准备/CV.md)、[projects](../面试准备/自我准备/projects.md) 和[自我介绍](../面试准备/自我准备/self-introduction.md)；实际修改前单独确认事实口径。
 4. 做两场推理 Mock：一场框架/性能，一场分布式/AMD；W7 训练 Mock 计作第三场。
 5. 每场记录：问题、原答、缺口类型、修正答、证据链接和是否通过复测。
-6. 准备 5 分钟中文/英文项目陈述、三个 STAR、反问问题和未知问题处理模板。
+6. 准备中文／英文项目陈述、三个 STAR、反问问题和未知问题处理材料，并在本周两场推理 Mock 内演练约 5 分钟陈述；不另加独立口头验收。
 7. 根据真实岗位状态形成投递队列，不把过期岗位当作当前机会。
 
 ### 13.4 最终验收
@@ -527,15 +547,15 @@ AMD AI framework readiness pack
 
 ### 15.2 指标
 
-| 层次 | 指标 |
-|---|---|
-| Serving | requests/s、input/output tokens/s、goodput |
-| Request | TTFT、E2E、TPOT 的 p50；样本足够时才报告 p95/p99 |
-| Token interval | raw ITL 数量、请求数和聚合方式 |
-| KV | bytes/request、有效带宽、等待、失败/重算 |
-| EP | dispatch/combine、通信占比、expert max/mean、负载 CV |
-| Kernel | time、occupancy、register/LDS、cache、memory throughput、launch/sync |
-| 稳定性 | 正确率、错误/超时、峰值内存、长稳波动 |
+| 层次           | 指标                                                                 |
+| -------------- | -------------------------------------------------------------------- |
+| Serving        | requests/s、input/output tokens/s、goodput                           |
+| Request        | TTFT、E2E、TPOT 的 p50；样本足够时才报告 p95/p99                     |
+| Token interval | raw ITL 数量、请求数和聚合方式                                       |
+| KV             | bytes/request、有效带宽、等待、失败/重算                             |
+| EP             | dispatch/combine、通信占比、expert max/mean、负载 CV                 |
+| Kernel         | time、occupancy、register/LDS、cache、memory throughput、launch/sync |
+| 稳定性         | 正确率、错误/超时、峰值内存、长稳波动                                |
 
 ### 15.3 对照原则
 
@@ -555,14 +575,14 @@ AMD AI framework readiness pack
 
 本表保存 2026-08-09 启动时的历史返回 capsule，不裁决当前学习位置。
 
-| 字段 | 启动时事实 |
-|---|---|
-| 启动日期 | 2026-08-09 |
-| 启动前模块 | PyTorch |
-| 启动前断点类型 | 阶段边界 |
-| 已完成内容 | Ezyang《PyTorch Internals》全文读毕，累计 9.0h；遗留 Tensor Stride、调用链和扩展问题 |
-| 产出文件 | [PyTorch Internals 笔记](../PyTorch/深入学习理解PyTorch/1-Internal-Overview.md) |
-| 返回位置 | PyTorch 阶段边界；专项结束后由用户决定，不默认进入 Dispatcher |
+| 字段           | 启动时事实                                                                           |
+| -------------- | ------------------------------------------------------------------------------------ |
+| 启动日期       | 2026-08-09                                                                           |
+| 启动前模块     | PyTorch                                                                              |
+| 启动前断点类型 | 阶段边界                                                                             |
+| 已完成内容     | Ezyang《PyTorch Internals》全文读毕，累计 9.0h；遗留 Tensor Stride、调用链和扩展问题 |
+| 产出文件       | [PyTorch Internals 笔记](../PyTorch/深入学习理解PyTorch/1-Internal-Overview.md)       |
+| 返回位置       | PyTorch 阶段边界；专项结束后由用户决定，不默认进入 Dispatcher                        |
 
 ### 16.2 当前环境基线
 
@@ -596,20 +616,20 @@ AMD AI framework readiness pack
 
 ## 17. 十个学习日应急路径
 
-真实面试窗口少于 14 天时，使用约 36–40h 的最小闭环：
+真实面试窗口少于 14 天时，使用约 36–40h 的最小闭环；若未来授权启用，正式口头环节仍统一放到 D10 Mock，D1–D9 不另设口头验收：
 
-| 日 | 主题 | 最小产出 |
-|---|---|---|
-| D1 | 当前 Checkpoint + vLLM 主链 | request/KV/runner 白板与 source map |
-| D2 | C++/Linux 红灯 | RAII、object model、ELF/library、并发基础测试 |
-| D3 | Roofline 与 benchmark | 一个可复算案例、正确性和绝对基线 |
-| D4 | 并行策略手推 | 5 个组合题覆盖 TP/PP/DP/SP/CP/EP 的 shape/collective/bytes/routing |
-| D5 | MoE EP | routing worked example、fallback、系统设计 |
-| D6 | PD/KV/RDMA | 状态机、KV bytes、failure、网络层次 |
-| D7 | PyTorch/ROCm 迁移 | custom op 主链、六层 porting matrix |
-| D8 | 训练最低素养 | training step、显存账本、并行决策 |
-| D9 | Claim 与案例 | CV claim 矩阵、三个 Case Card |
-| D10 | Mock | 框架/性能与分布式两场复测 |
+| 日  | 主题                        | 最小产出                                                           |
+| --- | --------------------------- | ------------------------------------------------------------------ |
+| D1  | 当前 Checkpoint + vLLM 主链 | request/KV/runner 书面关系图与 source map                         |
+| D2  | C++/Linux 红灯              | RAII、object model、ELF/library、并发基础测试                      |
+| D3  | Roofline 与 benchmark       | 一个可复算案例、正确性和绝对基线                                   |
+| D4  | 并行策略手推                | 5 个组合题覆盖 TP/PP/DP/SP/CP/EP 的 shape/collective/bytes/routing |
+| D5  | MoE EP                      | routing worked example、fallback、系统设计                         |
+| D6  | PD/KV/RDMA                  | 状态机、KV bytes、failure、网络层次                                |
+| D7  | PyTorch/ROCm 迁移           | custom op 主链、六层 porting matrix                                |
+| D8  | 训练最低素养                | training step、显存账本、并行决策                                  |
+| D9  | Claim 与案例                | CV claim 矩阵、三个 Case Card                                      |
+| D10 | Mock                        | 框架/性能与分布式两场复测                                          |
 
 应急路径停止完整 MORI、编译器深潜、第二个上游选题和完整训练框架。面试结束后回到原 Checkpoint，不把应急阅读自动标成 Lesson 通过。
 

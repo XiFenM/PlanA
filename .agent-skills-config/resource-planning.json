@@ -675,14 +675,14 @@
   ],
   "overlays": [
     {
-      "overlay_id": "jd-four-week-sprint",
+      "overlay_id": "jd-eight-week-evidence-sprint",
       "fact_refs": ["resource-ranking-profile"],
       "modules": ["compiler", "inference-framework", "parallel-computing", "pytorch", "tpu", "training-distributed"],
       "source_ids": [],
       "query_ids": [],
       "priority": 20,
-      "valid_from": "2026-08-09",
-      "valid_until": "2026-09-05"
+      "valid_from": "2026-08-29",
+      "valid_until": "2026-10-24"
     }
   ],
   "modules": [
