@@ -1,0 +1,439 @@
+{
+  "schemaVersion": 1,
+  "recordingId": "interview-cambricon-recording-01",
+  "createdAt": "2026-09-08T12:35:07.298Z",
+  "comparisonKind": "Independent OpenAI ASR text against existing Gemini audio-understanding draft and prior local review",
+  "sources": {
+    "asr": {
+      "path": "outputs/managed/interview-video-analysis/transcripts/transcribe-cambricon-recording-01-openai-20260908.raw.json",
+      "sha256": "4847eaa681d711612b49084402353bbac3b0006032a65e52f795db57b80d3656"
+    },
+    "index": {
+      "path": "outputs/managed/interview-video-analysis/transcripts/interview-cambricon-recording-01.openai-asr-indexed.json",
+      "sha256": "4b8c0ba7c4a719bfff7b2e3f938430bdd882326bbf625c003efbe8bdf1713ba2"
+    },
+    "gemini": {
+      "path": "outputs/managed/interview-video-analysis/analysis/understand-cambricon-recording-01-20260908.audio.md",
+      "sha256": "f3f3395b7dcab04f9f34b269bc0c08df319ab144f1e2ec80eb45b83c0b09670f"
+    },
+    "priorAudit": {
+      "path": "outputs/managed/interview-video-analysis/analysis/interview-cambricon-recording-01.audio-evidence-audit.md",
+      "sha256": "88f17d7060e754998bd0bd4eec123ff8885626f1c0ca3258c858262730b16d54"
+    },
+    "priorReport": {
+      "path": "outputs/managed/interview-video-analysis/reports/interview-cambricon-recording-01-analysis.md",
+      "sha256": "aa13fae32af4f17f71af37f1b05d9da1142d23bb2605d006d982085a44997af5"
+    }
+  },
+  "sameAudioInput": true,
+  "geminiNewCalls": 0,
+  "asrNewCalls": 1,
+  "independentAsrModels": 1,
+  "humanReferenceTranscriptAvailable": false,
+  "wordErrorRateComputed": false,
+  "exactAudioAlignment": false,
+  "offsetConvention": "Zero-based UTF-16 code-unit offsets into ASR response text, [start,end). No inferred timestamps.",
+  "questionMap": [
+    {
+      "id": "Q1",
+      "paragraphs": [
+        "P001",
+        "P002",
+        "P003",
+        "P004"
+      ],
+      "newRelativeToGemini": false
+    },
+    {
+      "id": "Q2",
+      "paragraphs": [
+        "P004",
+        "P005",
+        "P006"
+      ],
+      "newRelativeToGemini": false
+    },
+    {
+      "id": "Q3",
+      "paragraphs": [
+        "P007",
+        "P008"
+      ],
+      "newRelativeToGemini": false
+    },
+    {
+      "id": "Q4",
+      "paragraphs": [
+        "P009",
+        "P010",
+        "P011"
+      ],
+      "newRelativeToGemini": false
+    },
+    {
+      "id": "Q5",
+      "paragraphs": [
+        "P011",
+        "P012",
+        "P013",
+        "P014"
+      ],
+      "newRelativeToGemini": false
+    },
+    {
+      "id": "Q6",
+      "paragraphs": [
+        "P014",
+        "P015",
+        "P016"
+      ],
+      "newRelativeToGemini": false
+    },
+    {
+      "id": "Q7",
+      "paragraphs": [
+        "P017",
+        "P018"
+      ],
+      "newRelativeToGemini": false
+    },
+    {
+      "id": "Q8",
+      "paragraphs": [
+        "P019"
+      ],
+      "newRelativeToGemini": false
+    },
+    {
+      "id": "Q9",
+      "paragraphs": [
+        "P019"
+      ],
+      "newRelativeToGemini": false
+    },
+    {
+      "id": "Q10",
+      "paragraphs": [
+        "P019",
+        "P020"
+      ],
+      "newRelativeToGemini": false
+    },
+    {
+      "id": "Q11",
+      "paragraphs": [
+        "P020"
+      ],
+      "newRelativeToGemini": false
+    },
+    {
+      "id": "Q12",
+      "paragraphs": [
+        "P020"
+      ],
+      "newRelativeToGemini": false
+    },
+    {
+      "id": "Q13",
+      "paragraphs": [
+        "P021",
+        "P022",
+        "P023"
+      ],
+      "newRelativeToGemini": false
+    },
+    {
+      "id": "Q14",
+      "paragraphs": [
+        "P023",
+        "P024"
+      ],
+      "newRelativeToGemini": false
+    },
+    {
+      "id": "Q15",
+      "paragraphs": [
+        "P024"
+      ],
+      "newRelativeToGemini": false
+    },
+    {
+      "id": "Q15b",
+      "paragraphs": [
+        "P024"
+      ],
+      "newRelativeToGemini": true
+    },
+    {
+      "id": "Q16",
+      "paragraphs": [
+        "P024",
+        "P025"
+      ],
+      "newRelativeToGemini": false
+    },
+    {
+      "id": "Q17",
+      "paragraphs": [
+        "P025",
+        "P026",
+        "P027"
+      ],
+      "newRelativeToGemini": false
+    }
+  ],
+  "evidence": [
+    {
+      "id": "C01",
+      "quote": "也是非 CUDA 架构的",
+      "startChar": 288,
+      "endChar": 300,
+      "paragraphs": [
+        "P001"
+      ],
+      "questionId": "Q1",
+      "classification": "conflict",
+      "geminiOrPriorReportSummary": "Gemini 把硬件描述写成类 CUDA。",
+      "revision": "ASR 明确出现非 CUDA；保留非 CUDA 的转写证据，不用类 CUDA 概括本场自述。",
+      "speakerAttribution": "Inferred only from adjacent question-answer semantics when needed; no diarization evidence."
+    },
+    {
+      "id": "C02",
+      "quote": "最后一块它就无法命中了，然后结果就是最后需要重算。",
+      "startChar": 1801,
+      "endChar": 1826,
+      "paragraphs": [
+        "P005"
+      ],
+      "questionId": "Q2",
+      "classification": "clarification",
+      "geminiOrPriorReportSummary": "Gemini 将大尾块未满概括成缓存匹配失效，旧审查提醒避免全前缀 miss 的表述。",
+      "revision": "ASR 本身明确最后一块不能命中、最后需要重算；不将整个前缀失效归为候选人观点。",
+      "speakerAttribution": "Inferred only from adjacent question-answer semantics when needed; no diarization evidence."
+    },
+    {
+      "id": "C03",
+      "quote": "变成 3 乘 14 乘 14 乘 2。",
+      "startChar": 3490,
+      "endChar": 3509,
+      "paragraphs": [
+        "P010"
+      ],
+      "questionId": "Q4",
+      "classification": "clarification",
+      "geminiOrPriorReportSummary": "Gemini 在 14×14×2=392 与 1000 多之间跳转。",
+      "revision": "ASR 明确完整乘积为 3×14×14×2；旧版数值混乱担忧需收窄，仍检查 byte/元素和实测口径。",
+      "speakerAttribution": "Inferred only from adjacent question-answer semantics when needed; no diarization evidence."
+    },
+    {
+      "id": "C04",
+      "quote": "一千一一幺二八零",
+      "startChar": 3531,
+      "endChar": 3539,
+      "paragraphs": [
+        "P010"
+      ],
+      "questionId": "Q4",
+      "classification": "transcription-uncertainty",
+      "geminiOrPriorReportSummary": "Gemini 补写 1024/1280。",
+      "revision": "ASR 有一段口吃式数字，末尾可读为幺二八零；不保留 1024 为已说数字，1280 也不是独立听辨确认。",
+      "speakerAttribution": "Inferred only from adjacent question-answer semantics when needed; no diarization evidence."
+    },
+    {
+      "id": "C05",
+      "quote": "但是这个流其实还没有开始做，所以它也算是同步完成了。",
+      "startChar": 5049,
+      "endChar": 5075,
+      "paragraphs": [
+        "P014"
+      ],
+      "questionId": "Q5",
+      "classification": "mechanism-narrowed",
+      "geminiOrPriorReportSummary": "Gemini 解释成异步流提前读取未完成 Host 写入。",
+      "revision": "ASR 强调拷贝流尚未开始而同步已返回；应核对入队、等待与准备完成的先后，不锁定为一种 Host 内存竞争。",
+      "speakerAttribution": "Inferred only from adjacent question-answer semantics when needed; no diarization evidence."
+    },
+    {
+      "id": "C06",
+      "quote": "然后最后我们就把这里再加了一个 device 的 guard",
+      "startChar": 5094,
+      "endChar": 5124,
+      "paragraphs": [
+        "P014"
+      ],
+      "questionId": "Q5",
+      "classification": "prior-audit-correction",
+      "geminiOrPriorReportSummary": "上一轮审查把 DeviceGuard 修复表述视为底稿补入。",
+      "revision": "ASR 明确提到 device guard，撤回无现场文字支持这一判断；具体类、实现与同步语义仍未知。",
+      "speakerAttribution": "Inferred only from adjacent question-answer semantics when needed; no diarization evidence."
+    },
+    {
+      "id": "C07",
+      "quote": "现在 PaddlePaddle 不停地升级",
+      "startChar": 5354,
+      "endChar": 5375,
+      "paragraphs": [
+        "P015"
+      ],
+      "questionId": "Q6",
+      "classification": "transcription-conflict",
+      "geminiOrPriorReportSummary": "Gemini 统一识别为 PyTorch，ASR 连续识别为 Paddle/PaddlePaddle。",
+      "revision": "结合前后 PyTorch 和插件语境，PyTorch 是候选解释；不静默修正原文，也不新增 Paddle 项目经历。",
+      "speakerAttribution": "Inferred only from adjacent question-answer semantics when needed; no diarization evidence."
+    },
+    {
+      "id": "C08",
+      "quote": "这个工作其实还在进行中，所以就不太好说太多。",
+      "startChar": 5571,
+      "endChar": 5593,
+      "paragraphs": [
+        "P015"
+      ],
+      "questionId": "Q6",
+      "classification": "scope-clarification",
+      "geminiOrPriorReportSummary": "Gemini 的流畅分层摘要容易掩盖项目阶段。",
+      "revision": "ASR 明确该插件工作仍在进行中；保留进行中状态，不写成完成完整插件。",
+      "speakerAttribution": "Inferred only from adjacent question-answer semantics when needed; no diarization evidence."
+    },
+    {
+      "id": "C09",
+      "quote": "您指的是那个 Process Group 那个吗？",
+      "startChar": 6185,
+      "endChar": 6210,
+      "paragraphs": [
+        "P017"
+      ],
+      "questionId": "Q7",
+      "classification": "speaker-attribution-correction",
+      "geminiOrPriorReportSummary": "Gemini 记为面试官明确提问 ProcessGroup。",
+      "revision": "按 ASR 相邻问答语义，是候选人先确认是否指 Process Group，再得到回应；没有独立说话人分离。",
+      "speakerAttribution": "Inferred only from adjacent question-answer semantics when needed; no diarization evidence."
+    },
+    {
+      "id": "C10",
+      "quote": "我记得应该是它背后可以有个虚函数指针表",
+      "startChar": 7003,
+      "endChar": 7022,
+      "paragraphs": [
+        "P019"
+      ],
+      "questionId": "Q9",
+      "classification": "evidence-narrowed",
+      "geminiOrPriorReportSummary": "Gemini 补齐了对象虚表指针到派生实现的完整解释。",
+      "revision": "ASR 明确支持提到虚函数指针表；没有同等清楚的独立 vptr 解释，不把补齐内容计作已展示。",
+      "speakerAttribution": "Inferred only from adjacent question-answer semantics when needed; no diarization evidence."
+    },
+    {
+      "id": "C11",
+      "quote": "应该也是在栈上。",
+      "startChar": 7397,
+      "endChar": 7405,
+      "paragraphs": [
+        "P020"
+      ],
+      "questionId": "Q11",
+      "classification": "supported",
+      "geminiOrPriorReportSummary": "Gemini 记录全局变量被回答为栈上。",
+      "revision": "ASR 相互支持这一局部回答；后续未见完整正确修正，仍不从此推断全部编程能力。",
+      "speakerAttribution": "Inferred only from adjacent question-answer semantics when needed; no diarization evidence."
+    },
+    {
+      "id": "C12",
+      "quote": "就是在每次调用这个函数的时候，它会先进入装饰器",
+      "startChar": 7495,
+      "endChar": 7518,
+      "paragraphs": [
+        "P020"
+      ],
+      "questionId": "Q12",
+      "classification": "supported-with-boundary",
+      "geminiOrPriorReportSummary": "Gemini 记录装饰器在函数调用时先执行。",
+      "revision": "ASR 支持此措辞；重点澄清装饰阶段与 wrapper 调用阶段，不能仅按流畅摘要认定机制完整。",
+      "speakerAttribution": "Inferred only from adjacent question-answer semantics when needed; no diarization evidence."
+    },
+    {
+      "id": "C13",
+      "quote": "这个我也是在实践中看到过一些。",
+      "startChar": 7838,
+      "endChar": 7853,
+      "paragraphs": [
+        "P021"
+      ],
+      "questionId": "Q13",
+      "classification": "scope-clarification",
+      "geminiOrPriorReportSummary": "Gemini 写成在某项目用到 Monkey Patch。",
+      "revision": "ASR 明确说在实践中看到过；可以保留理解与场景推导，独立实现及验证程度未展示。",
+      "speakerAttribution": "Inferred only from adjacent question-answer semantics when needed; no diarization evidence."
+    },
+    {
+      "id": "C14",
+      "quote": "也是 Python 唯一的解释器去切换上下文的去处理的。",
+      "startChar": 8648,
+      "endChar": 8676,
+      "paragraphs": [
+        "P023"
+      ],
+      "questionId": "Q14",
+      "classification": "evidence-narrowed",
+      "geminiOrPriorReportSummary": "Gemini 补成 CPython 字节码受 GIL 串行限制的标准说法。",
+      "revision": "ASR 更接近单解释器切换上下文的解释；方向有主旨，但锁与解释器数量仍要区分。",
+      "speakerAttribution": "Inferred only from adjacent question-answer semantics when needed; no diarization evidence."
+    },
+    {
+      "id": "C15",
+      "quote": "一般来说我们通信是采用的是那种模型上面的通信",
+      "startChar": 8748,
+      "endChar": 8770,
+      "paragraphs": [
+        "P024"
+      ],
+      "questionId": "Q15",
+      "classification": "unsupported-specifics",
+      "geminiOrPriorReportSummary": "Gemini 补入 all_reduce/all_gather 作为 IPC 回答。",
+      "revision": "ASR 该段未明确列出这些 API；保留模型层通信/通信库这一粗粒度概述，sockets/OS 识别本身也待核。",
+      "speakerAttribution": "Inferred only from adjacent question-answer semantics when needed; no diarization evidence."
+    },
+    {
+      "id": "C16",
+      "quote": "C++ 没有写过多线程。",
+      "startChar": 8829,
+      "endChar": 8841,
+      "paragraphs": [
+        "P024"
+      ],
+      "questionId": "Q15b",
+      "classification": "new-follow-up",
+      "geminiOrPriorReportSummary": "旧 Gemini 问题索引未单列 C++ 多线程实践追问。",
+      "revision": "ASR 包含回答 C++ 没有写过多线程；补入问答与准备项，不推断完全不懂并发。",
+      "speakerAttribution": "Inferred only from adjacent question-answer semantics when needed; no diarization evidence."
+    },
+    {
+      "id": "C17",
+      "quote": "我们也是用的 private use one 这个玩意儿。",
+      "startChar": 9495,
+      "endChar": 9524,
+      "paragraphs": [
+        "P026"
+      ],
+      "questionId": "Q17",
+      "classification": "new-detail",
+      "geminiOrPriorReportSummary": "Gemini 未保留反问中 PrivateUse1 的提及。",
+      "revision": "按相邻语义，PrivateUse1 是面试官介绍团队时提及，不能计作候选人展开解释。",
+      "speakerAttribution": "Inferred only from adjacent question-answer semantics when needed; no diarization evidence."
+    },
+    {
+      "id": "C18",
+      "quote": "因为插件里边还有什么 Torch Compile",
+      "startChar": 9710,
+      "endChar": 9734,
+      "paragraphs": [
+        "P026"
+      ],
+      "questionId": "Q17",
+      "classification": "speaker-attribution-correction",
+      "geminiOrPriorReportSummary": "Gemini 把 torch.compile 列为候选人主动反问。",
+      "revision": "ASR 中该话题由面试官在介绍插件工作时提出，候选人回应；收窄主动反问的归属。",
+      "speakerAttribution": "Inferred only from adjacent question-answer semantics when needed; no diarization evidence."
+    }
+  ]
+}

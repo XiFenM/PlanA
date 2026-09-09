@@ -1,0 +1,92 @@
+{
+  "recordingId": "interview-cambricon-recording-01",
+  "verifiedAt": "2026-09-08T12:40:01.767Z",
+  "scope": "ASR comparison and Gemini default configuration update; verification before registering this evidence as an artifact.",
+  "documentChecks": {
+    "indexSegments": 27,
+    "textCharacters": 9977,
+    "roundtrip": true,
+    "exactQuoteSpans": 18,
+    "questionGroups": 18,
+    "newQuestionGroups": 1,
+    "localLinksVerified": 20,
+    "oldObjectsUnchanged": true,
+    "exactAudioAlignment": false,
+    "humanListening": false,
+    "diagnostic": "work/managed/interview-video-analysis/preflight/cambricon-asr-delivery-candidate-manifest-20260908.json"
+  },
+  "asrResponseValidation": {
+    "valid": true,
+    "input": "/root/workspace/learning/daily-work/outputs/managed/interview-video-analysis/transcripts/transcribe-cambricon-recording-01-openai-20260908.raw.json",
+    "model": "openai/gpt-transcribe",
+    "textChars": 9977,
+    "usage": {
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "total_tokens": 0,
+      "seconds": 2202
+    },
+    "durationChecked": true
+  },
+  "candidateManifestValidation": {
+    "valid": true,
+    "manifest": "/root/workspace/learning/daily-work/work/managed/interview-video-analysis/preflight/cambricon-asr-delivery-candidate-manifest-20260908.json",
+    "sources": 1,
+    "analysisRuns": 11,
+    "artifacts": 34,
+    "verifiedFiles": 39,
+    "diagnostic": {
+      "path": "work/managed/interview-video-analysis/preflight/cambricon-asr-delivery-candidate-manifest-20260908.json",
+      "sha256": "853c37e76917bc30535ffd853e6a7ebc8cc0d9197b88f26cbde5c012375fe019"
+    },
+    "note": "Extracted diagnostic snapshot only; project manifest remains the single business record."
+  },
+  "workflow": {
+    "valid": true,
+    "workflowId": "interview-video-analysis-20260908",
+    "operationId": "transcribe-cambricon-recording-01-openai-20260908",
+    "state": "succeeded",
+    "previewDigest": "31a4a9dc2e929d641ab3ab794b107fe03150848c2ddf7ad7362df6c766547f74",
+    "receiptKind": "local-response-sha256-fingerprint",
+    "providerRequestIdAvailable": false
+  },
+  "defaults": {
+    "localEnvUnderstandingModelAlreadySet": "google/gemini-3.8-flash",
+    "exampleUnderstandingModelUpdated": "google/gemini-3.8-flash",
+    "defaultTranscriptionModel": "openai/gpt-transcribe",
+    "effectiveUnderstandingDefaultDryRunPassed": true,
+    "geminiNewCalls": 0
+  },
+  "checks": {
+    "pnpmCheck": "passed",
+    "testFilesPassed": 7,
+    "testsPassed": 57,
+    "finalFormatCheck": "passed",
+    "sourceAndHistoricalObjectsUnchanged": true,
+    "asrRawTextIndexExact": true,
+    "quoteSpansVerified": 18
+  },
+  "fullProjectManifest": {
+    "status": "pre-existing-missing-files",
+    "unchangedFromBaseline": true,
+    "errorLines": 15
+  },
+  "externalCalls": {
+    "billableTranscriptions": 1,
+    "model": "openai/gpt-transcribe",
+    "apiDurationSeconds": 2202,
+    "retries": 0,
+    "geminiCallsThisTurn": 0,
+    "readOnlyModelCatalogQueries": 1,
+    "published": false,
+    "actualBillingVerified": false
+  },
+  "limitations": {
+    "humanListening": false,
+    "diarization": false,
+    "exactAudioTimestamps": false,
+    "wordErrorRate": false,
+    "groundTruthTranscript": false,
+    "userAcceptance": "pending"
+  }
+}

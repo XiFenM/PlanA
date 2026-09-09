@@ -1,0 +1,59 @@
+{
+  "schema": "agent-skills.creator-operation-proposal/v1",
+  "workflow_id": "interview-video-analysis-20260908",
+  "operation_id": "transcribe-cambricon-recording-01-openai-20260908",
+  "kind": "transform",
+  "profile_id": "content-project",
+  "route_id": "zenmux-transcribe",
+  "summary": "One OpenAI transcription of the exact audio previously analyzed by Gemini, explicitly requested by the user for comparison; no new Gemini invocation.",
+  "inputs": [
+    {
+      "path": "package.json",
+      "sha256": "947c92fe216468319b3c2f7fe351618564063a3f6cab191838ac7ce93662f7ef",
+      "authority": "managed-fact"
+    },
+    {
+      "path": "work/managed/interview-video-analysis/derived/interview-cambricon-recording-01.normalized-stereo-16k-64kbps.mp3",
+      "sha256": "3a4e76277132d28cc3bf60629d9c801ac97b522a7d013927ce266cafd4a99b04",
+      "authority": "user-provided"
+    }
+  ],
+  "targets": [
+    {
+      "path": "outputs/managed/interview-video-analysis/transcripts/transcribe-cambricon-recording-01-openai-20260908.raw.json",
+      "before_sha256": "absent"
+    }
+  ],
+  "dependencies": [],
+  "parameters": {
+    "subcommand": "transcribe",
+    "arguments": {
+      "enable-itn": true,
+      "input": "work/managed/interview-video-analysis/derived/interview-cambricon-recording-01.normalized-stereo-16k-64kbps.mp3",
+      "language": "zh",
+      "max-local-mb": 25,
+      "model": "openai/gpt-transcribe",
+      "out": "outputs/managed/interview-video-analysis/transcripts/transcribe-cambricon-recording-01-openai-20260908.raw.json"
+    }
+  },
+  "billable": true,
+  "billing": {
+    "provider": "zenmux",
+    "model_or_tier": "openai/gpt-transcribe",
+    "count": 1,
+    "request_bounds": {
+      "enable-itn": true,
+      "language": "zh",
+      "max-local-mb": 25,
+      "stream": false
+    },
+    "cost_boundary": {
+      "kind": "estimate-only",
+      "currency": "USD",
+      "amount": "0.50"
+    },
+    "one_attempt_max": true
+  },
+  "destructive": false,
+  "remote": true
+}

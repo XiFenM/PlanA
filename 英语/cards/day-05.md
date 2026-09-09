@@ -5,10 +5,11 @@
     "id": "markji",
     "profile": "plana-markji"
   },
-  "candidate_sha256": "870ab976ead76c138e920d30b221813a41a64e559654442d1404b56f5edcf08e",
+  "artifact_set_sha256": "7c36a815a862f87cfe1b9bb7430e7d627aba142f398af8e9bcd1e4d8b1c835f3",
+  "candidate_sha256": "04d072199912ac264f1dd9946655627f67aea98bd81fd584784b438f18913c53",
   "cards": [
     {
-      "content_sha256": "6a4282c36d1503c37b11bb65e87f363cfe98842f6b92a8d1ef854693a2f9a0d8",
+      "content_sha256": "eb23e217d5967c368bd8cd54329052d1f63b576ef3bab01fe8e7b411425de489",
       "content_summary": "主动产出 turn an entire Git repository into an interactive code knowledge graph，并掌握 turn A into B 的结构。",
       "dependency_content_sha256": {},
       "depends_on": [],
@@ -32,10 +33,10 @@
       ],
       "successor_to": null,
       "template_id": "active-production",
-      "template_version": "1.0.0"
+      "template_version": "1.1.0"
     },
     {
-      "content_sha256": "f98a926dca894b12b155571c539ecd789fcdb220e0bad1aed61ab2b1a4ce0857",
+      "content_sha256": "5028b4ee8783dd384148a3eb365c9ca716bb2f5f52d0d5e61ae0ad56d7240d4c",
       "content_summary": "主动产出 get up to speed on an unfamiliar codebase，并掌握其“达到可工作理解”的边界。",
       "dependency_content_sha256": {},
       "depends_on": [],
@@ -59,12 +60,43 @@
       ],
       "successor_to": null,
       "template_id": "active-production",
-      "template_version": "1.0.0"
+      "template_version": "1.1.0"
     }
   ],
-  "managed_body_sha256": "2c37733890c5d2f5ac01c1ab4255a44baecfe163145ccb53845b47b66d12c533",
-  "manifest_payload_sha256": "c646ae307a05f1ee86a64a3f06463429c0f4a2e2e18bc19f7b287be674f8d34a",
-  "schema": "memo-cards.artifact/v1",
+  "managed_body_sha256": "7fcbc8ed1a9b9f9423ff31c167c31572d0994cc88174b26658287df07cd315be",
+  "manifest_payload_sha256": "f2ee0ef66124bcf5166a0df5b0863609c8915410d191ceb7e6e3f4d785d533a6",
+  "schema": "memo-cards.artifact/v2",
+  "sidecars": [
+    {
+      "byte_size": 3933,
+      "columns": [
+        "提示",
+        "目标表达",
+        "边界",
+        "场景"
+      ],
+      "kind": "markji-import-xlsx",
+      "path": "英语/cards/day-05-active-production.xlsx",
+      "row_count": 2,
+      "rows": [
+        {
+          "content_sha256": "eb23e217d5967c368bd8cd54329052d1f63b576ef3bab01fe8e7b411425de489",
+          "logical_id": "mc-1e655c30d6cc98adf68462fb",
+          "row_sha256": "76a674311a78e96f2c7d335b0f455b494c912c9dd6357ab4495aa09652723b32"
+        },
+        {
+          "content_sha256": "5028b4ee8783dd384148a3eb365c9ca716bb2f5f52d0d5e61ae0ad56d7240d4c",
+          "logical_id": "mc-c44ae3571855a03f4c4e3c06",
+          "row_sha256": "5f750ac470eccb2f349784e472df353a7a172c5add2a088bf410a39ab00b0356"
+        }
+      ],
+      "sha256": "362011f34f043b653cc4db8d8daaad9c4aadfb134e9f4bf6830a1434ac10e176",
+      "sheet_name": "cards",
+      "table_sha256": "d59fd6d0ce580690f5e4ad02f4ba8bbf3eb8b441ef03ec25e7659ec43d9a9256",
+      "template_id": "active-production",
+      "template_version": "1.1.0"
+    }
+  ],
   "source_fingerprint": "2a446f04e3efe30fc3468154c54b6af4d93bcd9f8027987a080bc7179cdd0d13",
   "sources": [
     {
@@ -76,17 +108,17 @@
     }
   ],
   "target_collection": "english-cards",
-  "template_registry_sha256": "d6cdcd90c996ca6922a06f02a44b06800468a557bec6ad5c433511d7b57761d7",
-  "template_registry_version": "1.0.0"
+  "template_registry_sha256": "358d0b6e1ee30ee06c0ae9636266ddafad6f2e81494f6d8975d68448e190996c",
+  "template_registry_version": "1.1.0"
 }
 ---
-# Markji 表格导入暂存
+# Markji 表格导入卡片
 
-> 供粘贴进 Markji 下载表格；这不是可直接上传的 TSV 文件。
+> Markdown 保留受管元数据与模板定义；卡片数据请使用下列按模板拆分的 XLSX 文件导入。
 
 ## 主动产出卡
 
-模板 `active-production@1.0.0`：
+模板 `active-production@1.1.0`：
 
 ```text
 [P#H1#{{提示}}]
@@ -96,8 +128,4 @@
 📍 [T#!939393#{{场景}}]
 ```
 
-```tsv
-提示	目标表达	边界	场景
-怎样表达“把整个 Git 仓库转换成可交互的代码知识图谱”？	turn an entire Git repository into an interactive code knowledge graph	turn A into B 表示把 A 转换为 B；entire 强调整个仓库，interactive code knowledge graph 比泛称 code map 更具体。示例：I am looking for an open-source tool that can turn an entire Git repository into an interactive code knowledge graph.	描述 Graphify、CodeGraph 等源码可视化工具的目标
-怎样表达“快速熟悉一个陌生代码库”？	get up to speed on an unfamiliar codebase	get up to speed on 表示快速补齐背景并达到可工作的理解程度，不等同于完全掌握。示例：A good code map can help me get up to speed on an unfamiliar codebase.	说明希望借助代码图谱快速学习 vLLM 等开源项目
-```
+导入文件：[day-05-active-production.xlsx](day-05-active-production.xlsx)（2 张卡）

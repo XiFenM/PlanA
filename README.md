@@ -123,7 +123,7 @@ git submodule update --init --recursive -- .agent-skills
 ### 2.2 Skill 中央管线（version 2 受管配置）
 
 中央规范源以 [`.agent-skills`](.agent-skills) 子模块固定在
-`424a0a910c362b6dca370fc59d56366c7668bd8f`。[`.agent-skills.json`](.agent-skills.json) 为 Codex 与 Claude
+`4ce41526b9b43ec0f434c06ffc008128bdc36ea8`。[`.agent-skills.json`](.agent-skills.json) 为 Codex 与 Claude
 同时选择 `guide-learning`、`study-log`、`english-coach`、`memo-cards`、
 `resource-planning` 和 `playwright-cli`，并为五个学习 Skill 引用
 [`.agent-skills-config/`](.agent-skills-config/) 下的 Git-tracked 公共配置。`playwright-cli` 无需仓库配置。
@@ -184,12 +184,15 @@ uv run --no-project python .agent-skills/tools/materialize_skills.py --repo . --
 | `resource-planning` | **供给侧**：research → refresh → review 的受管资源生命周期 | 「研究／比较资料」；持久动作须精确预览与当次确认 |
 | `guide-learning` | **主干**：来源化教学 → 讲后检查 → 按证据缺口练习 → mastery → 稀疏恢复 | 教我／带我学／继续或恢复 Lesson |
 | `study-log` | **按需交接**：结构化过程记录，或经边界与隐私确认的 raw 可见文本存档 | 「整理学习记录／保存原始对话」 |
-| `memo-cards` | **记忆侧**：学习记录 / 文章面试Q&A / 英语日志 → 墨墨 TSV 卡 | 「制卡」 |
+| `memo-cards` | **记忆侧**：成熟素材 → Markdown／XLSX 复习卡，可通过官方 API 上传到指定 Markji 章节 | 「制卡」「上传卡片」 |
 | `english-coach` | **英语轨**：学后「英语回顾」专项（主）+ 技术对话轮末反馈（辅） | 「英语回顾」/ 直接写英文 |
 | `playwright-cli` | 工具件，不占流程位 | 浏览器自动化 |
 
 学习、文章、结构化记录、原始对话、卡片和英语回顾是六个可独立授权的动作。学习收尾不自动生成后五者；
 有价值时 Agent 可以提议，用户确认后才交给对应 Skill。
+
+直接上传 Markji 的 token 只在本机秘密存储中配置，不进入本仓库公共配置或对话。
+设置方法见[墨墨 API 上传与密钥配置](.agent-skills/skills/memo-cards/references/markji-api-upload.md)。
 
 ---
 

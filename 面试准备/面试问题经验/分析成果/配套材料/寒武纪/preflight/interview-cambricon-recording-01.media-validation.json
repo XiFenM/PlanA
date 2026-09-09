@@ -1,0 +1,45 @@
+{
+  "recordingId": "interview-cambricon-recording-01",
+  "checkedAt": "2026-09-08T12:11:43.617Z",
+  "source": {
+    "path": "work/managed/interview-video-analysis/incoming/寒武纪.mkv",
+    "sha256": "1006b01c8a1ebaa4935e0376a39b7e6617a60ce78f54276e9cd48469e20ca0b9"
+  },
+  "audio": {
+    "path": "work/managed/interview-video-analysis/derived/interview-cambricon-recording-01.normalized-stereo-16k-64kbps.mp3",
+    "sha256": "3a4e76277132d28cc3bf60629d9c801ac97b522a7d013927ce266cafd4a99b04"
+  },
+  "sourceUnchanged": true,
+  "sourceAudioFullDecode": "passed",
+  "sourceVideoFullDecode": "not-run",
+  "derivativeFullDecode": "passed",
+  "sourceContainerDurationMs": 2201933,
+  "sourceAudioDurationMs": 2201834,
+  "derivativeDurationMs": 2201940,
+  "derivativeBytes": 17615853,
+  "channels": 2,
+  "sampleRateHz": 16000,
+  "under50MiB": true,
+  "encodedIntegratedLufs": -18.72,
+  "encodedTruePeakDbtp": -1.16,
+  "encoderPaddingWarning": "MP3 encoder emitted an end-padding queue warning; complete derivative decode passed and duration differs by only 0.106 seconds from source audio.",
+  "visualInspection": {
+    "kind": "local sampled frames",
+    "exactFrames": [
+      {
+        "sourceSeconds": 1200,
+        "path": "work/managed/interview-video-analysis/derived/interview-cambricon-recording-01.frame-20m00s.png",
+        "observation": "The editor shows the platform A+B C++ template; this is not evidence of candidate algorithm work."
+      },
+      {
+        "sourceSeconds": 2100,
+        "path": "work/managed/interview-video-analysis/derived/interview-cambricon-recording-01.frame-35m00s.png",
+        "observation": "The meeting video call fills most of the screen."
+      }
+    ],
+    "limits": "No claim about unsampled intervals, identity, emotions, external tabs, or source-file timestamps matching the meeting timer."
+  },
+  "independentAsrAvailable": false,
+  "humanListeningReview": false,
+  "externalGenerationCalls": 0
+}

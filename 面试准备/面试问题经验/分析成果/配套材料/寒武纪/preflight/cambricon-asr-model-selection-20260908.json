@@ -1,0 +1,89 @@
+{
+  "queriedAt": "2026-09-08T12:27:05.841Z",
+  "models": [
+    {
+      "id": "google/gemini-3.8-flash",
+      "object": "model",
+      "display_name": "Google: Gemini 3.8 Flash",
+      "created": 1788346035,
+      "owned_by": "google",
+      "input_modalities": [
+        "file",
+        "image",
+        "audio",
+        "video",
+        "text"
+      ],
+      "output_modalities": [
+        "text"
+      ],
+      "capabilities": {
+        "reasoning": true
+      },
+      "context_length": 1048576,
+      "pricings": {
+        "completion": [
+          {
+            "value": 3.75,
+            "unit": "perMTokens",
+            "currency": "USD"
+          }
+        ],
+        "input_cache_read": [
+          {
+            "value": 0.075,
+            "unit": "perMTokens",
+            "currency": "USD"
+          }
+        ],
+        "prompt": [
+          {
+            "value": 0.75,
+            "unit": "perMTokens",
+            "currency": "USD"
+          }
+        ],
+        "web_search": [
+          {
+            "value": 0.007,
+            "unit": "perCount",
+            "currency": "USD"
+          }
+        ]
+      },
+      "publish_time": "2026-09-02"
+    },
+    {
+      "id": "openai/gpt-transcribe",
+      "object": "model",
+      "display_name": "OpenAI: GPT Transcribe",
+      "created": 1786436995,
+      "owned_by": "openai",
+      "input_modalities": [
+        "audio"
+      ],
+      "output_modalities": [
+        "transcription"
+      ],
+      "capabilities": {
+        "reasoning": false
+      },
+      "context_length": 15000,
+      "pricings": {
+        "audio_input": [
+          {
+            "value": 0.000075,
+            "unit": "perSecond",
+            "currency": "USD"
+          }
+        ]
+      },
+      "publish_time": "2026-08-06"
+    }
+  ],
+  "asrSeconds": 2201.94,
+  "asrEstimatedUsd": 0.1651455,
+  "asrEstimateOnlyBoundaryUsd": 0.5,
+  "oneAttemptMax": true,
+  "geminiExternalCalls": 0
+}

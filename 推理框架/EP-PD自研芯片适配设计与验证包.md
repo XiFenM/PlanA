@@ -208,6 +208,16 @@
 - **已完成动作**：在既有验证包中登记 [W1-P1](#w1-p1-runtime-output-validation) 的范围、候选验证点、材料与启动边界；更新恢复指针，当前不自动进入实践。
 - **证据边界**：这只是待办登记，不是正式实践契约接受、测试执行或通过记录，不修改既有文字练习结果，也不标记 W1 完成。
 
+#### `plana-jd-w1-20260909-kv-page-spec-review`
+
+- **日期**：2026-09-09
+- **Lesson 引用**：`plana-jd-w1-vllm-execution-boundaries`
+- **覆盖范围**：按用户请求快速复习上游 KV 页尾 padding 的规格配置、物理页字节数、原始存储块数与 Tensor stride，并准备通用场景卡片。
+- **已完成动作**：在单层单组、普通未量化、B=16、本地 KV heads=8、K/V head 维度均为 96、BF16、仅页尾 padding、backend 真正支持对应 stride 的题设下，学习者正确回答 128 KiB 页跨度和 256 KiB 原始 buffer 对应 2 块、65536 个 BF16 元素的 block stride，逻辑 head_size 保持 96。
+- **接口补充**：针对学习者的设置入口追问，说明上游 `page_size_padded` 是补齐后整页总字节数的配置字段，`page_size_bytes` 是无 setter 的派生属性；冻结规格通过构造参数或 `replace` 生成。普通页尾 padding view 分支依赖该配置是否非空，并要求 num-blocks-first 布局及 kernel 的真实 stride 支持。原始 int8 buffer 的字节容量与逻辑 view 的元素数分别使用。
+- **一手来源锚点**：固定 `vLLM v0.26.0 @ 568afb3` 的 [AttentionSpec 字段与属性](https://github.com/vllm-project/vllm/blob/568afb3a13806beb53bb2e6bd518269357b237c0/vllm/v1/kv_cache_interface.py#L175-L201)、[页尾 padding view](https://github.com/vllm-project/vllm/blob/568afb3a13806beb53bb2e6bd518269357b237c0/vllm/v1/worker/gpu/attn_utils.py#L200-L253)、[MRV1 原始分配与块数解释](https://github.com/vllm-project/vllm/blob/568afb3a13806beb53bb2e6bd518269357b237c0/vllm/v1/worker/gpu_model_runner.py#L7238-L7344)、[容量规划](https://github.com/vllm-project/vllm/blob/568afb3a13806beb53bb2e6bd518269357b237c0/vllm/v1/core/kv_cache_utils.py#L1344-L1419)。具体实现以这些固定源码为准。
+- **证据边界**：本段记录轻量变式作答和接口讲解，不声称完成 kernel 适配、设备实测或整个 W1；原周末实践安排不变。自研 vllm-cl 的历史双字段方案归入工程实践案例，不作为上游接口限制或本组通用卡片的事实依据。
+
 ---
 
 > 以下章节保存设计工件、来源锚点和历史 evidence。章节内的历史推进记录不裁决当前 Lesson stage、唯一下一动作或 final mastery。

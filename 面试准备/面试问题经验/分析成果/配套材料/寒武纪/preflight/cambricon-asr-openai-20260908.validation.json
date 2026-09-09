@@ -1,0 +1,1 @@
+{"valid":true,"input":"/root/workspace/learning/daily-work/outputs/managed/interview-video-analysis/transcripts/transcribe-cambricon-recording-01-openai-20260908.raw.json","model":"openai/gpt-transcribe","textChars":9977,"usage":{"input_tokens":0,"output_tokens":0,"total_tokens":0,"seconds":2202},"durationChecked":true}

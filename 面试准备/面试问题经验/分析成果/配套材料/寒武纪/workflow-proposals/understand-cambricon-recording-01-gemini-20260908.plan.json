@@ -1,0 +1,72 @@
+{
+  "billable": true,
+  "billing": {
+    "cost_boundary": {
+      "amount": "1.00",
+      "currency": "USD",
+      "kind": "estimate-only"
+    },
+    "count": 1,
+    "model_or_tier": "google/gemini-3.7-flash",
+    "one_attempt_max": true,
+    "provider": "zenmux",
+    "request_bounds": {
+      "compress": "none",
+      "max-local-mb": 50,
+      "stream": false
+    }
+  },
+  "context_digest": "96482c5eaad8df4900150e89f5745caa088227c2c047dc4660ca1684c59953ff",
+  "dependencies": [],
+  "destructive": false,
+  "inputs": [
+    {
+      "authority": "managed-fact",
+      "path": "package.json",
+      "sha256": "947c92fe216468319b3c2f7fe351618564063a3f6cab191838ac7ce93662f7ef"
+    },
+    {
+      "authority": "user-provided",
+      "path": "work/managed/interview-video-analysis/derived/interview-cambricon-recording-01.normalized-stereo-16k-64kbps.mp3",
+      "sha256": "3a4e76277132d28cc3bf60629d9c801ac97b522a7d013927ce266cafd4a99b04"
+    },
+    {
+      "authority": "user-provided",
+      "path": "work/managed/interview-video-analysis/prompts/understand-cambricon-recording-01-20260908.md",
+      "sha256": "9dd7eef3ae981a8fc14504900af8062fb646fd68f2e102ddcffd780a286a337f"
+    }
+  ],
+  "kind": "transform",
+  "operation_id": "understand-cambricon-recording-01-gemini-20260908",
+  "parameters": {
+    "arguments": {
+      "compress": "none",
+      "input": "work/managed/interview-video-analysis/derived/interview-cambricon-recording-01.normalized-stereo-16k-64kbps.mp3",
+      "max-local-mb": 50,
+      "model": "google/gemini-3.7-flash",
+      "out": "outputs/managed/interview-video-analysis/analysis/understand-cambricon-recording-01-20260908.audio.md",
+      "prompt-file": "work/managed/interview-video-analysis/prompts/understand-cambricon-recording-01-20260908.md"
+    },
+    "subcommand": "understand"
+  },
+  "preview_digest": "a1fe813b1686c15e0d78be726a2d872737539ffb8bb2d70f2de8762c7d55d970",
+  "profile_id": "content-project",
+  "remote": true,
+  "required_grants": [
+    "billable"
+  ],
+  "route_id": "zenmux-understand",
+  "schema": "agent-skills.creator-operation-plan/v1",
+  "summary": "Analyze the full normalized Cambricon interview audio under the user’s explicit permission to process this recording through ZenMux; one initial attempt, estimate-only USD 1 boundary.",
+  "targets": [
+    {
+      "before_sha256": "absent",
+      "path": "outputs/managed/interview-video-analysis/analysis/understand-cambricon-recording-01-20260908.audio.md"
+    },
+    {
+      "before_sha256": "absent",
+      "path": "outputs/managed/interview-video-analysis/analysis/understand-cambricon-recording-01-20260908.audio.md.response.json"
+    }
+  ],
+  "workflow_id": "interview-video-analysis-20260908"
+}

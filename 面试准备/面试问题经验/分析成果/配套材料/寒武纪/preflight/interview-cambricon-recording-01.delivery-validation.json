@@ -1,0 +1,79 @@
+{
+  "recordingId": "interview-cambricon-recording-01",
+  "verifiedAt": "2026-09-08T12:23:49.389Z",
+  "stage": "Candidate delivery verification before registering this evidence as an artifact; the canonical project manifest remains authoritative.",
+  "documentChecks": {
+    "historicalObjectsUnchanged": true,
+    "localLinksVerified": 5,
+    "reportContractSectionsPresent": true,
+    "questionIntervalsChecked": 17,
+    "timestampsWithinMedia": true,
+    "exactTimestampContentAlignmentVerified": false,
+    "verbatimTranscriptionVerified": false,
+    "diagnostic": "work/managed/interview-video-analysis/preflight/cambricon-delivery-candidate-manifest-diagnostic-20260908.json"
+  },
+  "candidateManifestValidation": {
+    "valid": true,
+    "manifest": "/root/workspace/learning/daily-work/work/managed/interview-video-analysis/preflight/cambricon-delivery-candidate-manifest-diagnostic-20260908.json",
+    "sources": 1,
+    "analysisRuns": 5,
+    "artifacts": 19,
+    "verifiedFiles": 21,
+    "diagnostic": {
+      "path": "work/managed/interview-video-analysis/preflight/cambricon-delivery-candidate-manifest-diagnostic-20260908.json",
+      "sha256": "c4d44d9f3c4163735b41e75bbbe538d368cfc148c59bd08d65bcdcc533ce148a"
+    },
+    "notes": "Diagnostic is an extracted snapshot for validation only, not a second project manifest."
+  },
+  "workflowLedger": {
+    "valid": true,
+    "workflowId": "interview-video-analysis-20260908",
+    "operationId": "understand-cambricon-recording-01-gemini-20260908",
+    "state": "succeeded",
+    "receipt": "0e0b3f6bab6840de99c9820b643bb615",
+    "previewDigest": "a1fe813b1686c15e0d78be726a2d872737539ffb8bb2d70f2de8762c7d55d970"
+  },
+  "repositoryCheck": {
+    "command": "pnpm check",
+    "status": "passed",
+    "skillMaterialization": "passed",
+    "format": "passed",
+    "lint": "passed",
+    "typecheck": "passed",
+    "testFilesPassed": 7,
+    "testsPassed": 57,
+    "executionEnvironment": "Allowed local IPC outside the restrictive sandbox; no real generation API used by tests."
+  },
+  "fullProjectManifest": {
+    "status": "blocked-by-pre-existing-missing-files",
+    "failureLines": 15,
+    "unchangedFromBaseline": true,
+    "notes": "First Horizon recording and four associated media/billing files are absent. Existing source, terminal-run and artifact objects remain unchanged."
+  },
+  "externalCalls": {
+    "billableUnderstandingRequests": 1,
+    "retries": 0,
+    "provider": "zenmux",
+    "model": "google/gemini-3.7-flash",
+    "material": "Exact full normalized stereo audio and prompt from the bound operation plan",
+    "successfulReadOnlyModelCatalogQueries": 1,
+    "publicTechnicalDocumentationRead": true,
+    "sourceMaterialSentToPublicSearch": false,
+    "publications": 0,
+    "actualBilledAmountVerified": false
+  },
+  "limits": {
+    "independentAsr": false,
+    "humanListening": false,
+    "exactTimestampAlignment": false,
+    "fullVideoReview": false,
+    "structuredCapabilityJsonValidation": false,
+    "userAcceptance": "pending"
+  },
+  "localMedia": {
+    "originalPreserved": true,
+    "sourceAudioFullDecode": true,
+    "derivativeFullDecode": true,
+    "rawFrameImagesIgnoredByGit": true
+  }
+}

@@ -1,0 +1,4 @@
+# 本次归档的音频副本与会议画面仅保留在本地。
+derived/*.mp3
+derived/*.png
+derived/*.jpg

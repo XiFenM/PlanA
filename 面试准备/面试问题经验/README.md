@@ -16,6 +16,7 @@
 | XG 科技二面，2026-08-24              | 主体较完整的带时间戳文字记录、AI 纪要与 4 张图               | [二面最终分析报告](分析成果/reports/interview-xg-20260824-02-analysis.md)                 | [二面原始素材](原始素材/XG科技/2026-08-24-二面/) |
 | 安霸半导体，2026-08-28（容器元数据） | 完整音频的单模型理解与本地证据审计；分析副本已做响度归一化   | [最终分析报告](分析成果/reports/interview-ambarella-20260828-01-analysis.md)              | 本次仅归档分析成果，原视频仍在 daily-work        |
 | 进迭时空，日期与轮次未确认           | 完整音频的一次 Gemini 理解与本地技术审查；整理出 17 组主要问答 | [分析报告](分析成果/reports/interview-jindie-recording-01-analysis.md)                  | 本次仅归档分析成果，原录音仍在 daily-work        |
+| 寒武纪，日期与轮次未确认 | 同音频的 Gemini 理解与 OpenAI 转写对照；17 组问答加 1 项补充追问 | [转写校准版复盘](分析成果/reports/interview-cambricon-recording-01-asr-calibrated-analysis.md) | 原视频仍在 daily-work；分析音频与抽帧随配套材料本地归档 |
 
 跨面试题目按主题汇总在 [common_problems.md](common_problems.md)。该文件是已有内容，本次归档没有改写。
 
@@ -25,10 +26,11 @@
 面试问题经验/
 ├── README.md                     # 本入口
 ├── common_problems.md            # 跨面试问题主题汇总
-├── 分析成果/                     # 27 个报告、审计、转写和 JSON 结果
+├── 分析成果/                     # 报告、审计、转写和配套证据
 │   ├── analysis/                 # 结构化分析与技术 QA
 │   ├── reports/                  # 逐场复盘报告
-│   └── transcripts/              # 转写、校准稿与交叉 QA
+│   ├── transcripts/              # 转写、校准稿与交叉 QA
+│   └── 配套材料/寒武纪/           # 处理说明、媒体副本、请求与验证记录
 └── 原始素材/                     # 12 个文字、简记和图片文件
     ├── 小红书/
     ├── 奕行智能/
@@ -131,20 +133,46 @@
 
 本次没有独立 ASR 或人工回听，时间码只作近似导航。底稿在约 `02:45–06:10`、`14:50–16:00` 等区间没有展开内容，仍需回听；技术审查已收窄模型对硬件细节的推断，并纠正 FlashAttention 复杂度等表述。2026-09-07 是处理与归档日期，不作为面试实际日期。
 
+### 寒武纪：日期与轮次未确认
+
+- [转写校准版复盘](分析成果/reports/interview-cambricon-recording-01-asr-calibrated-analysis.md)：建议优先阅读。
+- [OpenAI 与 Gemini 逐题对照](分析成果/analysis/interview-cambricon-recording-01.asr-gemini-comparison.md)
+- [对照引用与字符区间 JSON](分析成果/analysis/interview-cambricon-recording-01.asr-gemini-comparison.json)
+- [OpenAI 转写原文索引](分析成果/transcripts/interview-cambricon-recording-01.openai-asr-indexed.md)
+- [无损字符索引 JSON](分析成果/transcripts/interview-cambricon-recording-01.openai-asr-indexed.json)
+- [OpenAI 原始转写响应](分析成果/transcripts/transcribe-cambricon-recording-01-openai-20260908.raw.json)
+- [第一版 Gemini 复盘](分析成果/reports/interview-cambricon-recording-01-analysis.md)
+- [第一轮证据与技术审查](分析成果/analysis/interview-cambricon-recording-01.audio-evidence-audit.md)
+- [Gemini 原始底稿](分析成果/analysis/understand-cambricon-recording-01-20260908.audio.md)
+- [Gemini 响应元数据](分析成果/analysis/understand-cambricon-recording-01-20260908.audio.md.response.json)
+
+本场录像约 36 分 42 秒。两次处理采用同一份完整音频：Gemini 3.7 Flash 理解一次，OpenAI GPT Transcribe 转写一次，后者返回 9,977 字符。对照修正了缓存尾块、Conv3D 完整维度、device guard 与反问归属的部分解读，并补出 C++ 多线程追问。报告没有人工回听支持；ASR 无时间戳和说话人字段，专名错识仍需回听。
+
+配套材料按原有职责分目录保存：
+
+- [处理说明](分析成果/配套材料/寒武纪/notes/)与[实际提示词](分析成果/配套材料/寒武纪/prompts/)
+- [媒体副本、抽帧及元数据](分析成果/配套材料/寒武纪/derived/)
+- [请求提案与精确计划](分析成果/配套材料/寒武纪/workflow-proposals/)
+- [预检与验证记录](分析成果/配套材料/寒武纪/preflight/)，包括[第一轮交付验证](分析成果/配套材料/寒武纪/preflight/interview-cambricon-recording-01.delivery-validation.json)和[转写对照交付验证](分析成果/配套材料/寒武纪/preflight/interview-cambricon-recording-01.asr-delivery-validation.json)
+- [本场来源与运行清单快照](分析成果/配套材料/寒武纪/source-manifest.snapshot.json)与[归档文件及哈希映射](分析成果/配套材料/寒武纪/archive-manifest.json)
+
+2026-09-08 是分析与归档日期，不认定为面试日期。后续理解默认模型已更新为 Gemini 3.8 Flash，本场没有再用 3.8 调用。归档的 JSON 中原路径与哈希保留 daily-work 上下文，用于追溯；清单快照不接管业务状态。音频副本与会议画面按本目录的 Git 忽略规则仅在本地保留，原始 MKV 沿用此前视频归档约定，仍在 daily-work。
+
 ## 阅读和维护约定
 
 1. 最终报告用于快速复盘；原始记录用于确认说话人、时间戳和上下文。
 2. 技术审计与 QA 用于区分现场事实、技术校准和未知项，不代表面试官正式评价。
 3. `.raw.json` 保存原始模型响应，`.normalized.json` 是结构化衍生结果；一般阅读无需从 JSON 开始。
-4. `分析成果` 保留原 `outputs` 的三层相对结构，确保报告中的内部链接可以继续使用。
+4. 核心分析成果沿用原 `outputs` 的 `analysis / reports / transcripts` 结构；配套材料按场次归档。必要的相对链接调整记录在对应归档清单中。
 5. 新增面试时继续按“公司 / 日期与轮次”归档，并保持分析成果和原始素材分离。
 6. 不覆盖原始素材；修订报告时创建新版本或明确记录替代关系。
 
 ## 来源与同步状态
 
-- 最近归档日期：2026-09-07。
-- 分析成果来源：`daily-work/outputs/managed/interview-video-analysis` 的全部 27 个文件；本次增量复制进迭时空的 4 个文件，已有 23 个文件与源文件一致。
-- 原始素材维持 2026-08-26 的归档状态，共 12 个文件；本次归档范围为分析成果。
-- 归档采用复制方式，`daily-work` 中的源文件没有移动、删除或改写。
-- 当前 39 个归档文件均保留原文件名和原始字节；全部 27 个分析成果副本已逐一核对 SHA-256，与源文件一致。
-- 报告中的执行与归档状态保留生成时的表述，最新归档情况以本节为准。本目录不是自动同步镜像，后续在 `daily-work` 中新增或修改内容时需要再次归档并校验。
+- 最近归档日期：2026-09-08。
+- 本次复制寒武纪已登记的全部 36 个产物：10 个核心分析文件、26 个配套产物；归档映射、清单快照和媒体忽略规则另行生成。
+- 核心 analysis / reports / transcripts 现有 37 个文件；原有 27 个文件保持原样。
+- 寒武纪新增副本中，35 个与 daily-work 源文件逐字节一致；第一版报告仅调整一条指向接收说明的相对链接，源文件和副本哈希均在归档映射中记录。
+- 原始素材仍为此前归档的 12 个文件；本次归档包括分析音频副本和抽帧，原始录像继续保留在 daily-work。
+- 归档采用复制方式；daily-work 仍是来源、运行和产物业务清单的维护位置。归档 JSON 保留源仓库的路径语境，不应直接作为新环境中的执行计划。
+- 报告保留生成时的执行状态，最新归档情况以本节为准。本目录不是自动同步镜像，后续更新需重新复制并校验。

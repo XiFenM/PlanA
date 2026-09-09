@@ -1,0 +1,1582 @@
+{
+  "schemaVersion": 1,
+  "projectSlug": "interview-video-analysis",
+  "sources": [
+    {
+      "recordingId": "interview-cambricon-recording-01",
+      "sourceKind": "recording",
+      "path": "work/managed/interview-video-analysis/incoming/寒武纪.mkv",
+      "sha256": "1006b01c8a1ebaa4935e0376a39b7e6617a60ce78f54276e9cd48469e20ca0b9",
+      "bytes": 735462001,
+      "registeredAt": "2026-09-08T12:10:46.289Z",
+      "probe": {
+        "durationMs": 2201933,
+        "container": "matroska,webm",
+        "videoStreams": 1,
+        "audioStreams": 1,
+        "result": {
+          "path": "work/managed/interview-video-analysis/derived/interview-cambricon-recording-01.source-probe.json",
+          "sha256": "21a83650ae5a68d1d1a8af3f9df07fbbcb8461dfc266d5b5637031927d502714"
+        }
+      },
+      "rights": {
+        "status": "confirmed",
+        "processingBoundary": "external-review-required",
+        "notes": "用户明确要求分析已放好的寒武纪.mkv，并允许调用 ZenMux API 上传发送材料。此记录表示对本场分析与外部处理的授权，不声明核验参与者同意书。具体首个请求由 agent 在该授权内沿用 Gemini 3.7 Flash、完整音轨、一次尝试与 1 美元非硬性估算；没有外部发布授权。"
+      }
+    }
+  ],
+  "analysisRuns": [
+    {
+      "recordingId": "interview-cambricon-recording-01",
+      "routeId": null,
+      "effects": {
+        "billable": false,
+        "remote": false,
+        "destructive": false,
+        "publish": false
+      },
+      "operationId": null,
+      "authorization": null,
+      "createdAt": "2026-09-08T12:10:46.289Z",
+      "provider": null,
+      "model": null,
+      "prompt": {
+        "path": "work/managed/interview-video-analysis/prompts/understand-cambricon-recording-01-20260908.md",
+        "sha256": "9dd7eef3ae981a8fc14504900af8062fb646fd68f2e102ddcffd780a286a337f"
+      },
+      "analysisSchema": {
+        "path": "projects/managed/interview-video-analysis/schemas/interview-report-contract-v1.md",
+        "sha256": "98e303e21564cb4b6b1ca4cbc679870bd109f7b6e72c91298c89ac445cefe4dd"
+      },
+      "requestReceipt": null,
+      "usage": null,
+      "billing": null,
+      "retryOf": null,
+      "validation": {
+        "status": "not-run",
+        "validator": null,
+        "errors": []
+      },
+      "qa": {
+        "status": "not-run",
+        "notes": "Preparation only; no listening, independent ASR or user acceptance is claimed."
+      },
+      "runId": "prepare-cambricon-recording-01-20260908",
+      "kind": "other",
+      "status": "succeeded",
+      "inputs": [
+        {
+          "path": "work/managed/interview-video-analysis/incoming/寒武纪.mkv",
+          "sha256": "1006b01c8a1ebaa4935e0376a39b7e6617a60ce78f54276e9cd48469e20ca0b9"
+        }
+      ],
+      "outputs": [
+        {
+          "path": "work/managed/interview-video-analysis/derived/interview-cambricon-recording-01.source-probe.json",
+          "sha256": "21a83650ae5a68d1d1a8af3f9df07fbbcb8461dfc266d5b5637031927d502714"
+        },
+        {
+          "path": "work/managed/interview-video-analysis/derived/interview-cambricon-recording-01.derivative-probe.json",
+          "sha256": "ea178a388a9e9eec3a0e57bc8df63e82e9e08e4cf33c500fbb835c98ae52afcc"
+        },
+        {
+          "path": "work/managed/interview-video-analysis/derived/interview-cambricon-recording-01.normalized-stereo-16k-64kbps.mp3",
+          "sha256": "3a4e76277132d28cc3bf60629d9c801ac97b522a7d013927ce266cafd4a99b04"
+        },
+        {
+          "path": "work/managed/interview-video-analysis/derived/interview-cambricon-recording-01.audio-derivation.json",
+          "sha256": "d54d5e6b1ee053d8b1321fece70d5c0c2297561e135e6b9ff090bae015d0789f"
+        },
+        {
+          "path": "work/managed/interview-video-analysis/derived/interview-cambricon-recording-01.contact-sheet.jpg",
+          "sha256": "2dc6a45a662ed014cf71adce657e88ab19c020b78ae5421c2e796ec105c94b88"
+        },
+        {
+          "path": "work/managed/interview-video-analysis/derived/interview-cambricon-recording-01.frame-20m00s.png",
+          "sha256": "d295591338e1e88b8f2da674a68100549287c68712126f7ac9aea36e8b06163e"
+        },
+        {
+          "path": "work/managed/interview-video-analysis/derived/interview-cambricon-recording-01.frame-35m00s.png",
+          "sha256": "57c783dcf1ff7c2adcd63176334e78db532d15e9f1ae2351f232bca8478b54c7"
+        },
+        {
+          "path": "work/managed/interview-video-analysis/prompts/understand-cambricon-recording-01-20260908.md",
+          "sha256": "9dd7eef3ae981a8fc14504900af8062fb646fd68f2e102ddcffd780a286a337f"
+        },
+        {
+          "path": "work/managed/interview-video-analysis/workflow-proposals/understand-cambricon-recording-01-gemini-20260908.proposal.json",
+          "sha256": "2a129a036e93452f0bf7216d83a5ccdfb55f502daf8f689aa4714e5e0acf219f"
+        },
+        {
+          "path": "work/managed/interview-video-analysis/workflow-proposals/understand-cambricon-recording-01-gemini-20260908.plan.json",
+          "sha256": "0de8d75b712f568e28a3798dcac2f6f4f93e965ed99c87adf2feff13fd4a0c82"
+        },
+        {
+          "path": "work/managed/interview-video-analysis/preflight/cambricon-recording-01-understand-dry-run.json",
+          "sha256": "27ad064de395931769caf2ebb56840973b31560743a5cd7e792ddffe00b4609c"
+        },
+        {
+          "path": "work/managed/interview-video-analysis/preflight/cambricon-recording-01-model-selection-20260908.json",
+          "sha256": "b161558e1592fd9f419d252283145d02f99e7b33ea03d89cdabd3553e06592a3"
+        },
+        {
+          "path": "projects/managed/interview-video-analysis/notes/intake-interview-cambricon-recording-01.md",
+          "sha256": "7b5a32f82c7fe9b4ad27e7e51d86128fafc339cf5b25f2a450112f5f0be3bf9e"
+        }
+      ],
+      "parameters": {
+        "sourceAudioFullDecode": "passed",
+        "videoReview": "sampled frames only",
+        "derivativeProbe": "passed",
+        "derivativeFullDecode": "scheduled separately",
+        "sourcePreserved": true,
+        "externalGenerationCalls": 0
+      }
+    },
+    {
+      "recordingId": "interview-cambricon-recording-01",
+      "routeId": "zenmux-understand",
+      "effects": {
+        "billable": true,
+        "remote": true,
+        "destructive": false,
+        "publish": false
+      },
+      "operationId": "understand-cambricon-recording-01-gemini-20260908",
+      "authorization": {
+        "previewDigest": "a1fe813b1686c15e0d78be726a2d872737539ffb8bb2d70f2de8762c7d55d970",
+        "authorizedAt": "2026-09-08T12:10:44.672Z",
+        "grants": [
+          "billable"
+        ]
+      },
+      "createdAt": "2026-09-08T12:10:46.289Z",
+      "provider": "zenmux",
+      "model": "google/gemini-3.7-flash",
+      "prompt": {
+        "path": "work/managed/interview-video-analysis/prompts/understand-cambricon-recording-01-20260908.md",
+        "sha256": "9dd7eef3ae981a8fc14504900af8062fb646fd68f2e102ddcffd780a286a337f"
+      },
+      "analysisSchema": {
+        "path": "projects/managed/interview-video-analysis/schemas/interview-report-contract-v1.md",
+        "sha256": "98e303e21564cb4b6b1ca4cbc679870bd109f7b6e72c91298c89ac445cefe4dd"
+      },
+      "requestReceipt": "0e0b3f6bab6840de99c9820b643bb615",
+      "usage": {
+        "promptTokens": 56295,
+        "completionTokens": 10753,
+        "reasoningTokens": 816,
+        "totalTokens": 67048
+      },
+      "billing": {
+        "boundaryKind": "estimate-only",
+        "currency": "USD",
+        "authorizedAmount": 1,
+        "actualAmount": null,
+        "oneAttemptMax": true
+      },
+      "retryOf": null,
+      "validation": {
+        "status": "not-run",
+        "validator": null,
+        "errors": []
+      },
+      "qa": {
+        "status": "not-run",
+        "notes": "Raw full-audio model response retained; separate local evidence and technical review follows. No independent ASR or human listening review."
+      },
+      "runId": "understand-cambricon-recording-01-gemini-20260908",
+      "kind": "understand",
+      "status": "succeeded",
+      "inputs": [
+        {
+          "path": "work/managed/interview-video-analysis/incoming/寒武纪.mkv",
+          "sha256": "1006b01c8a1ebaa4935e0376a39b7e6617a60ce78f54276e9cd48469e20ca0b9"
+        },
+        {
+          "path": "work/managed/interview-video-analysis/derived/interview-cambricon-recording-01.normalized-stereo-16k-64kbps.mp3",
+          "sha256": "3a4e76277132d28cc3bf60629d9c801ac97b522a7d013927ce266cafd4a99b04"
+        },
+        {
+          "path": "work/managed/interview-video-analysis/prompts/understand-cambricon-recording-01-20260908.md",
+          "sha256": "9dd7eef3ae981a8fc14504900af8062fb646fd68f2e102ddcffd780a286a337f"
+        }
+      ],
+      "outputs": [
+        {
+          "path": "outputs/managed/interview-video-analysis/analysis/understand-cambricon-recording-01-20260908.audio.md",
+          "sha256": "f3f3395b7dcab04f9f34b269bc0c08df319ab144f1e2ec80eb45b83c0b09670f"
+        },
+        {
+          "path": "outputs/managed/interview-video-analysis/analysis/understand-cambricon-recording-01-20260908.audio.md.response.json",
+          "sha256": "99c4f33551272e4f7a8d05e4e80a095521075e6f2c562c6c3c150c97798c9612"
+        }
+      ],
+      "parameters": {
+        "compress": "none",
+        "input": "work/managed/interview-video-analysis/derived/interview-cambricon-recording-01.normalized-stereo-16k-64kbps.mp3",
+        "max-local-mb": 50,
+        "model": "google/gemini-3.7-flash",
+        "out": "outputs/managed/interview-video-analysis/analysis/understand-cambricon-recording-01-20260908.audio.md",
+        "prompt-file": "work/managed/interview-video-analysis/prompts/understand-cambricon-recording-01-20260908.md",
+        "stream": false,
+        "sourceMode": "single-model-full-audio-understanding",
+        "independentAsrAvailable": false
+      }
+    },
+    {
+      "recordingId": "interview-cambricon-recording-01",
+      "routeId": null,
+      "effects": {
+        "billable": false,
+        "remote": false,
+        "destructive": false,
+        "publish": false
+      },
+      "operationId": null,
+      "authorization": null,
+      "createdAt": "2026-09-08T12:11:43.620Z",
+      "provider": null,
+      "model": null,
+      "prompt": {
+        "path": "work/managed/interview-video-analysis/prompts/understand-cambricon-recording-01-20260908.md",
+        "sha256": "9dd7eef3ae981a8fc14504900af8062fb646fd68f2e102ddcffd780a286a337f"
+      },
+      "analysisSchema": {
+        "path": "projects/managed/interview-video-analysis/schemas/interview-report-contract-v1.md",
+        "sha256": "98e303e21564cb4b6b1ca4cbc679870bd109f7b6e72c91298c89ac445cefe4dd"
+      },
+      "requestReceipt": null,
+      "usage": null,
+      "billing": null,
+      "retryOf": null,
+      "validation": {
+        "status": "not-run",
+        "validator": null,
+        "errors": []
+      },
+      "qa": {
+        "status": "passed",
+        "notes": "Media integrity and two sampled frames checked; no listening, ASR, role or word-level validation."
+      },
+      "runId": "verify-cambricon-media-20260908",
+      "kind": "validate",
+      "status": "succeeded",
+      "inputs": [
+        {
+          "path": "work/managed/interview-video-analysis/incoming/寒武纪.mkv",
+          "sha256": "1006b01c8a1ebaa4935e0376a39b7e6617a60ce78f54276e9cd48469e20ca0b9"
+        },
+        {
+          "path": "work/managed/interview-video-analysis/derived/interview-cambricon-recording-01.normalized-stereo-16k-64kbps.mp3",
+          "sha256": "3a4e76277132d28cc3bf60629d9c801ac97b522a7d013927ce266cafd4a99b04"
+        },
+        {
+          "path": "work/managed/interview-video-analysis/derived/interview-cambricon-recording-01.audio-derivation.json",
+          "sha256": "d54d5e6b1ee053d8b1321fece70d5c0c2297561e135e6b9ff090bae015d0789f"
+        }
+      ],
+      "outputs": [
+        {
+          "path": "work/managed/interview-video-analysis/derived/interview-cambricon-recording-01.encoded-loudness.json",
+          "sha256": "fcfcd971a2b278e59685422830da0a6013b1239401a51de2ab8ad9d84796c45a"
+        },
+        {
+          "path": "work/managed/interview-video-analysis/preflight/interview-cambricon-recording-01.media-validation.json",
+          "sha256": "5f3d74f991db18941457dac2fe2a1f372ce8764f748b771a2df0a3482dd70e95"
+        }
+      ],
+      "parameters": {
+        "sourceUnchanged": true,
+        "sourceAudioFullDecode": true,
+        "derivativeFullDecode": true,
+        "encodedIntegratedLufs": -18.72,
+        "encodedTruePeakDbtp": -1.16,
+        "videoReview": "local samples only",
+        "externalGenerationCalls": 0
+      }
+    },
+    {
+      "recordingId": "interview-cambricon-recording-01",
+      "routeId": null,
+      "effects": {
+        "billable": false,
+        "remote": false,
+        "destructive": false,
+        "publish": false
+      },
+      "operationId": null,
+      "authorization": null,
+      "createdAt": "2026-09-08T12:21:17.002Z",
+      "provider": null,
+      "model": null,
+      "prompt": {
+        "path": "work/managed/interview-video-analysis/prompts/understand-cambricon-recording-01-20260908.md",
+        "sha256": "9dd7eef3ae981a8fc14504900af8062fb646fd68f2e102ddcffd780a286a337f"
+      },
+      "analysisSchema": {
+        "path": "projects/managed/interview-video-analysis/schemas/interview-report-contract-v1.md",
+        "sha256": "98e303e21564cb4b6b1ca4cbc679870bd109f7b6e72c91298c89ac445cefe4dd"
+      },
+      "requestReceipt": null,
+      "usage": null,
+      "billing": null,
+      "retryOf": null,
+      "validation": {
+        "status": "not-run",
+        "validator": null,
+        "errors": []
+      },
+      "qa": {
+        "status": "passed",
+        "notes": "Local evidence and technical review passed within stated limits. No word-level, exact-timestamp or speaker verification; corrected overstatements and unsupported additions."
+      },
+      "runId": "audit-cambricon-recording-01-20260908",
+      "kind": "validate",
+      "status": "succeeded",
+      "inputs": [
+        {
+          "path": "work/managed/interview-video-analysis/incoming/寒武纪.mkv",
+          "sha256": "1006b01c8a1ebaa4935e0376a39b7e6617a60ce78f54276e9cd48469e20ca0b9"
+        },
+        {
+          "path": "outputs/managed/interview-video-analysis/analysis/understand-cambricon-recording-01-20260908.audio.md",
+          "sha256": "f3f3395b7dcab04f9f34b269bc0c08df319ab144f1e2ec80eb45b83c0b09670f"
+        },
+        {
+          "path": "outputs/managed/interview-video-analysis/analysis/understand-cambricon-recording-01-20260908.audio.md.response.json",
+          "sha256": "99c4f33551272e4f7a8d05e4e80a095521075e6f2c562c6c3c150c97798c9612"
+        },
+        {
+          "path": "work/managed/interview-video-analysis/preflight/interview-cambricon-recording-01.media-validation.json",
+          "sha256": "5f3d74f991db18941457dac2fe2a1f372ce8764f748b771a2df0a3482dd70e95"
+        }
+      ],
+      "outputs": [
+        {
+          "path": "outputs/managed/interview-video-analysis/analysis/interview-cambricon-recording-01.audio-evidence-audit.md",
+          "sha256": "88f17d7060e754998bd0bd4eec123ff8885626f1c0ca3258c858262730b16d54"
+        }
+      ],
+      "parameters": {
+        "sourceMode": "single-model-full-audio-understanding-with-local-frame-samples",
+        "independentAsrAvailable": false,
+        "humanListeningReview": false,
+        "coverageGaps": [
+          "22:55-23:25",
+          "27:00-27:05",
+          "33:00-33:05",
+          "36:30-36:41.933"
+        ],
+        "externalTechnicalReferences": true,
+        "sourceMaterialSentDuringReferenceChecks": false
+      }
+    },
+    {
+      "recordingId": "interview-cambricon-recording-01",
+      "routeId": null,
+      "effects": {
+        "billable": false,
+        "remote": false,
+        "destructive": false,
+        "publish": false
+      },
+      "operationId": null,
+      "authorization": null,
+      "createdAt": "2026-09-08T12:21:17.002Z",
+      "provider": null,
+      "model": null,
+      "prompt": {
+        "path": "work/managed/interview-video-analysis/prompts/understand-cambricon-recording-01-20260908.md",
+        "sha256": "9dd7eef3ae981a8fc14504900af8062fb646fd68f2e102ddcffd780a286a337f"
+      },
+      "analysisSchema": {
+        "path": "projects/managed/interview-video-analysis/schemas/interview-report-contract-v1.md",
+        "sha256": "98e303e21564cb4b6b1ca4cbc679870bd109f7b6e72c91298c89ac445cefe4dd"
+      },
+      "requestReceipt": null,
+      "usage": null,
+      "billing": null,
+      "retryOf": null,
+      "validation": {
+        "status": "not-run",
+        "validator": null,
+        "errors": []
+      },
+      "qa": {
+        "status": "passed",
+        "notes": "Report separates source summaries, technical corrections, suggested exercises and unknowns; user acceptance remains pending."
+      },
+      "runId": "report-cambricon-recording-01-20260908",
+      "kind": "report",
+      "status": "succeeded",
+      "inputs": [
+        {
+          "path": "work/managed/interview-video-analysis/incoming/寒武纪.mkv",
+          "sha256": "1006b01c8a1ebaa4935e0376a39b7e6617a60ce78f54276e9cd48469e20ca0b9"
+        },
+        {
+          "path": "outputs/managed/interview-video-analysis/analysis/understand-cambricon-recording-01-20260908.audio.md",
+          "sha256": "f3f3395b7dcab04f9f34b269bc0c08df319ab144f1e2ec80eb45b83c0b09670f"
+        },
+        {
+          "path": "outputs/managed/interview-video-analysis/analysis/interview-cambricon-recording-01.audio-evidence-audit.md",
+          "sha256": "88f17d7060e754998bd0bd4eec123ff8885626f1c0ca3258c858262730b16d54"
+        },
+        {
+          "path": "work/managed/interview-video-analysis/preflight/interview-cambricon-recording-01.media-validation.json",
+          "sha256": "5f3d74f991db18941457dac2fe2a1f372ce8764f748b771a2df0a3482dd70e95"
+        }
+      ],
+      "outputs": [
+        {
+          "path": "outputs/managed/interview-video-analysis/reports/interview-cambricon-recording-01-analysis.md",
+          "sha256": "aa13fae32af4f17f71af37f1b05d9da1142d23bb2605d006d982085a44997af5"
+        }
+      ],
+      "parameters": {
+        "sourceMode": "single-model-full-audio-understanding-with-local-audit",
+        "evidenceBoundary": "no-verbatim-transcript-no-independent-asr-no-human-listening",
+        "identifiedQuestionGroups": 17,
+        "calibrationStatus": "not_calibrated",
+        "externalGenerationCalls": 0
+      }
+    },
+    {
+      "recordingId": "interview-cambricon-recording-01",
+      "routeId": null,
+      "effects": {
+        "billable": false,
+        "remote": false,
+        "destructive": false,
+        "publish": false
+      },
+      "operationId": null,
+      "authorization": null,
+      "createdAt": "2026-09-08T12:23:49.400Z",
+      "provider": null,
+      "model": null,
+      "prompt": {
+        "path": "work/managed/interview-video-analysis/prompts/understand-cambricon-recording-01-20260908.md",
+        "sha256": "9dd7eef3ae981a8fc14504900af8062fb646fd68f2e102ddcffd780a286a337f"
+      },
+      "analysisSchema": {
+        "path": "projects/managed/interview-video-analysis/schemas/interview-report-contract-v1.md",
+        "sha256": "98e303e21564cb4b6b1ca4cbc679870bd109f7b6e72c91298c89ac445cefe4dd"
+      },
+      "requestReceipt": null,
+      "usage": null,
+      "billing": null,
+      "retryOf": null,
+      "validation": {
+        "status": "passed",
+        "validator": {
+          "path": "projects/managed/interview-video-analysis/scripts/validate-manifest.mjs",
+          "sha256": "8929f8e843b75f9a7d0837670c98740b0c2cbb6bc8c96e846577139c893a5ef7"
+        },
+        "errors": []
+      },
+      "qa": {
+        "status": "passed",
+        "notes": "Verified candidate manifest, current artifact bytes, local links, approximate timestamp bounds and stated limitations. No listening or explicit user acceptance."
+      },
+      "runId": "verify-cambricon-delivery-20260908",
+      "kind": "validate",
+      "status": "succeeded",
+      "inputs": [
+        {
+          "path": "work/managed/interview-video-analysis/incoming/寒武纪.mkv",
+          "sha256": "1006b01c8a1ebaa4935e0376a39b7e6617a60ce78f54276e9cd48469e20ca0b9"
+        },
+        {
+          "path": "outputs/managed/interview-video-analysis/reports/interview-cambricon-recording-01-analysis.md",
+          "sha256": "aa13fae32af4f17f71af37f1b05d9da1142d23bb2605d006d982085a44997af5"
+        },
+        {
+          "path": "outputs/managed/interview-video-analysis/analysis/interview-cambricon-recording-01.audio-evidence-audit.md",
+          "sha256": "88f17d7060e754998bd0bd4eec123ff8885626f1c0ca3258c858262730b16d54"
+        },
+        {
+          "path": "work/managed/interview-video-analysis/preflight/interview-cambricon-recording-01.media-validation.json",
+          "sha256": "5f3d74f991db18941457dac2fe2a1f372ce8764f748b771a2df0a3482dd70e95"
+        }
+      ],
+      "outputs": [
+        {
+          "path": "work/managed/interview-video-analysis/preflight/cambricon-delivery-candidate-manifest-diagnostic-20260908.json",
+          "sha256": "c4d44d9f3c4163735b41e75bbbe538d368cfc148c59bd08d65bcdcc533ce148a"
+        },
+        {
+          "path": "work/managed/interview-video-analysis/preflight/interview-cambricon-recording-01.delivery-validation.json",
+          "sha256": "73f7c8d0b44bdd66a980f8aae8df0b6e80d1b314b4d86959625a918b4db3c0c3"
+        }
+      ],
+      "parameters": {
+        "candidateManifestValid": true,
+        "historicalObjectsUnchanged": true,
+        "fullManifestFailuresUnchanged": true,
+        "repositoryCheckPassed": true,
+        "testsPassed": 57,
+        "questionIntervalsChecked": 17,
+        "sourceMaterialSentExternallyDuringVerification": false,
+        "externalGenerationCalls": 0
+      }
+    },
+    {
+      "recordingId": "interview-cambricon-recording-01",
+      "routeId": null,
+      "effects": {
+        "billable": false,
+        "remote": false,
+        "destructive": false,
+        "publish": false
+      },
+      "operationId": null,
+      "authorization": null,
+      "createdAt": "2026-09-08T12:27:47.636Z",
+      "provider": null,
+      "model": null,
+      "prompt": {
+        "path": "projects/managed/interview-video-analysis/notes/asr-cambricon-20260908.md",
+        "sha256": "1b70efac9c16b71608e69d043a51e6fd12ec8d28eaae094e4fac9ae484b260d9"
+      },
+      "analysisSchema": {
+        "path": "projects/managed/interview-video-analysis/schemas/audio-transcription.schema.json",
+        "sha256": "2d030b17f59ec4cfa3285868546706d5cfd5702ba31fb3d9e2c1ecd6bb0e2091"
+      },
+      "requestReceipt": null,
+      "usage": null,
+      "billing": null,
+      "retryOf": null,
+      "validation": {
+        "status": "not-run",
+        "validator": null,
+        "errors": []
+      },
+      "qa": {
+        "status": "not-run",
+        "notes": "ASR preparation only; local protocol is not sent as a prompt."
+      },
+      "runId": "prepare-cambricon-asr-20260908",
+      "kind": "other",
+      "status": "succeeded",
+      "inputs": [
+        {
+          "path": "work/managed/interview-video-analysis/incoming/寒武纪.mkv",
+          "sha256": "1006b01c8a1ebaa4935e0376a39b7e6617a60ce78f54276e9cd48469e20ca0b9"
+        },
+        {
+          "path": "work/managed/interview-video-analysis/derived/interview-cambricon-recording-01.normalized-stereo-16k-64kbps.mp3",
+          "sha256": "3a4e76277132d28cc3bf60629d9c801ac97b522a7d013927ce266cafd4a99b04"
+        }
+      ],
+      "outputs": [
+        {
+          "path": "projects/managed/interview-video-analysis/notes/asr-cambricon-20260908.md",
+          "sha256": "1b70efac9c16b71608e69d043a51e6fd12ec8d28eaae094e4fac9ae484b260d9"
+        },
+        {
+          "path": "work/managed/interview-video-analysis/workflow-proposals/transcribe-cambricon-recording-01-openai-20260908.proposal.json",
+          "sha256": "55ed5b7bbbd9a9eaa393d6f66fac95473c87113ec535ecc48ecc514dc3d48403"
+        },
+        {
+          "path": "work/managed/interview-video-analysis/workflow-proposals/transcribe-cambricon-recording-01-openai-20260908.plan.json",
+          "sha256": "8588642f4fc7df707df3b5e06b1c2821fdefa67d8d3efeba638d78d943e144cb"
+        },
+        {
+          "path": "work/managed/interview-video-analysis/preflight/cambricon-asr-openai-20260908.dry-run.json",
+          "sha256": "4bdcf7f3924a7c26a39f3f490c5d430faac23fa59c0713f13d3db5f5e5d080a1"
+        },
+        {
+          "path": "work/managed/interview-video-analysis/preflight/cambricon-asr-model-selection-20260908.json",
+          "sha256": "233354fb20f840f1415f9591ec10c73ad046561077630de3b398d57de097994a"
+        },
+        {
+          "path": "work/managed/interview-video-analysis/preflight/cambricon-gemini-default-20260908.dry-run.json",
+          "sha256": "b9a02e597fafa3f3050b39437445cd1ba9cc4276b7f5a7d96e5c4fbf29f48c9f"
+        }
+      ],
+      "parameters": {
+        "sameAudioAsGemini": true,
+        "independentOfGeminiText": true,
+        "asrPromptSent": false,
+        "defaultUnderstandingModelVerifiedByDryRun": "google/gemini-3.8-flash",
+        "geminiRequestsThisTurn": 0,
+        "externalGenerationCalls": 0
+      }
+    },
+    {
+      "recordingId": "interview-cambricon-recording-01",
+      "routeId": "zenmux-transcribe",
+      "effects": {
+        "billable": true,
+        "remote": true,
+        "destructive": false,
+        "publish": false
+      },
+      "operationId": "transcribe-cambricon-recording-01-openai-20260908",
+      "authorization": {
+        "previewDigest": "31a4a9dc2e929d641ab3ab794b107fe03150848c2ddf7ad7362df6c766547f74",
+        "authorizedAt": "2026-09-08T12:27:46.776Z",
+        "grants": [
+          "billable"
+        ]
+      },
+      "createdAt": "2026-09-08T12:27:47.636Z",
+      "provider": "zenmux",
+      "model": "openai/gpt-transcribe",
+      "prompt": {
+        "path": "projects/managed/interview-video-analysis/notes/asr-cambricon-20260908.md",
+        "sha256": "1b70efac9c16b71608e69d043a51e6fd12ec8d28eaae094e4fac9ae484b260d9"
+      },
+      "analysisSchema": {
+        "path": "projects/managed/interview-video-analysis/schemas/audio-transcription.schema.json",
+        "sha256": "2d030b17f59ec4cfa3285868546706d5cfd5702ba31fb3d9e2c1ecd6bb0e2091"
+      },
+      "requestReceipt": "response-sha256:4847eaa681d711612b49084402353bbac3b0006032a65e52f795db57b80d3656",
+      "usage": {
+        "promptTokens": 0,
+        "completionTokens": 0,
+        "reasoningTokens": 0,
+        "totalTokens": 0
+      },
+      "billing": {
+        "boundaryKind": "estimate-only",
+        "currency": "USD",
+        "authorizedAmount": 0.5,
+        "actualAmount": null,
+        "oneAttemptMax": true
+      },
+      "retryOf": null,
+      "validation": {
+        "status": "not-run",
+        "validator": null,
+        "errors": []
+      },
+      "qa": {
+        "status": "not-run",
+        "notes": "Transcription response retained. Provider returned no queryable request identifier; receipt is a local SHA-256 response fingerprint, not a provider ID. Zero token counts do not mean a free request."
+      },
+      "runId": "transcribe-cambricon-recording-01-openai-20260908",
+      "kind": "transcribe",
+      "status": "succeeded",
+      "inputs": [
+        {
+          "path": "work/managed/interview-video-analysis/incoming/寒武纪.mkv",
+          "sha256": "1006b01c8a1ebaa4935e0376a39b7e6617a60ce78f54276e9cd48469e20ca0b9"
+        },
+        {
+          "path": "work/managed/interview-video-analysis/derived/interview-cambricon-recording-01.normalized-stereo-16k-64kbps.mp3",
+          "sha256": "3a4e76277132d28cc3bf60629d9c801ac97b522a7d013927ce266cafd4a99b04"
+        }
+      ],
+      "outputs": [
+        {
+          "path": "outputs/managed/interview-video-analysis/transcripts/transcribe-cambricon-recording-01-openai-20260908.raw.json",
+          "sha256": "4847eaa681d711612b49084402353bbac3b0006032a65e52f795db57b80d3656"
+        }
+      ],
+      "parameters": {
+        "enable-itn": true,
+        "input": "work/managed/interview-video-analysis/derived/interview-cambricon-recording-01.normalized-stereo-16k-64kbps.mp3",
+        "language": "zh",
+        "max-local-mb": 25,
+        "model": "openai/gpt-transcribe",
+        "out": "outputs/managed/interview-video-analysis/transcripts/transcribe-cambricon-recording-01-openai-20260908.raw.json",
+        "stream": false,
+        "protocolIsLocalOnly": true,
+        "promptTextSent": false,
+        "independentOfGeminiOutput": true,
+        "durationSeconds": 2202,
+        "receiptKind": "response-fingerprint-not-provider-generation-id",
+        "billingUnit": "audio-seconds"
+      }
+    },
+    {
+      "recordingId": "interview-cambricon-recording-01",
+      "routeId": null,
+      "effects": {
+        "billable": false,
+        "remote": false,
+        "destructive": false,
+        "publish": false
+      },
+      "operationId": null,
+      "authorization": null,
+      "createdAt": "2026-09-08T12:38:36.076Z",
+      "provider": null,
+      "model": null,
+      "prompt": {
+        "path": "projects/managed/interview-video-analysis/notes/asr-cambricon-20260908.md",
+        "sha256": "1b70efac9c16b71608e69d043a51e6fd12ec8d28eaae094e4fac9ae484b260d9"
+      },
+      "analysisSchema": {
+        "path": "projects/managed/interview-video-analysis/schemas/audio-transcription.schema.json",
+        "sha256": "2d030b17f59ec4cfa3285868546706d5cfd5702ba31fb3d9e2c1ecd6bb0e2091"
+      },
+      "requestReceipt": null,
+      "usage": null,
+      "billing": null,
+      "retryOf": null,
+      "validation": {
+        "status": "passed",
+        "validator": {
+          "path": "projects/managed/interview-video-analysis/scripts/validate-transcription.mjs",
+          "sha256": "5472161a5b655bfbd743481fbeb971cd94beebc96c5e760dc87ad53623ca94a9"
+        },
+        "errors": []
+      },
+      "qa": {
+        "status": "passed",
+        "notes": "ASR schema/duration validated; indexed chunks reconstruct the raw text exactly. No acoustic correctness, diarization or exact timestamps are claimed."
+      },
+      "runId": "index-cambricon-asr-20260908",
+      "kind": "other",
+      "status": "succeeded",
+      "inputs": [
+        {
+          "path": "work/managed/interview-video-analysis/incoming/寒武纪.mkv",
+          "sha256": "1006b01c8a1ebaa4935e0376a39b7e6617a60ce78f54276e9cd48469e20ca0b9"
+        },
+        {
+          "path": "outputs/managed/interview-video-analysis/transcripts/transcribe-cambricon-recording-01-openai-20260908.raw.json",
+          "sha256": "4847eaa681d711612b49084402353bbac3b0006032a65e52f795db57b80d3656"
+        }
+      ],
+      "outputs": [
+        {
+          "path": "work/managed/interview-video-analysis/preflight/cambricon-asr-openai-20260908.validation.json",
+          "sha256": "5dc1f027ecc4401201b1abfc9c6672cdf129538dd66c97e33100fbc0b07eeedd"
+        },
+        {
+          "path": "outputs/managed/interview-video-analysis/transcripts/interview-cambricon-recording-01.openai-asr-indexed.json",
+          "sha256": "4b8c0ba7c4a719bfff7b2e3f938430bdd882326bbf625c003efbe8bdf1713ba2"
+        },
+        {
+          "path": "outputs/managed/interview-video-analysis/transcripts/interview-cambricon-recording-01.openai-asr-indexed.md",
+          "sha256": "4feac18feda7ccbeaadb6245a989ddfbf55b721549482126161b14737375331e"
+        }
+      ],
+      "parameters": {
+        "rawResponseSchemaValid": true,
+        "durationSeconds": 2202,
+        "textCharacters": 9977,
+        "segments": 27,
+        "exactTextRoundtrip": true,
+        "timestampsInvented": false,
+        "speakersInvented": false,
+        "wordCorrections": 0,
+        "externalGenerationCalls": 0
+      }
+    },
+    {
+      "recordingId": "interview-cambricon-recording-01",
+      "routeId": null,
+      "effects": {
+        "billable": false,
+        "remote": false,
+        "destructive": false,
+        "publish": false
+      },
+      "operationId": null,
+      "authorization": null,
+      "createdAt": "2026-09-08T12:38:36.076Z",
+      "provider": null,
+      "model": null,
+      "prompt": {
+        "path": "projects/managed/interview-video-analysis/notes/asr-cambricon-20260908.md",
+        "sha256": "1b70efac9c16b71608e69d043a51e6fd12ec8d28eaae094e4fac9ae484b260d9"
+      },
+      "analysisSchema": {
+        "path": "projects/managed/interview-video-analysis/schemas/interview-report-contract-v1.md",
+        "sha256": "98e303e21564cb4b6b1ca4cbc679870bd109f7b6e72c91298c89ac445cefe4dd"
+      },
+      "requestReceipt": null,
+      "usage": null,
+      "billing": null,
+      "retryOf": null,
+      "validation": {
+        "status": "not-run",
+        "validator": null,
+        "errors": []
+      },
+      "qa": {
+        "status": "passed",
+        "notes": "Local comparative review; separates agreement, additions, unsupported detail, speaker-attribution inference and transcription uncertainty. Corrects prior local audit where ASR adds evidence."
+      },
+      "runId": "compare-cambricon-asr-gemini-20260908",
+      "kind": "validate",
+      "status": "succeeded",
+      "inputs": [
+        {
+          "path": "work/managed/interview-video-analysis/incoming/寒武纪.mkv",
+          "sha256": "1006b01c8a1ebaa4935e0376a39b7e6617a60ce78f54276e9cd48469e20ca0b9"
+        },
+        {
+          "path": "outputs/managed/interview-video-analysis/transcripts/transcribe-cambricon-recording-01-openai-20260908.raw.json",
+          "sha256": "4847eaa681d711612b49084402353bbac3b0006032a65e52f795db57b80d3656"
+        },
+        {
+          "path": "outputs/managed/interview-video-analysis/transcripts/interview-cambricon-recording-01.openai-asr-indexed.json",
+          "sha256": "4b8c0ba7c4a719bfff7b2e3f938430bdd882326bbf625c003efbe8bdf1713ba2"
+        },
+        {
+          "path": "outputs/managed/interview-video-analysis/transcripts/interview-cambricon-recording-01.openai-asr-indexed.md",
+          "sha256": "4feac18feda7ccbeaadb6245a989ddfbf55b721549482126161b14737375331e"
+        },
+        {
+          "path": "outputs/managed/interview-video-analysis/analysis/understand-cambricon-recording-01-20260908.audio.md",
+          "sha256": "f3f3395b7dcab04f9f34b269bc0c08df319ab144f1e2ec80eb45b83c0b09670f"
+        },
+        {
+          "path": "outputs/managed/interview-video-analysis/reports/interview-cambricon-recording-01-analysis.md",
+          "sha256": "aa13fae32af4f17f71af37f1b05d9da1142d23bb2605d006d982085a44997af5"
+        },
+        {
+          "path": "outputs/managed/interview-video-analysis/analysis/interview-cambricon-recording-01.audio-evidence-audit.md",
+          "sha256": "88f17d7060e754998bd0bd4eec123ff8885626f1c0ca3258c858262730b16d54"
+        }
+      ],
+      "outputs": [
+        {
+          "path": "outputs/managed/interview-video-analysis/analysis/interview-cambricon-recording-01.asr-gemini-comparison.json",
+          "sha256": "8aa24f34787b05f771b8866e1b3f98118081512bbfc93b46763615a7776c63c5"
+        },
+        {
+          "path": "outputs/managed/interview-video-analysis/analysis/interview-cambricon-recording-01.asr-gemini-comparison.md",
+          "sha256": "6b0f04aa1e29e3340ae1c612bd7730600747605114bcccd9d5bd357344b3ac1b"
+        }
+      ],
+      "parameters": {
+        "asrModels": 1,
+        "existingAudioUnderstandingModels": 1,
+        "newGeminiCalls": 0,
+        "questionGroups": 18,
+        "newlyIsolatedFollowUps": 1,
+        "exactQuoteSpans": 18,
+        "groundTruthAvailable": false,
+        "wordErrorRateComputed": false,
+        "humanListening": false,
+        "externalGenerationCalls": 0
+      }
+    },
+    {
+      "recordingId": "interview-cambricon-recording-01",
+      "routeId": null,
+      "effects": {
+        "billable": false,
+        "remote": false,
+        "destructive": false,
+        "publish": false
+      },
+      "operationId": null,
+      "authorization": null,
+      "createdAt": "2026-09-08T12:38:36.076Z",
+      "provider": null,
+      "model": null,
+      "prompt": {
+        "path": "projects/managed/interview-video-analysis/notes/asr-cambricon-20260908.md",
+        "sha256": "1b70efac9c16b71608e69d043a51e6fd12ec8d28eaae094e4fac9ae484b260d9"
+      },
+      "analysisSchema": {
+        "path": "projects/managed/interview-video-analysis/schemas/interview-report-contract-v1.md",
+        "sha256": "98e303e21564cb4b6b1ca4cbc679870bd109f7b6e72c91298c89ac445cefe4dd"
+      },
+      "requestReceipt": null,
+      "usage": null,
+      "billing": null,
+      "retryOf": null,
+      "validation": {
+        "status": "not-run",
+        "validator": null,
+        "errors": []
+      },
+      "qa": {
+        "status": "passed",
+        "notes": "Reviewable revised report with source-specific corrections and preparation priorities; previous artifacts are preserved, user acceptance pending."
+      },
+      "runId": "report-cambricon-asr-calibrated-20260908",
+      "kind": "report",
+      "status": "succeeded",
+      "inputs": [
+        {
+          "path": "work/managed/interview-video-analysis/incoming/寒武纪.mkv",
+          "sha256": "1006b01c8a1ebaa4935e0376a39b7e6617a60ce78f54276e9cd48469e20ca0b9"
+        },
+        {
+          "path": "outputs/managed/interview-video-analysis/transcripts/transcribe-cambricon-recording-01-openai-20260908.raw.json",
+          "sha256": "4847eaa681d711612b49084402353bbac3b0006032a65e52f795db57b80d3656"
+        },
+        {
+          "path": "outputs/managed/interview-video-analysis/transcripts/interview-cambricon-recording-01.openai-asr-indexed.md",
+          "sha256": "4feac18feda7ccbeaadb6245a989ddfbf55b721549482126161b14737375331e"
+        },
+        {
+          "path": "outputs/managed/interview-video-analysis/analysis/interview-cambricon-recording-01.asr-gemini-comparison.json",
+          "sha256": "8aa24f34787b05f771b8866e1b3f98118081512bbfc93b46763615a7776c63c5"
+        },
+        {
+          "path": "outputs/managed/interview-video-analysis/analysis/interview-cambricon-recording-01.asr-gemini-comparison.md",
+          "sha256": "6b0f04aa1e29e3340ae1c612bd7730600747605114bcccd9d5bd357344b3ac1b"
+        },
+        {
+          "path": "outputs/managed/interview-video-analysis/reports/interview-cambricon-recording-01-analysis.md",
+          "sha256": "aa13fae32af4f17f71af37f1b05d9da1142d23bb2605d006d982085a44997af5"
+        }
+      ],
+      "outputs": [
+        {
+          "path": "outputs/managed/interview-video-analysis/reports/interview-cambricon-recording-01-asr-calibrated-analysis.md",
+          "sha256": "a45bb60c27a49625c4f79e058b3485cbfdadb524157390df9009ee37829df8f9"
+        }
+      ],
+      "parameters": {
+        "sourceMode": "asr-text-analysis-compared-with-prior-audio-understanding",
+        "calibrationStatus": "not_calibrated",
+        "priorReportsPreserved": true,
+        "newGeminiCalls": 0,
+        "humanListening": false,
+        "exactAudioAlignment": false,
+        "externalGenerationCalls": 0
+      }
+    }
+  ],
+  "artifacts": [
+    {
+      "artifactId": "artifact-cambricon-20260908-preflight-01",
+      "disposition": "candidate",
+      "path": "work/managed/interview-video-analysis/derived/interview-cambricon-recording-01.source-probe.json",
+      "sha256": "21a83650ae5a68d1d1a8af3f9df07fbbcb8461dfc266d5b5637031927d502714",
+      "producingRunId": "prepare-cambricon-recording-01-20260908",
+      "upstreamArtifactIds": [],
+      "kind": "probe",
+      "validationEvidence": [],
+      "acceptance": {
+        "status": "pending",
+        "occurredAt": null,
+        "evidenceRef": null,
+        "notes": "Prepared locally; successful execution does not imply user acceptance."
+      }
+    },
+    {
+      "artifactId": "artifact-cambricon-20260908-preflight-02",
+      "disposition": "candidate",
+      "path": "work/managed/interview-video-analysis/derived/interview-cambricon-recording-01.derivative-probe.json",
+      "sha256": "ea178a388a9e9eec3a0e57bc8df63e82e9e08e4cf33c500fbb835c98ae52afcc",
+      "producingRunId": "prepare-cambricon-recording-01-20260908",
+      "upstreamArtifactIds": [],
+      "kind": "probe",
+      "validationEvidence": [],
+      "acceptance": {
+        "status": "pending",
+        "occurredAt": null,
+        "evidenceRef": null,
+        "notes": "Prepared locally; successful execution does not imply user acceptance."
+      }
+    },
+    {
+      "artifactId": "artifact-cambricon-20260908-preflight-03",
+      "disposition": "candidate",
+      "path": "work/managed/interview-video-analysis/derived/interview-cambricon-recording-01.normalized-stereo-16k-64kbps.mp3",
+      "sha256": "3a4e76277132d28cc3bf60629d9c801ac97b522a7d013927ce266cafd4a99b04",
+      "producingRunId": "prepare-cambricon-recording-01-20260908",
+      "upstreamArtifactIds": [],
+      "kind": "other",
+      "validationEvidence": [],
+      "acceptance": {
+        "status": "pending",
+        "occurredAt": null,
+        "evidenceRef": null,
+        "notes": "Prepared locally; successful execution does not imply user acceptance."
+      }
+    },
+    {
+      "artifactId": "artifact-cambricon-20260908-preflight-04",
+      "disposition": "candidate",
+      "path": "work/managed/interview-video-analysis/derived/interview-cambricon-recording-01.audio-derivation.json",
+      "sha256": "d54d5e6b1ee053d8b1321fece70d5c0c2297561e135e6b9ff090bae015d0789f",
+      "producingRunId": "prepare-cambricon-recording-01-20260908",
+      "upstreamArtifactIds": [],
+      "kind": "other",
+      "validationEvidence": [],
+      "acceptance": {
+        "status": "pending",
+        "occurredAt": null,
+        "evidenceRef": null,
+        "notes": "Prepared locally; successful execution does not imply user acceptance."
+      }
+    },
+    {
+      "artifactId": "artifact-cambricon-20260908-preflight-05",
+      "disposition": "candidate",
+      "path": "work/managed/interview-video-analysis/derived/interview-cambricon-recording-01.contact-sheet.jpg",
+      "sha256": "2dc6a45a662ed014cf71adce657e88ab19c020b78ae5421c2e796ec105c94b88",
+      "producingRunId": "prepare-cambricon-recording-01-20260908",
+      "upstreamArtifactIds": [],
+      "kind": "other",
+      "validationEvidence": [],
+      "acceptance": {
+        "status": "pending",
+        "occurredAt": null,
+        "evidenceRef": null,
+        "notes": "Prepared locally; successful execution does not imply user acceptance."
+      }
+    },
+    {
+      "artifactId": "artifact-cambricon-20260908-preflight-06",
+      "disposition": "candidate",
+      "path": "work/managed/interview-video-analysis/derived/interview-cambricon-recording-01.frame-20m00s.png",
+      "sha256": "d295591338e1e88b8f2da674a68100549287c68712126f7ac9aea36e8b06163e",
+      "producingRunId": "prepare-cambricon-recording-01-20260908",
+      "upstreamArtifactIds": [],
+      "kind": "other",
+      "validationEvidence": [],
+      "acceptance": {
+        "status": "pending",
+        "occurredAt": null,
+        "evidenceRef": null,
+        "notes": "Prepared locally; successful execution does not imply user acceptance."
+      }
+    },
+    {
+      "artifactId": "artifact-cambricon-20260908-preflight-07",
+      "disposition": "candidate",
+      "path": "work/managed/interview-video-analysis/derived/interview-cambricon-recording-01.frame-35m00s.png",
+      "sha256": "57c783dcf1ff7c2adcd63176334e78db532d15e9f1ae2351f232bca8478b54c7",
+      "producingRunId": "prepare-cambricon-recording-01-20260908",
+      "upstreamArtifactIds": [],
+      "kind": "other",
+      "validationEvidence": [],
+      "acceptance": {
+        "status": "pending",
+        "occurredAt": null,
+        "evidenceRef": null,
+        "notes": "Prepared locally; successful execution does not imply user acceptance."
+      }
+    },
+    {
+      "artifactId": "artifact-cambricon-20260908-preflight-08",
+      "disposition": "candidate",
+      "path": "work/managed/interview-video-analysis/prompts/understand-cambricon-recording-01-20260908.md",
+      "sha256": "9dd7eef3ae981a8fc14504900af8062fb646fd68f2e102ddcffd780a286a337f",
+      "producingRunId": "prepare-cambricon-recording-01-20260908",
+      "upstreamArtifactIds": [],
+      "kind": "prompt",
+      "validationEvidence": [],
+      "acceptance": {
+        "status": "pending",
+        "occurredAt": null,
+        "evidenceRef": null,
+        "notes": "Prepared locally; successful execution does not imply user acceptance."
+      }
+    },
+    {
+      "artifactId": "artifact-cambricon-20260908-preflight-09",
+      "disposition": "candidate",
+      "path": "work/managed/interview-video-analysis/workflow-proposals/understand-cambricon-recording-01-gemini-20260908.proposal.json",
+      "sha256": "2a129a036e93452f0bf7216d83a5ccdfb55f502daf8f689aa4714e5e0acf219f",
+      "producingRunId": "prepare-cambricon-recording-01-20260908",
+      "upstreamArtifactIds": [],
+      "kind": "other",
+      "validationEvidence": [],
+      "acceptance": {
+        "status": "pending",
+        "occurredAt": null,
+        "evidenceRef": null,
+        "notes": "Prepared locally; successful execution does not imply user acceptance."
+      }
+    },
+    {
+      "artifactId": "artifact-cambricon-20260908-preflight-10",
+      "disposition": "candidate",
+      "path": "work/managed/interview-video-analysis/workflow-proposals/understand-cambricon-recording-01-gemini-20260908.plan.json",
+      "sha256": "0de8d75b712f568e28a3798dcac2f6f4f93e965ed99c87adf2feff13fd4a0c82",
+      "producingRunId": "prepare-cambricon-recording-01-20260908",
+      "upstreamArtifactIds": [],
+      "kind": "other",
+      "validationEvidence": [],
+      "acceptance": {
+        "status": "pending",
+        "occurredAt": null,
+        "evidenceRef": null,
+        "notes": "Prepared locally; successful execution does not imply user acceptance."
+      }
+    },
+    {
+      "artifactId": "artifact-cambricon-20260908-preflight-11",
+      "disposition": "candidate",
+      "path": "work/managed/interview-video-analysis/preflight/cambricon-recording-01-understand-dry-run.json",
+      "sha256": "27ad064de395931769caf2ebb56840973b31560743a5cd7e792ddffe00b4609c",
+      "producingRunId": "prepare-cambricon-recording-01-20260908",
+      "upstreamArtifactIds": [],
+      "kind": "other",
+      "validationEvidence": [],
+      "acceptance": {
+        "status": "pending",
+        "occurredAt": null,
+        "evidenceRef": null,
+        "notes": "Prepared locally; successful execution does not imply user acceptance."
+      }
+    },
+    {
+      "artifactId": "artifact-cambricon-20260908-preflight-12",
+      "disposition": "candidate",
+      "path": "work/managed/interview-video-analysis/preflight/cambricon-recording-01-model-selection-20260908.json",
+      "sha256": "b161558e1592fd9f419d252283145d02f99e7b33ea03d89cdabd3553e06592a3",
+      "producingRunId": "prepare-cambricon-recording-01-20260908",
+      "upstreamArtifactIds": [],
+      "kind": "other",
+      "validationEvidence": [],
+      "acceptance": {
+        "status": "pending",
+        "occurredAt": null,
+        "evidenceRef": null,
+        "notes": "Prepared locally; successful execution does not imply user acceptance."
+      }
+    },
+    {
+      "artifactId": "artifact-cambricon-20260908-preflight-13",
+      "disposition": "candidate",
+      "path": "projects/managed/interview-video-analysis/notes/intake-interview-cambricon-recording-01.md",
+      "sha256": "7b5a32f82c7fe9b4ad27e7e51d86128fafc339cf5b25f2a450112f5f0be3bf9e",
+      "producingRunId": "prepare-cambricon-recording-01-20260908",
+      "upstreamArtifactIds": [],
+      "kind": "other",
+      "validationEvidence": [],
+      "acceptance": {
+        "status": "pending",
+        "occurredAt": null,
+        "evidenceRef": null,
+        "notes": "Prepared locally; successful execution does not imply user acceptance."
+      }
+    },
+    {
+      "artifactId": "artifact-cambricon-20260908-media-verify-1",
+      "disposition": "candidate",
+      "path": "work/managed/interview-video-analysis/derived/interview-cambricon-recording-01.encoded-loudness.json",
+      "sha256": "fcfcd971a2b278e59685422830da0a6013b1239401a51de2ab8ad9d84796c45a",
+      "producingRunId": "verify-cambricon-media-20260908",
+      "upstreamArtifactIds": [
+        "artifact-cambricon-20260908-preflight-03",
+        "artifact-cambricon-20260908-preflight-04"
+      ],
+      "kind": "qa",
+      "validationEvidence": [],
+      "acceptance": {
+        "status": "pending",
+        "occurredAt": null,
+        "evidenceRef": null,
+        "notes": "Checked locally; awaiting user review."
+      }
+    },
+    {
+      "artifactId": "artifact-cambricon-20260908-media-verify-2",
+      "disposition": "candidate",
+      "path": "work/managed/interview-video-analysis/preflight/interview-cambricon-recording-01.media-validation.json",
+      "sha256": "5f3d74f991db18941457dac2fe2a1f372ce8764f748b771a2df0a3482dd70e95",
+      "producingRunId": "verify-cambricon-media-20260908",
+      "upstreamArtifactIds": [
+        "artifact-cambricon-20260908-preflight-03",
+        "artifact-cambricon-20260908-preflight-04"
+      ],
+      "kind": "qa",
+      "validationEvidence": [],
+      "acceptance": {
+        "status": "pending",
+        "occurredAt": null,
+        "evidenceRef": null,
+        "notes": "Checked locally; awaiting user review."
+      }
+    },
+    {
+      "artifactId": "artifact-cambricon-20260908-audio-understanding",
+      "disposition": "candidate",
+      "path": "outputs/managed/interview-video-analysis/analysis/understand-cambricon-recording-01-20260908.audio.md",
+      "sha256": "f3f3395b7dcab04f9f34b269bc0c08df319ab144f1e2ec80eb45b83c0b09670f",
+      "producingRunId": "understand-cambricon-recording-01-gemini-20260908",
+      "upstreamArtifactIds": [
+        "artifact-cambricon-20260908-preflight-03",
+        "artifact-cambricon-20260908-preflight-08"
+      ],
+      "kind": "raw-response",
+      "validationEvidence": [],
+      "acceptance": {
+        "status": "pending",
+        "occurredAt": null,
+        "evidenceRef": null,
+        "notes": "Original model output; conclusions require the separate audit."
+      }
+    },
+    {
+      "artifactId": "artifact-cambricon-20260908-audio-understanding-metadata",
+      "disposition": "candidate",
+      "path": "outputs/managed/interview-video-analysis/analysis/understand-cambricon-recording-01-20260908.audio.md.response.json",
+      "sha256": "99c4f33551272e4f7a8d05e4e80a095521075e6f2c562c6c3c150c97798c9612",
+      "producingRunId": "understand-cambricon-recording-01-gemini-20260908",
+      "upstreamArtifactIds": [
+        "artifact-cambricon-20260908-preflight-03",
+        "artifact-cambricon-20260908-preflight-08"
+      ],
+      "kind": "raw-response",
+      "validationEvidence": [],
+      "acceptance": {
+        "status": "pending",
+        "occurredAt": null,
+        "evidenceRef": null,
+        "notes": "Original model output; conclusions require the separate audit."
+      }
+    },
+    {
+      "artifactId": "artifact-cambricon-20260908-audio-evidence-audit",
+      "disposition": "candidate",
+      "path": "outputs/managed/interview-video-analysis/analysis/interview-cambricon-recording-01.audio-evidence-audit.md",
+      "sha256": "88f17d7060e754998bd0bd4eec123ff8885626f1c0ca3258c858262730b16d54",
+      "producingRunId": "audit-cambricon-recording-01-20260908",
+      "upstreamArtifactIds": [
+        "artifact-cambricon-20260908-audio-understanding",
+        "artifact-cambricon-20260908-audio-understanding-metadata",
+        "artifact-cambricon-20260908-media-verify-2"
+      ],
+      "kind": "qa",
+      "validationEvidence": [
+        {
+          "validator": {
+            "path": "projects/managed/interview-video-analysis/scripts/validate-manifest.mjs",
+            "sha256": "8929f8e843b75f9a7d0837670c98740b0c2cbb6bc8c96e846577139c893a5ef7"
+          },
+          "status": "passed",
+          "notes": "Project source/run/artifact reference and byte integrity checks passed on the diagnostic snapshot; content review is separately documented."
+        }
+      ],
+      "acceptance": {
+        "status": "pending",
+        "occurredAt": null,
+        "evidenceRef": null,
+        "notes": "Completed as a reviewable candidate; no explicit user acceptance inferred."
+      }
+    },
+    {
+      "artifactId": "artifact-cambricon-20260908-analysis-report",
+      "disposition": "candidate",
+      "path": "outputs/managed/interview-video-analysis/reports/interview-cambricon-recording-01-analysis.md",
+      "sha256": "aa13fae32af4f17f71af37f1b05d9da1142d23bb2605d006d982085a44997af5",
+      "producingRunId": "report-cambricon-recording-01-20260908",
+      "upstreamArtifactIds": [
+        "artifact-cambricon-20260908-audio-understanding",
+        "artifact-cambricon-20260908-audio-evidence-audit"
+      ],
+      "kind": "report",
+      "validationEvidence": [
+        {
+          "validator": {
+            "path": "projects/managed/interview-video-analysis/scripts/validate-manifest.mjs",
+            "sha256": "8929f8e843b75f9a7d0837670c98740b0c2cbb6bc8c96e846577139c893a5ef7"
+          },
+          "status": "passed",
+          "notes": "Project source/run/artifact reference and byte integrity checks passed on the diagnostic snapshot; content review is separately documented."
+        }
+      ],
+      "acceptance": {
+        "status": "pending",
+        "occurredAt": null,
+        "evidenceRef": null,
+        "notes": "Completed as a reviewable candidate; no explicit user acceptance inferred."
+      }
+    },
+    {
+      "artifactId": "artifact-cambricon-20260908-delivery-verify-1",
+      "disposition": "candidate",
+      "path": "work/managed/interview-video-analysis/preflight/cambricon-delivery-candidate-manifest-diagnostic-20260908.json",
+      "sha256": "c4d44d9f3c4163735b41e75bbbe538d368cfc148c59bd08d65bcdcc533ce148a",
+      "producingRunId": "verify-cambricon-delivery-20260908",
+      "upstreamArtifactIds": [
+        "artifact-cambricon-20260908-analysis-report",
+        "artifact-cambricon-20260908-audio-evidence-audit",
+        "artifact-cambricon-20260908-media-verify-2"
+      ],
+      "kind": "qa",
+      "validationEvidence": [],
+      "acceptance": {
+        "status": "pending",
+        "occurredAt": null,
+        "evidenceRef": null,
+        "notes": "Verification evidence; not explicit user acceptance or an alternative business manifest."
+      }
+    },
+    {
+      "artifactId": "artifact-cambricon-20260908-delivery-verify-2",
+      "disposition": "candidate",
+      "path": "work/managed/interview-video-analysis/preflight/interview-cambricon-recording-01.delivery-validation.json",
+      "sha256": "73f7c8d0b44bdd66a980f8aae8df0b6e80d1b314b4d86959625a918b4db3c0c3",
+      "producingRunId": "verify-cambricon-delivery-20260908",
+      "upstreamArtifactIds": [
+        "artifact-cambricon-20260908-analysis-report",
+        "artifact-cambricon-20260908-audio-evidence-audit",
+        "artifact-cambricon-20260908-media-verify-2"
+      ],
+      "kind": "qa",
+      "validationEvidence": [],
+      "acceptance": {
+        "status": "pending",
+        "occurredAt": null,
+        "evidenceRef": null,
+        "notes": "Verification evidence; not explicit user acceptance or an alternative business manifest."
+      }
+    },
+    {
+      "artifactId": "artifact-cambricon-asr-20260908-preflight-1",
+      "disposition": "candidate",
+      "path": "projects/managed/interview-video-analysis/notes/asr-cambricon-20260908.md",
+      "sha256": "1b70efac9c16b71608e69d043a51e6fd12ec8d28eaae094e4fac9ae484b260d9",
+      "producingRunId": "prepare-cambricon-asr-20260908",
+      "upstreamArtifactIds": [
+        "artifact-cambricon-20260908-preflight-03"
+      ],
+      "kind": "other",
+      "validationEvidence": [],
+      "acceptance": {
+        "status": "pending",
+        "occurredAt": null,
+        "evidenceRef": null,
+        "notes": "Prepared locally; no user acceptance inferred."
+      }
+    },
+    {
+      "artifactId": "artifact-cambricon-asr-20260908-preflight-2",
+      "disposition": "candidate",
+      "path": "work/managed/interview-video-analysis/workflow-proposals/transcribe-cambricon-recording-01-openai-20260908.proposal.json",
+      "sha256": "55ed5b7bbbd9a9eaa393d6f66fac95473c87113ec535ecc48ecc514dc3d48403",
+      "producingRunId": "prepare-cambricon-asr-20260908",
+      "upstreamArtifactIds": [
+        "artifact-cambricon-20260908-preflight-03"
+      ],
+      "kind": "other",
+      "validationEvidence": [],
+      "acceptance": {
+        "status": "pending",
+        "occurredAt": null,
+        "evidenceRef": null,
+        "notes": "Prepared locally; no user acceptance inferred."
+      }
+    },
+    {
+      "artifactId": "artifact-cambricon-asr-20260908-preflight-3",
+      "disposition": "candidate",
+      "path": "work/managed/interview-video-analysis/workflow-proposals/transcribe-cambricon-recording-01-openai-20260908.plan.json",
+      "sha256": "8588642f4fc7df707df3b5e06b1c2821fdefa67d8d3efeba638d78d943e144cb",
+      "producingRunId": "prepare-cambricon-asr-20260908",
+      "upstreamArtifactIds": [
+        "artifact-cambricon-20260908-preflight-03"
+      ],
+      "kind": "other",
+      "validationEvidence": [],
+      "acceptance": {
+        "status": "pending",
+        "occurredAt": null,
+        "evidenceRef": null,
+        "notes": "Prepared locally; no user acceptance inferred."
+      }
+    },
+    {
+      "artifactId": "artifact-cambricon-asr-20260908-preflight-4",
+      "disposition": "candidate",
+      "path": "work/managed/interview-video-analysis/preflight/cambricon-asr-openai-20260908.dry-run.json",
+      "sha256": "4bdcf7f3924a7c26a39f3f490c5d430faac23fa59c0713f13d3db5f5e5d080a1",
+      "producingRunId": "prepare-cambricon-asr-20260908",
+      "upstreamArtifactIds": [
+        "artifact-cambricon-20260908-preflight-03"
+      ],
+      "kind": "other",
+      "validationEvidence": [],
+      "acceptance": {
+        "status": "pending",
+        "occurredAt": null,
+        "evidenceRef": null,
+        "notes": "Prepared locally; no user acceptance inferred."
+      }
+    },
+    {
+      "artifactId": "artifact-cambricon-asr-20260908-preflight-5",
+      "disposition": "candidate",
+      "path": "work/managed/interview-video-analysis/preflight/cambricon-asr-model-selection-20260908.json",
+      "sha256": "233354fb20f840f1415f9591ec10c73ad046561077630de3b398d57de097994a",
+      "producingRunId": "prepare-cambricon-asr-20260908",
+      "upstreamArtifactIds": [
+        "artifact-cambricon-20260908-preflight-03"
+      ],
+      "kind": "other",
+      "validationEvidence": [],
+      "acceptance": {
+        "status": "pending",
+        "occurredAt": null,
+        "evidenceRef": null,
+        "notes": "Prepared locally; no user acceptance inferred."
+      }
+    },
+    {
+      "artifactId": "artifact-cambricon-asr-20260908-preflight-6",
+      "disposition": "candidate",
+      "path": "work/managed/interview-video-analysis/preflight/cambricon-gemini-default-20260908.dry-run.json",
+      "sha256": "b9a02e597fafa3f3050b39437445cd1ba9cc4276b7f5a7d96e5c4fbf29f48c9f",
+      "producingRunId": "prepare-cambricon-asr-20260908",
+      "upstreamArtifactIds": [
+        "artifact-cambricon-20260908-preflight-03"
+      ],
+      "kind": "other",
+      "validationEvidence": [],
+      "acceptance": {
+        "status": "pending",
+        "occurredAt": null,
+        "evidenceRef": null,
+        "notes": "Prepared locally; no user acceptance inferred."
+      }
+    },
+    {
+      "artifactId": "artifact-cambricon-asr-20260908-openai-raw",
+      "disposition": "candidate",
+      "path": "outputs/managed/interview-video-analysis/transcripts/transcribe-cambricon-recording-01-openai-20260908.raw.json",
+      "sha256": "4847eaa681d711612b49084402353bbac3b0006032a65e52f795db57b80d3656",
+      "producingRunId": "transcribe-cambricon-recording-01-openai-20260908",
+      "upstreamArtifactIds": [
+        "artifact-cambricon-20260908-preflight-03"
+      ],
+      "kind": "transcript",
+      "validationEvidence": [
+        {
+          "validator": {
+            "path": "projects/managed/interview-video-analysis/scripts/validate-transcription.mjs",
+            "sha256": "5472161a5b655bfbd743481fbeb971cd94beebc96c5e760dc87ad53623ca94a9"
+          },
+          "status": "passed",
+          "notes": "Model, response schema, text length, token totals and duration checked; not word-level accuracy."
+        }
+      ],
+      "acceptance": {
+        "status": "pending",
+        "occurredAt": null,
+        "evidenceRef": null,
+        "notes": "Raw ASR candidate; not independently listened or speaker-aligned."
+      }
+    },
+    {
+      "artifactId": "artifact-cambricon-asr-20260908-response-validation",
+      "disposition": "candidate",
+      "path": "work/managed/interview-video-analysis/preflight/cambricon-asr-openai-20260908.validation.json",
+      "sha256": "5dc1f027ecc4401201b1abfc9c6672cdf129538dd66c97e33100fbc0b07eeedd",
+      "producingRunId": "index-cambricon-asr-20260908",
+      "upstreamArtifactIds": [
+        "artifact-cambricon-asr-20260908-openai-raw"
+      ],
+      "kind": "transcript",
+      "validationEvidence": [],
+      "acceptance": {
+        "status": "pending",
+        "occurredAt": null,
+        "evidenceRef": null,
+        "notes": "Prepared and locally checked; not a claim of human listening or explicit user acceptance."
+      }
+    },
+    {
+      "artifactId": "artifact-cambricon-asr-20260908-index-json",
+      "disposition": "candidate",
+      "path": "outputs/managed/interview-video-analysis/transcripts/interview-cambricon-recording-01.openai-asr-indexed.json",
+      "sha256": "4b8c0ba7c4a719bfff7b2e3f938430bdd882326bbf625c003efbe8bdf1713ba2",
+      "producingRunId": "index-cambricon-asr-20260908",
+      "upstreamArtifactIds": [
+        "artifact-cambricon-asr-20260908-openai-raw"
+      ],
+      "kind": "transcript",
+      "validationEvidence": [],
+      "acceptance": {
+        "status": "pending",
+        "occurredAt": null,
+        "evidenceRef": null,
+        "notes": "Prepared and locally checked; not a claim of human listening or explicit user acceptance."
+      }
+    },
+    {
+      "artifactId": "artifact-cambricon-asr-20260908-index-md",
+      "disposition": "candidate",
+      "path": "outputs/managed/interview-video-analysis/transcripts/interview-cambricon-recording-01.openai-asr-indexed.md",
+      "sha256": "4feac18feda7ccbeaadb6245a989ddfbf55b721549482126161b14737375331e",
+      "producingRunId": "index-cambricon-asr-20260908",
+      "upstreamArtifactIds": [
+        "artifact-cambricon-asr-20260908-openai-raw"
+      ],
+      "kind": "transcript",
+      "validationEvidence": [],
+      "acceptance": {
+        "status": "pending",
+        "occurredAt": null,
+        "evidenceRef": null,
+        "notes": "Prepared and locally checked; not a claim of human listening or explicit user acceptance."
+      }
+    },
+    {
+      "artifactId": "artifact-cambricon-asr-20260908-comparison-json",
+      "disposition": "candidate",
+      "path": "outputs/managed/interview-video-analysis/analysis/interview-cambricon-recording-01.asr-gemini-comparison.json",
+      "sha256": "8aa24f34787b05f771b8866e1b3f98118081512bbfc93b46763615a7776c63c5",
+      "producingRunId": "compare-cambricon-asr-gemini-20260908",
+      "upstreamArtifactIds": [
+        "artifact-cambricon-asr-20260908-index-json",
+        "artifact-cambricon-asr-20260908-index-md",
+        "artifact-cambricon-20260908-audio-understanding",
+        "artifact-cambricon-20260908-analysis-report",
+        "artifact-cambricon-20260908-audio-evidence-audit"
+      ],
+      "kind": "qa",
+      "validationEvidence": [],
+      "acceptance": {
+        "status": "pending",
+        "occurredAt": null,
+        "evidenceRef": null,
+        "notes": "Prepared and locally checked; not a claim of human listening or explicit user acceptance."
+      }
+    },
+    {
+      "artifactId": "artifact-cambricon-asr-20260908-comparison-md",
+      "disposition": "candidate",
+      "path": "outputs/managed/interview-video-analysis/analysis/interview-cambricon-recording-01.asr-gemini-comparison.md",
+      "sha256": "6b0f04aa1e29e3340ae1c612bd7730600747605114bcccd9d5bd357344b3ac1b",
+      "producingRunId": "compare-cambricon-asr-gemini-20260908",
+      "upstreamArtifactIds": [
+        "artifact-cambricon-asr-20260908-index-json",
+        "artifact-cambricon-asr-20260908-index-md",
+        "artifact-cambricon-20260908-audio-understanding",
+        "artifact-cambricon-20260908-analysis-report",
+        "artifact-cambricon-20260908-audio-evidence-audit"
+      ],
+      "kind": "qa",
+      "validationEvidence": [],
+      "acceptance": {
+        "status": "pending",
+        "occurredAt": null,
+        "evidenceRef": null,
+        "notes": "Prepared and locally checked; not a claim of human listening or explicit user acceptance."
+      }
+    },
+    {
+      "artifactId": "artifact-cambricon-asr-20260908-calibrated-report",
+      "disposition": "candidate",
+      "path": "outputs/managed/interview-video-analysis/reports/interview-cambricon-recording-01-asr-calibrated-analysis.md",
+      "sha256": "a45bb60c27a49625c4f79e058b3485cbfdadb524157390df9009ee37829df8f9",
+      "producingRunId": "report-cambricon-asr-calibrated-20260908",
+      "upstreamArtifactIds": [
+        "artifact-cambricon-asr-20260908-openai-raw",
+        "artifact-cambricon-asr-20260908-comparison-md",
+        "artifact-cambricon-asr-20260908-comparison-json",
+        "artifact-cambricon-20260908-analysis-report"
+      ],
+      "kind": "report",
+      "validationEvidence": [],
+      "acceptance": {
+        "status": "pending",
+        "occurredAt": null,
+        "evidenceRef": null,
+        "notes": "Prepared and locally checked; not a claim of human listening or explicit user acceptance."
+      }
+    }
+  ]
+}

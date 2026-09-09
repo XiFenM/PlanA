@@ -8,6 +8,14 @@
   },
   "input_collections": [
     {
+      "id": "inference-adaptation-evidence",
+      "kind": "source-bundle",
+      "patterns": [
+        "推理框架/EP-PD自研芯片适配设计与验证包.md"
+      ],
+      "producer": "guide-learning"
+    },
+    {
       "id": "inference-study-article",
       "kind": "article",
       "patterns": [

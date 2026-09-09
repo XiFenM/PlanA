@@ -1,0 +1,17 @@
+{
+  "recordingId": "interview-cambricon-recording-01",
+  "measurement": {
+    "input_i": "-18.72",
+    "input_tp": "-1.16",
+    "input_lra": "8.10",
+    "input_thresh": "-29.45",
+    "output_i": "-17.92",
+    "output_tp": "-2.00",
+    "output_lra": "7.90",
+    "output_thresh": "-28.60",
+    "normalization_type": "dynamic",
+    "target_offset": "-0.08"
+  },
+  "fullDecode": "passed",
+  "notes": "input_* values measure the actual encoded MP3. output_* describe the measurement filter, not a newly written derivative."
+}

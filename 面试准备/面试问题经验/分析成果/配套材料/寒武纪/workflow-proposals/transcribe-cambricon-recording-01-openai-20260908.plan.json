@@ -1,0 +1,64 @@
+{
+  "billable": true,
+  "billing": {
+    "cost_boundary": {
+      "amount": "0.50",
+      "currency": "USD",
+      "kind": "estimate-only"
+    },
+    "count": 1,
+    "model_or_tier": "openai/gpt-transcribe",
+    "one_attempt_max": true,
+    "provider": "zenmux",
+    "request_bounds": {
+      "enable-itn": true,
+      "language": "zh",
+      "max-local-mb": 25,
+      "stream": false
+    }
+  },
+  "context_digest": "96482c5eaad8df4900150e89f5745caa088227c2c047dc4660ca1684c59953ff",
+  "dependencies": [],
+  "destructive": false,
+  "inputs": [
+    {
+      "authority": "managed-fact",
+      "path": "package.json",
+      "sha256": "947c92fe216468319b3c2f7fe351618564063a3f6cab191838ac7ce93662f7ef"
+    },
+    {
+      "authority": "user-provided",
+      "path": "work/managed/interview-video-analysis/derived/interview-cambricon-recording-01.normalized-stereo-16k-64kbps.mp3",
+      "sha256": "3a4e76277132d28cc3bf60629d9c801ac97b522a7d013927ce266cafd4a99b04"
+    }
+  ],
+  "kind": "transform",
+  "operation_id": "transcribe-cambricon-recording-01-openai-20260908",
+  "parameters": {
+    "arguments": {
+      "enable-itn": true,
+      "input": "work/managed/interview-video-analysis/derived/interview-cambricon-recording-01.normalized-stereo-16k-64kbps.mp3",
+      "language": "zh",
+      "max-local-mb": 25,
+      "model": "openai/gpt-transcribe",
+      "out": "outputs/managed/interview-video-analysis/transcripts/transcribe-cambricon-recording-01-openai-20260908.raw.json"
+    },
+    "subcommand": "transcribe"
+  },
+  "preview_digest": "31a4a9dc2e929d641ab3ab794b107fe03150848c2ddf7ad7362df6c766547f74",
+  "profile_id": "content-project",
+  "remote": true,
+  "required_grants": [
+    "billable"
+  ],
+  "route_id": "zenmux-transcribe",
+  "schema": "agent-skills.creator-operation-plan/v1",
+  "summary": "One OpenAI transcription of the exact audio previously analyzed by Gemini, explicitly requested by the user for comparison; no new Gemini invocation.",
+  "targets": [
+    {
+      "before_sha256": "absent",
+      "path": "outputs/managed/interview-video-analysis/transcripts/transcribe-cambricon-recording-01-openai-20260908.raw.json"
+    }
+  ],
+  "workflow_id": "interview-video-analysis-20260908"
+}

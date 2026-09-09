@@ -1,0 +1,69 @@
+{
+  "schemaVersion": 1,
+  "recordingId": "interview-cambricon-recording-01",
+  "createdAt": "2026-09-08T12:10:04.795Z",
+  "operation": {
+    "kind": "local-audio-transform",
+    "externalCall": false,
+    "tool": "ffmpeg 6.1.1-3ubuntu5",
+    "preserveSource": true
+  },
+  "input": {
+    "path": "work/managed/interview-video-analysis/incoming/寒武纪.mkv",
+    "sha256": "1006b01c8a1ebaa4935e0376a39b7e6617a60ce78f54276e9cd48469e20ca0b9",
+    "bytes": 735462001,
+    "audioStream": 1,
+    "channels": 2,
+    "sampleRateHz": 48000,
+    "durationMs": 2201834,
+    "startTimeSeconds": 0
+  },
+  "measurementBefore": {
+    "input_i": "-22.19",
+    "input_tp": "0.45",
+    "input_lra": "11.90",
+    "input_thresh": "-33.08",
+    "output_i": "-19.73",
+    "output_tp": "-2.00",
+    "output_lra": "8.60",
+    "output_thresh": "-30.45",
+    "normalization_type": "dynamic",
+    "target_offset": "1.73"
+  },
+  "transform": {
+    "loudnessFilter": "loudnorm=I=-18:TP=-2:LRA=11:measured_I=-22.19:measured_TP=0.45:measured_LRA=11.90:measured_thresh=-33.08:offset=1.73:linear=false:print_format=json",
+    "sampleRateHz": 16000,
+    "channels": 2,
+    "codec": "libmp3lame",
+    "bitRate": "64k",
+    "twoPassLoudnessNormalization": true,
+    "denoise": false,
+    "silenceTrim": false,
+    "metadataRemoved": true
+  },
+  "preEncodingFilterMeasurement": {
+    "input_i": "-22.19",
+    "input_tp": "0.45",
+    "input_lra": "11.90",
+    "input_thresh": "-33.08",
+    "output_i": "-18.26",
+    "output_tp": "-2.00",
+    "output_lra": "8.20",
+    "output_thresh": "-28.97",
+    "normalization_type": "dynamic",
+    "target_offset": "0.26"
+  },
+  "output": {
+    "path": "work/managed/interview-video-analysis/derived/interview-cambricon-recording-01.normalized-stereo-16k-64kbps.mp3",
+    "sha256": "3a4e76277132d28cc3bf60629d9c801ac97b522a7d013927ce266cafd4a99b04",
+    "bytes": 17615853,
+    "durationMs": 2201940,
+    "startTimeSeconds": 0.069062
+  },
+  "limitations": [
+    "Full source audio decoded; video was sampled, not fully decoded or reviewed.",
+    "MP3 muxer reported an end-of-stream padding warning; derivative duration checked and independent full decode scheduled.",
+    "Normalization cannot recover missing or clipped audio; numeric metrics do not validate speech content or roles.",
+    "Model timestamps are approximate source-file navigation, not meeting UI timer values."
+  ]
+}

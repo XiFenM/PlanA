@@ -1,0 +1,20 @@
+{
+  "endpoint": "https://zenmux.ai/api/v1/audio/transcriptions",
+  "payload": {
+    "model": "openai/gpt-transcribe",
+    "language": "zh",
+    "enable_itn": true,
+    "stream": false,
+    "input_audio": {
+      "data": "<redacted:37 chars>",
+      "format": "mp3"
+    }
+  },
+  "local_input": {
+    "filename": "interview-cambricon-recording-01.normalized-stereo-16k-64kbps.mp3",
+    "format": "mp3",
+    "size_bytes": 17615853,
+    "max_local_mb": 25
+  },
+  "output": "/root/workspace/learning/daily-work/outputs/managed/interview-video-analysis/transcripts/transcribe-cambricon-recording-01-openai-20260908.raw.json"
+}

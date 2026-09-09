@@ -1,0 +1,349 @@
+{
+  "schemaVersion": 1,
+  "recordingId": "interview-cambricon-recording-01",
+  "preparedAt": "2026-09-08T12:56:11.484Z",
+  "purpose": "用户明确要求将本次全部分析产物整理复制到 PlanA/面试准备/面试问题经验。",
+  "sourceRepository": "daily-work",
+  "archiveRepository": "PlanA",
+  "archiveDirectory": "面试准备/面试问题经验",
+  "sourceManifestSnapshot": "分析成果/配套材料/寒武纪/source-manifest.snapshot.json",
+  "originalRecordingCopied": false,
+  "artifactsSelected": 36,
+  "byteIdenticalCopies": 35,
+  "linkAdjustedCopies": 1,
+  "sourcePathsAndDigestsKeepOriginalRepositoryContext": true,
+  "projectStateOwner": "daily-work/projects/managed/interview-video-analysis/manifest.json",
+  "notes": "该文件是归档路径与哈希映射，不是新的业务清单或执行账本。原片仍保留在 daily-work；所有已登记产物包括音频副本、抽帧与配套证据均复制。",
+  "files": [
+    {
+      "sourcePath": "work/managed/interview-video-analysis/derived/interview-cambricon-recording-01.source-probe.json",
+      "archivePath": "分析成果/配套材料/寒武纪/derived/interview-cambricon-recording-01.source-probe.json",
+      "sourceSha256": "21a83650ae5a68d1d1a8af3f9df07fbbcb8461dfc266d5b5637031927d502714",
+      "archiveSha256": "21a83650ae5a68d1d1a8af3f9df07fbbcb8461dfc266d5b5637031927d502714",
+      "bytes": 3178,
+      "byteIdentical": true,
+      "linkChanges": []
+    },
+    {
+      "sourcePath": "work/managed/interview-video-analysis/derived/interview-cambricon-recording-01.derivative-probe.json",
+      "archivePath": "分析成果/配套材料/寒武纪/derived/interview-cambricon-recording-01.derivative-probe.json",
+      "sourceSha256": "ea178a388a9e9eec3a0e57bc8df63e82e9e08e4cf33c500fbb835c98ae52afcc",
+      "archiveSha256": "ea178a388a9e9eec3a0e57bc8df63e82e9e08e4cf33c500fbb835c98ae52afcc",
+      "bytes": 1621,
+      "byteIdentical": true,
+      "linkChanges": []
+    },
+    {
+      "sourcePath": "work/managed/interview-video-analysis/derived/interview-cambricon-recording-01.normalized-stereo-16k-64kbps.mp3",
+      "archivePath": "分析成果/配套材料/寒武纪/derived/interview-cambricon-recording-01.normalized-stereo-16k-64kbps.mp3",
+      "sourceSha256": "3a4e76277132d28cc3bf60629d9c801ac97b522a7d013927ce266cafd4a99b04",
+      "archiveSha256": "3a4e76277132d28cc3bf60629d9c801ac97b522a7d013927ce266cafd4a99b04",
+      "bytes": 17615853,
+      "byteIdentical": true,
+      "linkChanges": []
+    },
+    {
+      "sourcePath": "work/managed/interview-video-analysis/derived/interview-cambricon-recording-01.audio-derivation.json",
+      "archivePath": "分析成果/配套材料/寒武纪/derived/interview-cambricon-recording-01.audio-derivation.json",
+      "sourceSha256": "d54d5e6b1ee053d8b1321fece70d5c0c2297561e135e6b9ff090bae015d0789f",
+      "archiveSha256": "d54d5e6b1ee053d8b1321fece70d5c0c2297561e135e6b9ff090bae015d0789f",
+      "bytes": 2386,
+      "byteIdentical": true,
+      "linkChanges": []
+    },
+    {
+      "sourcePath": "work/managed/interview-video-analysis/derived/interview-cambricon-recording-01.contact-sheet.jpg",
+      "archivePath": "分析成果/配套材料/寒武纪/derived/interview-cambricon-recording-01.contact-sheet.jpg",
+      "sourceSha256": "2dc6a45a662ed014cf71adce657e88ab19c020b78ae5421c2e796ec105c94b88",
+      "archiveSha256": "2dc6a45a662ed014cf71adce657e88ab19c020b78ae5421c2e796ec105c94b88",
+      "bytes": 48463,
+      "byteIdentical": true,
+      "linkChanges": []
+    },
+    {
+      "sourcePath": "work/managed/interview-video-analysis/derived/interview-cambricon-recording-01.frame-20m00s.png",
+      "archivePath": "分析成果/配套材料/寒武纪/derived/interview-cambricon-recording-01.frame-20m00s.png",
+      "sourceSha256": "d295591338e1e88b8f2da674a68100549287c68712126f7ac9aea36e8b06163e",
+      "archiveSha256": "d295591338e1e88b8f2da674a68100549287c68712126f7ac9aea36e8b06163e",
+      "bytes": 247484,
+      "byteIdentical": true,
+      "linkChanges": []
+    },
+    {
+      "sourcePath": "work/managed/interview-video-analysis/derived/interview-cambricon-recording-01.frame-35m00s.png",
+      "archivePath": "分析成果/配套材料/寒武纪/derived/interview-cambricon-recording-01.frame-35m00s.png",
+      "sourceSha256": "57c783dcf1ff7c2adcd63176334e78db532d15e9f1ae2351f232bca8478b54c7",
+      "archiveSha256": "57c783dcf1ff7c2adcd63176334e78db532d15e9f1ae2351f232bca8478b54c7",
+      "bytes": 618065,
+      "byteIdentical": true,
+      "linkChanges": []
+    },
+    {
+      "sourcePath": "work/managed/interview-video-analysis/prompts/understand-cambricon-recording-01-20260908.md",
+      "archivePath": "分析成果/配套材料/寒武纪/prompts/understand-cambricon-recording-01-20260908.md",
+      "sourceSha256": "9dd7eef3ae981a8fc14504900af8062fb646fd68f2e102ddcffd780a286a337f",
+      "archiveSha256": "9dd7eef3ae981a8fc14504900af8062fb646fd68f2e102ddcffd780a286a337f",
+      "bytes": 4496,
+      "byteIdentical": true,
+      "linkChanges": []
+    },
+    {
+      "sourcePath": "work/managed/interview-video-analysis/workflow-proposals/understand-cambricon-recording-01-gemini-20260908.proposal.json",
+      "archivePath": "分析成果/配套材料/寒武纪/workflow-proposals/understand-cambricon-recording-01-gemini-20260908.proposal.json",
+      "sourceSha256": "2a129a036e93452f0bf7216d83a5ccdfb55f502daf8f689aa4714e5e0acf219f",
+      "archiveSha256": "2a129a036e93452f0bf7216d83a5ccdfb55f502daf8f689aa4714e5e0acf219f",
+      "bytes": 2496,
+      "byteIdentical": true,
+      "linkChanges": []
+    },
+    {
+      "sourcePath": "work/managed/interview-video-analysis/workflow-proposals/understand-cambricon-recording-01-gemini-20260908.plan.json",
+      "archivePath": "分析成果/配套材料/寒武纪/workflow-proposals/understand-cambricon-recording-01-gemini-20260908.plan.json",
+      "sourceSha256": "0de8d75b712f568e28a3798dcac2f6f4f93e965ed99c87adf2feff13fd4a0c82",
+      "archiveSha256": "0de8d75b712f568e28a3798dcac2f6f4f93e965ed99c87adf2feff13fd4a0c82",
+      "bytes": 2711,
+      "byteIdentical": true,
+      "linkChanges": []
+    },
+    {
+      "sourcePath": "work/managed/interview-video-analysis/preflight/cambricon-recording-01-understand-dry-run.json",
+      "archivePath": "分析成果/配套材料/寒武纪/preflight/cambricon-recording-01-understand-dry-run.json",
+      "sourceSha256": "27ad064de395931769caf2ebb56840973b31560743a5cd7e792ddffe00b4609c",
+      "archiveSha256": "27ad064de395931769caf2ebb56840973b31560743a5cd7e792ddffe00b4609c",
+      "bytes": 5088,
+      "byteIdentical": true,
+      "linkChanges": []
+    },
+    {
+      "sourcePath": "work/managed/interview-video-analysis/preflight/cambricon-recording-01-model-selection-20260908.json",
+      "archivePath": "分析成果/配套材料/寒武纪/preflight/cambricon-recording-01-model-selection-20260908.json",
+      "sourceSha256": "b161558e1592fd9f419d252283145d02f99e7b33ea03d89cdabd3553e06592a3",
+      "archiveSha256": "b161558e1592fd9f419d252283145d02f99e7b33ea03d89cdabd3553e06592a3",
+      "bytes": 1416,
+      "byteIdentical": true,
+      "linkChanges": []
+    },
+    {
+      "sourcePath": "projects/managed/interview-video-analysis/notes/intake-interview-cambricon-recording-01.md",
+      "archivePath": "分析成果/配套材料/寒武纪/notes/intake-interview-cambricon-recording-01.md",
+      "sourceSha256": "7b5a32f82c7fe9b4ad27e7e51d86128fafc339cf5b25f2a450112f5f0be3bf9e",
+      "archiveSha256": "7b5a32f82c7fe9b4ad27e7e51d86128fafc339cf5b25f2a450112f5f0be3bf9e",
+      "bytes": 4969,
+      "byteIdentical": true,
+      "linkChanges": []
+    },
+    {
+      "sourcePath": "work/managed/interview-video-analysis/derived/interview-cambricon-recording-01.encoded-loudness.json",
+      "archivePath": "分析成果/配套材料/寒武纪/derived/interview-cambricon-recording-01.encoded-loudness.json",
+      "sourceSha256": "fcfcd971a2b278e59685422830da0a6013b1239401a51de2ab8ad9d84796c45a",
+      "archiveSha256": "fcfcd971a2b278e59685422830da0a6013b1239401a51de2ab8ad9d84796c45a",
+      "bytes": 521,
+      "byteIdentical": true,
+      "linkChanges": []
+    },
+    {
+      "sourcePath": "work/managed/interview-video-analysis/preflight/interview-cambricon-recording-01.media-validation.json",
+      "archivePath": "分析成果/配套材料/寒武纪/preflight/interview-cambricon-recording-01.media-validation.json",
+      "sourceSha256": "5f3d74f991db18941457dac2fe2a1f372ce8764f748b771a2df0a3482dd70e95",
+      "archiveSha256": "5f3d74f991db18941457dac2fe2a1f372ce8764f748b771a2df0a3482dd70e95",
+      "bytes": 1945,
+      "byteIdentical": true,
+      "linkChanges": []
+    },
+    {
+      "sourcePath": "outputs/managed/interview-video-analysis/analysis/understand-cambricon-recording-01-20260908.audio.md",
+      "archivePath": "分析成果/analysis/understand-cambricon-recording-01-20260908.audio.md",
+      "sourceSha256": "f3f3395b7dcab04f9f34b269bc0c08df319ab144f1e2ec80eb45b83c0b09670f",
+      "archiveSha256": "f3f3395b7dcab04f9f34b269bc0c08df319ab144f1e2ec80eb45b83c0b09670f",
+      "bytes": 35243,
+      "byteIdentical": true,
+      "linkChanges": []
+    },
+    {
+      "sourcePath": "outputs/managed/interview-video-analysis/analysis/understand-cambricon-recording-01-20260908.audio.md.response.json",
+      "archivePath": "分析成果/analysis/understand-cambricon-recording-01-20260908.audio.md.response.json",
+      "sourceSha256": "99c4f33551272e4f7a8d05e4e80a095521075e6f2c562c6c3c150c97798c9612",
+      "archiveSha256": "99c4f33551272e4f7a8d05e4e80a095521075e6f2c562c6c3c150c97798c9612",
+      "bytes": 818,
+      "byteIdentical": true,
+      "linkChanges": []
+    },
+    {
+      "sourcePath": "outputs/managed/interview-video-analysis/analysis/interview-cambricon-recording-01.audio-evidence-audit.md",
+      "archivePath": "分析成果/analysis/interview-cambricon-recording-01.audio-evidence-audit.md",
+      "sourceSha256": "88f17d7060e754998bd0bd4eec123ff8885626f1c0ca3258c858262730b16d54",
+      "archiveSha256": "88f17d7060e754998bd0bd4eec123ff8885626f1c0ca3258c858262730b16d54",
+      "bytes": 12257,
+      "byteIdentical": true,
+      "linkChanges": []
+    },
+    {
+      "sourcePath": "outputs/managed/interview-video-analysis/reports/interview-cambricon-recording-01-analysis.md",
+      "archivePath": "分析成果/reports/interview-cambricon-recording-01-analysis.md",
+      "sourceSha256": "aa13fae32af4f17f71af37f1b05d9da1142d23bb2605d006d982085a44997af5",
+      "archiveSha256": "5ee4c105ac91802ff1ec4e3912de2bd143252001b8f316c44de434a27b09d5d5",
+      "bytes": 23274,
+      "byteIdentical": false,
+      "linkChanges": [
+        {
+          "file": "分析成果/reports/interview-cambricon-recording-01-analysis.md",
+          "from": "../../../../projects/managed/interview-video-analysis/notes/intake-interview-cambricon-recording-01.md",
+          "to": "../配套材料/寒武纪/notes/intake-interview-cambricon-recording-01.md"
+        }
+      ]
+    },
+    {
+      "sourcePath": "work/managed/interview-video-analysis/preflight/cambricon-delivery-candidate-manifest-diagnostic-20260908.json",
+      "archivePath": "分析成果/配套材料/寒武纪/preflight/cambricon-delivery-candidate-manifest-diagnostic-20260908.json",
+      "sourceSha256": "c4d44d9f3c4163735b41e75bbbe538d368cfc148c59bd08d65bcdcc533ce148a",
+      "archiveSha256": "c4d44d9f3c4163735b41e75bbbe538d368cfc148c59bd08d65bcdcc533ce148a",
+      "bytes": 32083,
+      "byteIdentical": true,
+      "linkChanges": []
+    },
+    {
+      "sourcePath": "work/managed/interview-video-analysis/preflight/interview-cambricon-recording-01.delivery-validation.json",
+      "archivePath": "分析成果/配套材料/寒武纪/preflight/interview-cambricon-recording-01.delivery-validation.json",
+      "sourceSha256": "73f7c8d0b44bdd66a980f8aae8df0b6e80d1b314b4d86959625a918b4db3c0c3",
+      "archiveSha256": "73f7c8d0b44bdd66a980f8aae8df0b6e80d1b314b4d86959625a918b4db3c0c3",
+      "bytes": 3181,
+      "byteIdentical": true,
+      "linkChanges": []
+    },
+    {
+      "sourcePath": "projects/managed/interview-video-analysis/notes/asr-cambricon-20260908.md",
+      "archivePath": "分析成果/配套材料/寒武纪/notes/asr-cambricon-20260908.md",
+      "sourceSha256": "1b70efac9c16b71608e69d043a51e6fd12ec8d28eaae094e4fac9ae484b260d9",
+      "archiveSha256": "1b70efac9c16b71608e69d043a51e6fd12ec8d28eaae094e4fac9ae484b260d9",
+      "bytes": 3375,
+      "byteIdentical": true,
+      "linkChanges": []
+    },
+    {
+      "sourcePath": "work/managed/interview-video-analysis/workflow-proposals/transcribe-cambricon-recording-01-openai-20260908.proposal.json",
+      "archivePath": "分析成果/配套材料/寒武纪/workflow-proposals/transcribe-cambricon-recording-01-openai-20260908.proposal.json",
+      "sourceSha256": "55ed5b7bbbd9a9eaa393d6f66fac95473c87113ec535ecc48ecc514dc3d48403",
+      "archiveSha256": "55ed5b7bbbd9a9eaa393d6f66fac95473c87113ec535ecc48ecc514dc3d48403",
+      "bytes": 1989,
+      "byteIdentical": true,
+      "linkChanges": []
+    },
+    {
+      "sourcePath": "work/managed/interview-video-analysis/workflow-proposals/transcribe-cambricon-recording-01-openai-20260908.plan.json",
+      "archivePath": "分析成果/配套材料/寒武纪/workflow-proposals/transcribe-cambricon-recording-01-openai-20260908.plan.json",
+      "sourceSha256": "8588642f4fc7df707df3b5e06b1c2821fdefa67d8d3efeba638d78d943e144cb",
+      "archiveSha256": "8588642f4fc7df707df3b5e06b1c2821fdefa67d8d3efeba638d78d943e144cb",
+      "bytes": 2204,
+      "byteIdentical": true,
+      "linkChanges": []
+    },
+    {
+      "sourcePath": "work/managed/interview-video-analysis/preflight/cambricon-asr-openai-20260908.dry-run.json",
+      "archivePath": "分析成果/配套材料/寒武纪/preflight/cambricon-asr-openai-20260908.dry-run.json",
+      "sourceSha256": "4bdcf7f3924a7c26a39f3f490c5d430faac23fa59c0713f13d3db5f5e5d080a1",
+      "archiveSha256": "4bdcf7f3924a7c26a39f3f490c5d430faac23fa59c0713f13d3db5f5e5d080a1",
+      "bytes": 621,
+      "byteIdentical": true,
+      "linkChanges": []
+    },
+    {
+      "sourcePath": "work/managed/interview-video-analysis/preflight/cambricon-asr-model-selection-20260908.json",
+      "archivePath": "分析成果/配套材料/寒武纪/preflight/cambricon-asr-model-selection-20260908.json",
+      "sourceSha256": "233354fb20f840f1415f9591ec10c73ad046561077630de3b398d57de097994a",
+      "archiveSha256": "233354fb20f840f1415f9591ec10c73ad046561077630de3b398d57de097994a",
+      "bytes": 1927,
+      "byteIdentical": true,
+      "linkChanges": []
+    },
+    {
+      "sourcePath": "work/managed/interview-video-analysis/preflight/cambricon-gemini-default-20260908.dry-run.json",
+      "archivePath": "分析成果/配套材料/寒武纪/preflight/cambricon-gemini-default-20260908.dry-run.json",
+      "sourceSha256": "b9a02e597fafa3f3050b39437445cd1ba9cc4276b7f5a7d96e5c4fbf29f48c9f",
+      "archiveSha256": "b9a02e597fafa3f3050b39437445cd1ba9cc4276b7f5a7d96e5c4fbf29f48c9f",
+      "bytes": 602,
+      "byteIdentical": true,
+      "linkChanges": []
+    },
+    {
+      "sourcePath": "outputs/managed/interview-video-analysis/transcripts/transcribe-cambricon-recording-01-openai-20260908.raw.json",
+      "archivePath": "分析成果/transcripts/transcribe-cambricon-recording-01-openai-20260908.raw.json",
+      "sourceSha256": "4847eaa681d711612b49084402353bbac3b0006032a65e52f795db57b80d3656",
+      "archiveSha256": "4847eaa681d711612b49084402353bbac3b0006032a65e52f795db57b80d3656",
+      "bytes": 26378,
+      "byteIdentical": true,
+      "linkChanges": []
+    },
+    {
+      "sourcePath": "work/managed/interview-video-analysis/preflight/cambricon-asr-openai-20260908.validation.json",
+      "archivePath": "分析成果/配套材料/寒武纪/preflight/cambricon-asr-openai-20260908.validation.json",
+      "sourceSha256": "5dc1f027ecc4401201b1abfc9c6672cdf129538dd66c97e33100fbc0b07eeedd",
+      "archiveSha256": "5dc1f027ecc4401201b1abfc9c6672cdf129538dd66c97e33100fbc0b07eeedd",
+      "bytes": 322,
+      "byteIdentical": true,
+      "linkChanges": []
+    },
+    {
+      "sourcePath": "outputs/managed/interview-video-analysis/transcripts/interview-cambricon-recording-01.openai-asr-indexed.json",
+      "archivePath": "分析成果/transcripts/interview-cambricon-recording-01.openai-asr-indexed.json",
+      "sourceSha256": "4b8c0ba7c4a719bfff7b2e3f938430bdd882326bbf625c003efbe8bdf1713ba2",
+      "archiveSha256": "4b8c0ba7c4a719bfff7b2e3f938430bdd882326bbf625c003efbe8bdf1713ba2",
+      "bytes": 29564,
+      "byteIdentical": true,
+      "linkChanges": []
+    },
+    {
+      "sourcePath": "outputs/managed/interview-video-analysis/transcripts/interview-cambricon-recording-01.openai-asr-indexed.md",
+      "archivePath": "分析成果/transcripts/interview-cambricon-recording-01.openai-asr-indexed.md",
+      "sourceSha256": "4feac18feda7ccbeaadb6245a989ddfbf55b721549482126161b14737375331e",
+      "archiveSha256": "4feac18feda7ccbeaadb6245a989ddfbf55b721549482126161b14737375331e",
+      "bytes": 28561,
+      "byteIdentical": true,
+      "linkChanges": []
+    },
+    {
+      "sourcePath": "outputs/managed/interview-video-analysis/analysis/interview-cambricon-recording-01.asr-gemini-comparison.json",
+      "archivePath": "分析成果/analysis/interview-cambricon-recording-01.asr-gemini-comparison.json",
+      "sourceSha256": "8aa24f34787b05f771b8866e1b3f98118081512bbfc93b46763615a7776c63c5",
+      "archiveSha256": "8aa24f34787b05f771b8866e1b3f98118081512bbfc93b46763615a7776c63c5",
+      "bytes": 15366,
+      "byteIdentical": true,
+      "linkChanges": []
+    },
+    {
+      "sourcePath": "outputs/managed/interview-video-analysis/analysis/interview-cambricon-recording-01.asr-gemini-comparison.md",
+      "archivePath": "分析成果/analysis/interview-cambricon-recording-01.asr-gemini-comparison.md",
+      "sourceSha256": "6b0f04aa1e29e3340ae1c612bd7730600747605114bcccd9d5bd357344b3ac1b",
+      "archiveSha256": "6b0f04aa1e29e3340ae1c612bd7730600747605114bcccd9d5bd357344b3ac1b",
+      "bytes": 12039,
+      "byteIdentical": true,
+      "linkChanges": []
+    },
+    {
+      "sourcePath": "outputs/managed/interview-video-analysis/reports/interview-cambricon-recording-01-asr-calibrated-analysis.md",
+      "archivePath": "分析成果/reports/interview-cambricon-recording-01-asr-calibrated-analysis.md",
+      "sourceSha256": "a45bb60c27a49625c4f79e058b3485cbfdadb524157390df9009ee37829df8f9",
+      "archiveSha256": "a45bb60c27a49625c4f79e058b3485cbfdadb524157390df9009ee37829df8f9",
+      "bytes": 13579,
+      "byteIdentical": true,
+      "linkChanges": []
+    },
+    {
+      "sourcePath": "work/managed/interview-video-analysis/preflight/cambricon-asr-delivery-candidate-manifest-20260908.json",
+      "archivePath": "分析成果/配套材料/寒武纪/preflight/cambricon-asr-delivery-candidate-manifest-20260908.json",
+      "sourceSha256": "853c37e76917bc30535ffd853e6a7ebc8cc0d9197b88f26cbde5c012375fe019",
+      "archiveSha256": "853c37e76917bc30535ffd853e6a7ebc8cc0d9197b88f26cbde5c012375fe019",
+      "bytes": 65667,
+      "byteIdentical": true,
+      "linkChanges": []
+    },
+    {
+      "sourcePath": "work/managed/interview-video-analysis/preflight/interview-cambricon-recording-01.asr-delivery-validation.json",
+      "archivePath": "分析成果/配套材料/寒武纪/preflight/interview-cambricon-recording-01.asr-delivery-validation.json",
+      "sourceSha256": "fb8ddd3c56485e3ba45fa42dc96411197027a2233b6ca80d94c2acd763b05446",
+      "archiveSha256": "fb8ddd3c56485e3ba45fa42dc96411197027a2233b6ca80d94c2acd763b05446",
+      "bytes": 3263,
+      "byteIdentical": true,
+      "linkChanges": []
+    }
+  ]
+}

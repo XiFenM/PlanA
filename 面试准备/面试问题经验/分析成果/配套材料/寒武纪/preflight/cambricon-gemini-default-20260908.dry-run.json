@@ -1,0 +1,24 @@
+{
+  "endpoint": "https://zenmux.ai/api/v1/chat/completions",
+  "payload": {
+    "model": "google/gemini-3.8-flash",
+    "messages": [
+      {
+        "role": "user",
+        "content": [
+          {
+            "type": "text",
+            "text": "仅验证默认模型配置，不发送请求。"
+          },
+          {
+            "type": "file",
+            "file": {
+              "filename": "interview-cambricon-recording-01.normalized-stereo-16k-64kbps.mp3",
+              "file_data": "data:audio/mpeg;base64,<redacted:23487804 chars>"
+            }
+          }
+        ]
+      }
+    ]
+  }
+}
