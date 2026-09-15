@@ -2,6 +2,7 @@
 
 > - 创建日期：2026-08-08
 > - 最近调整：2026-09-08（正式口头验收集中到 W4 及后续 Mock；沿用 2026-08-30 的源码、预算与排序基线）
+> - 进度同步：2026-09-15，W1 概念与材料验收已收束；两项实践暂缓，整周未关闭，未启动 W2。
 > - Program 状态：[见唯一状态区](#program-plana-jd-ai-framework-4w)；精确学习位置只由[唯一学习断点](学习断点.md)裁决
 > - 目标岗位：[本地复合 JD](<../Job Description/AI框架方向/高级AI框架开发工程师.md>) / [市场岗位需求索引](<../Job Description/AI框架方向/市场岗位需求/README.md>)
 > - 诊断依据：[AMD AI 框架开发工程师胜任力诊断](../面试准备/自我准备/AMD-AI框架开发工程师胜任力诊断-2026-08-29.md)
@@ -301,14 +302,18 @@ W1–W3 按前四项及本周具体技术门验收。口头项目在对应 Mock 
 
 ### 6.4 验收门
 
-- [ ] 独立文字复述覆盖请求主链，并通过必要的文字追问；15 分钟口头讲解与口头追问移交 W4 Mock，不作为 W1 完成门槛。
-- [ ] source map 只有真正进入链路的 8–12 个文件，不是目录罗列。
-- [ ] `messages`、sampling 参数、stream/HTTP 状态等能说明留在哪一层以及原因。
-- [ ] 能说明推理 DP、replica routing、backpressure 与 DPLB 分别在哪一层工作，以及它们与 TP 的区别。
-- [ ] KV 账本统一 token、element、byte、block 和 address alignment。
-- [ ] Claim 矩阵至少审计 10 条，标明“已证明/需降级/待补证”。
-- [ ] C++ 基线已定位具体错误，不用“工作中主要写 Python”跳过。
-- [ ] Conv3D Case Card 不再只有“TTFT -40%”，能说明 workload 和仍待核对字段。
+以下勾选记录各项概念与材料证据；[W1-P1](../推理框架/EP-PD自研芯片适配设计与验证包.md#w1-p1-runtime-output-validation) 和 [W1-P2](../推理框架/EP-PD自研芯片适配设计与验证包.md#w1-p2-cpp-linux-validation) 的待实践状态另行维护，不能用下面的勾选替代运行或实践验证。
+
+2026-09-15 用户确认暂缓两项实践；学习记录、复习资料和归档回执见[本次收尾记录](../推理框架/EP-PD自研芯片适配设计与验证包.md#plana-jd-w1-20260915-wrap-up)。此项暂停不改变周预算或后续 Lesson 的授权范围。
+
+- [x] 独立文字复述覆盖请求主链，并通过必要的文字追问；见[整段文字复述验收](../推理框架/EP-PD自研芯片适配设计与验证包.md#plana-jd-w1-20260908-oral-review)。15 分钟口头讲解与口头追问移交 W4 Mock，不作为 W1 完成门槛。
+- [x] source map 包含进入请求链的 12 个文件及职责，见[源码索引](../推理框架/EP-PD自研芯片适配设计与验证包.md#pass-c-source-map)；源码定位已由 Pass C 验收。
+- [x] `messages`、sampling 参数、stream/HTTP 状态等能说明留在哪一层以及原因，见[协议到核心请求的验收](../推理框架/EP-PD自研芯片适配设计与验证包.md#pass-c1-openai-to-engine-core-request)。
+- [x] 推理 DP、replica routing、DPLB 与 TP 的边界沿用既有 Pass B 证据；[2026-09-15 反压分层检查](../推理框架/EP-PD自研芯片适配设计与验证包.md#plana-jd-w1-20260915-backpressure)补齐 waiting 积压、前端准入和客户端反馈的概念边界。
+- [x] KV 账本统一 token、element、byte、block 和 address alignment；见[全模型与多请求账本](../推理框架/EP-PD自研芯片适配设计与验证包.md#plana-jd-w1-20260907-kv-ledger-synthesis)及[页跨度与对齐复核](../推理框架/EP-PD自研芯片适配设计与验证包.md#plana-jd-w1-20260909-kv-page-spec-review)。
+- [x] Claim 矩阵已审计 19 条，标明“已证明／需降级／待补证”；见 [2026-09-14 当前矩阵](../推理框架/EP-PD自研芯片适配设计与验证包.md#w1-claim-evidence-matrix-20260914)。矩阵完成不代表外部文稿已改写或数字已独立验证。
+- [x] C++ 基线已定位具体错误；2026-09-14 用户确认[概念与书面校准收束](../推理框架/EP-PD自研芯片适配设计与验证包.md#w1-cpp-linux-baseline-20260914)，[实践仍待验证](../推理框架/EP-PD自研芯片适配设计与验证包.md#w1-p2-cpp-linux-validation)，不代表整个 W1 通过。
+- [x] [Conv3D Case Card v1](../面试准备/自我准备/projects.md#project1-conv3d-case-card-v1)已完成草稿验收：Workload、布局、正确性、个人职责与待核字段齐全；图片均值与视频单次测量分开，未覆盖的视频模型级精度明确列为限制。原始数字与完整实证审计仍待后续核验。
 
 ## 7. W2：MoE EP、并行策略与 C++ 系统基础
 

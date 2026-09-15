@@ -13,8 +13,12 @@
 - **能力标题**：vLLM 执行链与扩展边界。
 - **Program 引用**：[临时 Program `plana-jd-ai-framework-4w`](../计划/高级AI框架开发工程师-八周证据冲刺计划.md#program-plana-jd-ai-framework-4w)。
 - **当前 stage**：`synthesis`。固定提交 `568afb3` 的 Pass A–E、KV 账本，以及整段独立文字复述、两轮变式与必要局部补差均已有通过证据；oral-F1／oral-F2／oral-F3 全部关闭，不再追加同类检查。根据用户 2026-09-08 确认的[口头验收新安排](../计划/高级AI框架开发工程师-八周证据冲刺计划.md#53-每周统一验收门)，口头要求移交 W4 及后续 Mock，不再作为 W1 未完成项，也不记为已通过。页对齐与插件旁支保持原证据边界；W1 其余任务及整个 Lesson 尚未关闭，final mastery 未写入。
-- **授权边界**：前台仍为 W1，下述 revision 1 的文字练习已经收口。用户当前只授权登记周末待做实践，不启动 W2–W4、新实践、环境安装、模型／tokenizer 下载或新的实现文件。
-- **待做实践引用**：[W1-P1：运行路径选择与最小输出契约验证](#w1-p1-runtime-output-validation)。该项保持未完成，延期不取消 W1 原有证据要求；本轮可以先处理非实践材料，不为此重复已通过的概念题。
+- **授权边界**：前台仍为 W1，下述 vLLM revision 1 的文字练习已经收口。用户于 2026-09-14 确认保存 C++／Linux 基线、更新当前 Claim-evidence 矩阵，并接受 [Conv3D Case Card 正式练习 revision 1](#w1-conv3d-case-card-practice-20260914)。该练习只授权契约列明的记录与最终忠实投影，不直接改写 `CV.md`、既有项目事实或 `self-introduction.md`，不启动 W2–W4、新 Benchmark、环境安装、Kernel 实现或其他实践。
+- **待做实践引用**：[W1-P1：运行路径选择与最小输出契约验证](#w1-p1-runtime-output-validation)、[W1-P2：C++／Linux 基线实践验证](#w1-p2-cpp-linux-validation)。两项均未启动，用户于 2026-09-15 确认暂缓；延期不取消原有证据要求，也不要求重复已通过的概念题。
+- **W1 补充基线**：[C++／Linux 概念与书面校准](#w1-cpp-linux-baseline-20260914)已由用户确认收束，实践待验证；不构成整个 Lesson 的 `final_mastery`。
+- **W1 Claim 审计**：[当前 Claim-evidence 矩阵](#w1-claim-evidence-matrix-20260914)已覆盖 19 条高风险表述，只裁决可用口径与补证边界，不直接修改外部文稿。
+- **W1 Case Card 练习**：[Conv3D Case Card revision 1](#w1-conv3d-case-card-practice-20260914)已完成 A1–A6 的草稿验收，[Case Card v1](../面试准备/自我准备/projects.md#project1-conv3d-case-card-v1)已保存；不新增或改写本 Lesson 的三个目标，也不代表 W1 整体完成。
+- **W1 反压补充**：[反压分层与立即重试变式](#plana-jd-w1-20260915-backpressure)已通过概念检查，与既有 DP／DPLB／TP 证据共同覆盖对应书面验收项；不声称实现或实测了端到端反压。
 - **历史契约边界**：下述已完成练习的 revision、digest、原约定和文字证据保持不变；本次只调整后续口头验收的所属周次，不追溯改写历史，也不据此启动 W4。
 
 ### 来源与版本锚点
@@ -79,6 +83,7 @@
 - **非阻塞表达建议**：开启 chunked prefill 只允许按预算拆分，不保证每个 prompt 都分为多个 chunk；最后一个 prefill chunk 与首个有效输出 token 的关系已有先前学习证据，不为本轮省略再加门槛。Runner 清理还包含自身 cached request state；此处作完整性补充。辅助函数／枚举名称及 `token budge` 等笔误不单独否决；grammar 为用户主动扩展，不追加为必考范围。
 
 <a id="plana-jd-w1-oral-findings"></a>
+
 #### 当前 findings
 
 | ID | 映射 | 严重度 | owner | 状态 | Evidence | 下一动作 |
@@ -86,6 +91,264 @@
 | `oral-F1` | A1、A2、A3 | major | learner | closed | 初始混淆物理池分配、Runner 状态与调度侧引用回收；2026-09-08 局部变式中，学习者正确说明从 InputBatch 移除 R、保留 S 并维护映射，拒绝再次扣减 block 7，指出会错误从 1 归零而归还。结合已补齐的执行闭环与 pool 预分配证据，本题范围复核通过。[Scheduler 回收](https://github.com/vllm-project/vllm/blob/568afb3a13806beb53bb2e6bd518269357b237c0/vllm/v1/core/sched/scheduler.py#L2224-L2239)、[Runner 更新](https://github.com/vllm-project/vllm/blob/568afb3a13806beb53bb2e6bd518269357b237c0/vllm/v1/worker/gpu_model_runner.py#L1179-L1193) | — |
 | `oral-F2` | A2、A3 | major | learner | closed | 初始把 FINAL_ONLY 解释为 Core 完整生成后才发送；经前端过滤位置提示后，第二轮在 stream=false、前端提前命中 stop string、Core finished=false 的条件下，独立判断可最终返回且无需等待第 100 个 token，对外为 stop。本题范围的迁移证据通过，不外推其他输出路径。[前端输出过滤](https://github.com/vllm-project/vllm/blob/568afb3a13806beb53bb2e6bd518269357b237c0/vllm/v1/engine/output_processor.py#L273-L287) | — |
 | `oral-F3` | A2、A3 | major | learner | closed | 初始把 RequestState 与 Collector 的清理绑定到 generate 消费之后；2026-09-08 局部变式给出 RequestState 已注销、最终输出仍在 Collector 的快照，学习者正确判断 generate 仍能取出并 yield 最终结果，消费者生命周期边界复核通过。终止控制方向已答对，ABORT 名称为导师精确补充，不以枚举背诵另设门。[输出处理与请求清理](https://github.com/vllm-project/vllm/blob/568afb3a13806beb53bb2e6bd518269357b237c0/vllm/v1/engine/output_processor.py#L676-L717) | — |
+
+<a id="w1-cpp-linux-baseline-20260914"></a>
+
+### W1 补充基线：C++／Linux 概念与书面校准
+
+- **确认日期与结论**：2026-09-14，用户确认“C++／Linux 基线概念与书面校准完成，实践待验证”。本节对应[冲刺计划 W1 的基线任务](../计划/高级AI框架开发工程师-八周证据冲刺计划.md#62-主任务)，不新增 Lesson，也不关闭 W1 或覆盖历史诊断。
+- **证据形式**：本次对话中的短代码判断、推导、局部补差及三个综合情境；没有本轮编译运行、sanitizer、库加载或服务配置实测。未提供实际学习时长，不推算工时。
+- **来源范围**：C++ 采用 [C++17 草案 N4659](https://www.open-std.org/jtc1/sc22/wg21/docs/papers/2017/n4659.pdf) 的生命周期、初始化、虚函数与删除规则；ELF 采用 [gABI 4.3 DRAFT](https://gabi.xinuos.com/elf/01-intro.html) 的 Section、Segment 与符号表约定。工具行为参考 [readelf](https://sourceware.org/binutils/docs/binutils/readelf.html)、[ldd](https://man7.org/linux/man-pages/man1/ldd.1.html)、[进程 maps](https://man7.org/linux/man-pages/man5/proc_pid_maps.5.html) 和 [环境继承](https://man7.org/linux/man-pages/man7/environ.7.html)；在线资料核验截至 2026-09-14，不代替未来实践环境的版本记录。
+
+**基线缺口表**
+
+本表的 🟩 只表示相应范围的书面判断通过，🟨 表示仅有讲解或仍缺实践证据，不等同于整体岗位能力评级。
+
+| 范围 | 当前结论 | 最小证据与边界 |
+|---|---|---|
+| RAII、借用、移动与对象生命周期 | 🟩 书面通过 | 正确判断借用指针不延长生命周期、移动只转移管理权、`reset()` 不销毁管理对象，以及静态管理对象不保证动态资源一直存活；综合题 1 正确得到 7，由 `keeper` 经虚析构清理，返回整数仍有效。按值返回的理由经导师补准为独立副本，不要求数值不能来自对象成员。 |
+| 静态／动态类型、overload／override／name hiding | 🟩 书面通过 | 能按名字查找、重载选择、虚派发分阶段判断；包含 `using Base::f` 与显式限定调用的综合题得到 2、10、1。显式限定不取消覆盖关系，只影响本次调用。 |
+| 多态销毁与未定义行为 | 🟩 补差后通过 | 区分默认删除器通过 `Derived*` 与无虚析构的 `Base*` 删除派生对象；曾将 UB 展开成确定的“只析构基类并泄漏成员”，经讲解后在无额外资源的变式中仍正确判定 UB，不再保证具体析构序列。 |
+| 编译／链接、声明／定义与符号身份 | 🟩 书面通过 | 能定位漏传目标文件的链接失败，拒绝用重复声明替代定义；识别 `add(int,int)` 与 `add(double,double)` 不能在链接时重新重载匹配。将定义合入一个源文件不等于取消最终链接，此措辞已补准。 |
+| ELF 与存储期 | 🟩 补差后通过 | 区分 Section／Segment、`.data`／`.bss`、作用域／存储期；正确计算 `p_filesz=4 KiB`、`p_memsz=12 KiB` 的 8 KiB 零初始化尾部，以及零数组扩容只增加题设段的 `p_memsz` 2 MiB。综合题 2 漏写 `calls`，且把普通局部变量的理由简化为“局部”；补差变式 `static int local=5` 正确说明局部作用域、静态存储期、通常在 `.data`。 |
+| 动态库搜索与证据链 | 🟩 核心书面诊断通过 | 区分构建时 `-L` 与运行时查找、缺库与缺符号；综合题 3 依据目标进程出错前的 maps 快照认定实际映射 A，不以当前终端 ldd 的 B 结果替代，正确解释 `UND` 不是可用定义，并提出启动新进程核查实际映射。 |
+| C++17 保证的拷贝消除与可选 NRVO | 🟨 讲解补充 | 已回答用户关于返回 `unique_ptr` 的追问；没有单独完成返回值消除规则的独立变式或编译验证，不扩大为已验证的全部 copy／move 能力。 |
+| 编译、sanitizer、ELF／动态库实测与服务启动配置 | 🟨 实践待验证 | 仅阅读示意代码、命令和模拟证据。环境变量继承、配置落实到真实服务启动入口、实际触发原故障调用由导师补充，未完成独立实操验证；见 [W1-P2](#w1-p2-cpp-linux-validation)。 |
+
+**补差与判断边界**
+
+- ELF 初讲时前置术语引入过快；按用户反馈补全“源码 → 目标文件 → 链接 → 装载 → 执行”的背景后继续，不把用户当时缺少前置说明记作已教授内容的错题。
+- “新开终端会继承当前终端设置”“只确认进程启动就足够”不作为本轮已独立通过的部署能力。导师补充了父子进程环境传递、正式启动入口和触发 `compute(int)` 的验证要求，未把这些此前未展开的前提追加为书面阻塞项。
+- 本轮已暴露的书面概念差距经补差收口；🟨 项仍保留原证据边界。线程同步、memory ordering、完整 ABI、并发生命周期程序以及现场编码未在本轮验证；不据此把诊断报告中的整个 C++／Linux 风险清零。
+
+<a id="w1-claim-evidence-matrix-20260914"></a>
+
+### W1 当前 Claim-evidence 矩阵
+
+- **审计日期与范围**：2026-09-14；核对 [CV](../面试准备/自我准备/CV.md)、[项目档案](../面试准备/自我准备/projects.md)、[自我介绍](../面试准备/自我准备/self-introduction.md)、[2026-08-29 诊断旧表](../面试准备/自我准备/AMD-AI框架开发工程师胜任力诊断-2026-08-29.md#13-简历-claim-审计)及截至当日的 W1 evidence。旧诊断保持历史快照，不回写当前结论。
+- **状态定义**：`已证明` 表示当前证据足以支持本表给出的有界口径；`需降级` 表示存在相关证据，但现有措辞、范围或数字超出证据；`待补证` 表示当前不应把该强表述作为能力事实。
+- **证据层级**：固定 revision 源码只裁决对应实现理解；用户确认的项目口述可支持历史经历叙述，但不冒充 commit、Trace 或 Benchmark 的独立审计。性能数字只有在 Workload、绝对基线、方法和正确性同时闭环后才升级。
+
+| ID | 当前强 Claim 与来源 | 裁决 | 当前证据与边界 | 当前可用口径／关闭条件 |
+|---|---|---|---|---|
+| `CL01` | [CV“深入理解 vLLM 模型执行、调度、KV Cache 与 PagedAttention”](../面试准备/自我准备/CV.md#推理框架与模型部署) | 需降级 | Pass A–E、12 文件 source map、KV 账本和独立文字变式已通过；实现证据固定于 `vLLM v0.26.0@568afb3`、V1／MRV1，不包含 Attention Kernel 算法、设备运行和性能实证。 | “能够基于 `vLLM v0.26.0` 源码解释 V1 请求执行、Scheduler／KV block 生命周期及 Prefix Cache 与 PagedAttention 的职责边界。” |
+| `CL02` | [自我介绍“对 vLLM 执行链、调度、KV Cache、Chunked Prefill 比较熟悉”](../面试准备/自我准备/self-introduction.md) | 需降级 | 固定 `vLLM v0.26.0@568afb3` 范围内，独立主链复述以及调度／token 记账、取消／抢占、InputBatch／slot mapping 和 KV 账本的迁移检查已通过；Chunked Prefill 目前只有一次范围纠正，尚无无提示变式。 | 改为“比较熟悉 `vLLM V1` 的请求执行链、调度与 KV Cache”；Chunked Prefill 经独立复核后再并入口径。 |
+| `CL03` | [CV“vLLM／PyTorch 源码级二次开发，完成多类模型四阶段适配”](../面试准备/自我准备/CV.md#工作经历) | 需降级 | [项目一口述](../面试准备/自我准备/projects.md#project1-oral-baseline-20260902)支持主要负责 Qwen2.5-VL、Qwen3-VL、ERNIE 4.5-VL 的框架层接入、精度对齐和性能优化；Qwen3-Omni、Llama、DeepSeek 及“各模型都完整覆盖四阶段”缺少同等粒度证据，生产项目也没有固定 commit／patch 审计。 | “主要负责 Qwen2.5-VL、Qwen3-VL、ERNIE 4.5-VL 的框架接入、精度对齐和性能优化。” |
+| `CL04` | [CV“熟悉 SGLang 的 RadixAttention、结构化输出与调度”](../面试准备/自我准备/CV.md#推理框架与模型部署) | 待补证 | Lesson 虽固定 `SGLang v0.5.17@2948168` 教学基线，但尚未完成对应源码 map、学习者独立解释或 patch；固定版本和后续计划本身不构成能力 evidence。 | 当前从简历删除；完成固定版本窄对照并通过独立解释后，再决定是否写“了解”。 |
+| `CL05` | [CV“掌握 Continuous Batching、Chunked Prefill、Prefix Cache”](../面试准备/自我准备/CV.md#推理框架与模型部署) | 需降级 | 固定 `vLLM v0.26.0@568afb3` 范围内，Prefix Cache 的 KV 账本、hash／refcount／reuse 和 PagedAttention 职责辨析已有独立证据；Chunked Prefill 只有补差后的预算拆分边界，Continuous Batching 尚无直接独立验收。 | 当前只写“能够基于固定源码解释 Prefix Cache 的命中、引用和复用边界”；Chunked Prefill 与 Continuous Batching 分别补独立变式后再加入。 |
+| `CL06` | [CV“掌握 Speculative Decoding、PD 分离、量化和多模态推理”](../面试准备/自我准备/CV.md#推理框架与模型部署) | 需降级 | 多模态部署有项目口述支持；Speculative Decoding 在当前练习中明确排除，PD 状态机／性能模型尚无独立验收证据，量化也缺少当前可审查工件。 | 当前只保留“有多模态模型推理适配与部署经验”；Speculative Decoding、PD 分离和量化从能力口径删除，分别补证后再加入。 |
+| `CL07` | [CV“熟悉 Qwen／Llama／DeepSeek／Ernie 及 MHA／MQA／GQA／MLA／MoE／MTP”](../面试准备/自我准备/CV.md#推理框架与模型部署) | 需降级 | 有若干模型适配历史口述，但当前 W1 并未分别验收每个模型和结构；名词列表不能代替对 shape、数据流和适配点的独立解释。 | 只保留有具体职责证据的 Qwen2.5-VL、Qwen3-VL、ERNIE 4.5-VL 项目经验；结构名词串当前删除，后续按 shape、数据流和适配点逐项补回。 |
+| `CL08` | [CV“理解 Tensor、Storage、Stride、Dispatcher、Autograd、Caching Allocator 和 PrivateUse1”](../面试准备/自我准备/CV.md#pytorch-与分布式系统) | 需降级 | 项目口述支持 Tensor／Storage／Layout、PyTorch 算子接口、数据拷贝和后端调试经验；本轮未验收 Autograd、Allocator、PrivateUse1 及本人自定义算子注册／实现的完整调用链。 | “具备 PyTorch 算子接口、数据拷贝和 Tensor／Storage／Layout 问题的框架级调试经验”；其他 Internals 与自定义算子实现逐项补证。 |
+| `CL09` | [CV“熟悉 DeepSpeed、Megatron-LM、FSDP 及 ZeRO／TP／SP／PP／EP”](../面试准备/自我准备/CV.md#pytorch-与分布式系统) | 需降级 | [项目四](../面试准备/自我准备/projects.md#project4-oral-baseline-20260903)支持参与 DeepSpeed ZeRO-3、Megatron-LM TP 与通信后端适配；两框架交付范围、实际并行组合、Loss 对齐和代码边界未核，FSDP 无直接证据。 | “参与 DeepSpeed ZeRO-3、Megatron-LM Tensor Parallel 与通信后端适配，处理 Padding、Collective 与 Stream 语义问题”；FSDP 当前删除，待补证后再加入。 |
+| `CL10` | [CV“理解 Ring／Tree AllReduce、ReduceScatter、AllGather，具备自研通信后端经验”](../面试准备/自我准备/CV.md#pytorch-与分布式系统) | 需降级 | 项目四和 TP 子组变式支持通信接口、分组、精度、同步及性能定位经验；未单独验收 Ring／Tree 算法、通信量和多拓扑选择。 | “具备自研通信后端的接口适配、分组正确性、同步语义和多卡性能定位经验”；Ring／Tree 另行补证。 |
+| `CL11` | [CV“具备 Kernel 开发调优经验，熟悉 Triton／TileLang 及 FlashAttention”](../面试准备/自我准备/CV.md#高性能计算与工程能力) | 需降级 | Conv3D 和 blocked Col-major 只支持框架侧 Shape／Layout 分析、Kernel 接入及协同调优；内部 Kernel 由算子同事实现。无本人 Triton／TileLang／FlashAttention 概念验收、实现、正确性或 profiler 工件。 | “具备 Kernel 接入、真实 Shape／Layout 分析和与算子团队协同调优经验”；Triton、TileLang、FlashAttention 当前删除，待独立证据后再加入。 |
+| `CL12` | [CV“擅长以 Profile、算子对比、控制变量和 Replay 定位性能及精度问题”](../面试准备/自我准备/CV.md#个人概述) | 已证明 | Conv3D、ECG、异步 H2D 和训练通信四个项目口述均给出该方法的具体用法和 ownership；这是用户确认的历史经历证据，不是本轮重跑 Trace 的结果。 | 可保留方法型表述，不把任一单次现象扩张为已证明的底层机制或所有 workload 通用。 |
+| `CL13` | [CV“能够使用 Roofline 方法拆解端到端瓶颈”](../面试准备/自我准备/CV.md#高性能计算与工程能力) | 需降级 | ECG 口述支持低并发 GEMM 的 FLOPs、最低 Bytes 和 AI 初步推导；读写次数、cache reuse、设备屋脊点、实测带宽和效率未闭环。 | “做过低并发 GEMM 的 Roofline 初步估算，用于判断权重访存可能占主导”；完成可复算全链后再升级。 |
+| `CL14` | [CV“能够使用 Nsight Systems／Compute，并建立可重复 Benchmark”](../面试准备/自我准备/CV.md#高性能计算与工程能力) | 待补证 | 通用 Profile／Trace 有历史项目支持，但 Nsight 只见 CV 自述，没有版本、命令、Trace／counter 解读或可复现工件。 | 当前口径只保留“使用框架 Profile／Trace 和控制变量分析 Host、算子、拷贝、通信与 Layout 瓶颈”；Nsight 待真实 capture 补证。 |
+| `CL15` | [CV“熟练使用 C／C++、Linux”](../面试准备/自我准备/CV.md#高性能计算与工程能力) | 需降级 | [C++／Linux 基线](#w1-cpp-linux-baseline-20260914)支持 RAII、多态、编译链接、ELF 和动态库诊断的书面理解；编译、sanitizer、真实库加载、线程／memory ordering、ABI 和现场编码尚未实践验证。 | “熟练使用 Python、Linux、Git 和 Bash；具备 PyTorch 扩展与通信适配层的 C++ 修改和调试经验”；不把书面基线升级为“熟练 C++ 系统开发”。 |
+| `CL16` | [CV／自我介绍“Qwen3-VL Conv3D 使 TTFT 下降 40%”](../面试准备/自我准备/projects.md#project1-oral-baseline-20260902) | 需降级 | 口述支持 `OOM → 小通道 Padding → 模型侧布局重构 → 算子协作 → 两级验证`；模型是 Qwen2.5-VL-32B 还是 Qwen3-VL、具体性能幅度、绝对耗时、Profile 分母和布局／Kernel 收益拆分均未统一。 | 暂撤下百分比与冲突模型名；只说“完成模型侧布局重构并协同算子优化，消除已观察到的 OOM，显著降低 Conv3D 开销和 TTFT”。 |
+| `CL17` | [CV“ECG 从 40 秒以上降至 10–15 秒”](../面试准备/自我准备/projects.md#project2-oral-baseline-20260902) | 需降级 | 项目口述支持分阶段优化并达到客户时延目标；当前起止范围、Transformers／vLLM 边界、输入／输出长度、并发、预热、统计和单项消融未统一。 | 对外先不写精确起止数字，改为“经过 Host 路径、小 Shape 计算和权重布局优化，显著降低端到端时延并达到客户验收目标”。 |
+| `CL18` | [自我介绍“Col-major 使三类模型少并发吞吐提升约 20%”](../面试准备/自我准备/self-introduction.md) | 待补证 | 只见自我介绍中的同源数字；项目二只支持 ECG 的权重预排布与访存判断，不支持 Llama-3-70B、Qwen2.5、Qwen3 三模型和 `20%` 口径。 | 暂删模型列表和百分比；可改为“在低并发小 Batch 场景中，通过加载期权重预排布改善 Matmul 访存效率”。 |
+| `CL19` | [CV／自我介绍“vLLM V1 异步 H2D／D2D 异常目前根因闭环中”](../面试准备/自我准备/projects.md#project3-oral-baseline-20260902) | 已证明 | 新项目基线已覆盖旧状态：按用户口述，根因为 `CPU Padding 完成 → H2D 提交 → 设备拷贝完成 → 消费` 依赖不完整，已修复；168 条请求×5 轮，共 840 次在当前请求集中未再观察到原异常。本表不采用已撤回 diff，也不扩张为全部 Runtime 实现归属或所有 workload 零故障。 | 当前文稿的“根因闭环中”已滞后；可改为“定位两阶段 Host 准备与异步 H2D 间的依赖缺口，通过统一异步任务标记与等待机制完成修复；修复后在现场 168 条请求×5 轮回归范围内未再复现”。 |
+
+**矩阵结果**：`已证明` 2 条，`需降级` 14 条，`待补证` 3 条，共 19 条。这一结果完成 W1 的当前 Claim 审计门，但不代表原文稿已经改写，也不代表其他 W1 任务完成。后续修订外部文稿时以本表为当前裁决入口，项目事实和数字仍回到各项目的待核字段关闭。
+
+<a id="w1-conv3d-case-card-practice-20260914"></a>
+
+### W1 正式练习：Conv3D Case Card v1
+
+- **练习 ID／revision**：`plana-jd-w1-conv3d-case-card-20260914`／`1`。
+- **digest**：`sha256:1a3a5859a2ed220310f6c4fb5305b7c26450e2275477d74a1d3ee1a12ca62660`。
+- **接受事件**：[`plana-jd-w1-20260914-conv3d-case-card-accepted`](#plana-jd-w1-20260914-conv3d-case-card-accepted)，绑定上述 revision 与 digest。
+- **运行范围**：W1 附属独立正式练习；`conceptual` 与 `practical` 为 required，`empirical` 为 not-required。不把 `w1-conv3d-case-card` 静默加入现有 vLLM Lesson 的 required objective。
+- **规范化契约**：以下对象是已接受契约的持久投影。digest 只覆盖 `id`、`targets`、`task`、`deliverables`、`acceptance`、`scope` 与 `optional`；递归按 key 排序、保留数组顺序并采用 UTF-8 紧凑 JSON 计算。
+
+```json
+{
+  "id": "plana-jd-w1-conv3d-case-card-20260914",
+  "targets": [
+    {
+      "objective_id": "w1-conv3d-case-card",
+      "missing_dimensions": ["conceptual", "practical"],
+      "evidence_gap": "现有项目口述与 CL16 只支持有界叙述，尚无一张由学习者独立组织、字段齐全且可审计的 Conv3D Case Card；模型、Workload、Shape 和性能数字仍有待核项。"
+    }
+  ],
+  "task": "基于项目一 2026-09-02 口述基线、W1 Case Card 模板与 CL16，独立完成 Conv3D Case Card v1；覆盖 F1–F6，并将每项标为“项目口述”“原始记录已核”或“待核”，不得补造未知事实或性能数字。",
+  "deliverables": [
+    {
+      "artifact": "dialogue:plana-jd-w1-conv3d-case-card-v1",
+      "outcome": "学习者在对话中提交并修订完整卡片核心内容，覆盖 Claim 与范围、问题与基线、机制与反证、修改与 ownership、正确性与性能验证、结果归因与限制。"
+    },
+    {
+      "artifact": "面试准备/自我准备/projects.md#project1-conv3d-case-card-v1",
+      "outcome": "全部 required acceptance 通过后，Agent 将学习者已确认内容忠实投影为受管 Markdown section；只规范结构和明显笔误，不补造事实、数字或 ownership。"
+    }
+  ],
+  "acceptance": [
+    {
+      "id": "A1",
+      "criterion": "F1–F6 关键字段齐全；每个事实有来源标签，未知项写明“待核”、原因和可执行关闭动作，不静默选定冲突模型或 40% 数字。",
+      "evidence_method": "按 W1 Case Card 模板与项目一待核字段逐项 rubric review。"
+    },
+    {
+      "id": "A2",
+      "criterion": "机制链明确连接逻辑 Shape、物理 Layout/Stride、对齐与 Padding、实际 Bytes/搬运以及 OOM/时延；区分 Padding、Workspace 和 Kernel 性能。实际参数缺失时允许使用符号公式，但必须标出补数条件。",
+      "evidence_method": "对卡片机制链做可复算性检查；不要求本轮取得新的原始数据。"
+    },
+    {
+      "id": "A3",
+      "criterion": "至少列出一个竞争解释，并说明哪个控制变量、Trace 或对照能够支持或否定当前布局假设。",
+      "evidence_method": "检查假设—证据—反证链是否可证伪。"
+    },
+    {
+      "id": "A4",
+      "criterion": "正确性验证与性能验证分开；包含单算子和端到端两层契约，明确 reference、误差/输出判据、Workload 可比条件和测量边界；缺失值保持待核。",
+      "evidence_method": "按验证契约 rubric 检查，不运行新 Benchmark。"
+    },
+    {
+      "id": "A5",
+      "criterion": "清楚区分“我负责／我参与／他人负责”，不把 Conv3D Kernel 内部实现归给本人；最终对外口径不强于 CL16。",
+      "evidence_method": "与项目一口述基线的个人职责边界及 CL16 交叉核对。"
+    },
+    {
+      "id": "A6",
+      "criterion": "学习者能够解释一个关键验证选择，并在 Review 后无实质提示完成一个表面不同但机制相同的条件变式。",
+      "evidence_method": "对话解释与一次无提示小型变式。"
+    }
+  ],
+  "scope": {
+    "learner_owned": [
+      {
+        "artifact": "dialogue:plana-jd-w1-conv3d-case-card-v1",
+        "operations": ["create", "modify"]
+      }
+    ],
+    "agent_owned": [
+      {
+        "artifact": "推理框架/EP-PD自研芯片适配设计与验证包.md#w1-conv3d-case-card-practice-20260914",
+        "operations": ["read", "create", "modify", "record"]
+      },
+      {
+        "artifact": "面试准备/自我准备/projects.md#project1-conv3d-case-card-v1",
+        "operations": ["read", "create", "modify", "record"]
+      },
+      {
+        "artifact": "计划/学习断点.md",
+        "operations": ["read", "modify", "record"]
+      },
+      {
+        "artifact": "计划/高级AI框架开发工程师-八周证据冲刺计划.md#64-验收门",
+        "operations": ["read", "modify", "record"]
+      }
+    ],
+    "read_only": [
+      {
+        "artifact": "计划/高级AI框架开发工程师-八周证据冲刺计划.md#44-case-card-模板",
+        "operations": ["read"]
+      },
+      {
+        "artifact": "计划/高级AI框架开发工程师-八周证据冲刺计划.md#62-主任务",
+        "operations": ["read"]
+      },
+      {
+        "artifact": "面试准备/自我准备/projects.md#project1-oral-baseline-20260902",
+        "operations": ["read"]
+      },
+      {
+        "artifact": "推理框架/EP-PD自研芯片适配设计与验证包.md#w1-claim-evidence-matrix-20260914",
+        "operations": ["read"]
+      },
+      {
+        "artifact": "面试准备/自我准备/CV.md",
+        "operations": ["read"]
+      },
+      {
+        "artifact": "面试准备/自我准备/self-introduction.md",
+        "operations": ["read"]
+      },
+      {
+        "artifact": "面试准备/自我准备/AMD-AI框架开发工程师胜任力诊断-2026-08-29.md#72-优化案例必须升级为可审计-case-card",
+        "operations": ["read"]
+      }
+    ],
+    "excluded": [
+      {
+        "artifact": "projects.md 中现有项目事实与待核字段、CV、自我介绍和旧诊断的改写；目标 Case Card section 之外的新文稿",
+        "operations": []
+      },
+      {
+        "artifact": "未跟踪内容、公司代码、内部 API、未公开硬件参数、原始日志、已撤回 diff 或未经确认可披露的信息",
+        "operations": []
+      },
+      {
+        "artifact": "新 Benchmark/Profile/counter、环境安装、Kernel 实现或调优、W1-P1/P2、Roofline、其他 Case Card、W2–W4",
+        "operations": []
+      },
+      {
+        "artifact": "W1 整体完成、Lesson final mastery 或 CL16 证据等级升级",
+        "operations": []
+      }
+    ]
+  },
+  "optional": []
+}
+```
+
+- **当前 Review 状态**：A1–A6 在已接受 revision 1 的草稿范围内通过，正式练习已结束；[Case Card v1](../面试准备/自我准备/projects.md#project1-conv3d-case-card-v1)由学习者对话核心内容忠实整理后保存。图片性能的 10 例均值、视频单次测量、未覆盖的视频模型级精度及原始资料缺口均明确保留；未确认可披露的数值没有写入项目正文。项目经历继续按用户口述／自核层使用，不升级为原始 commit、Issue、脚本或运行结果的独立审计，不写 Lesson final mastery。
+- **F1 当前可保留输入**：用户确认所列 Qwen2.5-VL／Qwen3-VL 全部规格均适用两组单算子 Shape，并提供框架版本、BF16、Conv3D 配置及单并发历史信息；实际模型级验证仅按 F5 所述范围记录。本人负责问题定位、复现提取、模型调用重构和权重布局调整，与算子同事协作完成方案；观察到的资源和性能改善保留适用条件。项目事实的工作稿投影现见上述 Case Card，原始记录与数字缺口不因保存而关闭。
+
+- **布局定位与算量证据**：学习者说明原始 Host 输入为二维展平张量；H2D 准备阶段先补齐二维末维，再传入设备，框架侧保留逻辑尺寸。随后设备侧 view 拆分逻辑维度并复用原存储；通道重排由后端算子生成新的存储时，才出现小通道末维的高比例补齐。具体内部参数留在学习者对话工件，当前只记录上述机制边界。学习者独立给出图片输入的逻辑／补齐字节公式；导师纠正了提前取整导致的倍数误差，并根据后续补充区分“相对逻辑输入”与“相对既有设备输入”两个分母。以上属于口述与纸面推导，不是分配器实测或 OOM 峰值证据。
+- **术语核对**：后端所称 `reshape` 暂按用户报告的“通道重排并生成新存储”理解，不仅凭内部名称判错；标准 PyTorch 的 [view](https://docs.pytorch.org/docs/2.11/generated/torch.Tensor.view.html)、[reshape](https://docs.pytorch.org/docs/2.11/generated/torch.reshape.html) 和 [permute](https://docs.pytorch.org/docs/2.11/generated/torch.permute.html) 语义只作公开接口说明，不裁决历史自研实现。实际 stride、物理描述和连续性标记尚未提供，不从逻辑 Shape 自动推出。
+- **首维与并发边界**：学习者将首维解释为预处理产生的视觉分块数，区分图片空间切分、视频时间／空间切分与请求级单并发；原始图片已无法恢复，所举二维网格仅为可能解释。以 [Transformers v4.51.3 的 Qwen2-VL 预处理源码](https://github.com/huggingface/transformers/blob/v4.51.3/src/transformers/models/qwen2_vl/image_processing_qwen2_vl.py#L256-L280)作概念对照，单视觉项的首维为 `grid_t × grid_h × grid_w`，网格取决于预处理后的尺寸与时间分组；该源码不证明历史自研版本的实际网格。导师补准：多个请求的视觉数据合入同一次调用时才可按所合并的分块数累加，服务并发增加本身不决定每次 Conv3D 的首维。
+- **剩余快照待核字段**：原始媒体及具体网格因素材缺失无法唯一恢复，当前只保留已报告的算子输入规模；实际 stride、存储观测、连续性标记及 accumulation dtype 尚无原记录，分别以对应后端的张量描述、分配记录与算子配置为后续核对来源，缺失时不填入推测值。F5 已由用户补充输入／权重采用 BF16，比较前是否另有 dtype 转换仍待核。按 revision 1 允许未知项留待核的约定，这些状态不升级为本轮找回素材或新跑实验的要求。
+- **F2／F3 排查证据（2026-09-15 补充）**：学习者明确首次 OOM 出现在 Qwen2.5-VL-32B 的视频输入；Python 调用栈指向 PyTorch Conv3D，复现并打印输入后获得视频单例的算子 Shape。学习者依据该自研算子库的输入连续化要求提出 Padding 膨胀假设，检查算子处理逻辑后发现通道末置重排；随后将重排从 Conv3D 内部外提，在单例中使用 PyTorch 显存 snapshot 检查，观察到重排后显存跃升。该链支持将显存膨胀定位到重排与补齐阶段；“连续化会补齐”只描述该后端行为。此处保存用户对历史观察的报告，未读取原始代码或快照，也不把原始首次故障推广为全部模型均曾 OOM。
+- **当前证据边界**：布局账本可预测重排输出的容量，但不能替代快照中的实测峰值、失败分配字节与同时存活对象记录。Workspace、其他存储和生命周期的叠加贡献、单算子时延与优化因素的独立贡献仍待核。TTFT 只保留各模型和样本组的近似口述结果；图片均值与视频单次测量分别标注，不能从 OOM 用例构造有限时延基线。后续可用脱敏记录核对这些字段，当前不要求新跑实验。
+- **F4 输入与权重方案**：学习者说明优化后沿用二维输入的 H2D 路径，保持 `C×T×H×W` 合并维，并向专用 Conv3D 算子传入四个逻辑维度的标量参数；权重也在初始化时保留为 `(out_channels, C×T×H×W)`。调用侧取消了输入与权重的通道末置物化，因而避免产生对应的大规模补齐缓冲。算子内部是否在 SRAM 中再次补齐及如何计算，学习者明确不掌握，继续保留算子团队的实现边界。
+- **展平映射检查**：学习者独立给出零起始索引 `k=c×T×H×W+t×H×W+h×W+w`，并正确用整除和取模可逆说明无元素丢失；输入与权重采用同一映射时，可保持相同卷积窗口内的元素乘积配对。当前证据支持逻辑映射，不证明专用算子实装、物理 Padding 处理或 BF16 数值正确性；完整卷积语义仍须结合实际配置和 F5 对照确认。
+- **F5 正确性参考与判据**：用户明确专用算子与 CPU Conv3D 的 golden reference 对照，原设备算子接入时也曾与 CPU 参考对照，并未做新旧设备实现直接互比。用户报告采用测试套件默认 `rtol=0.1、atol=0.05`；当前可记录为在该容差内通过 CPU 参考检查，不能表述为逐元素严格相等或新旧实现必然在相同容差内彼此接近。导师将此前“与原始 Conv3D 一致”的问法修正为“对共同 CPU 参考验证”，不追加直接互比要求。
+- **F5 数据与输出对齐**：学习者说明在 CPU 上用 `torch.randn` 准备同一份 BF16 输入和权重，先执行 CPU Conv3D 参考计算，再将输入及权重的卷积维度按共同次序展平并 H2D，调用专用算子。当前具体恢复的是视频 Shape 单例；在所述卷积核、步长和无 Padding 配置下，CPU 输出为 `(N,out_channels,1,1,1)`，专用算子输出为 `(N,out_channels)`。仅 squeeze CPU 输出最后三个单例维后按既定容差比较，保留 N 与输出通道轴。该叙述支持同份数据和输出映射的单算子验证，不自动证明整模型正确性。
+- **F5 模型级回归**：用户报告从 `vision-arena-bench-v0.1` 随机抽取 10 个含图片的测例，在 Qwen2.5-VL-32B 上设置 `temperature=0`、随机种子 `1234`，记录专用 Conv3D 接入后的模型输出，并与模型采用 CPU Conv3D 参考路径时的输出逐 Token 比较，10 例输出 Token 序列完全一致。当前只据此描述这组图片测例的回归结果；实际模型权重 revision、样本标识及其余运行配置未恢复，不外推到全部型号或全量数据集。[官方数据集页](https://huggingface.co/datasets/lmarena-ai/vision-arena-bench-v0.1)仅核对名称与资料入口，不证明历史样本选择或运行结果；本轮未下载数据或执行评测。
+- **F6 已知覆盖限制**：用户明确没有做视频输入的模型级回归。视频 Shape 的随机张量单算子测试与上述图片模型级测试分别保留适用范围；不把单算子通过、首次视频 OOM 的定位或配置确定性扩展为视频端到端正确性。此项作为已知限制记录，按当前草稿契约不自动增加视频实验或扩大样本量的要求。
+- **F6 性能结果分组**：用户明确视频性能计时来自可正常运行的 3B 模型，只有同一随手选取视频的一次请求；32B 视频 OOM，没有对应的优化前 TTFT；32B 图片记录的是数据集中 10 个测例的平均 TTFT。用户确认前后使用相同输入与运行配置，报告优化后图片均值及视频单次观测的上界，具体原始数值未恢复。三组分别保留，不能用 3B 视频代替 32B 视频基线，也不把图片均值上界改成每条请求的上界。近似耗时保留在本次学习者口述中，正式卡片中的数字待测量和披露口径确认后再写入；不计算跨模型或跨输入的收益。
+- **F6 计时与统计方法**：客户端从请求发送计时，到收到第一个生成 Token 结束；请求前确认模型初始化完成、API 服务可用，模型加载和预热不计入所报 TTFT。图片组是 10 个不同测例各一次请求的算术平均；视频组仅一个样本、一次请求，不称 10 例平均。此前将“10 例平均”统一用于两组的解读已由用户后续澄清修正；当前没有同一测例重复运行的波动或分位数证据。
+- **样本对应关系**：固定单算子图片／视频 Shape 来自用户另外随手选择的媒体，不在 `vision-arena-bench-v0.1` 内，不作为该数据集 10 个图片测例共有的 Shape。3B 视频性能使用的仍是随手选择的同一个视频。原始媒体、数据集抽样标识与各样例网格尚未恢复，按待核保留。
+- **输出分配边界**：用户解释二维返回旨在避免输出末维 Padding；新接口的二维输出形状已明确，但旧设备输出的物理布局、实际分配和节省量尚未提供，输出侧显存收益暂不写成已核结果。
+- **容差解释与待核边界**：若当时采用标准 [PyTorch assert_close](https://docs.pytorch.org/docs/2.11/testing.html#torch.testing.assert_close) 或等价比较，对于有限实数元素，误差界为 `abs(actual-reference) <= atol + rtol×abs(reference)`；这是接口说明，尚未核对历史脚本的具体比较函数。比较前是否转换 dtype、实际误差、随机种子、完整输入集合和回归次数仍待核；不把套件默认阈值等同于实测误差，也不因本轮检查而自动收紧历史验收阈值。
+
+<a id="w1-conv3d-case-card-findings"></a>
+
+#### 当前 findings
+
+| ID | 映射 | 严重度 | owner | 状态 | Evidence（建立／复核） | 下一动作 |
+|---|---|---|---|---|---|---|
+| `conv3d-F01-case-scope` | A1、A5 | major | learner | closed | 建立：初稿缺少 Claim 句，多个模型规格未与案例关联。复核：用户确认两组 Shape 适用于所列全部规格，并自行提交问题定位、复现提取、模型调用重构、算子协作及定性结果的 Claim；没有填入未核百分比，也没有宣称独立实现 Kernel。结果按相应已验证输入与测试范围理解；仅关闭范围与表述缺口，不等于性能实证或 A1／A5 全部通过。 | — |
+| `conv3d-F02-layout-snapshot` | A1、A2、A4 | major | learner | closed | 建立：逻辑维、物理对齐维和分配位置混写。复核：学习者已说明 Host 二维输入补齐、设备侧 view 复用与通道重排生成大张量的顺序，并区分视觉分块数与请求级并发；原图和具体网格明确未知，其余快照字段已列待核与核对来源。导师补准了算量舍入与并发累加条件；本次仅关闭草稿的布局表述歧义，独立变式及 A2／A4 整体证据仍须按原契约验收。 | — |
+| `conv3d-F03-provenance` | A1 | minor | learner | open | `vLLM 0.9.3` 尚未绑定内部 fork 的实际 commit；当前来源锚点是泛称，末列“关闭”只表示状态，不能让复核者重新定位证据或区分已关闭／待关闭。 | 把已核项写成“已关闭：依据可重新定位的脱敏记录，无后续动作”；将实际 commit 或其他未确认字段标为“待核”并给出具体核验动作。 |
+
+<a id="w1-conv3d-case-card-transfer-1"></a>
+
+#### A6 独立变式：布局容量与另一种分配来源
+
+- **状态与边界**：已作答并通过，沿用 revision 1 的 A2／A3／A6；以下全部是教学假设，不是项目设备参数。
+- **题设**：BF16，`N=1024、C=8、T=2、H=W=8`；每个新分配张量的最内层连续数据段按 256 Bytes 向上补齐。方案甲分配二维输入 `(N,C×T×H×W)`；方案乙物化通道末置输入 `(N,T,H,W,C)`。只计算每个方案的单个输入缓冲，不计其他分配。
+- **交付 1**：独立计算两种方案各占多少 MiB，以及方案乙相对于甲的存储量倍数。
+- **交付 2**：若同步后的快照显示，进入卷积计算后还新增了一块无法由上述输入缓冲解释的显存，提出另一种可能来源，并说明用什么检查区分它与输入 Padding。
+- **复核证据**：学习者独立算出甲 2 MiB、乙 32 MiB、乙为甲的 16 倍，正确处理 BF16 字节与对齐；提出输出 Tensor 分配的竞争解释，并建议在输出分配前后添加显存快照检查。该方法能够区分分配阶段，满足当前变式的计算与可证伪判断要求。
+- **非阻塞补准**：乙的物理 Shape 应为 `(1024,2,8,8,128)`，提交中交换了 T／H 次序，但乘积和容量正确，不要求重复整题。输出是否补齐仍由真实物理内层维与分配规则决定，不能仅从逻辑尾维为 1 推定。
+
+#### 本次练习验收
+
+| 验收项 | 最小证据 | 判断 |
+|---|---|---|
+| A1：字段与来源 | Case Card 覆盖 F1–F6；口述、自核与待核分开，缺口均给出核验方式 | 通过 |
+| A2：机制与算量 | H2D／view／通道重排分开，输入与权重共同索引可逆；A6 独立算出两种输入容量和倍数 | 通过 |
+| A3：可证伪性 | 项目中外提重排检查快照；A6 提出输出分配的替代解释及分配前后对照 | 通过 |
+| A4：验证契约 | 同份 BF16 数据对 CPU 参考、输出 squeeze 和容差；模型级图片 Token 对照与视频未覆盖；TTFT 分组、计时和统计边界明确 | 通过 |
+| A5：职责与口径 | 模型调用和权重处理由本人负责，Kernel 内部归算子团队；性能数值与贡献拆分保持待核，未升级 CL16 | 通过 |
+| A6：解释与独立迁移 | 学习者解释 CPU／专用输出对齐，并无实质提示完成新参数的容量计算和另一分配来源判断 | 通过 |
+
+- **帮助与独立性**：导师提供了字段释义、口径收窄、舍入与单位、统计范围等补准；学习者提供项目核心叙述并完成共同展平映射、验证解释及最后的独立变式。Agent 只将已提交内容整理为授权章节，未代做核心推导、代码或历史实验。
+- **关闭范围**：本次独立练习的 conceptual／practical 草稿证据充分，empirical 为 not-required；required blocking／major 开放数为 0，`conv3d-F03-provenance` 保留为非阻塞 minor。只有 W1 Case Card 草稿门完成，历史实证与披露缺口、整个 W1 和 Lesson mastery 均不随之关闭。
 
 ### Session event 索引
 
@@ -217,6 +480,73 @@
 - **接口补充**：针对学习者的设置入口追问，说明上游 `page_size_padded` 是补齐后整页总字节数的配置字段，`page_size_bytes` 是无 setter 的派生属性；冻结规格通过构造参数或 `replace` 生成。普通页尾 padding view 分支依赖该配置是否非空，并要求 num-blocks-first 布局及 kernel 的真实 stride 支持。原始 int8 buffer 的字节容量与逻辑 view 的元素数分别使用。
 - **一手来源锚点**：固定 `vLLM v0.26.0 @ 568afb3` 的 [AttentionSpec 字段与属性](https://github.com/vllm-project/vllm/blob/568afb3a13806beb53bb2e6bd518269357b237c0/vllm/v1/kv_cache_interface.py#L175-L201)、[页尾 padding view](https://github.com/vllm-project/vllm/blob/568afb3a13806beb53bb2e6bd518269357b237c0/vllm/v1/worker/gpu/attn_utils.py#L200-L253)、[MRV1 原始分配与块数解释](https://github.com/vllm-project/vllm/blob/568afb3a13806beb53bb2e6bd518269357b237c0/vllm/v1/worker/gpu_model_runner.py#L7238-L7344)、[容量规划](https://github.com/vllm-project/vllm/blob/568afb3a13806beb53bb2e6bd518269357b237c0/vllm/v1/core/kv_cache_utils.py#L1344-L1419)。具体实现以这些固定源码为准。
 - **证据边界**：本段记录轻量变式作答和接口讲解，不声称完成 kernel 适配、设备实测或整个 W1；原周末实践安排不变。自研 vllm-cl 的历史双字段方案归入工程实践案例，不作为上游接口限制或本组通用卡片的事实依据。
+
+#### `plana-jd-w1-20260914-cpp-linux-baseline`
+
+- **日期**：2026-09-14（用户确认收束日）。
+- **Lesson 引用**：`plana-jd-w1-vllm-execution-boundaries`；归入 W1 附属基线任务，不改既有 vLLM 目标或历史契约。
+- **覆盖范围**：C++ 所有权与多态、ELF／存储期、编译链接与动态库诊断。
+- **已完成动作**：完成三个书面综合情境及必要局部补差；用户确认保存基线结论和待实践项。记录 [基线缺口表](#w1-cpp-linux-baseline-20260914)，登记 [W1-P2](#w1-p2-cpp-linux-validation)。
+- **开放问题**：独立编译、sanitizer、真实 ELF／库加载、服务启动环境配置仍待验证；RVO／NRVO 保留为讲解补充。
+- **证据边界**：本次只是概念与书面校准收束，不是实践契约接受、实际测试通过或整个 W1 的关闭；未写入 `final_mastery`，未估算学习时长。
+
+#### `plana-jd-w1-20260914-claim-evidence-matrix`
+
+- **日期**：2026-09-14。
+- **Lesson 引用**：`plana-jd-w1-vllm-execution-boundaries`；归入 W1 Claim 校准任务，不改动原 vLLM 三目标。
+- **覆盖范围**：当前 `CV.md`、`projects.md`、`self-introduction.md` 的高风险能力与性能表述，以 2026-08-29 诊断旧表为历史 seed，吸收 W1 新增书面／源码 evidence 和项目口述更新。
+- **已完成动作**：完成 [19 条当前 Claim 矩阵](#w1-claim-evidence-matrix-20260914)；裁决为已证明 2 条、需降级 14 条、待补证 3 条，每条都有当前可用口径或关闭条件。
+- **证据边界**：本次没有改写简历、项目档案或自我介绍；项目性能和历史事实仍为用户口述层，未使用已撤回 diff，未冒充为原始 Benchmark、Trace 或 commit 审计。不写 `final_mastery`，不标记 W1 整体完成。
+
+#### `plana-jd-w1-20260914-conv3d-case-card-accepted`
+
+- **日期**：2026-09-14。
+- **Session topic**：W1 Conv3D Case Card v1；这是附属独立正式练习，不新增现有 vLLM Lesson 的 required objective。
+- **覆盖范围**：项目一口述基线、W1 Case Card 模板与 Claim 矩阵 `CL16` 的有界材料组织。
+- **已完成动作**：用户明确接受 [练习 `plana-jd-w1-conv3d-case-card-20260914` revision 1](#w1-conv3d-case-card-practice-20260914)，绑定 digest `sha256:1a3a5859a2ed220310f6c4fb5305b7c26450e2275477d74a1d3ee1a12ca62660`；契约列明学习者核心内容、Agent 记录路径、A1–A6 与排除范围。
+- **开放问题**：学习者尚未提交 F1–F6 核心内容；模型版本、Workload、Shape、性能数字和原始实证继续保持待核。
+- **证据边界**：接受契约只启动练习，不证明卡片通过，不创建项目正文，不升级 `CL16`，不标记 W1 或 Lesson 完成；未提供学习时长。
+
+#### `plana-jd-w1-20260914-conv3d-case-card-f1-review`
+
+- **日期**：2026-09-14。
+- **Session topic**：W1 Conv3D Case Card v1 的 F1“Claim 与范围”首版 Review。
+- **覆盖范围**：模型与版本、框架版本、候选 Conv3D Shape／dtype、请求并发及 512 B 对齐环境叙述。
+- **已完成动作**：学习者提交 F1 首版；按 revision 1 的 A1／A2／A5 Review，保留用户确认的历史输入边界并打开 [3 个稳定 findings](#w1-conv3d-case-card-findings)，其中 2 个 major、1 个 minor。
+- **开放问题**：具体案例与模型规格尚未绑定；逻辑／物理 Layout、请求 Batch／算子 N 和对齐作用层级未拆开；实际 fork commit 与可重定位来源锚点仍待补准。
+- **证据边界**：本段不复制学习者原表，不把用户自核来源冒充 Agent 独立审计，不创建项目 Case Card 正文，不确认任何性能数字，不记录学习时长。
+
+#### `plana-jd-w1-20260915-conv3d-diagnosis`
+
+- **日期**：2026-09-15（补充排查过程的会话日期，并非项目故障日期）。
+- **Session topic**：Conv3D Case Card 的故障定位、接口重构与正确性回归。
+- **覆盖范围**：F2 故障与基线、F3 局部对照、F4 接口与元素映射、F5 正确性回归，以及 F6 性能分组与计时统计方法。
+- **已完成动作**：学习者完成 F1–F6 核心内容和 A6 独立变式，A1–A6 按既定草稿范围通过；忠实整理并保存 [Case Card v1](../面试准备/自我准备/projects.md#project1-conv3d-case-card-v1)，完成 W1 对应的 Case Card 验收项。
+- **开放问题**：实际误差、样本标识、精确耗时、峰值、失败分配及分项收益保留待核，视频模型级精度仍未覆盖。
+- **marker**：`practice-closed`。
+- **证据边界**：完成的是草稿组织与独立解释练习；本轮没有执行模型、读取内部代码或核验原始 snapshot，未升级 CL16，未关闭 W1 或写入 Lesson final mastery，未记录未提供的学习时长。
+
+#### `plana-jd-w1-20260915-backpressure`
+
+- **日期**：2026-09-15。
+- **Lesson 引用**：`plana-jd-w1-vllm-execution-boundaries`；补齐 W1 既有反压分层要求。
+- **来源与边界**：[Reactive Streams](https://www.reactive-streams.org/)用于解释下游容量反馈与有界缓冲；固定提交的 [Scheduler 准入限制](https://github.com/vllm-project/vllm/blob/568afb3a13806beb53bb2e6bd518269357b237c0/vllm/v1/core/sched/scheduler.py#L617-L622)只裁决本地 Token／运行槽位限制，不据此推定 API 准入或端到端反压已经实现。
+- **学习者证据**：在运行请求限额但入口无限接收的情境中，正确指出压力积在 Scheduler waiting，尚未反馈到前端与客户端；提出等待队列限容、EngineCore 通知前端暂停提交、满载时入口拒绝与容量恢复后重新接收的方案。在客户端立即重试的变式中，正确指出前端仍会承压，需要客户端减少并发并等待后重试。
+- **导师补准**：区分后端到前端的反压与入口过载拒绝；前端是否逐请求查询 EngineCore 取决于反馈实现，频繁重试不必然产生查询。该补充不增加新的实现要求。
+- **验收结论**：反压概念检查及轻量设计通过，与既有 DP／DPLB 路由和 TP 边界证据合并，完成相应 W1 书面验收；同步请求主链、12 文件索引、协议字段边界和 KV 账本的既有通过记录，不重复验收。
+- **后续边界**：W1-P1／P2 仍未启动，未运行负载测试，未修改旧练习契约，未写入 Lesson final mastery，也未记录未提供的学习时长。
+
+<a id="plana-jd-w1-20260915-wrap-up"></a>
+
+#### `plana-jd-w1-20260915-wrap-up`
+
+- **日期与用户要求**：2026-09-15，暂缓 W1 最后两项实践，保存学习断点，整理结构化学习记录与可追溯日志，制作复习卡，同步进度并提交 Git；不推送远端。
+- **学习进展**：vLLM 主链、文字复述与变式、C++／Linux 概念基线、19 条 Claim 审计、Conv3D Case Card v1 及反压补充均已完成各自的概念或材料验收。W1 保持 `synthesis`，P1／P2 未启动，不写入 `final_mastery`，不进入 W2。
+- **结构化记录**：[C++／Linux 基线](log/2026-09-14-cpp-linux-baseline.md)、[Conv3D 案例证据与反压](log/2026-09-15-conv3d-claim-backpressure.md)。覆盖选定的 210 条可见消息；使用稳定消息 ID 回溯来源，不把导师补充、用户澄清或课堂模拟改写为用户错误或实操证据。
+- **复习资料**：[C++／Linux](cards/w1-cpp-linux-baseline.md) 11 张、[Conv3D 证据与反压](cards/conv3d-evidence-backpressure.md) 12 张；对应模板 XLSX 与受管清单均由制卡工具生成。最终 Review 将两份日志中的措辞补准／导师问法纠正改标为“要点”；用户确认后更新卡片来源哈希，问答、ID 和 XLSX 均未改变。两组同请求复核均得到 `operation=no-op`、`would_write=false`，无来源依赖或表格漂移。排除 3 项与旧卡语义重复的候选；只保留可公开的通用机制与证据边界，不制入未确认可披露的项目参数、性能数字或待实践项。未上传墨墨。
+- **可追溯原文归档**：待用户确认有权将选定的专有叙述保存在本机私有归档目录；尚未执行原文归档。归档确认与回执只在本事件更新，不把原文或私有路径纳入 Git。
+- **提交授权与范围**：用户再次确认更新来源校验信息并提交；本次范围为相关进度、既有本轮案例与验收增量、两份结构化记录及两组卡片，提交结果由 Git 历史记录。原文私存的权限确认单独处理；不纳入既有未跟踪的 `temp.md`。
+- **状态投影与工时**：同步唯一 Checkpoint、临时冲刺计划、README、全局及相关模块进度；未提供本段真实学习时长，不新增工时或课程完成率。不改写主计划、历史周报和旧验收契约。
 
 ---
 
@@ -604,7 +934,7 @@ core patch 的论证应指出：需要的语义、现有字段／hook 能表达�
 #### W1-P1：运行路径选择与最小输出契约验证
 
 - **状态**：⬜ 待启动；当前只登记，尚未接受正式实践契约、准备执行环境或运行测试。
-- **安排**：周末集中实践，暂按最近周末 **2026-09-12～2026-09-13** 记录；具体时段由用户启动时确认，可调整，不是硬截止日期，不自动执行或创建提醒。
+- **安排**：用户于 2026-09-15 确认暂缓，替代先前暂记的 2026-09-12～2026-09-13 周末安排；恢复时再确认时段，不新增截止日期、自动执行或提醒。
 - **目的**：将已经理解的 vLLM 请求链对应到明确配置与真实实现，并用一个小型验证检查已学过的输出契约。
 - **版本与范围**：沿用 `vLLM v0.26.0 @ 568afb3a13806beb53bb2e6bd518269357b237c0`；普通文本、单请求场景。Executor 的 `backend=uni` 与 Attention backend 分别记录，不预设当前设备、模型或实际 backend。
 
@@ -628,6 +958,27 @@ core patch 的论证应指出：需要的语义、现有字段／hook 能表达�
 - 现有 [测试 fixture](https://github.com/vllm-project/vllm/blob/568afb3a13806beb53bb2e6bd518269357b237c0/tests/v1/engine/conftest.py#L29-L45) 涉及 tokenizer 和 vLLM 配置；实践前核对兼容依赖与本地缓存，不承诺无需下载或当前环境直接可运行。
 - 启动时再确认实现／验收文件的归属、允许的环境操作与通过标准；当前不安装依赖、不下载资源、不编写或执行测试，也不修改参考源码子模块。
 - 本作业不扩展为完整服务部署、性能 benchmark、上游 patch 或口头验收；继续使用既有周预算，不另行记入未发生的学习时长。
+
+<a id="w1-p2-cpp-linux-validation"></a>
+
+#### W1-P2：C++／Linux 基线实践验证
+
+- **状态**：⬜ 待启动；2026-09-14 仅登记候选验证范围，尚未接受正式实践契约、创建实现／测试文件或执行本项测试。
+- **目的与依据**：为[基线缺口表](#w1-cpp-linux-baseline-20260914)补实际操作证据；书面通过不自动转成实践通过，也不重复整套概念题。
+- **安排**：用户于 2026-09-15 确认暂缓；沿用周末集中实践的偏好，具体日期和范围待明确启动时确认，不新增固定时长、截止日期或自动提醒。
+
+**候选验证内容（启动时选择最低充分范围，不自动叠加为全部必做）**
+
+1. **C++ 生命周期**：用最小 C++17 程序验证已学过的借用、移动、`reset()` 或多态销毁边界，记录编译器告警与 sanitizer／等价工具的适用范围；不把未报告错误当成不存在 UB 的证明。
+2. **编译链接与 ELF**：用隔离的目标文件、可执行文件和共享库，核查声明／定义、符号匹配、Section／Segment、`p_filesz`／`p_memsz`；对照预期与实际工具输出，不用课堂模拟数据充当实测。
+3. **动态库来源与调用验证**：使用自建可信测试库复现缺库或缺符号，区分 ELF 依赖、当前环境解析与目标 PID 映射；修正实际启动入口后，用新进程的 maps 和原故障函数调用结果共同验证。新开终端不等于继承旧终端环境；只启动成功不等于目标调用已覆盖。
+
+**启动与证据边界**
+
+- 启动前按正式实践流程确认目的、交付、通过标准、文件归属及允许的环境操作；导师准备最小验收工具，学习者保留核心实现和解释任务。
+- 另记真实 OS、编译器、标准库、binutils 与所选检查工具版本，不沿用历史 Windows／GPU 配置推断当前环境。不把源码／手册核验记录当作本地工具实测。
+- 当前不安装依赖、不修改系统级库搜索配置、不替换真实业务库或重启生产服务；不对不可信二进制执行 `ldd`。未来测试以隔离目录和自建库为范围，具体权限仍在启动时确认。
+- W2 的并发生命周期练习仍是后续候选，不因本项登记提前启动；口头要求继续由 W4 及后续 Mock 承接。
 
 ## 5. Risk register
 
