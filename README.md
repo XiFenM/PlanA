@@ -51,7 +51,7 @@ PlanA/
 │     学习指引.md                   ← 稳定版资料清单（🟥/🟨/🟩 分级）+ 长期订阅
 │     进度.md                       ← Sprint 进度子表（🟥 一行一条 + 🟨🟩 章节聚合）
 │   随学习推进，会陆续追加：复盘博客 / 论文笔记 / kernel demo / 心得文档
-│   以及 AI 工作流的两类产物：log/（学习记录）与 cards/（受管 Markdown + 按模板 XLSX）
+│   以及 AI 工作流产物：log/（结构化记录）、log-raw/（同名可追溯对话）、cards/（受管 Markdown + 按模板 XLSX）
 │
 ├── 面试准备/                       ← 工作复盘、面试问题与个人面试材料
 │   ├── 工作经历总结/
@@ -185,7 +185,7 @@ uv run --no-project python .agent-skills/tools/materialize_skills.py --repo . --
 |---|---|---|
 | `resource-planning` | **供给侧**：research → refresh → review 的受管资源生命周期 | 「研究／比较资料」；持久动作须精确预览与当次确认 |
 | `guide-learning` | **主干**：来源化教学 → 讲后检查 → 按证据缺口练习 → mastery → 稀疏恢复 | 教我／带我学／继续或恢复 Lesson |
-| `study-log` | **按需交接**：结构化过程记录，或经边界与隐私确认的 raw 可见文本存档 | 「整理学习记录／保存原始对话」 |
+| `study-log` | **按需交接**：仓库内同名配对的结构化记录与 raw 可见文本；原文仍须确认边界与隐私 | 「整理学习记录／保存原始对话」 |
 | `memo-cards` | **记忆侧**：成熟素材 → Markdown／XLSX 复习卡，可通过官方 API 上传到指定 Markji 章节 | 「制卡」「上传卡片」 |
 | `english-coach` | **英语轨**：学后「英语回顾」专项（主）+ 技术对话轮末反馈（辅） | 「英语回顾」/ 直接写英文 |
 | `playwright-cli` | 工具件，不占流程位 | 浏览器自动化 |
@@ -399,7 +399,7 @@ uv run --no-project python .agent-skills/tools/materialize_skills.py --repo . --
 5. **新资料先治理、再编辑课程**：refresh 只产生证据、候选与不可变报告；只有通过门槛并经逐项 review 确认的 decision unit 才进入精确课程 slot。
 6. **替代是课程动作**：资源关系使用 version/update/successor/conflict 等可证明关系；只有用户确认的 review 才执行 replace，不从标题相似或旧周报自动推断。
 7. **审计由事务拥有**：registry 事件与 Git 历史记录变更；不再要求在每份课程文件里维护另一套手写晋级 Changelog。
-8. **AI 产物与行为各有事实源**：结构化学习记录只进 `{板块}/log/`，更新已有记录时先展示 diff 并确认；raw 对话默认放在 Git 工作树外。记忆卡只进 `{板块}/cards/`，文章 Q&A 卡为主牌，学习记录卡只保留纠错与文章未收录的过程细节。中央 Skill 拥有 Agent 行为规范；本仓库配置层只保存 PlanA 路径、事实职责、时长归属与领域透镜。
+8. **AI 产物与行为各有事实源**：结构化学习记录放在 `{板块}/log/`，同名配对 raw 对话放在同级 `{板块}/log-raw/`，全部位于仓库内；原文仍须确认消息边界与隐私，保存不等于授权提交或公开。更新已有结构化记录前展示 diff 并确认；迁移原文时可保留既有制卡来源字节不变。记忆卡只进 `{板块}/cards/`，只消费结构化记录或稳定文章，不消费 raw。中央 Skill 拥有 Agent 行为规范；本仓库配置层只保存 PlanA 路径、事实职责、时长归属与领域透镜。
 
 ---
 

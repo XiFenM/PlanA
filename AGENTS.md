@@ -55,7 +55,7 @@ Route work by intent:
 - `guide-learning` — source-grounded explanation, adaptive post-explanation checks, evidence-gap-driven practice, review, mastery, and sparse recovery. PlanA facts: `.agent-skills-config/guide-learning-profile.md`.
 - `english-coach` — post-study English review and scoped turn-end English feedback. PlanA paths and handoffs: `英语/review-workflow.md`.
 - `memo-cards` — Markji table-import cards from English logs, technical Q&A, or structured study records.
-- `study-log` — user-requested structured process records or privacy-reviewed visible-text raw archives. Structured PlanA output stays under `{module}/log/`; raw archives do not.
+- `study-log` — user-requested paired learning records inside the repository. Structured PlanA output stays under `{module}/log/`; its same-named visible-text archive stays under sibling `{module}/log-raw/`. Raw content still needs privacy review and is not a card input; saving does not authorize Git stage, commit, push, or public disclosure. Existing hashed structured sources may remain unchanged during archive migration.
 - `resource-planning` — managed research, source refresh, claim-level evidence, candidate review, and exact slot-scoped curriculum edits. Configured scope is not network or write authorization. Prepare an exact transaction, obtain current confirmation, publish, then verify.
 - `playwright-cli` — browser automation; it is a tool Skill, not part of the learning-state pipeline.
 
