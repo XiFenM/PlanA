@@ -11,7 +11,7 @@
       "id": "inference-adaptation-evidence",
       "kind": "source-bundle",
       "patterns": [
-        "推理框架/EP-PD自研芯片适配设计与验证包.md"
+        "计划/八周冲刺进度/历史记录/W1-学习验收记录.md"
       ],
       "producer": "guide-learning"
     },

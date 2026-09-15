@@ -1,4 +1,4 @@
-本文围绕一次 vLLM 请求，说明三个问题：`output_kind` 如何组织调用方可见的输出；请求结束后，调度侧、前端和 ModelRunner 分别清理什么；如何将这些机制串成从接收请求到返回结果的完整表述。
+本文围绕一次 vLLM 请求，说明前端如何构造核心请求、控制面如何向执行面交付任务、`output_kind` 如何组织输出，以及请求结束后各组件如何清理状态。文末提供全流程讲述稿和源码定位索引。
 
 ## 来源与讨论范围
 
@@ -12,6 +12,61 @@
 - 以 `stream=true`、最终达到 `max_tokens` 为主线，再对照非流式输出、stop string 和断连分支。
 
 本文不展开多模态执行、PD 传输、多卡通信或具体 Attention Kernel 的内部算法。KV 延期回收只用于说明安全边界，不将某条同步路径推广为所有异步配置的统一时序。内容为源码理解与讲述材料，不代表设备运行或性能实测结论。
+
+<a id="pass-c1-openai-to-engine-core-request"></a>
+## OpenAI 请求到 EngineCoreRequest
+
+请求进入 EngineCore 之前，前端完成协议解释、输入准备和核心请求构造：
+
+`POST /v1/chat/completions` → `OpenAIServingChat._create_chat_completion()` → `render_chat_request()` → `EngineInput` + `SamplingParams` → `AsyncLLM.generate()/add_request()` → `InputProcessor.process_inputs()` → `EngineCoreRequest` → `EngineCoreClient.add_request_async()`。
+
+API serving 层解释 `messages`、tools、chat template、HTTP headers 和 `stream` 等协议信息。Chat 内容经过渲染与分词成为 `EngineInput`，生成参数归一化为 `SamplingParams`；InputProcessor 再校验和整理这些输入，生成核心请求。
+
+`EngineCoreRequest` 携带 request ID、prompt token IDs／embeds、多模态 features、sampling／pooling params、到达时间、LoRA、cache salt、priority、DP rank 与 trace headers。这里列的是输入契约可携带的字段，本文的纯文本主场景不会使用全部字段。FastAPI `Request`、原始 OpenAI `messages` 和 HTTP 连接本身都留在前端。EngineCore 因而不需要解释 Chat 协议和模板，同一个 token 级核心可以用于 Chat、Completion 和离线入口。
+
+AsyncLLM 先创建 `RequestOutputCollector`，向本进程的 `OutputProcessor` 注册请求，再通过 Client 跨进程提交 `EngineCoreRequest`。这个顺序保证了核心即使很快返回结果，前端也已经有接收该 request ID 输出的位置。`stream` 会投影为 `SamplingParams.output_kind` 随请求传递，但 SSE 或完整 HTTP 响应的选择仍在前端；输出字段的消费位置见后文。
+
+源码入口：[`/v1/chat/completions` 路由](https://github.com/vllm-project/vllm/blob/568afb3a13806beb53bb2e6bd518269357b237c0/vllm/entrypoints/openai/chat_completion/api_router.py#L40-L61)、[Chat 渲染与参数归一化](https://github.com/vllm-project/vllm/blob/568afb3a13806beb53bb2e6bd518269357b237c0/vllm/entrypoints/openai/chat_completion/serving.py#L255-L384)、[先注册 Collector 再跨进程发送](https://github.com/vllm-project/vllm/blob/568afb3a13806beb53bb2e6bd518269357b237c0/vllm/v1/engine/async_llm.py#L333-L412)、[InputProcessor 构造核心请求](https://github.com/vllm-project/vllm/blob/568afb3a13806beb53bb2e6bd518269357b237c0/vllm/v1/engine/input_processor.py#L242-L385)。
+
+<a id="request-execution-chain"></a>
+## 从请求调度到设备执行
+
+从组件调用关系观察，普通请求经过以下路径。前端与 EngineCore 之间存在进程边界，整条路径不是一个同步 Python 调用栈。
+
+```text
+POST /v1/chat/completions
+→ OpenAIServingChat → AsyncLLM
+→ EngineCore（跨进程）
+→ Scheduler.schedule + KVCacheManager 逻辑块分配
+→ SchedulerOutput → Executor / Worker → ModelRunner
+→ model forward / Attention
+→ torch.ops.vllm.unified_* custom op
+→ AttentionImpl backend → device kernel
+```
+
+`EngineCore.step()` 组织 `schedule → execute_model → update_from_output`。Scheduler 调用 KVCacheManager 分配逻辑 blocks，但不直接向设备 KV tensor 写入数据。执行计划经 Executor 和 Worker 到达 ModelRunner，由 Runner 准备执行状态并调用模型 forward。[EngineCore 单步执行](https://github.com/vllm-project/vllm/blob/568afb3a13806beb53bb2e6bd518269357b237c0/vllm/v1/engine/core.py#L576-L606)、[Scheduler 分配逻辑块](https://github.com/vllm-project/vllm/blob/568afb3a13806beb53bb2e6bd518269357b237c0/vllm/v1/core/sched/scheduler.py#L519-L526)、[GPU Worker 执行入口](https://github.com/vllm-project/vllm/blob/568afb3a13806beb53bb2e6bd518269357b237c0/vllm/v1/worker/gpu_worker.py#L1085-L1159)
+
+通用 `Attention.forward()` 经过 `torch.ops.vllm.unified_*` 编译图边界，再由注册实现调用 `AttentionImpl`。custom op 与底层 device kernel 是不同层次的接口，不能把注册入口等同于设备计算实现。[Attention 调用路径](https://github.com/vllm-project/vllm/blob/568afb3a13806beb53bb2e6bd518269357b237c0/vllm/model_executor/layers/attention/attention.py#L488-L582)
+
+<a id="pass-d-execution-contract"></a>
+### 控制面与执行面的契约
+
+下面按跨组件传递的内容区分职责，适用范围仍是本文的 MRV1 普通单卡生成路径。
+
+| 边界 | 主要传递内容 | 接收方职责 |
+|---|---|---|
+| Scheduler → Executor／Worker／ModelRunner | `SchedulerOutput`：新／已有请求、本步 token 数、block IDs，以及结束／恢复等状态信息 | Executor 下发任务；Worker 处理设备／rank 外层调用；ModelRunner 更新本地缓存和 InputBatch，准备有效输入与 metadata |
+| ModelRunner → 模型 | 显式传入 `input_ids`、`positions` 等 tensor；通过本次 `ForwardContext` 提供 Attention metadata 和 slot mapping | 执行模型前向，产生隐藏状态；本步 metadata 与可复用的模型层、物理 KV tensor 保持对应 |
+| 通用 Attention → 具体 backend | Q/K/V、物理 KV tensor、metadata、输出缓冲；独立 KV 更新入口还接收 slot mapping | 按 backend 契约完成 KV 写入与 Attention 计算；两者可在分开的接口内实现，但要保持先写后读依赖 |
+| 执行层 → EngineCore／Scheduler | `ModelRunnerOutput`：请求映射、有效采样 token IDs、logprobs 等 | Scheduler 回写 token 历史、检查停止条件并回收资源，组织 `EngineCoreOutputs` 交给前端处理 |
+
+batch 重排后，有效输入的 `input_ids`、`positions` 和 `slot_mapping` 仍须按 token 一一对应；`query_start_loc` 按本步请求片段重新累计，block table 的行和请求级 metadata 跟随 batch 顺序。请求自己的 block ID 列表无需因单纯 batch 重排而改变。
+
+slot mapping 指定新 K/V 的写入槽位，block table 定位请求上下文。单个映射正确或 tensor shape 合法，都不能替代这些字段之间的一致性。[Runner 更新状态与准备输入](https://github.com/vllm-project/vllm/blob/568afb3a13806beb53bb2e6bd518269357b237c0/vllm/v1/worker/gpu_model_runner.py#L1169)、[Attention 上下文与执行入口](https://github.com/vllm-project/vllm/blob/568afb3a13806beb53bb2e6bd518269357b237c0/vllm/model_executor/layers/attention/attention.py#L731)
+
+模型前向返回隐藏状态，普通生成路径选取每个请求本步片段的最后一行计算 logits；Partial Prefill 的内部采样结果会被过滤。MRV1 的 `execute_model()` 返回 `None` 时，后续由 `sample_tokens()` 消费中间状态并取得执行输出，不表示执行失败。[执行与采样衔接](https://github.com/vllm-project/vllm/blob/568afb3a13806beb53bb2e6bd518269357b237c0/vllm/v1/engine/core.py#L576-L606)
+
+设备实现可以通过 Platform、Worker 和 backend 扩展点接入，但仍需兑现上述输入、输出与完成语义。具体边界见[设备适配边界](3-设备适配边界.md)。
 
 ## output_kind 与两层输出
 
@@ -160,3 +215,23 @@ ModelRunner 根据调度结果更新本地请求状态和持久 InputBatch，处
 执行侧的本地状态通过另一条路径清理。Scheduler 将结束请求的 ID 放入后续 SchedulerOutput，经 Executor 和 Worker 传给 ModelRunner。ModelRunner 移除该请求的本地缓存状态和 InputBatch 成员，其他请求继续按照调度结果执行。它不会再次扣减 KV pool 的引用计数，也不会重新创建或释放整个模型和缓存池。即使后续调度结果没有待计算 token，Runner 也可以先完成状态更新再跳过 forward；前端返回最终结果，不必等待这一步本地清理完成。
 
 如果停止条件是前端 Detokenizer 才识别出的 stop string，前端会先形成对外的 `stop` 结果，并由 AsyncLLM 向 EngineCore 发送 `ABORT`。Core 再执行请求终止、KV 引用回收和 Runner 清理通知。若客户端断连导致生成任务取消，也需要把取消通知传给 Core，但这时不能再期待已经断开的客户端收到最终 HTTP 响应。对于取消时仍有在途设备操作的情况，KV 块回收还必须遵守安全时序，避免其他请求过早覆盖仍在使用的缓存。
+
+<a id="pass-c-source-map"></a>
+## 请求链源码索引
+
+以下 12 个文件按跨组件的数据交接定位，路径相对 `vllm/`，链接均固定到本文的 `568afb3` 提交。阅读时先识别载荷字段，再定位构造与发送位置，最后定位消费和状态更新位置。`SchedulerOutput` 与 `ModelRunnerOutput` 可以作为控制面和执行面的两个定位入口。
+
+| 文件 | 优先定位的类／函数 | 在请求链中回答的问题 |
+|---|---|---|
+| [entrypoints/openai/chat_completion/serving.py](https://github.com/vllm-project/vllm/blob/568afb3a13806beb53bb2e6bd518269357b237c0/vllm/entrypoints/openai/chat_completion/serving.py#L255) | `render_chat_request()`、`_create_chat_completion()`、`chat_completion_stream_generator()` | 组织 Chat 渲染、调用采样参数转换和 `generate()`，按 `stream` 选择 SSE 或完整响应。 |
+| [v1/engine/async_llm.py](https://github.com/vllm-project/vllm/blob/568afb3a13806beb53bb2e6bd518269357b237c0/vllm/v1/engine/async_llm.py#L280) | `add_request()`、`_add_request()`、`generate()`、`_run_output_handler()` | 创建 Collector、先注册请求再跨 IPC 提交；接收 Core 输出、消费 Collector，并转发前端 stop string 引发的 abort。 |
+| [v1/engine/input_processor.py](https://github.com/vllm-project/vllm/blob/568afb3a13806beb53bb2e6bd518269357b237c0/vllm/v1/engine/input_processor.py#L242) | `InputProcessor.process_inputs()` | 校验并整理模型输入、采样参数，构造 `EngineCoreRequest`。 |
+| [v1/engine/core_client.py](https://github.com/vllm-project/vllm/blob/568afb3a13806beb53bb2e6bd518269357b237c0/vllm/v1/engine/core_client.py#L1121) | `AsyncMPClient.add_request_async()`、`abort_requests_async()`、`get_output_async()` | 跨进程发送 ADD／ABORT，接收 `EngineCoreOutputs`；传输层不承担调度与模型计算。 |
+| [v1/engine/__init__.py](https://github.com/vllm-project/vllm/blob/568afb3a13806beb53bb2e6bd518269357b237c0/vllm/v1/engine/__init__.py#L88) | `EngineCoreRequest`、`EngineCoreOutput`、`EngineCoreOutputs` | 定义前端与 Core 之间的输入、单请求增量输出和批量输出契约；`finished` 由结束原因派生。 |
+| [v1/engine/core.py](https://github.com/vllm-project/vllm/blob/568afb3a13806beb53bb2e6bd518269357b237c0/vllm/v1/engine/core.py#L576) | `preprocess_add_request()`、`step()`、`abort_requests()` | 把已解码的核心输入转换为内部 Request；组织 `schedule → execute_model → update_from_output`，并接收终止控制。 |
+| [v1/request.py](https://github.com/vllm-project/vllm/blob/568afb3a13806beb53bb2e6bd518269357b237c0/vllm/v1/request.py#L59) | `Request.from_engine_core_request()`、`append_output_token_ids()`、`RequestStatus` | 持有可变请求状态、token 历史和计算进度；区分队列位置与 `WAITING / RUNNING / PREEMPTED / FINISHED_*` 状态。 |
+| [v1/core/sched/scheduler.py](https://github.com/vllm-project/vllm/blob/568afb3a13806beb53bb2e6bd518269357b237c0/vllm/v1/core/sched/scheduler.py#L425) | `schedule()`、`_update_after_schedule()`、`update_from_output()`、`finish_requests()` | 决定准入与本步计算量，维护在途记账，消费采样结果、处理终止和抢占，并生成设备侧清理通知。 |
+| [v1/core/kv_cache_manager.py](https://github.com/vllm-project/vllm/blob/568afb3a13806beb53bb2e6bd518269357b237c0/vllm/v1/core/kv_cache_manager.py#L283) | `get_computed_blocks()`、`allocate_slots()`、`free()` | 查询前缀命中、分配逻辑 KV slots／blocks、释放请求的块占用；不执行模型 forward。 |
+| [v1/core/sched/output.py](https://github.com/vllm-project/vllm/blob/568afb3a13806beb53bb2e6bd518269357b237c0/vllm/v1/core/sched/output.py#L191) | `NewRequestData`、`CachedRequestData`、`SchedulerOutput` | 定义本步执行计划：新／已有请求、每请求计算量、block IDs，以及 `finished_req_ids` 等清理通知。 |
+| [v1/outputs.py](https://github.com/vllm-project/vllm/blob/568afb3a13806beb53bb2e6bd518269357b237c0/vllm/v1/outputs.py#L234) | `ModelRunnerOutput` | 定义执行侧返回 Scheduler 的结果：请求索引、采样 token IDs、logprobs 等；区别于发给前端的 `EngineCoreOutput`。 |
+| [v1/engine/output_processor.py](https://github.com/vllm-project/vllm/blob/568afb3a13806beb53bb2e6bd518269357b237c0/vllm/v1/engine/output_processor.py#L45) | `RequestOutputCollector`、`OutputProcessor.add_request()`、`process_outputs()` | 持有前端 RequestState，增量 detokenize、检查 stop string、组织 DELTA／累计输出、向 Collector 投递并清理前端状态。 |

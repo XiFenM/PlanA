@@ -4,7 +4,7 @@
 >
 > **当前阶段**：[高级 AI 框架开发工程师八周证据冲刺](计划/高级AI框架开发工程师-八周证据冲刺计划.md)；原 20 周主计划当前冻结为长期候选排程。**长期定位**：作为我的二脑，沉淀资料、笔记、复盘、实战结果与新感悟。
 >
-> **当前停点（2026-09-15）**：W1 概念与材料任务已收口；W1-P1／P2 均未启动，并按用户要求暂缓。整周尚未关闭，精确恢复位置见[唯一学习断点](计划/学习断点.md)。
+> **学习进度**：各周完成项、依据与缺项统一见[八周冲刺进度 · W1](计划/八周冲刺进度/W1.md)及[计划中的各周入口](计划/高级AI框架开发工程师-八周证据冲刺计划.md)；精确恢复位置见[唯一学习断点](计划/学习断点.md)。
 
 ---
 
@@ -86,7 +86,7 @@ PlanA/
 | SGLang | [`推理框架/references/sglang`](推理框架/references/sglang) | 上游 `main` 快照（2026-08-30 更新） | `78fa921189e3a66c7278733940c60a1e6fe6e467` |
 | PyTorch | [`PyTorch/references/pytorch`](PyTorch/references/pytorch) | 上游 `main` 快照（2026-08-30 更新） | `460948b96a67002b7257ac4f3d6a192f70d61d27` |
 
-`main` 是移动引用，表中日期只是核对日；父仓库记录的完整 SHA gitlink 才是当前比较快照的精确版本事实源。W1 已形成 evidence 的教学基线仍是 vLLM `v0.26.0`、SGLang `v0.5.17` 与 PyTorch `v2.11.0`，选择理由、用途和当前快照之间的关系见 [EP-PD 自研芯片适配设计与验证包 §0.2](推理框架/EP-PD自研芯片适配设计与验证包.md#02-固定源码基线)。
+`main` 是移动引用，表中日期只是核对日；父仓库记录的完整 SHA gitlink 才是当前比较快照的精确版本事实源。W1 已形成 evidence 的教学基线仍是 vLLM `v0.26.0`、SGLang `v0.5.17` 与 PyTorch `v2.11.0`，选择理由、用途和当前快照之间的关系见 [W1 详细验收记录 · 固定源码基线](计划/八周冲刺进度/历史记录/W1-学习验收记录.md#02-固定源码基线)。
 
 根目录 [`.gitmodules`](.gitmodules) 登记了上游地址，并为三个源码子模块启用浅克隆。`shallow = true` 只减少这些仓库自身的历史下载量，不会阻止递归初始化它们的下级子模块。需要复现某个父仓库 revision 时，应先检出该 revision，再按其 gitlink 初始化子模块。
 
@@ -128,7 +128,7 @@ git submodule update --init --recursive -- .agent-skills
 `4ce41526b9b43ec0f434c06ffc008128bdc36ea8`。[`.agent-skills.json`](.agent-skills.json) 为 Codex 与 Claude
 同时选择 `guide-learning`、`study-log`、`english-coach`、`memo-cards`、
 `resource-planning` 和 `playwright-cli`，并为五个学习 Skill 引用
-[`.agent-skills-config/`](.agent-skills-config/) 下的 Git-tracked 公共配置。`playwright-cli` 无需仓库配置。
+[`.agent-skills-config/`](.agent-skills-config) 下的 Git-tracked 公共配置。`playwright-cli` 无需仓库配置。
 
 materializer 会为有配置的 Skill 在两个宿主副本中生成逐字节一致的 `.agent-skills-context.json`。它只提供
 仓库事实定位、已核验路径的 tracked 输入 collection 和机械写入上限，不读取学习资料正文，也不保证
@@ -174,7 +174,7 @@ uv run --no-project python .agent-skills/tools/materialize_skills.py --repo . --
 作为提醒，不构成运行或评审前置。[周更流程](计划/周更流程.md) 与
 [月底晋级评审](计划/月底晋级评审.md) 仅保留退役入口，行为以中央 `resource-planning` 为准。
 
-**两条并行子轨道**：[Leetcode/](Leetcode/) 和 [英语/](英语/) 继续使用各自的 `学习指引.md` + `进度.md` 双锚文件管理。原 20 周计划中“英语每日 60–75min、排除在 650h 外”属于冻结排程的历史预算；当前八周 Program 将 Leetcode、英语和 Mock 一并计入每个日历周 18h 的目标容量，不再叠加隐藏负担。音频教材仍由同级工具仓库 `../blog-voice` 生产。
+**两条并行子轨道**：[Leetcode/](Leetcode) 和 [英语/](英语) 继续使用各自的 `学习指引.md` + `进度.md` 双锚文件管理。原 20 周计划中“英语每日 60–75min、排除在 650h 外”属于冻结排程的历史预算；当前八周 Program 将 Leetcode、英语和 Mock 一并计入每个日历周 18h 的目标容量，不再叠加隐藏负担。音频教材仍由同级工具仓库 `../blog-voice` 生产。
 
 **AI 学习工作流（6 个 Skills）**：中央 [`.agent-skills`](.agent-skills) 是 Skill 规范源，
 `.agents/skills/` 与 `.claude/skills/` 只是生成的宿主发现视图。Agent 侧路由表与管线图见
@@ -373,19 +373,19 @@ uv run --no-project python .agent-skills/tools/materialize_skills.py --repo . --
 
 | 你是谁 / 你想干什么 | 从这里入 |
 |---|---|
-| 想看我的目标岗位画像 | [Job Description/](Job Description/) |
+| 想看我的目标岗位画像 | [Job Description/](<Job Description>) |
 | 想看当前活动计划 | [计划/高级AI框架开发工程师-八周证据冲刺计划.md](计划/高级AI框架开发工程师-八周证据冲刺计划.md) |
 | 想看我五个月的整体规划 | [计划/主计划.md](计划/主计划.md) |
 | 想看某板块要读什么资料 | [{板块}/学习指引.md](推理框架/学习指引.md) |
 | 想看我学到哪了 | [计划/进度总表.md](计划/进度总表.md) |
-| 想看旧资源快照 | [计划/周报/](计划/周报/) 中的 W18/W26/W32 legacy 报告 |
-| 想看新受管资源运行 | [计划/资源治理/reports/](计划/资源治理/reports/) 的不可变报告；当前状态以 registry 为准 |
+| 想看旧资源快照 | [计划/周报/](计划/周报) 中的 W18/W26/W32 legacy 报告 |
+| 想看新受管资源运行 | [计划/资源治理/reports/](计划/资源治理/reports) 的不可变报告；当前状态以 registry 为准 |
 | 想看我的英语听说训练计划 | [英语/学习指引.md](英语/学习指引.md)（进度见 [英语/进度.md](英语/进度.md)）|
-| 想看面试故事素材 | [面试准备/](面试准备/) |
+| 想看面试故事素材 | [面试准备/](面试准备) |
 | 想看当前 AI 框架岗位胜任力诊断 | [面试准备/自我准备/AMD-AI框架开发工程师胜任力诊断-2026-08-29.md](面试准备/自我准备/AMD-AI框架开发工程师胜任力诊断-2026-08-29.md) |
 | 想看 2026-08-29 市场岗位基线 | [Job Description/AI框架方向/市场岗位需求/README.md](<Job Description/AI框架方向/市场岗位需求/README.md>) |
 | 想看 AI 怎么带我学 | [中央 `guide-learning`](.agent-skills/skills/guide-learning/SKILL.md) + [PlanA 配置层](.agent-skills-config/guide-learning-profile.md) |
-| 想看学习过程记录 / 记忆卡 | 各板块 `log/`（学习记录）与 `cards/`（墨墨 TSV），如 [PyTorch/log/](PyTorch/log/) |
+| 想看学习过程记录 / 记忆卡 | 各板块 `log/`（学习记录）与 `cards/`（墨墨 TSV），如 [PyTorch/log/](PyTorch/log) |
 | 想看具体的论文笔记 / 实战复盘 | 各板块目录下后续会陆续追加的 `.md` 文件 |
 
 ---

@@ -2,7 +2,7 @@
 
 > - 创建日期：2026-08-08
 > - 最近调整：2026-09-08（正式口头验收集中到 W4 及后续 Mock；沿用 2026-08-30 的源码、预算与排序基线）
-> - 进度同步：2026-09-15，W1 概念与材料验收已收束；两项实践暂缓，整周未关闭，未启动 W2。
+> - 周进度：[W1](八周冲刺进度/W1.md) · [W2](八周冲刺进度/W2.md) · [W3](八周冲刺进度/W3.md) · [W4](八周冲刺进度/W4.md) · [W5](八周冲刺进度/W5.md) · [W6](八周冲刺进度/W6.md) · [W7](八周冲刺进度/W7.md) · [W8](八周冲刺进度/W8.md)
 > - Program 状态：[见唯一状态区](#program-plana-jd-ai-framework-4w)；精确学习位置只由[唯一学习断点](学习断点.md)裁决
 > - 目标岗位：[本地复合 JD](<../Job Description/AI框架方向/高级AI框架开发工程师.md>) / [市场岗位需求索引](<../Job Description/AI框架方向/市场岗位需求/README.md>)
 > - 诊断依据：[AMD AI 框架开发工程师胜任力诊断](../面试准备/自我准备/AMD-AI框架开发工程师胜任力诊断-2026-08-29.md)
@@ -18,7 +18,7 @@
 
 - **Program ID**：`plana-jd-ai-framework-4w`。该 ID 为稳定历史标识，不因计划延长而更改。
 - **状态**：`active`。
-- **前台 Lesson**：[W1「vLLM 执行链与扩展边界」](../推理框架/EP-PD自研芯片适配设计与验证包.md#lesson-plana-jd-w1-vllm-execution-boundaries)。
+- **前台 Lesson**：[W1「vLLM 执行链与扩展边界」](八周冲刺进度/W1.md#lesson-plana-jd-w1-vllm-execution-boundaries)。
 - **Checkpoint**：[唯一学习断点](学习断点.md)。本文件不复制精确 Pass、题目或下一动作。
 - **已授权范围**：W1。W2–W10 均为候选，不因出现在计划中而自动获得授权。
 - **父 Program**：[主计划](主计划.md#program-plana-ai-infra-interview-20w)。
@@ -131,9 +131,9 @@
 
 ### 3.3 已有学习状态
 
-- W1 Lesson 已完成 Pass A–B 的材料和验收收口。
+- 当前各周的完成项、完成依据和缺项分别保存在 `八周冲刺进度/W1.md` 至 `W8.md`，以各周记录为准。
 - 精确恢复位置只读取[唯一学习断点](学习断点.md)，不从本节猜测或重置。
-- [EP/PD 适配设计与验证包](../推理框架/EP-PD自研芯片适配设计与验证包.md)继续作为 W1–W3 的 Lesson ledger 和专项设计工件。
+- [W1 进度](八周冲刺进度/W1.md)维护完成判断；知识成果见[请求生命周期与输出处理](../推理框架/深入学习理解vLLM/2-Request-Lifecycle-and-Output.md)和[设备适配边界](../推理框架/深入学习理解vLLM/3-设备适配边界.md)，学习条件及验收依据见[详细验收记录](八周冲刺进度/历史记录/W1-学习验收记录.md)。不再设置独立适配工作稿或重复的 W1 子计划。
 - 模块进度表中的 0% 表示形式化学习尚未登记，不能抹去生产经验；生产经验也不能替代本轮验收。
 
 ## 4. 证据包与验收纪律
@@ -302,18 +302,18 @@ W1–W3 按前四项及本周具体技术门验收。口头项目在对应 Mock 
 
 ### 6.4 验收门
 
-以下勾选记录各项概念与材料证据；[W1-P1](../推理框架/EP-PD自研芯片适配设计与验证包.md#w1-p1-runtime-output-validation) 和 [W1-P2](../推理框架/EP-PD自研芯片适配设计与验证包.md#w1-p2-cpp-linux-validation) 的待实践状态另行维护，不能用下面的勾选替代运行或实践验证。
+本节保留验收标准，不记录勾选状态；实际完成情况、证据与未完成项见 [W1 进度](八周冲刺进度/W1.md)。
 
-2026-09-15 用户确认暂缓两项实践；学习记录、复习资料和归档回执见[本次收尾记录](../推理框架/EP-PD自研芯片适配设计与验证包.md#plana-jd-w1-20260915-wrap-up)。此项暂停不改变周预算或后续 Lesson 的授权范围。
+- 能独立文字复述请求主链，并通过必要追问；正式口头验收仍由 W4 及后续 Mock 承接。
+- source map 覆盖真正进入请求链的 8–12 个文件及职责。
+- 能解释协议输入、sampling 参数、stream／HTTP 状态分别留在哪层以及原因。
+- 能区分推理 DP、replica routing、DPLB、反压与 TP 的职责。
+- KV 账本统一 token、element、byte、block 和 address alignment。
+- [Claim-evidence 矩阵](../面试准备/自我准备/Claim-evidence矩阵.md)至少审计 10 条，区分已证明、需降级与待补证。
+- C++／Linux 基线定位具体知识缺口；实践验证按 W1-P2 的明确约定进行，不以书面通过代替。
+- [Conv3D Case Card](../面试准备/自我准备/Conv3D-Case-Card.md)能说明 Workload、机制、验证、职责和待核字段，不只保留一个性能百分比。
 
-- [x] 独立文字复述覆盖请求主链，并通过必要的文字追问；见[整段文字复述验收](../推理框架/EP-PD自研芯片适配设计与验证包.md#plana-jd-w1-20260908-oral-review)。15 分钟口头讲解与口头追问移交 W4 Mock，不作为 W1 完成门槛。
-- [x] source map 包含进入请求链的 12 个文件及职责，见[源码索引](../推理框架/EP-PD自研芯片适配设计与验证包.md#pass-c-source-map)；源码定位已由 Pass C 验收。
-- [x] `messages`、sampling 参数、stream/HTTP 状态等能说明留在哪一层以及原因，见[协议到核心请求的验收](../推理框架/EP-PD自研芯片适配设计与验证包.md#pass-c1-openai-to-engine-core-request)。
-- [x] 推理 DP、replica routing、DPLB 与 TP 的边界沿用既有 Pass B 证据；[2026-09-15 反压分层检查](../推理框架/EP-PD自研芯片适配设计与验证包.md#plana-jd-w1-20260915-backpressure)补齐 waiting 积压、前端准入和客户端反馈的概念边界。
-- [x] KV 账本统一 token、element、byte、block 和 address alignment；见[全模型与多请求账本](../推理框架/EP-PD自研芯片适配设计与验证包.md#plana-jd-w1-20260907-kv-ledger-synthesis)及[页跨度与对齐复核](../推理框架/EP-PD自研芯片适配设计与验证包.md#plana-jd-w1-20260909-kv-page-spec-review)。
-- [x] Claim 矩阵已审计 19 条，标明“已证明／需降级／待补证”；见 [2026-09-14 当前矩阵](../推理框架/EP-PD自研芯片适配设计与验证包.md#w1-claim-evidence-matrix-20260914)。矩阵完成不代表外部文稿已改写或数字已独立验证。
-- [x] C++ 基线已定位具体错误；2026-09-14 用户确认[概念与书面校准收束](../推理框架/EP-PD自研芯片适配设计与验证包.md#w1-cpp-linux-baseline-20260914)，[实践仍待验证](../推理框架/EP-PD自研芯片适配设计与验证包.md#w1-p2-cpp-linux-validation)，不代表整个 W1 通过。
-- [x] [Conv3D Case Card v1](../面试准备/自我准备/projects.md#project1-conv3d-case-card-v1)已完成草稿验收：Workload、布局、正确性、个人职责与待核字段齐全；图片均值与视频单次测量分开，未覆盖的视频模型级精度明确列为限制。原始数字与完整实证审计仍待后续核验。
+P1／P2 的实践要求不因概念与材料项完成而取消；本次结构调整不改变原来的验收边界或后续周次授权。
 
 ## 7. W2：MoE EP、并行策略与 C++ 系统基础
 
@@ -446,6 +446,31 @@ W1–W3 按前四项及本周具体技术门验收。口头项目在对应 Mock 
 - [ ] upstream 工件绑定固定 commit、现有行为、缺口、reproducer/test 和预期结果。
 - [ ] 工件本地自审通过；未 merge 或未提交不等于失败。
 - [ ] 在本周已授权 Mock 内完成约 5 分钟英文“non-CUDA backend experience → ROCm migration”陈述，不另设独立口头考试或额外场次。
+
+<a id="upstream-u1-dense-dp"></a>
+
+### 11.4 历史候选选题：dense internal DP 队列统计
+
+此项来自 W1 的历史发现，归入 W6 已有的上游选题候选范围；不是必选题，不新增验收门，也不启动 W6。是否采用仍在当周明确选择。以下日期与源码判断保留当时范围，不视为最新状态。
+
+- 发现日期：2026-08-09。
+- 固定基线：vLLM `v0.26.0`，commit `568afb3a13806beb53bb2e6bd518269357b237c0`。
+- 用户意图：把该发现发展为一次可验证、可向上游贡献的开源实践；优先形成最小复现、回归测试与窄范围修复或文档澄清。
+- 预期契约：[官方 DP 文档](https://github.com/vllm-project/vllm/blob/568afb3a13806beb53bb2e6bd518269357b237c0/docs/serving/data_parallel_deployment.md#L75-L77)称 internal DP 根据各 EngineCore 的 running/waiting 队列做负载均衡；[`VllmConfig.needs_dp_coordinator`](https://github.com/vllm-project/vllm/blob/568afb3a13806beb53bb2e6bd518269357b237c0/vllm/config/vllm.py#L624-L645)也明确说 non-MoE internal/hybrid LB 启动 Coordinator 是为了收集并发布 queue stats。
+- 实现观察：dense DP 在 [`run_engine_core`](https://github.com/vllm-project/vllm/blob/568afb3a13806beb53bb2e6bd518269357b237c0/vllm/v1/engine/core.py#L1287-L1299) 中退回普通 `EngineCoreProc`；实时 `_maybe_publish_request_counts()` 只位于断言 MoE 的 [`DPEngineCoreProc`](https://github.com/vllm-project/vllm/blob/568afb3a13806beb53bb2e6bd518269357b237c0/vllm/v1/engine/core.py#L1844-L1860) 及其 [busy loop](https://github.com/vllm-project/vllm/blob/568afb3a13806beb53bb2e6bd518269357b237c0/vllm/v1/engine/core.py#L2002-L2043)。固定提交中未找到 dense 等价发布路径。
+- 潜在影响：dense 的 [`DPLBAsyncMPClient`](https://github.com/vllm-project/vllm/blob/568afb3a13806beb53bb2e6bd518269357b237c0/vllm/v1/engine/core_client.py#L1413-L1447) 虽执行 `waiting * 4 + running`，但可能缺少来自后端的实时计数，更多依赖前端 optimistic waiting 与同分轮转；在长短请求混合或多 API client 下可能产生负载偏斜。此处仍是待复现假设，不写成已证实性能缺陷。
+- 2026-08-30 current `main` 静态预核对：在 `1dc464d42681d22f38caf1fdc1eb632dc4421c45` 中，internal/hybrid LB 会[启用统计发布](https://github.com/vllm-project/vllm/blob/1dc464d42681d22f38caf1fdc1eb632dc4421c45/vllm/v1/engine/core.py#L1080-L1087)；dense DP [仍走普通 `EngineCoreProc`](https://github.com/vllm-project/vllm/blob/1dc464d42681d22f38caf1fdc1eb632dc4421c45/vllm/v1/engine/core.py#L1327-L1336)，但其基类 busy loop 已在 step 前后[发布 running、waiting 与 KV 使用率](https://github.com/vllm-project/vllm/blob/1dc464d42681d22f38caf1fdc1eb632dc4421c45/vllm/v1/engine/core.py#L1410-L1435)，Coordinator 也会[消费这些统计](https://github.com/vllm-project/vllm/blob/1dc464d42681d22f38caf1fdc1eb632dc4421c45/vllm/v1/engine/coordinator.py#L369-L419)。因此旧提交中的静态缺口在当前快照已不能按原路径复现；尚未核对引入它的 issue/PR、专项回归测试和 dense `DP=2` 运行行为，不能据此写成“已修复”或关闭 U1。
+- 待区分假设：① dense 发布链为实现遗漏，应补齐公共统计上报；②当前行为是有意设计，文档与配置注释需要说明限制；③该问题已在更新版本修复，固定 tag 只适合作为历史回归案例。
+- 上游行动前置：
+  - 🟡 对比最新 `main`：已完成 2026-08-30 静态预核对；动态行为、专项测试与变更来源仍待核验。
+  - ⬜ 检索已有 issue、PR、讨论与 maintainer 设计意图，避免重复工作。
+  - ⬜ 建立 dense `DP=2` 最小复现，观察 Coordinator 与 API client 收到的统计；当前单卡环境不能完成真实双副本测试。
+  - ⬜ 先写能暴露缺口的测试，再决定修改代码还是文档。
+- 最小贡献路径：
+  1. 若为文档问题：明确 MoE 与 dense internal DP 在该版本的统计反馈差异。
+  2. 若为代码问题：把请求计数发布抽到普通/DP EngineCore 可共享的窄接口，并避免把 MoE wave 语义错误带入 dense 路径。
+  3. 无论哪条路径：补充 dense internal DP 的路由统计回归测试；必要时增加长短请求混合的分流验证。
+- 完成定义：有固定版本最小复现、最新主线核验、已有讨论检索、失败测试或明确文档证据、maintainer 可审查的单一问题陈述；只有满足这些条件后才创建 issue 或提交 PR。
 
 ## 12. W7：训练框架与分布式训练系统素养
 

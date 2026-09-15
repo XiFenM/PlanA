@@ -11,6 +11,7 @@ There is no application build, dependency install, or automated test suite.
 ## Project Structure
 
 - `计划/` is the planning control plane: `主计划.md`, `进度总表.md`, `学习断点.md`, legacy reports in `计划/周报/`, and new managed resource state under `计划/资源治理/`. The two old SOP paths are retirement notices kept for historical links.
+- `计划/八周冲刺进度/W1.md` through `W8.md` own the sprint's weekly completion, evidence, and remaining gaps. Detailed accepted contracts and stage history stay under `计划/八周冲刺进度/历史记录/`; technical artifacts stay in their module, and Claim-evidence / Case Card outputs stay in `面试准备/自我准备/`. The old EP-PD package path is a compatibility entry, not an active ledger.
 - Core study modules live at the top level: `推理框架/`, `PyTorch/`, `训练框架与分布式/`, `并行计算编程/`, `模型理论/`, `Leetcode/`, `编译器/`, and `TPUs/`.
 - Each core module must keep two anchor files: `学习指引.md` for stable curriculum and `进度.md` for progress tracking. Extra ad-hoc Markdown notes in module directories are expected.
 - `英语/` is a 22-week parallel listening/speaking sub-track. It has `学习指引.md`, `进度.md`, `review-workflow.md`, plus `log/`, `cards/`, and `references/`. Central `english-coach` owns coaching behavior; this vault no longer keeps a parallel system prompt.
