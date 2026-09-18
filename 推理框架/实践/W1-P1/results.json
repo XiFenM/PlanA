@@ -1,0 +1,347 @@
+{
+  "date": "2026-09-16",
+  "kind": "导师基础环境与选择器核验，以及学习者 P1 主用例运行证据；不表示整个 P1 已验收",
+  "practice_revision": 1,
+  "contract_digest": "sha256:d5bcc1c317f2c10155cc47d5667a4a2662daf72e7f215016f15d8414e0b81987",
+  "environment_ref": "../../../../plana-w1-env/environment.json",
+  "environment_manifest_sha256": "7a660cbca065916994b45fcf6de92f0ba74efd4134a71c1be6ddd286dd622a23",
+  "pytest": {
+    "command": "PYTHONDONTWRITEBYTECODE=1 .venv/bin/python -m pytest -q -p no:cacheprovider 推理框架/实践/W1-P1/test_contract.py",
+    "exit_code": 0,
+    "passed": 3,
+    "skipped": 0,
+    "failed": 0,
+    "errors": 0,
+    "target_stop_case_executed": true,
+    "scope": "普通 LENGTH 基线与学习者 FINAL_ONLY 跨输出 stop 场景；include_stop_str_in_output=False",
+    "acceptance_covered": [
+      "A2",
+      "A3"
+    ],
+    "evidence_method": "实际执行学习者 run_case；下列结果由 test_a2/test_a3 对观察器记录的断言核验",
+    "verified_outputs": [
+      {
+        "call": 1,
+        "request_outputs_count": 0,
+        "reqs_to_abort": [],
+        "unfinished": 1,
+        "registered_internal_ids": [
+          "p1-internal"
+        ]
+      },
+      {
+        "call": 2,
+        "request_outputs_count": 1,
+        "request_id": "p1-public",
+        "text": "The river ",
+        "finished": true,
+        "finish_reason": "stop",
+        "stop_reason": "is quiet",
+        "reqs_to_abort": [
+          "p1-internal"
+        ],
+        "unfinished": 0,
+        "registered_internal_ids": []
+      },
+      {
+        "call": 3,
+        "request_outputs_count": 0,
+        "reqs_to_abort": [],
+        "unfinished": 0,
+        "registered_internal_ids": []
+      }
+    ],
+    "core_finished_inputs": [
+      false,
+      false,
+      false
+    ],
+    "learner_artifact": {
+      "path": "scenario.py",
+      "sha256": "39cbcd1f98229868fe6f04281a9eef0b813ede7c53a8fc4285de1091e1909aa9",
+      "agent_modified": false
+    }
+  },
+  "config_probe": {
+    "command": "PYTHONDONTWRITEBYTECODE=1 .venv/bin/python 推理框架/实践/W1-P1/harness.py config",
+    "exit_code": 0,
+    "executor_backend": "uni",
+    "worker_cls": "vllm.v1.worker.gpu_worker.Worker",
+    "use_v2_model_runner": true,
+    "dtype": "torch.bfloat16",
+    "head_size": 128,
+    "num_attention_heads": 16,
+    "kv_cache_dtype": "auto",
+    "block_size": 16,
+    "user_specified_block_size": false,
+    "configured_attention_backend": null,
+    "device_capability": [
+      12,
+      0
+    ],
+    "scope": "配置构造实测；Worker/Runner 未实例化，Attention selector/kernel 未执行"
+  },
+  "tool_sha256": {
+    "harness.py": "322a8d434c4cf79d2d81a85a0eb82768f5a237536b581085dc2a34711cc80b3b",
+    "test_contract.py": "6885c59a374d55c831660b469be510deae49e3422325c621b8b7596c46984830"
+  },
+  "attention_probe": {
+    "command": "PYTHONDONTWRITEBYTECODE=1 .venv/bin/python 推理框架/实践/W1-P1/harness.py attention",
+    "exit_code": 0,
+    "harness_sha256": "322a8d434c4cf79d2d81a85a0eb82768f5a237536b581085dc2a34711cc80b3b",
+    "scope": "CUDA 平台候选校验与自动选择实测；未实例化 Worker/Runner，未执行 Attention kernel",
+    "selector_inputs": {
+      "head_size": 128,
+      "dtype": "torch.bfloat16",
+      "kv_cache_dtype": "auto",
+      "block_size": null,
+      "use_mla": false,
+      "has_sink": false,
+      "use_sparse": false,
+      "use_mm_prefix": false,
+      "use_per_head_quant_scales": false,
+      "attn_type": "decoder",
+      "has_sliding_window": false,
+      "use_non_causal": false,
+      "use_batch_invariant": false,
+      "use_kv_connector": false,
+      "use_pcp": false
+    },
+    "num_heads": 16,
+    "device_capability": [
+      12,
+      0
+    ],
+    "valid_candidates": [
+      {
+        "name": "FLASH_ATTN",
+        "priority": 0
+      },
+      {
+        "name": "FLASHINFER",
+        "priority": 1
+      },
+      {
+        "name": "TRITON_ATTN",
+        "priority": 2
+      },
+      {
+        "name": "FLEX_ATTENTION",
+        "priority": 3
+      }
+    ],
+    "invalid_candidates": {
+      "TURBOQUANT": {
+        "priority": 4,
+        "reasons": [
+          "kv_cache_dtype not supported"
+        ]
+      }
+    },
+    "selected_class": "vllm.v1.attention.backends.flash_attn.FlashAttentionBackend"
+  },
+  "learner_prediction": {
+    "date": "2026-09-16",
+    "phase": "首次目标用例运行前；用户对话提交，尚未运行目标场景",
+    "case": {
+      "output_kind": "FINAL_ONLY",
+      "stop": "is quiet",
+      "include_stop_str_in_output": false,
+      "min_tokens": 0,
+      "max_tokens": 64,
+      "new_texts": [
+        "The river is",
+        " quiet today.",
+        " later"
+      ],
+      "core_finish_reason": null
+    },
+    "rows_as_submitted": [
+      {
+        "call": 1,
+        "request_outputs_count": 1,
+        "output_fields_written": "无",
+        "reqs_to_abort_written": "None",
+        "request_state_exists": true
+      },
+      {
+        "call": 2,
+        "request_outputs_count": 2,
+        "output_fields_written": "The river is quiet",
+        "reqs_to_abort_written": "p1-internal",
+        "request_state_exists": true
+      },
+      {
+        "call": 3,
+        "request_outputs_count": 2,
+        "output_fields_written": "无",
+        "reqs_to_abort_written": "p1-internal",
+        "request_state_exists": true
+      }
+    ],
+    "reasoning_summary": "文字判断第一次因 FINAL_ONLY 不对外输出；第二次命中 stop 后交付并取消；第三次无输出但继续取消。认为前端 RequestState 需要等 Core abort 完成后才删除。",
+    "submission_notes": "保留表格与文字的不一致：第一次、第三次文字称无输出，但表中数量分别填为 1、2；finished 与 finish_reason 未单独填写。",
+    "evidence_limit": "这是运行前预测，不是实际运行结果；后续纠正不覆盖本原始预测摘要。"
+  },
+  "prediction_transfer_check": {
+    "date": "2026-09-16",
+    "kind": "运行前纸面变式复核；非目标用例实测",
+    "case": {
+      "output_kind": "FINAL_ONLY",
+      "stop": "END",
+      "include_stop_str_in_output": true,
+      "new_texts": [
+        "Go E",
+        "ND now.",
+        " later"
+      ],
+      "core_finish_reason": null,
+      "core_abort_not_executed": true
+    },
+    "learner_answer_summary": {
+      "second_call": {
+        "request_outputs_count": 1,
+        "text": "Go END",
+        "reqs_to_abort": "本请求内部 ID",
+        "request_state_exists": false
+      },
+      "third_call": {
+        "request_outputs_count": 0,
+        "text": "无输出对象",
+        "reqs_to_abort": "没有取消项",
+        "request_state_exists": false
+      },
+      "reason": "前端 RequestState 已删除，迟到输出查不到该请求就跳过。"
+    },
+    "review": "返回数量、stop 保留规则、前端清理与迟到输出的解释通过；导师补充 request_outputs 本身是列表，空取消列表为 []。",
+    "evidence_limit": "仅恢复这三处纸面理解；核心实现、目标用例运行、结果解释和运行后小变式仍待完成。"
+  },
+  "baseline_pytest": {
+    "command": "PYTHONDONTWRITEBYTECODE=1 .venv/bin/python -m pytest -q -p no:cacheprovider 推理框架/实践/W1-P1/test_contract.py",
+    "exit_code": 0,
+    "passed": 1,
+    "skipped": 2,
+    "failed": 0,
+    "passed_case": "普通 LENGTH 结束基线：缓存、处理器导入、注册、输出、清理与观察器",
+    "skip_reason": "学习者尚未提交 scenario.py；未运行 A2/A3 目标场景",
+    "target_stop_case_executed": false,
+    "documentation_note": "基线检查后仅将预测提交位置的说明校准为对话或分析.md，测试执行逻辑未改；本轮未重跑目标场景。"
+  },
+  "loader_issue": {
+    "owner": "agent",
+    "status": "resolved",
+    "initial_result": {
+      "passed": 1,
+      "errors": 2,
+      "target_stop_case_executed": false
+    },
+    "error": "ImportError: attempted relative import with no known parent package",
+    "cause": "验收工具使用顶层模块名加载 scenario.py，未提供 .harness 相对导入所需的包上下文。",
+    "fix": "在验收加载器建立 plana_w1_p1 包上下文，并复用已加载的 harness 模块；未修改学习者文件。",
+    "verification": "原始学习者实现复验 3 passed"
+  },
+  "include_stop_variant": {
+    "date": "2026-09-16",
+    "learner_prediction_before_run": {
+      "text": "The river is quiet",
+      "output_counts": "保持主用例的 0／1／0",
+      "abort_lists_and_cleanup": "与主用例不变",
+      "implementation_change_claim": "认为必须在 run_case 构造 SamplingParams 时强制指定 include_stop_str_in_output=True。"
+    },
+    "planned_input_change": {
+      "P1_INCLUDE_STOP": "1",
+      "case.include_stop_str_in_output": true
+    },
+    "scenario_sha256_before": "39cbcd1f98229868fe6f04281a9eef0b813ede7c53a8fc4285de1091e1909aa9",
+    "execution_status": "passed",
+    "command": "P1_INCLUDE_STOP=1 PYTHONDONTWRITEBYTECODE=1 .venv/bin/python -m pytest -q -p no:cacheprovider 推理框架/实践/W1-P1/test_contract.py",
+    "exit_code": 0,
+    "passed": 3,
+    "failed": 0,
+    "errors": 0,
+    "skipped": 0,
+    "scenario_sha256_after": "39cbcd1f98229868fe6f04281a9eef0b813ede7c53a8fc4285de1091e1909aa9",
+    "agent_modified_scenario": false,
+    "evidence_method": "运行同一学习者实现，A2 断言参数与 case 一致，A3 断言输出与状态。",
+    "verified_outputs": [
+      {
+        "call": 1,
+        "request_outputs_count": 0,
+        "reqs_to_abort": [],
+        "unfinished": 1,
+        "registered_internal_ids": [
+          "p1-internal"
+        ]
+      },
+      {
+        "call": 2,
+        "request_outputs_count": 1,
+        "request_id": "p1-public",
+        "text": "The river is quiet",
+        "finished": true,
+        "finish_reason": "stop",
+        "stop_reason": "is quiet",
+        "reqs_to_abort": [
+          "p1-internal"
+        ],
+        "unfinished": 0,
+        "registered_internal_ids": []
+      },
+      {
+        "call": 3,
+        "request_outputs_count": 0,
+        "reqs_to_abort": [],
+        "unfinished": 0,
+        "registered_internal_ids": []
+      }
+    ],
+    "review": "行为预测与实测一致；必须修改 run_case 的说法需补准。现有实现从 case 读取开关，测试入口通过 P1_INCLUDE_STOP 创建 True 输入，函数无需修改。参数来源经导师提示，尚待学习者分析稿解释。"
+  },
+  "analysis_review": {
+    "date": "2026-09-18",
+    "artifact": "分析.md",
+    "artifact_sha256": "2dceb1c8e13b656d01baeb622980c3b1de3660be7694e811957bfbc0e589946f",
+    "review_method": "本次仅核对来源路径修正及实现哈希，复用既有验收；没有重跑代码或修改学习者文件。",
+    "accepted_content": [
+      "固定教学提交、四组件类名、本次分支条件与验证层级已明确",
+      "配置构造及 Attention 选择器实测与未执行的 Executor/Worker/Runner/Attention kernel 已区分",
+      "原始预测修正、两组运行差异、前端清理与参数传递解释可接受"
+    ],
+    "required_revision": null,
+    "nonblocking_observations": [],
+    "scope": "P1 已通过，剩余定位笔误已修复；W1 最终收口继续按用户要求暂缓。",
+    "review_note": "学习者已将 Worker 行来源改为 vllm/platforms/cuda.py 中 CudaPlatformBase.check_and_update_config()，与正文及固定源码一致；p1-F4 关闭。"
+  },
+  "practice_acceptance": {
+    "date": "2026-09-17",
+    "practice_id": "plana-jd-w1-p1-20260916",
+    "revision": 1,
+    "status": "passed",
+    "scope": "仅 P1 练习，非 W1/Lesson final mastery",
+    "criteria": {
+      "A1": {
+        "status": "passed",
+        "evidence": "分析.md 的固定版本、四行路径表、分支解释与证明边界；正文 Worker 来源准确。"
+      },
+      "A2": {
+        "status": "passed",
+        "evidence": "同一学习者 scenario.py 的主用例与变式请求/输入检查通过。"
+      },
+      "A3": {
+        "status": "passed",
+        "evidence": "两组实际运行各 3 passed；输出、文本判停、取消列表、清理与迟到输出均通过断言。"
+      },
+      "A4": {
+        "status": "passed",
+        "evidence": "保留首次预测及纠正记录；纸面复核、运行后变式的行为预测与实测一致，最终分析明确参数传递和证明边界。"
+      }
+    },
+    "blocking_or_major_open": 0,
+    "nonblocking_findings": [],
+    "assistance": "保留导师步骤指导、原预测纠正及参数传递提示；变式行为预测正确并经运行核验，不表述为完全无提示独立实现。",
+    "analysis_sha256": "2dceb1c8e13b656d01baeb622980c3b1de3660be7694e811957bfbc0e589946f",
+    "scenario_sha256": "39cbcd1f98229868fe6f04281a9eef0b813ede7c53a8fc4285de1091e1909aa9",
+    "analysis_sha256_at_acceptance": "e333879b7953a169863938aa5335255613881f3ebc93f266230e4157ddbca181",
+    "last_reviewed_date": "2026-09-18"
+  }
+}

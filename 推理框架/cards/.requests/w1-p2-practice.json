@@ -1,0 +1,259 @@
+{
+  "schema": "memo-cards.request/v1",
+  "output_collection": "inference-cards",
+  "target": "推理框架/cards/w1-p2-shared-library-practice.md",
+  "selection": "selected",
+  "sources": [
+    {
+      "id": "p2-structured-log",
+      "collection": "inference-study-logs",
+      "path": "推理框架/log/2026-09-18-w1-p2-shared-library-practice.md",
+      "sha256": "38f04743e1bdf2572ae22ca6114cfe7bb4bd1447dba07e6f40d636f63d88f208",
+      "summary": "W1-P2 已核验学习过程；仅采用稳定要点与真实纠错，不读取 raw 为卡片来源。"
+    }
+  ],
+  "cards": [
+    {
+      "key": "soname-symbol-compatibility",
+      "domain": "linux-dynamic-linking",
+      "recall_target": "区分相同SONAME与所需函数符号可用性的保证",
+      "assessment": "discrimination",
+      "layer": "atomic",
+      "fact_scope": {
+        "kind": "evergreen"
+      },
+      "quality": "A",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 5,
+      "template_id": "technical-qa",
+      "fields": {
+        "问题": "两份共享库的 SONAME 相同，能保证它们都满足 app 的函数引用吗？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "不能；相同库名不保证包含相同的函数定义。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "label": "核验",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "对照 app 需要的动态符号与候选库实际导出的定义；本例 compute(int) 与 compute(double) 不匹配。"
+                }
+              ]
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "符号检查只裁决相应接口证据，不等于完成所有 ABI 兼容性验证。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "同名库仍须核对符号",
+        "来源": "P2 实践记录 P2-02、P2-04"
+      },
+      "content_summary": "区分相同SONAME与所需函数符号可用性的保证",
+      "depends_on": [],
+      "rank": 1,
+      "source_ids": [
+        "p2-structured-log"
+      ]
+    },
+    {
+      "key": "lazy-binding-ready",
+      "domain": "linux-dynamic-linking",
+      "recall_target": "限定延迟绑定场景中进入main对函数符号可用性的证明",
+      "assessment": "mechanism",
+      "layer": "mechanism",
+      "fact_scope": {
+        "kind": "evergreen"
+      },
+      "quality": "A",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 5,
+      "template_id": "technical-qa",
+      "fields": {
+        "问题": "采用函数延迟绑定时，打印 READY 能证明外部目标函数可调用吗？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "不能；目标函数符号可能到第一次调用时才解析。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "label": "过程",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "库先装载，程序到达调用前的 READY；执行目标调用时仍可能出现 undefined symbol。"
+                }
+              ]
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "报错时机取决于绑定方式；不能推广为所有动态链接错误都会延迟。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "到达调用前 ≠ 目标调用成功",
+        "来源": "P2 实践记录 P2-03"
+      },
+      "content_summary": "限定延迟绑定场景中进入main对函数符号可用性的证明",
+      "depends_on": [],
+      "rank": 2,
+      "source_ids": [
+        "p2-structured-log"
+      ]
+    },
+    {
+      "key": "mapping-and-real-call",
+      "domain": "linux-library-diagnosis",
+      "recall_target": "用新进程映射与原故障函数调用共同验证库路径修复",
+      "assessment": "mechanism",
+      "layer": "mechanism",
+      "fact_scope": {
+        "kind": "evergreen"
+      },
+      "quality": "A",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 5,
+      "template_id": "technical-qa",
+      "fields": {
+        "问题": "修复库路径后，为何既要看新 PID 的 maps，又要执行原故障函数？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "两者分别验证加载对象与故障调用是否真正恢复。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "label": "映射",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "目标 PID 的 maps 说明该进程映射了哪份库。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "label": "调用",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "真正触发原故障函数，核对返回值、退出状态与错误输出。"
+                }
+              ]
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "只启动成功或只看当前终端的 ldd，都不能代替这两项证据。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "新进程映射＋原故障调用",
+        "来源": "P2 实践记录 P2-05、P2-06"
+      },
+      "content_summary": "用新进程映射与原故障函数调用共同验证库路径修复",
+      "depends_on": [],
+      "rank": 3,
+      "source_ids": [
+        "p2-structured-log"
+      ]
+    },
+    {
+      "key": "inherited-environment",
+      "domain": "linux-process-environment",
+      "recall_target": "解释脚本未再次export时子进程仍继承已有环境变量",
+      "assessment": "discrimination",
+      "layer": "atomic",
+      "fact_scope": {
+        "kind": "evergreen"
+      },
+      "quality": "B",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 3,
+      "template_id": "technical-qa",
+      "fields": {
+        "问题": "脚本没有执行 export 分支，启动的 app 还能继承已有 LD_LIBRARY_PATH 吗？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "可以；从父环境传入并保留在脚本环境中的变量，会继续传给子进程。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "label": "本例",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "父路径已经是 A，修复分支不执行，app 仍继承 A 并正常调用。"
+                }
+              ]
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "这与仅创建了未导出的 shell 局部变量不同。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "继承的环境变量无需重复 export",
+        "来源": "P2 实践记录 P2-07"
+      },
+      "content_summary": "解释脚本未再次export时子进程仍继承已有环境变量",
+      "depends_on": [],
+      "rank": 4,
+      "source_ids": [
+        "p2-structured-log"
+      ]
+    }
+  ]
+}

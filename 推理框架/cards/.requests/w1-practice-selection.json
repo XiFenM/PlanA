@@ -1,0 +1,64 @@
+{
+  "new_candidates": {
+    "P1": 8,
+    "P2": 4
+  },
+  "reused_existing_topics": [
+    {
+      "topic": "FINAL_ONLY 抑制输出的层次",
+      "canonical": "推理框架/cards/vllm-full-session-review.md",
+      "logical_id": "mc-c0e72e196678952189509127"
+    },
+    {
+      "topic": "RequestState 与 Collector 消费生命周期",
+      "canonical": "推理框架/cards/vllm-full-session-review.md",
+      "logical_id": "mc-83bf809ee49d5864f0049a85"
+    },
+    {
+      "topic": "用户 stop 原因与 Core ABORT 操作",
+      "canonical": "推理框架/cards/vllm-full-session-review.md",
+      "logical_id": "mc-58f9377a4e5513c61f851abc"
+    },
+    {
+      "topic": "构建期 -L 与运行时搜索",
+      "canonical": "推理框架/cards/w1-cpp-linux-baseline.md",
+      "logical_id": "mc-0582bb6fd6e72fd6286d3b33"
+    },
+    {
+      "topic": "目标进程 maps 与当前 ldd 的范围",
+      "canonical": "推理框架/cards/w1-cpp-linux-baseline.md",
+      "logical_id": "mc-cb316aa34f2f5aae61bd2c35"
+    },
+    {
+      "topic": "UND 引用不等于定义",
+      "canonical": "推理框架/cards/w1-cpp-linux-baseline.md",
+      "logical_id": "mc-59af503a325be96a588ab102"
+    },
+    {
+      "topic": "链接时不会重新选择重载",
+      "canonical": "推理框架/cards/w1-cpp-linux-baseline.md",
+      "logical_id": "mc-4d4a53d74856aafc271a9a7c"
+    }
+  ],
+  "deferred": [
+    {
+      "topic": "本机具体 GPU 下的候选列表与 Runner 模块路径",
+      "reason": "已记入版本化日志和分析；本批优先强化选择机制及证据边界，暂不新增低频路径记忆卡。"
+    }
+  ],
+  "excluded": [
+    {
+      "topic": "P1 表格路径笔误与 W1 最终确认",
+      "reason": "遗留或流程状态，不是正式知识卡。"
+    },
+    {
+      "topic": "终端主机名、PID、绝对路径及一次性测试计数",
+      "reason": "一次性环境信息，不适合间隔复习。"
+    },
+    {
+      "topic": "动态加载器相对导入修复",
+      "reason": "本轮为导师工具问题，未作为学习者已核验的独立知识目标。"
+    }
+  ],
+  "policy": "只新增合格主题；不修改、迁移或刷新旧卡文件，raw 不作为制卡来源。"
+}

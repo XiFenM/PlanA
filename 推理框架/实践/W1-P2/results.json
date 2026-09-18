@@ -1,0 +1,311 @@
+{
+  "build": {
+    "scope": "导师自建实验工件，编译成功不代表学习者实践通过",
+    "os": "Linux 5.15.0-119-generic x86_64 GNU/Linux",
+    "versions": {
+      "g++": "g++ (Ubuntu 11.4.0-1ubuntu1~22.04.3) 11.4.0",
+      "ld": "GNU ld (GNU Binutils for Ubuntu) 2.38",
+      "readelf": "GNU readelf (GNU Binutils for Ubuntu) 2.38",
+      "nm": "GNU nm (GNU Binutils for Ubuntu) 2.38",
+      "ldd": "ldd (Ubuntu GLIBC 2.35-0ubuntu3.13) 2.35"
+    },
+    "commands": [
+      [
+        "g++",
+        "-std=c++17",
+        "-O0",
+        "-g",
+        "-Wall",
+        "-Wextra",
+        "-fPIC",
+        "-shared",
+        "-DP2_VARIANT=1",
+        "/root/autodl-tmp/PlanA/推理框架/实践/W1-P2/fixture/library.cpp",
+        "-Wl,-soname,libw1probe.so",
+        "-o",
+        "/root/autodl-tmp/plana-w1-env/p2-build/lib-a/libw1probe.so"
+      ],
+      [
+        "g++",
+        "-std=c++17",
+        "-O0",
+        "-g",
+        "-Wall",
+        "-Wextra",
+        "-fPIC",
+        "-shared",
+        "-DP2_VARIANT=2",
+        "/root/autodl-tmp/PlanA/推理框架/实践/W1-P2/fixture/library.cpp",
+        "-Wl,-soname,libw1probe.so",
+        "-o",
+        "/root/autodl-tmp/plana-w1-env/p2-build/lib-b/libw1probe.so"
+      ],
+      [
+        "g++",
+        "-std=c++17",
+        "-O0",
+        "-g",
+        "-Wall",
+        "-Wextra",
+        "-fplt",
+        "/root/autodl-tmp/PlanA/推理框架/实践/W1-P2/fixture/driver.cpp",
+        "-L/root/autodl-tmp/plana-w1-env/p2-build/lib-a",
+        "-lw1probe",
+        "-Wl,-z,lazy",
+        "-o",
+        "/root/autodl-tmp/plana-w1-env/p2-build/app"
+      ]
+    ],
+    "source_sha256": {
+      "api.hpp": "930322708acc76bb3a131e2589e56bdc72a229764315ddc30bd8aaa007663b99",
+      "driver.cpp": "0f825fbb7a2f4598d605e9700f741648d145afd1d2842280824af56bb9837c36",
+      "library.cpp": "80a763bdb068d4dfcd9d259c6d633b50c7cc0ecfdc5d05714ba193ea74055f43"
+    },
+    "artifacts": {
+      "/root/autodl-tmp/plana-w1-env/p2-build/app": "f1ad39689d0deb6bdae5c3b098c9ba57ab9b5883a1e510cd68d4638b9ad6a808",
+      "/root/autodl-tmp/plana-w1-env/p2-build/lib-a/libw1probe.so": "aaccca742eadde8726d1e60f5eebed491ab4078e231893665838ed344620fe42",
+      "/root/autodl-tmp/plana-w1-env/p2-build/lib-b/libw1probe.so": "7cad89a14e2b29d189467b577d8939782c690075e0e19de6e573085aeec1f987"
+    },
+    "binding": "函数调用采用 lazy binding；未写入 RPATH/RUNPATH"
+  },
+  "fixture_preflight": {
+    "owner": "agent",
+    "status": "passed",
+    "scope": "导师确认实验可用；不是学习者的预测、诊断或修复结果",
+    "successful_call_verified": true,
+    "repeatable_symbol_failure_verified": true
+  },
+  "date": "2026-09-17",
+  "practice_id": "plana-jd-w1-p2-20260917",
+  "revision": 1,
+  "contract_digest": "sha256:6f073ac71a671e72c01706f8e8ad7743b998a8ba092c5b87fd12b3edf5b2fef5",
+  "scope": "P2 已在约定的自建 ELF/共享库与 A/B 父环境范围验收通过；W1 最终关闭另待确认。",
+  "environment": {
+    "distribution": "Ubuntu 22.04.5 LTS",
+    "libstdcxx_path": "/usr/lib/x86_64-linux-gnu/libstdc++.so.6.0.30",
+    "libstdcxx_package_version": "12.3.0-1ubuntu1~22.04.3"
+  },
+  "pytest": {
+    "command": "PYTHONDONTWRITEBYTECODE=1 .venv/bin/python -m pytest -q -p no:cacheprovider 推理框架/实践/W1-P2/test_contract.py",
+    "exit_code": 0,
+    "passed": 2,
+    "skipped": 1,
+    "failed": 0,
+    "skip_reason": "学习者 launch.sh 尚未提交；不计为 B3 通过",
+    "phase": "导师初始工具预核验，保留当时 launch.sh 尚不存在的历史结果；当前学习者主用例见 learner_run_parent_B。"
+  },
+  "tool_sha256": {
+    "harness.py": "e1e0511b4d1568ecf26e6bf4b5e55d66a1af85b6e11fb3cd78f2988f30b7275b",
+    "test_contract.py": "2f6a604744cd72ae65b3e436a9ed400bb674c57cbe88353ba9d4e195d4aab432"
+  },
+  "learner_prediction_before_diagnostic": {
+    "date": "2026-09-17",
+    "scope": "学习者首次诊断操作前的预测；导师 fixture 预核验单独记录，不冒充学习者证据",
+    "loading": "lib-b",
+    "ready": "可以到达 READY",
+    "compute_call": "不能成功，将因缺少所需 compute(int) 实现而出现 undefined symbol 错误",
+    "reasoning_summary": "构建时确定调用 int 参数的 compute，运行时装入的库不提供该函数实现。",
+    "review": "三项预测与本实验的无 RPATH/RUNPATH、指定库搜索路径及延迟绑定条件一致；实际二进制与目标进程证据待学习者核对。"
+  },
+  "learner_binary_evidence": {
+    "date": "2026-09-17",
+    "source": "学习者实际执行命令后提交的终端输出摘要；不保存终端主机标识",
+    "commands": [
+      "readelf -d ../plana-w1-env/p2-build/app | rg 'NEEDED|RPATH|RUNPATH'",
+      "nm -D -C --undefined-only ../plana-w1-env/p2-build/app | rg 'compute'",
+      "nm -D -C --defined-only ../plana-w1-env/p2-build/lib-a/libw1probe.so | rg 'compute'",
+      "nm -D -C --defined-only ../plana-w1-env/p2-build/lib-b/libw1probe.so | rg 'compute'"
+    ],
+    "app_needed": [
+      "libw1probe.so",
+      "libstdc++.so.6",
+      "libgcc_s.so.1",
+      "libc.so.6"
+    ],
+    "app_rpath_or_runpath_reported": false,
+    "compute_symbols": {
+      "app": "U compute(int)",
+      "lib-a": "T compute(int)",
+      "lib-b": "T compute(double)"
+    },
+    "learner_conclusion": "app 所需符号与 lib-a 匹配，与 lib-b 不匹配。",
+    "review": "ELF 依赖与符号匹配解释正确；这些文件级证据尚未证明目标进程实际加载了哪份库。"
+  },
+  "diagnostic_observation": {
+    "command": [
+      "/root/autodl-tmp/plana-w1-env/p2-build/app"
+    ],
+    "parent_library": "B",
+    "parent_LD_LIBRARY_PATH": "/root/autodl-tmp/plana-w1-env/p2-build/lib-b",
+    "pid": 102268,
+    "executable": "/root/autodl-tmp/plana-w1-env/p2-build/app",
+    "library_maps_before_call": [
+      "7f0fb8589000-7f0fb858a000 r--p 00000000 09:00 22560092038                /root/autodl-tmp/plana-w1-env/p2-build/lib-b/libw1probe.so",
+      "7f0fb858a000-7f0fb858b000 r-xp 00001000 09:00 22560092038                /root/autodl-tmp/plana-w1-env/p2-build/lib-b/libw1probe.so",
+      "7f0fb858b000-7f0fb858c000 r--p 00002000 09:00 22560092038                /root/autodl-tmp/plana-w1-env/p2-build/lib-b/libw1probe.so",
+      "7f0fb858c000-7f0fb858d000 r--p 00002000 09:00 22560092038                /root/autodl-tmp/plana-w1-env/p2-build/lib-b/libw1probe.so",
+      "7f0fb858d000-7f0fb858e000 rw-p 00003000 09:00 22560092038                /root/autodl-tmp/plana-w1-env/p2-build/lib-b/libw1probe.so"
+    ],
+    "mapped_library_paths": [
+      "/root/autodl-tmp/plana-w1-env/p2-build/lib-b/libw1probe.so"
+    ],
+    "stdout": "READY pid=102268\n",
+    "stderr": "/root/autodl-tmp/plana-w1-env/p2-build/app: symbol lookup error: /root/autodl-tmp/plana-w1-env/p2-build/app: undefined symbol: _Z7computei\n",
+    "returncode": 127,
+    "app_sha256": "f1ad39689d0deb6bdae5c3b098c9ba57ab9b5883a1e510cd68d4638b9ad6a808",
+    "launch_sha256": null
+  },
+  "learner_diagnosis_review": {
+    "date": "2026-09-17",
+    "query_evidence": {
+      "source": "学习者提交的 ldd 输出",
+      "query_LD_LIBRARY_PATH": "/root/autodl-tmp/PlanA/../plana-w1-env/p2-build/lib-a",
+      "resolved_library": "/root/autodl-tmp/plana-w1-env/p2-build/lib-a/libw1probe.so"
+    },
+    "target_evidence_ref": "diagnostic_observation",
+    "target_pid": 102268,
+    "unresolved_symbol": {
+      "mangled": "_Z7computei",
+      "demangled": "compute(int)",
+      "checked_with": "c++filt"
+    },
+    "learner_explanation": "ldd 查询时的环境与目标 app 启动时的环境不同，二者解析或映射到不同库不矛盾。",
+    "review": "首次预测与目标运行吻合；ELF 依赖、动态符号、当前环境查询、目标 PID 映射及目标调用错误构成完整诊断证据。",
+    "criteria": {
+      "B1": "预测与机制通过",
+      "B2": "操作与解释通过"
+    },
+    "remaining": "B3 启动入口修复、B4 小变式和最终分析稿尚未完成。"
+  },
+  "learner_run_parent_B": {
+    "status": "passed",
+    "command": [
+      "bash",
+      "/root/autodl-tmp/PlanA/推理框架/实践/W1-P2/launch.sh"
+    ],
+    "parent_library": "B",
+    "parent_LD_LIBRARY_PATH": "/root/autodl-tmp/plana-w1-env/p2-build/lib-b",
+    "pid": 109803,
+    "executable": "/root/autodl-tmp/plana-w1-env/p2-build/app",
+    "library_maps_before_call": [
+      "7fbc0fd0b000-7fbc0fd0c000 r--p 00000000 09:00 21495356038                /root/autodl-tmp/plana-w1-env/p2-build/lib-a/libw1probe.so",
+      "7fbc0fd0c000-7fbc0fd0d000 r-xp 00001000 09:00 21495356038                /root/autodl-tmp/plana-w1-env/p2-build/lib-a/libw1probe.so",
+      "7fbc0fd0d000-7fbc0fd0e000 r--p 00002000 09:00 21495356038                /root/autodl-tmp/plana-w1-env/p2-build/lib-a/libw1probe.so",
+      "7fbc0fd0e000-7fbc0fd0f000 r--p 00002000 09:00 21495356038                /root/autodl-tmp/plana-w1-env/p2-build/lib-a/libw1probe.so",
+      "7fbc0fd0f000-7fbc0fd10000 rw-p 00003000 09:00 21495356038                /root/autodl-tmp/plana-w1-env/p2-build/lib-a/libw1probe.so"
+    ],
+    "mapped_library_paths": [
+      "/root/autodl-tmp/plana-w1-env/p2-build/lib-a/libw1probe.so"
+    ],
+    "stdout": "READY pid=109803\nRESULT 14\n",
+    "stderr": "",
+    "returncode": 0,
+    "app_sha256": "f1ad39689d0deb6bdae5c3b098c9ba57ab9b5883a1e510cd68d4638b9ad6a808",
+    "launch_sha256": "3c9ba3b1d7baf972df0b6d9508d7bc4cbf722639e4475aa5d4d6804e3931c4e5"
+  },
+  "learner_repair_review": {
+    "date": "2026-09-17",
+    "criterion": "B3",
+    "status": "passed",
+    "source": "学习者运行验收后由工具保存的 learner_run_parent_B；导师核对当前脚本、程序与记录哈希一致，本轮不重复运行。",
+    "record_ref": "learner_run_parent_B",
+    "launch_sha256": "3c9ba3b1d7baf972df0b6d9508d7bc4cbf722639e4475aa5d4d6804e3931c4e5",
+    "review": "父环境库路径恰为 lib-b 时，启动脚本将子进程搜索路径改为 lib-a；目标 app 映射 lib-a，实际调用返回 RESULT 14，退出码 0，无 stderr。",
+    "evidence_limit": "该条主用例仅裁决 B 输入；后续 A 输入见 learner_variant_review，不泛化为任意库搜索路径均已支持。",
+    "agent_modified_launcher": false
+  },
+  "learner_variant_prediction": {
+    "date": "2026-09-17",
+    "parent_library": "A",
+    "provided_before_variant_run": true,
+    "learner_answer": {
+      "if_condition": false,
+      "export_executed": false,
+      "loaded_library": "lib-a",
+      "call_output": "RESULT 14"
+    },
+    "review_before_run": "预测正确；导师补充说明 app 继承脚本已收到的导出环境变量，无需再次 export。",
+    "launch_sha256_before": "3c9ba3b1d7baf972df0b6d9508d7bc4cbf722639e4475aa5d4d6804e3931c4e5"
+  },
+  "learner_run_parent_A": {
+    "status": "passed",
+    "command": [
+      "bash",
+      "/root/autodl-tmp/PlanA/推理框架/实践/W1-P2/launch.sh"
+    ],
+    "parent_library": "A",
+    "parent_LD_LIBRARY_PATH": "/root/autodl-tmp/plana-w1-env/p2-build/lib-a",
+    "pid": 111409,
+    "executable": "/root/autodl-tmp/plana-w1-env/p2-build/app",
+    "library_maps_before_call": [
+      "7f82272c7000-7f82272c8000 r--p 00000000 09:00 21495356038                /root/autodl-tmp/plana-w1-env/p2-build/lib-a/libw1probe.so",
+      "7f82272c8000-7f82272c9000 r-xp 00001000 09:00 21495356038                /root/autodl-tmp/plana-w1-env/p2-build/lib-a/libw1probe.so",
+      "7f82272c9000-7f82272ca000 r--p 00002000 09:00 21495356038                /root/autodl-tmp/plana-w1-env/p2-build/lib-a/libw1probe.so",
+      "7f82272ca000-7f82272cb000 r--p 00002000 09:00 21495356038                /root/autodl-tmp/plana-w1-env/p2-build/lib-a/libw1probe.so",
+      "7f82272cb000-7f82272cc000 rw-p 00003000 09:00 21495356038                /root/autodl-tmp/plana-w1-env/p2-build/lib-a/libw1probe.so"
+    ],
+    "mapped_library_paths": [
+      "/root/autodl-tmp/plana-w1-env/p2-build/lib-a/libw1probe.so"
+    ],
+    "stdout": "READY pid=111409\nRESULT 14\n",
+    "stderr": "",
+    "returncode": 0,
+    "app_sha256": "f1ad39689d0deb6bdae5c3b098c9ba57ab9b5883a1e510cd68d4638b9ad6a808",
+    "launch_sha256": "3c9ba3b1d7baf972df0b6d9508d7bc4cbf722639e4475aa5d4d6804e3931c4e5"
+  },
+  "learner_variant_review": {
+    "date": "2026-09-17",
+    "criterion": "B4 运行变式",
+    "status": "passed",
+    "command": "P2_PARENT_LIBRARY=A PYTHONDONTWRITEBYTECODE=1 .venv/bin/python -m pytest -q -p no:cacheprovider 推理框架/实践/W1-P2/test_contract.py::test_b3_learner_launcher_selects_library_and_calls_compute",
+    "exit_code": 0,
+    "passed": 1,
+    "failed": 0,
+    "skipped": 0,
+    "record_ref": "learner_run_parent_A",
+    "unchanged_launcher_sha256": "3c9ba3b1d7baf972df0b6d9508d7bc4cbf722639e4475aa5d4d6804e3931c4e5",
+    "review": "预测与运行一致；同一脚本在 A 父环境下保持继承的 A 路径，新进程映射 lib-a 并返回 RESULT 14。是否执行 export 由已核对的输入与脚本条件推导，不声称采集了分支 trace。",
+    "scope": "只验证父 LD_LIBRARY_PATH 恰为 A 或 B 的两个场景，不推广到任意目录列表。",
+    "remaining": "学习者分析稿与最终解释 Review 尚未完成，P2 尚未整体验收。"
+  },
+  "analysis_review": {
+    "date": "2026-09-18",
+    "artifact": "分析.md",
+    "artifact_sha256": "7e1af288acb999073c3cac612c163d7fdde2411635fba66d0b450cbc88ad0bfd",
+    "status": "passed",
+    "evidence": "实际环境、C++ 函数签名、同名库差异、ldd/maps 环境区别、错误符号、修复与 A/B 变式解释及有限证明范围均与记录一致。",
+    "verification": "脚本、工具和三个编译产物哈希未变化，复用现有操作与运行结果；本轮未重复运行测试。",
+    "nonblocking_suggestions": [],
+    "agent_modified_analysis": false
+  },
+  "practice_acceptance": {
+    "date": "2026-09-18",
+    "practice_id": "plana-jd-w1-p2-20260917",
+    "revision": 1,
+    "status": "passed",
+    "scope": "仅 W1-P2 练习，非 W1/Lesson final mastery",
+    "criteria": {
+      "B1": {
+        "status": "passed",
+        "evidence": "故障场景与 A 父环境变式均先有学习者预测，后有相符的本地运行。"
+      },
+      "B2": {
+        "status": "passed",
+        "evidence": "学习者 readelf/nm/ldd/maps 操作及解释；PID 102268 实际映射 B，目标调用缺 _Z7computei，退出 127。"
+      },
+      "B3": {
+        "status": "passed",
+        "evidence": "学习者启动脚本使 B 父环境下的新 PID 109803 映射 A，输出 RESULT 14，退出 0。"
+      },
+      "B4": {
+        "status": "passed",
+        "evidence": "同一脚本在 A 父环境下的新 PID 111409 映射 A，输出 RESULT 14，退出 0；分析明确仅覆盖 A/B 两种父路径。"
+      }
+    },
+    "blocking_or_major_open": 0,
+    "nonblocking_findings": [],
+    "assistance": "导师提供 C++ fixture、构建/观察/验收工具、命令入口与延迟绑定说明；学习者完成预测、操作解释和启动脚本，导师补充环境继承说明。未代写学习者文件，不声称学习者独立编写了 C++ fixture。",
+    "analysis_sha256": "7e1af288acb999073c3cac612c163d7fdde2411635fba66d0b450cbc88ad0bfd",
+    "launcher_sha256": "3c9ba3b1d7baf972df0b6d9508d7bc4cbf722639e4475aa5d4d6804e3931c4e5"
+  }
+}

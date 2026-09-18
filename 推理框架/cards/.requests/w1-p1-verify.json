@@ -1,0 +1,548 @@
+{
+  "command": "verify",
+  "data": {
+    "context_sha256": "4eea88f8399cea84ba99a737f6e62e063f5b89c1e7d388de63cd360756c0ed3e",
+    "dependency_drift": [],
+    "interrupted_transactions": [],
+    "inventory_fingerprint": "4847bc1202554a47abb1522653b8f56249f4d83e01a59c04a5ea3b39014c58c8",
+    "inventory_unavailable": false,
+    "legacy_inventory": [],
+    "managed_artifacts": [
+      {
+        "artifact_set_drifted": false,
+        "body_drifted": false,
+        "card_count": 8,
+        "header_drifted": false,
+        "migration_required": false,
+        "path": "PyTorch/cards/2026-07-03-文章1收口.md",
+        "schema": "memo-cards.artifact/v2",
+        "sha256": "51c38dd26d690cbc826c041be2d4055070db0cb21eefe803505da4f4c5312ebd",
+        "sidecars": [
+          {
+            "actual_byte_size": 9297,
+            "actual_sha256": "7e1b5f655a301d78391b6804ca03b24470dc1cd6f52d3c5c024001e6ba68210d",
+            "expected_sha256": "7e1b5f655a301d78391b6804ca03b24470dc1cd6f52d3c5c024001e6ba68210d",
+            "path": "PyTorch/cards/2026-07-03-文章1收口-technical-qa.xlsx",
+            "row_count": 8,
+            "status": "ok",
+            "template_id": "technical-qa"
+          }
+        ]
+      },
+      {
+        "artifact_set_drifted": false,
+        "body_drifted": false,
+        "card_count": 12,
+        "header_drifted": false,
+        "migration_required": false,
+        "path": "推理框架/cards/conv3d-evidence-backpressure.md",
+        "schema": "memo-cards.artifact/v2",
+        "sha256": "6ba0225d164c257b360fc3537d815f75c432c7e5146af5a0a1276baa593687eb",
+        "sidecars": [
+          {
+            "actual_byte_size": 11148,
+            "actual_sha256": "fb3f70d040c69c3c60bb593a878107a60528a317cdbfb003ffd988aa916708c4",
+            "expected_sha256": "fb3f70d040c69c3c60bb593a878107a60528a317cdbfb003ffd988aa916708c4",
+            "path": "推理框架/cards/conv3d-evidence-backpressure-technical-qa.xlsx",
+            "row_count": 12,
+            "status": "ok",
+            "template_id": "technical-qa"
+          }
+        ]
+      },
+      {
+        "artifact_set_drifted": false,
+        "body_drifted": false,
+        "card_count": 5,
+        "header_drifted": false,
+        "migration_required": false,
+        "path": "推理框架/cards/kv-page-size-interface.md",
+        "schema": "memo-cards.artifact/v2",
+        "sha256": "186185a599e9d4f807f990ae491ae34bd798e602421031f664de489c98ad4672",
+        "sidecars": [
+          {
+            "actual_byte_size": 7846,
+            "actual_sha256": "4312b80663160f72d57851c4491ca7e17189d4c7c875917f2b42929e01d34740",
+            "expected_sha256": "4312b80663160f72d57851c4491ca7e17189d4c7c875917f2b42929e01d34740",
+            "path": "推理框架/cards/kv-page-size-interface-technical-qa.xlsx",
+            "row_count": 5,
+            "status": "ok",
+            "template_id": "technical-qa"
+          }
+        ]
+      },
+      {
+        "artifact_set_drifted": false,
+        "body_drifted": false,
+        "card_count": 75,
+        "header_drifted": false,
+        "migration_required": false,
+        "path": "推理框架/cards/vllm-full-session-review.md",
+        "schema": "memo-cards.artifact/v2",
+        "sha256": "33abaec629f80661256b2fcc09795de7478e6c0d546a0cb7f1ad8bac4523a6b3",
+        "sidecars": [
+          {
+            "actual_byte_size": 10535,
+            "actual_sha256": "78132223c85d19a940f4ccd77bd1404fded686295285b39794f7b70e760e9d58",
+            "expected_sha256": "78132223c85d19a940f4ccd77bd1404fded686295285b39794f7b70e760e9d58",
+            "path": "推理框架/cards/vllm-full-session-review-correction.xlsx",
+            "row_count": 10,
+            "status": "ok",
+            "template_id": "correction"
+          },
+          {
+            "actual_byte_size": 41636,
+            "actual_sha256": "b8e64714a1038d26b1bb86fbced6cb4dcc2768eb5b64894d3f9ceaa8d7850ffa",
+            "expected_sha256": "b8e64714a1038d26b1bb86fbced6cb4dcc2768eb5b64894d3f9ceaa8d7850ffa",
+            "path": "推理框架/cards/vllm-full-session-review-technical-qa.xlsx",
+            "row_count": 65,
+            "status": "ok",
+            "template_id": "technical-qa"
+          }
+        ]
+      },
+      {
+        "artifact_set_drifted": false,
+        "body_drifted": false,
+        "card_count": 15,
+        "header_drifted": false,
+        "migration_required": false,
+        "path": "推理框架/cards/vllm-repository-and-process-architecture.md",
+        "schema": "memo-cards.artifact/v2",
+        "sha256": "3ddcd52b5e79faba3633d8ba36bd2478e28b9760d9d9e794f6c32af9538c745a",
+        "sidecars": [
+          {
+            "actual_byte_size": 14195,
+            "actual_sha256": "e24399daa624287f740b5d2bd1513cc084480e1b628bf5dbedbc393bf5f6eded",
+            "expected_sha256": "e24399daa624287f740b5d2bd1513cc084480e1b628bf5dbedbc393bf5f6eded",
+            "path": "推理框架/cards/vllm-repository-and-process-architecture-technical-qa.xlsx",
+            "row_count": 14,
+            "status": "ok",
+            "template_id": "technical-qa"
+          },
+          {
+            "actual_byte_size": 3591,
+            "actual_sha256": "8048fd26a8d64f4d567cc86e3abcde0510a1056dcc2f8b3ab55eb7b5b57682c7",
+            "expected_sha256": "8048fd26a8d64f4d567cc86e3abcde0510a1056dcc2f8b3ab55eb7b5b57682c7",
+            "path": "推理框架/cards/vllm-repository-and-process-architecture-oral.xlsx",
+            "row_count": 1,
+            "status": "ok",
+            "template_id": "oral"
+          }
+        ]
+      },
+      {
+        "artifact_set_drifted": false,
+        "body_drifted": false,
+        "card_count": 11,
+        "header_drifted": false,
+        "migration_required": false,
+        "path": "推理框架/cards/w1-cpp-linux-baseline.md",
+        "schema": "memo-cards.artifact/v2",
+        "sha256": "aaf575630bdc216c7cb593bdd3f84ca998636bf0376f77b4f9fca6f16507c23a",
+        "sidecars": [
+          {
+            "actual_byte_size": 10562,
+            "actual_sha256": "ca204046572fa9e13f37f471ea1fb2d0034304f09b283828cf704ac28adc0ada",
+            "expected_sha256": "ca204046572fa9e13f37f471ea1fb2d0034304f09b283828cf704ac28adc0ada",
+            "path": "推理框架/cards/w1-cpp-linux-baseline-technical-qa.xlsx",
+            "row_count": 11,
+            "status": "ok",
+            "template_id": "technical-qa"
+          }
+        ]
+      },
+      {
+        "artifact_set_drifted": false,
+        "body_drifted": false,
+        "card_count": 8,
+        "header_drifted": false,
+        "migration_required": false,
+        "path": "推理框架/cards/w1-p1-runtime-output-practice.md",
+        "schema": "memo-cards.artifact/v2",
+        "sha256": "5167944c4419151d7fe2736191a7e5f05957109f3868c5a14298c1bde072e180",
+        "sidecars": [
+          {
+            "actual_byte_size": 6511,
+            "actual_sha256": "4038328cc699813d6c76bc7d86dc2c9fa17ea4d3fa373f12762ae39baf707317",
+            "expected_sha256": "4038328cc699813d6c76bc7d86dc2c9fa17ea4d3fa373f12762ae39baf707317",
+            "path": "推理框架/cards/w1-p1-runtime-output-practice-correction.xlsx",
+            "row_count": 4,
+            "status": "ok",
+            "template_id": "correction"
+          },
+          {
+            "actual_byte_size": 5448,
+            "actual_sha256": "988827ec31ba46d6b771e7bb7f7f2ae9fff908a156ff371fba5b2a992d285987",
+            "expected_sha256": "988827ec31ba46d6b771e7bb7f7f2ae9fff908a156ff371fba5b2a992d285987",
+            "path": "推理框架/cards/w1-p1-runtime-output-practice-technical-qa.xlsx",
+            "row_count": 4,
+            "status": "ok",
+            "template_id": "technical-qa"
+          }
+        ]
+      },
+      {
+        "artifact_set_drifted": false,
+        "body_drifted": false,
+        "card_count": 4,
+        "header_drifted": false,
+        "migration_required": false,
+        "path": "推理框架/cards/w1-p2-shared-library-practice.md",
+        "schema": "memo-cards.artifact/v2",
+        "sha256": "d0c126d8621d259da82b5bf6339a3aafa35beb8742721c8e5289fed03bbd4ceb",
+        "sidecars": [
+          {
+            "actual_byte_size": 5548,
+            "actual_sha256": "2ae32d5dd15f0708e8f444d80753d619a54f3225f1e39a89fc8d7a0bc8108587",
+            "expected_sha256": "2ae32d5dd15f0708e8f444d80753d619a54f3225f1e39a89fc8d7a0bc8108587",
+            "path": "推理框架/cards/w1-p2-shared-library-practice-technical-qa.xlsx",
+            "row_count": 4,
+            "status": "ok",
+            "template_id": "technical-qa"
+          }
+        ]
+      },
+      {
+        "artifact_set_drifted": false,
+        "body_drifted": false,
+        "card_count": 2,
+        "header_drifted": false,
+        "migration_required": false,
+        "path": "英语/cards/day-04.md",
+        "schema": "memo-cards.artifact/v2",
+        "sha256": "51f670bad6fb83f7dad991f33e9f732865d96597720482d3efc504fb10a64453",
+        "sidecars": [
+          {
+            "actual_byte_size": 3791,
+            "actual_sha256": "38167e1dac270222fa7dc794fc942ecd6514ce55a0fca94e6b212f21b81b65a5",
+            "expected_sha256": "38167e1dac270222fa7dc794fc942ecd6514ce55a0fca94e6b212f21b81b65a5",
+            "path": "英语/cards/day-04-active-production.xlsx",
+            "row_count": 2,
+            "status": "ok",
+            "template_id": "active-production"
+          }
+        ]
+      },
+      {
+        "artifact_set_drifted": false,
+        "body_drifted": false,
+        "card_count": 2,
+        "header_drifted": false,
+        "migration_required": false,
+        "path": "英语/cards/day-05.md",
+        "schema": "memo-cards.artifact/v2",
+        "sha256": "97e08a56eef0833871a945662c48af7976facdf324e53a0160c9c97ffa35d1f2",
+        "sidecars": [
+          {
+            "actual_byte_size": 3933,
+            "actual_sha256": "362011f34f043b653cc4db8d8daaad9c4aadfb134e9f4bf6830a1434ac10e176",
+            "expected_sha256": "362011f34f043b653cc4db8d8daaad9c4aadfb134e9f4bf6830a1434ac10e176",
+            "path": "英语/cards/day-05-active-production.xlsx",
+            "row_count": 2,
+            "status": "ok",
+            "template_id": "active-production"
+          }
+        ]
+      },
+      {
+        "artifact_set_drifted": false,
+        "body_drifted": false,
+        "card_count": 2,
+        "header_drifted": false,
+        "migration_required": false,
+        "path": "英语/cards/day-06.md",
+        "schema": "memo-cards.artifact/v2",
+        "sha256": "1da47470b7153dd59e26a495e0d82db8d7492deae56eb110d37865cac3811c6f",
+        "sidecars": [
+          {
+            "actual_byte_size": 4095,
+            "actual_sha256": "7de8ec2a37e590f379c4f9d194af6aceaa389bbc993b8f8b1260f5a922948654",
+            "expected_sha256": "7de8ec2a37e590f379c4f9d194af6aceaa389bbc993b8f8b1260f5a922948654",
+            "path": "英语/cards/day-06-active-production.xlsx",
+            "row_count": 2,
+            "status": "ok",
+            "template_id": "active-production"
+          }
+        ]
+      }
+    ],
+    "preview": {
+      "artifact_diffs": [
+        {
+          "diff": "",
+          "kind": "unified",
+          "path": "推理框架/cards/w1-p1-runtime-output-practice.md"
+        }
+      ],
+      "artifact_set_sha256": "f1cb705d8667f689cd25cd7f2cc9564cb87367f176d66ace74b3734bb24885d3",
+      "blocked": [],
+      "candidate_artifact_schema": "memo-cards.artifact/v2",
+      "candidate_markdown": "---\n{\n  \"adapter\": {\n    \"client_version\": \"3.8.00\",\n    \"id\": \"markji\",\n    \"profile\": \"plana-markji\"\n  },\n  \"artifact_set_sha256\": \"f1cb705d8667f689cd25cd7f2cc9564cb87367f176d66ace74b3734bb24885d3\",\n  \"candidate_sha256\": \"8afb21c00a57e310735b4d88225a6eb9faad13a7b1e5021a6db5fe48df0e9666\",\n  \"cards\": [\n    {\n      \"content_sha256\": \"e90af0701e1dd6eb66f3d18f067ac8de7d16912eac1d17a2a9d1285656969cc9\",\n      \"content_summary\": \"区分自动后端的候选优先顺序与最终有效选择\",\n      \"dependency_content_sha256\": {},\n      \"depends_on\": [],\n      \"fact_status\": \"verified\",\n      \"identity\": {\n        \"assessment\": \"mechanism\",\n        \"domain\": \"vllm-attention-selection\",\n        \"fact_scope\": {\n          \"commit\": \"568afb3a13806beb53bb2e6bd518269357b237c0\",\n          \"kind\": \"snapshot\",\n          \"product\": \"vllm\",\n          \"version\": \"v0.26.0\"\n        },\n        \"recall_target\": \"区分自动后端的候选优先顺序与最终有效选择\"\n      },\n      \"layer\": \"mechanism\",\n      \"lifecycle\": \"active\",\n      \"logical_id\": \"mc-bf4f0830353ce8175f192f8c\",\n      \"misconception_of\": null,\n      \"priority\": 5,\n      \"quality\": \"A\",\n      \"source_ids\": [\n        \"p1-structured-log\"\n      ],\n      \"successor_to\": null,\n      \"template_id\": \"technical-qa\",\n      \"template_version\": \"1.1.0\"\n    },\n    {\n      \"content_sha256\": \"2cae98e603220d5af3f5852b52f109e34c4232fd5e27d62eced110d094a91254\",\n      \"content_summary\": \"区分自动后端筛选与显式指定无效后端时的处理\",\n      \"dependency_content_sha256\": {},\n      \"depends_on\": [],\n      \"fact_status\": \"verified\",\n      \"identity\": {\n        \"assessment\": \"discrimination\",\n        \"domain\": \"vllm-attention-selection\",\n        \"fact_scope\": {\n          \"commit\": \"568afb3a13806beb53bb2e6bd518269357b237c0\",\n          \"kind\": \"snapshot\",\n          \"product\": \"vllm\",\n          \"version\": \"v0.26.0\"\n        },\n        \"recall_target\": \"区分自动后端筛选与显式指定无效后端时的处理\"\n      },\n      \"layer\": \"atomic\",\n      \"lifecycle\": \"active\",\n      \"logical_id\": \"mc-3122aaa3b9ce689446c681bc\",\n      \"misconception_of\": null,\n      \"priority\": 5,\n      \"quality\": \"A\",\n      \"source_ids\": [\n        \"p1-structured-log\"\n      ],\n      \"successor_to\": null,\n      \"template_id\": \"technical-qa\",\n      \"template_version\": \"1.1.0\"\n    },\n    {\n      \"content_sha256\": \"1409ca669b31a4c3cf7fa2564c65e0d46c73d96dadcf1eb9496c0c02bbc1215b\",\n      \"content_summary\": \"区分实现选择函数成功与所选实现实际执行的证据\",\n      \"dependency_content_sha256\": {},\n      \"depends_on\": [],\n      \"fact_status\": \"verified\",\n      \"identity\": {\n        \"assessment\": \"discrimination\",\n        \"domain\": \"runtime-evidence\",\n        \"fact_scope\": {\n          \"kind\": \"evergreen\"\n        },\n        \"recall_target\": \"区分实现选择函数成功与所选实现实际执行的证据\"\n      },\n      \"layer\": \"atomic\",\n      \"lifecycle\": \"active\",\n      \"logical_id\": \"mc-02e87b1438f73bdf09911e42\",\n      \"misconception_of\": null,\n      \"priority\": 5,\n      \"quality\": \"A\",\n      \"source_ids\": [\n        \"p1-structured-log\"\n      ],\n      \"successor_to\": null,\n      \"template_id\": \"technical-qa\",\n      \"template_version\": \"1.1.0\"\n    },\n    {\n      \"content_sha256\": \"c147b5c7b8030e4fccc6952a86d491b1b9bc963f312f66f0d228829b8b82e2d5\",\n      \"content_summary\": \"区分类对象检查与继承关系检查\",\n      \"dependency_content_sha256\": {},\n      \"depends_on\": [],\n      \"fact_status\": \"verified\",\n      \"identity\": {\n        \"assessment\": \"discrimination\",\n        \"domain\": \"python-type-introspection\",\n        \"fact_scope\": {\n          \"kind\": \"evergreen\"\n        },\n        \"recall_target\": \"区分类对象检查与继承关系检查\"\n      },\n      \"layer\": \"atomic\",\n      \"lifecycle\": \"active\",\n      \"logical_id\": \"mc-e83bfcf671f541a964dfb8b6\",\n      \"misconception_of\": null,\n      \"priority\": 3,\n      \"quality\": \"B\",\n      \"source_ids\": [\n        \"p1-structured-log\"\n      ],\n      \"successor_to\": null,\n      \"template_id\": \"technical-qa\",\n      \"template_version\": \"1.1.0\"\n    },\n    {\n      \"content_sha256\": \"6940c35ea89fd863020dec064a8ac2d58e7f639f4f5a1ac16265214c8c9d55c0\",\n      \"content_summary\": \"按每次调用的交付列表统计FINAL_ONLY输出数量\",\n      \"dependency_content_sha256\": {},\n      \"depends_on\": [],\n      \"fact_status\": \"verified\",\n      \"identity\": {\n        \"assessment\": \"discrimination\",\n        \"domain\": \"vllm-output-processing\",\n        \"fact_scope\": {\n          \"commit\": \"568afb3a13806beb53bb2e6bd518269357b237c0\",\n          \"kind\": \"snapshot\",\n          \"product\": \"vllm\",\n          \"version\": \"v0.26.0\"\n        },\n        \"recall_target\": \"按每次调用的交付列表统计final_only输出数量\"\n      },\n      \"layer\": \"atomic\",\n      \"lifecycle\": \"active\",\n      \"logical_id\": \"mc-77f3807adca2e196e9b5fbc2\",\n      \"misconception_of\": null,\n      \"priority\": 5,\n      \"quality\": \"A\",\n      \"source_ids\": [\n        \"p1-structured-log\"\n      ],\n      \"successor_to\": null,\n      \"template_id\": \"correction\",\n      \"template_version\": \"1.1.0\"\n    },\n    {\n      \"content_sha256\": \"6650279da73ae0cc7d2b10fe5839c0f062c2dc1c5c94c57ec8b3920b38c81936\",\n      \"content_summary\": \"确定排除stop字符串时的最终文本截断位置\",\n      \"dependency_content_sha256\": {},\n      \"depends_on\": [],\n      \"fact_status\": \"verified\",\n      \"identity\": {\n        \"assessment\": \"discrimination\",\n        \"domain\": \"vllm-output-processing\",\n        \"fact_scope\": {\n          \"commit\": \"568afb3a13806beb53bb2e6bd518269357b237c0\",\n          \"kind\": \"snapshot\",\n          \"product\": \"vllm\",\n          \"version\": \"v0.26.0\"\n        },\n        \"recall_target\": \"确定排除stop字符串时的最终文本截断位置\"\n      },\n      \"layer\": \"atomic\",\n      \"lifecycle\": \"active\",\n      \"logical_id\": \"mc-9e867890b277accc6e8fb96f\",\n      \"misconception_of\": null,\n      \"priority\": 5,\n      \"quality\": \"A\",\n      \"source_ids\": [\n        \"p1-structured-log\"\n      ],\n      \"successor_to\": null,\n      \"template_id\": \"correction\",\n      \"template_version\": \"1.1.0\"\n    },\n    {\n      \"content_sha256\": \"2675687351adc3bae39454bccf8c53d8d0e59ee3b0c2444af37809cab909cb74\",\n      \"content_summary\": \"解释前端判停清理不等待Core取消及迟到输出被忽略的原因\",\n      \"dependency_content_sha256\": {},\n      \"depends_on\": [],\n      \"fact_status\": \"verified\",\n      \"identity\": {\n        \"assessment\": \"mechanism\",\n        \"domain\": \"vllm-output-processing\",\n        \"fact_scope\": {\n          \"commit\": \"568afb3a13806beb53bb2e6bd518269357b237c0\",\n          \"kind\": \"snapshot\",\n          \"product\": \"vllm\",\n          \"version\": \"v0.26.0\"\n        },\n        \"recall_target\": \"解释前端判停清理不等待core取消及迟到输出被忽略的原因\"\n      },\n      \"layer\": \"mechanism\",\n      \"lifecycle\": \"active\",\n      \"logical_id\": \"mc-2a2f36ee5131912373479c1a\",\n      \"misconception_of\": null,\n      \"priority\": 5,\n      \"quality\": \"A\",\n      \"source_ids\": [\n        \"p1-structured-log\"\n      ],\n      \"successor_to\": null,\n      \"template_id\": \"correction\",\n      \"template_version\": \"1.1.0\"\n    },\n    {\n      \"content_sha256\": \"beb389722dee20f1fba4d9a0cdfa252d34f743fa0a7f7c782f14bd2b910bca62\",\n      \"content_summary\": \"在驱动已传递用例字段时通过修改输入切换测试条件\",\n      \"dependency_content_sha256\": {},\n      \"depends_on\": [],\n      \"fact_status\": \"verified\",\n      \"identity\": {\n        \"assessment\": \"discrimination\",\n        \"domain\": \"test-design\",\n        \"fact_scope\": {\n          \"kind\": \"evergreen\"\n        },\n        \"recall_target\": \"在驱动已传递用例字段时通过修改输入切换测试条件\"\n      },\n      \"layer\": \"atomic\",\n      \"lifecycle\": \"active\",\n      \"logical_id\": \"mc-544204f363ea08959c4dcb30\",\n      \"misconception_of\": null,\n      \"priority\": 5,\n      \"quality\": \"A\",\n      \"source_ids\": [\n        \"p1-structured-log\"\n      ],\n      \"successor_to\": null,\n      \"template_id\": \"correction\",\n      \"template_version\": \"1.1.0\"\n    }\n  ],\n  \"managed_body_sha256\": \"ee147509ea4bac24702c4b77507e22d5e24e7dc9cc592fc698498a3247f77bf8\",\n  \"manifest_payload_sha256\": \"cff3cee7320a9c434487d9c758f18ab22f5d71f895315c208c6c37ee9b0bcfba\",\n  \"schema\": \"memo-cards.artifact/v2\",\n  \"sidecars\": [\n    {\n      \"byte_size\": 6511,\n      \"columns\": [\n        \"意图\",\n        \"场景\",\n        \"正确\",\n        \"错误\",\n        \"说明\"\n      ],\n      \"kind\": \"markji-import-xlsx\",\n      \"path\": \"推理框架/cards/w1-p1-runtime-output-practice-correction.xlsx\",\n      \"row_count\": 4,\n      \"rows\": [\n        {\n          \"content_sha256\": \"6940c35ea89fd863020dec064a8ac2d58e7f639f4f5a1ac16265214c8c9d55c0\",\n          \"logical_id\": \"mc-77f3807adca2e196e9b5fbc2\",\n          \"row_sha256\": \"d0e554bb9d025fc83f498c177703cd9b14db07a38ca03325cbfa193c0e1af1a6\"\n        },\n        {\n          \"content_sha256\": \"6650279da73ae0cc7d2b10fe5839c0f062c2dc1c5c94c57ec8b3920b38c81936\",\n          \"logical_id\": \"mc-9e867890b277accc6e8fb96f\",\n          \"row_sha256\": \"231ea47ea7d16e87853a6e4cffa30c6427da2a943ae6a9260470bfa0769e581d\"\n        },\n        {\n          \"content_sha256\": \"2675687351adc3bae39454bccf8c53d8d0e59ee3b0c2444af37809cab909cb74\",\n          \"logical_id\": \"mc-2a2f36ee5131912373479c1a\",\n          \"row_sha256\": \"50806b5e59c3093451c8eaaec9153eeb00c1306efd1f4cc663fb802b8d3330cd\"\n        },\n        {\n          \"content_sha256\": \"beb389722dee20f1fba4d9a0cdfa252d34f743fa0a7f7c782f14bd2b910bca62\",\n          \"logical_id\": \"mc-544204f363ea08959c4dcb30\",\n          \"row_sha256\": \"c240fad8eff30d4c3221b839d084cf119a2b4d178f7486f0a7bd2d8d3d6bf6c5\"\n        }\n      ],\n      \"sha256\": \"4038328cc699813d6c76bc7d86dc2c9fa17ea4d3fa373f12762ae39baf707317\",\n      \"sheet_name\": \"cards\",\n      \"table_sha256\": \"43104c13b17cd87c8cf227e6d59d6ec1a1e024dcde2236693fb8dd198d760a6d\",\n      \"template_id\": \"correction\",\n      \"template_version\": \"1.1.0\"\n    },\n    {\n      \"byte_size\": 5448,\n      \"columns\": [\n        \"问题\",\n        \"答案\",\n        \"锚点\",\n        \"来源\"\n      ],\n      \"kind\": \"markji-import-xlsx\",\n      \"path\": \"推理框架/cards/w1-p1-runtime-output-practice-technical-qa.xlsx\",\n      \"row_count\": 4,\n      \"rows\": [\n        {\n          \"content_sha256\": \"e90af0701e1dd6eb66f3d18f067ac8de7d16912eac1d17a2a9d1285656969cc9\",\n          \"logical_id\": \"mc-bf4f0830353ce8175f192f8c\",\n          \"row_sha256\": \"2ff766e3f7d79c4eac213c890fcd0f3ad454b912a93cd9afd8d5f08992e60c5f\"\n        },\n        {\n          \"content_sha256\": \"2cae98e603220d5af3f5852b52f109e34c4232fd5e27d62eced110d094a91254\",\n          \"logical_id\": \"mc-3122aaa3b9ce689446c681bc\",\n          \"row_sha256\": \"c36d5f027d79f21584be65b1d30eddb19bf3ff67b3dd5bb304755a1ac68dff6a\"\n        },\n        {\n          \"content_sha256\": \"1409ca669b31a4c3cf7fa2564c65e0d46c73d96dadcf1eb9496c0c02bbc1215b\",\n          \"logical_id\": \"mc-02e87b1438f73bdf09911e42\",\n          \"row_sha256\": \"7a3bcb4f7b80397ddb7dc9fb126f936c431b50ba777be1a42c5ebd036399ff9e\"\n        },\n        {\n          \"content_sha256\": \"c147b5c7b8030e4fccc6952a86d491b1b9bc963f312f66f0d228829b8b82e2d5\",\n          \"logical_id\": \"mc-e83bfcf671f541a964dfb8b6\",\n          \"row_sha256\": \"9a2c080df7c8e636c59f8b2f7b28a44ab364bd355641d75a2b08ae03539dfadd\"\n        }\n      ],\n      \"sha256\": \"988827ec31ba46d6b771e7bb7f7f2ae9fff908a156ff371fba5b2a992d285987\",\n      \"sheet_name\": \"cards\",\n      \"table_sha256\": \"69db18e2bb6f378312347fce6291f902dba2efd18a579706d2eaaea45ee2fb93\",\n      \"template_id\": \"technical-qa\",\n      \"template_version\": \"1.1.0\"\n    }\n  ],\n  \"source_fingerprint\": \"df3d870b4c8d4e41598f4399bc8fa282a318215f3afd59b05e013276a8c077f4\",\n  \"sources\": [\n    {\n      \"collection\": \"inference-study-logs\",\n      \"id\": \"p1-structured-log\",\n      \"path\": \"推理框架/log/2026-09-18-w1-p1-runtime-output-practice.md\",\n      \"sha256\": \"e8050f7bf17e5198c7539b3da18786b5e5262fcdc36366e10d952fa86fb832fa\",\n      \"summary\": \"W1-P1 已核验学习过程；仅采用稳定要点与真实纠错，不读取 raw 为卡片来源。\"\n    }\n  ],\n  \"target_collection\": \"inference-cards\",\n  \"template_registry_sha256\": \"358d0b6e1ee30ee06c0ae9636266ddafad6f2e81494f6d8975d68448e190996c\",\n  \"template_registry_version\": \"1.1.0\"\n}\n---\n# Markji 表格导入卡片\n\n> Markdown 保留受管元数据与模板定义；卡片数据请使用下列按模板拆分的 XLSX 文件导入。\n\n## 真实错误纠错卡\n\n模板 `correction@1.1.0`：\n\n```text\n[P#H1#{{意图}}]\n📍 [T#!939393#{{场景}}]\n---\n✅ [T#B,!36b59d#{{正确}}]\n❌ [T#!c6413a#{{错误}}]\n{{说明}}\n```\n\n导入文件：[w1-p1-runtime-output-practice-correction.xlsx](w1-p1-runtime-output-practice-correction.xlsx)（4 张卡）\n\n## 技术问答卡\n\n模板 `technical-qa@1.1.0`：\n\n```text\n[P#H1#{{问题}}]\n---\n{{答案}}\n💡 [T#B,!36b59d#{{锚点}}]\n📍 [T#!939393#{{来源}}]\n```\n\n导入文件：[w1-p1-runtime-output-practice-technical-qa.xlsx](w1-p1-runtime-output-practice-technical-qa.xlsx)（4 张卡）\n",
+      "candidate_sha256": "5167944c4419151d7fe2736191a7e5f05957109f3868c5a14298c1bde072e180",
+      "candidate_sidecars": [
+        {
+          "byte_size": 6511,
+          "columns": [
+            "意图",
+            "场景",
+            "正确",
+            "错误",
+            "说明"
+          ],
+          "kind": "markji-import-xlsx",
+          "path": "推理框架/cards/w1-p1-runtime-output-practice-correction.xlsx",
+          "row_count": 4,
+          "rows": [
+            {
+              "content_sha256": "6940c35ea89fd863020dec064a8ac2d58e7f639f4f5a1ac16265214c8c9d55c0",
+              "logical_id": "mc-77f3807adca2e196e9b5fbc2",
+              "row_sha256": "d0e554bb9d025fc83f498c177703cd9b14db07a38ca03325cbfa193c0e1af1a6"
+            },
+            {
+              "content_sha256": "6650279da73ae0cc7d2b10fe5839c0f062c2dc1c5c94c57ec8b3920b38c81936",
+              "logical_id": "mc-9e867890b277accc6e8fb96f",
+              "row_sha256": "231ea47ea7d16e87853a6e4cffa30c6427da2a943ae6a9260470bfa0769e581d"
+            },
+            {
+              "content_sha256": "2675687351adc3bae39454bccf8c53d8d0e59ee3b0c2444af37809cab909cb74",
+              "logical_id": "mc-2a2f36ee5131912373479c1a",
+              "row_sha256": "50806b5e59c3093451c8eaaec9153eeb00c1306efd1f4cc663fb802b8d3330cd"
+            },
+            {
+              "content_sha256": "beb389722dee20f1fba4d9a0cdfa252d34f743fa0a7f7c782f14bd2b910bca62",
+              "logical_id": "mc-544204f363ea08959c4dcb30",
+              "row_sha256": "c240fad8eff30d4c3221b839d084cf119a2b4d178f7486f0a7bd2d8d3d6bf6c5"
+            }
+          ],
+          "sha256": "4038328cc699813d6c76bc7d86dc2c9fa17ea4d3fa373f12762ae39baf707317",
+          "sheet_name": "cards",
+          "table_sha256": "43104c13b17cd87c8cf227e6d59d6ec1a1e024dcde2236693fb8dd198d760a6d",
+          "template_id": "correction",
+          "template_version": "1.1.0"
+        },
+        {
+          "byte_size": 5448,
+          "columns": [
+            "问题",
+            "答案",
+            "锚点",
+            "来源"
+          ],
+          "kind": "markji-import-xlsx",
+          "path": "推理框架/cards/w1-p1-runtime-output-practice-technical-qa.xlsx",
+          "row_count": 4,
+          "rows": [
+            {
+              "content_sha256": "e90af0701e1dd6eb66f3d18f067ac8de7d16912eac1d17a2a9d1285656969cc9",
+              "logical_id": "mc-bf4f0830353ce8175f192f8c",
+              "row_sha256": "2ff766e3f7d79c4eac213c890fcd0f3ad454b912a93cd9afd8d5f08992e60c5f"
+            },
+            {
+              "content_sha256": "2cae98e603220d5af3f5852b52f109e34c4232fd5e27d62eced110d094a91254",
+              "logical_id": "mc-3122aaa3b9ce689446c681bc",
+              "row_sha256": "c36d5f027d79f21584be65b1d30eddb19bf3ff67b3dd5bb304755a1ac68dff6a"
+            },
+            {
+              "content_sha256": "1409ca669b31a4c3cf7fa2564c65e0d46c73d96dadcf1eb9496c0c02bbc1215b",
+              "logical_id": "mc-02e87b1438f73bdf09911e42",
+              "row_sha256": "7a3bcb4f7b80397ddb7dc9fb126f936c431b50ba777be1a42c5ebd036399ff9e"
+            },
+            {
+              "content_sha256": "c147b5c7b8030e4fccc6952a86d491b1b9bc963f312f66f0d228829b8b82e2d5",
+              "logical_id": "mc-e83bfcf671f541a964dfb8b6",
+              "row_sha256": "9a2c080df7c8e636c59f8b2f7b28a44ab364bd355641d75a2b08ae03539dfadd"
+            }
+          ],
+          "sha256": "988827ec31ba46d6b771e7bb7f7f2ae9fff908a156ff371fba5b2a992d285987",
+          "sheet_name": "cards",
+          "table_sha256": "69db18e2bb6f378312347fce6291f902dba2efd18a579706d2eaaea45ee2fb93",
+          "template_id": "technical-qa",
+          "template_version": "1.1.0"
+        }
+      ],
+      "changes": {
+        "add": [],
+        "blocked_count": 0,
+        "change": [],
+        "duplicate_count": 0,
+        "remove": []
+      },
+      "context_sha256": "4eea88f8399cea84ba99a737f6e62e063f5b89c1e7d388de63cd360756c0ed3e",
+      "current_artifact_schema": "memo-cards.artifact/v2",
+      "current_sha256": "5167944c4419151d7fe2736191a7e5f05957109f3868c5a14298c1bde072e180",
+      "deferred": [],
+      "dependency_drift": [],
+      "dependent_reviews": [],
+      "diff": "",
+      "duplicates": [],
+      "files": [
+        {
+          "candidate_byte_size": 6511,
+          "candidate_sha256": "4038328cc699813d6c76bc7d86dc2c9fa17ea4d3fa373f12762ae39baf707317",
+          "current_byte_size": 6511,
+          "current_sha256": "4038328cc699813d6c76bc7d86dc2c9fa17ea4d3fa373f12762ae39baf707317",
+          "operation": "no-op",
+          "ownership": "managed",
+          "path": "推理框架/cards/w1-p1-runtime-output-practice-correction.xlsx",
+          "role": "xlsx",
+          "template_id": "correction"
+        },
+        {
+          "candidate_byte_size": 5448,
+          "candidate_sha256": "988827ec31ba46d6b771e7bb7f7f2ae9fff908a156ff371fba5b2a992d285987",
+          "current_byte_size": 5448,
+          "current_sha256": "988827ec31ba46d6b771e7bb7f7f2ae9fff908a156ff371fba5b2a992d285987",
+          "operation": "no-op",
+          "ownership": "managed",
+          "path": "推理框架/cards/w1-p1-runtime-output-practice-technical-qa.xlsx",
+          "role": "xlsx",
+          "template_id": "technical-qa"
+        },
+        {
+          "candidate_byte_size": 13007,
+          "candidate_sha256": "5167944c4419151d7fe2736191a7e5f05957109f3868c5a14298c1bde072e180",
+          "current_byte_size": 13007,
+          "current_sha256": "5167944c4419151d7fe2736191a7e5f05957109f3868c5a14298c1bde072e180",
+          "operation": "no-op",
+          "ownership": "managed",
+          "path": "推理框架/cards/w1-p1-runtime-output-practice.md",
+          "role": "markdown",
+          "template_id": null
+        }
+      ],
+      "format_transition": null,
+      "included": [
+        {
+          "content_summary": "区分自动后端的候选优先顺序与最终有效选择",
+          "key": "backend-candidate-filter",
+          "lifecycle": "active",
+          "logical_id": "mc-bf4f0830353ce8175f192f8c",
+          "quality": "A",
+          "template_id": "technical-qa"
+        },
+        {
+          "content_summary": "区分自动后端筛选与显式指定无效后端时的处理",
+          "key": "explicit-backend-invalid",
+          "lifecycle": "active",
+          "logical_id": "mc-3122aaa3b9ce689446c681bc",
+          "quality": "A",
+          "template_id": "technical-qa"
+        },
+        {
+          "content_summary": "区分实现选择函数成功与所选实现实际执行的证据",
+          "key": "selection-versus-execution",
+          "lifecycle": "active",
+          "logical_id": "mc-02e87b1438f73bdf09911e42",
+          "quality": "A",
+          "template_id": "technical-qa"
+        },
+        {
+          "content_summary": "区分类对象检查与继承关系检查",
+          "key": "class-object-versus-subclass",
+          "lifecycle": "active",
+          "logical_id": "mc-e83bfcf671f541a964dfb8b6",
+          "quality": "B",
+          "template_id": "technical-qa"
+        },
+        {
+          "content_summary": "按每次调用的交付列表统计FINAL_ONLY输出数量",
+          "key": "request-output-count",
+          "lifecycle": "active",
+          "logical_id": "mc-77f3807adca2e196e9b5fbc2",
+          "quality": "A",
+          "template_id": "correction"
+        },
+        {
+          "content_summary": "确定排除stop字符串时的最终文本截断位置",
+          "key": "exclude-stop-text",
+          "lifecycle": "active",
+          "logical_id": "mc-9e867890b277accc6e8fb96f",
+          "quality": "A",
+          "template_id": "correction"
+        },
+        {
+          "content_summary": "解释前端判停清理不等待Core取消及迟到输出被忽略的原因",
+          "key": "frontend-cleanup-before-abort",
+          "lifecycle": "active",
+          "logical_id": "mc-2a2f36ee5131912373479c1a",
+          "quality": "A",
+          "template_id": "correction"
+        },
+        {
+          "content_summary": "在驱动已传递用例字段时通过修改输入切换测试条件",
+          "key": "parameterized-case",
+          "lifecycle": "active",
+          "logical_id": "mc-544204f363ea08959c4dcb30",
+          "quality": "A",
+          "template_id": "correction"
+        }
+      ],
+      "interrupted_transaction": null,
+      "interrupted_transactions": [],
+      "inventory_fingerprint": "4847bc1202554a47abb1522653b8f56249f4d83e01a59c04a5ea3b39014c58c8",
+      "legacy_inventory": [],
+      "operation": "no-op",
+      "preview_digest": "c2ccdf11c5aec644da18c2481e801991cf7ad58bb3d785e523cbae189f1651cb",
+      "request_sha256": "a23c95f4fd4bf830ff90c6afe2a9f716933a29cda340c736f7bc040f68373274",
+      "required_authorization": "none",
+      "risk_reasons": [],
+      "soft_target": null,
+      "source_fingerprint": "df3d870b4c8d4e41598f4399bc8fa282a318215f3afd59b05e013276a8c077f4",
+      "target": "推理框架/cards/w1-p1-runtime-output-practice.md",
+      "target_state": "managed",
+      "template_registry_sha256": "358d0b6e1ee30ee06c0ae9636266ddafad6f2e81494f6d8975d68448e190996c"
+    },
+    "publication_lock": null,
+    "publication_locks": [],
+    "repository_id": "plana",
+    "request_check": {
+      "artifact_set_sha256": "f1cb705d8667f689cd25cd7f2cc9564cb87367f176d66ace74b3734bb24885d3",
+      "files": [
+        {
+          "candidate_byte_size": 6511,
+          "candidate_sha256": "4038328cc699813d6c76bc7d86dc2c9fa17ea4d3fa373f12762ae39baf707317",
+          "current_byte_size": 6511,
+          "current_sha256": "4038328cc699813d6c76bc7d86dc2c9fa17ea4d3fa373f12762ae39baf707317",
+          "operation": "no-op",
+          "ownership": "managed",
+          "path": "推理框架/cards/w1-p1-runtime-output-practice-correction.xlsx",
+          "role": "xlsx",
+          "template_id": "correction"
+        },
+        {
+          "candidate_byte_size": 5448,
+          "candidate_sha256": "988827ec31ba46d6b771e7bb7f7f2ae9fff908a156ff371fba5b2a992d285987",
+          "current_byte_size": 5448,
+          "current_sha256": "988827ec31ba46d6b771e7bb7f7f2ae9fff908a156ff371fba5b2a992d285987",
+          "operation": "no-op",
+          "ownership": "managed",
+          "path": "推理框架/cards/w1-p1-runtime-output-practice-technical-qa.xlsx",
+          "role": "xlsx",
+          "template_id": "technical-qa"
+        },
+        {
+          "candidate_byte_size": 13007,
+          "candidate_sha256": "5167944c4419151d7fe2736191a7e5f05957109f3868c5a14298c1bde072e180",
+          "current_byte_size": 13007,
+          "current_sha256": "5167944c4419151d7fe2736191a7e5f05957109f3868c5a14298c1bde072e180",
+          "operation": "no-op",
+          "ownership": "managed",
+          "path": "推理框架/cards/w1-p1-runtime-output-practice.md",
+          "role": "markdown",
+          "template_id": null
+        }
+      ],
+      "operation": "no-op",
+      "preview_digest": "c2ccdf11c5aec644da18c2481e801991cf7ad58bb3d785e523cbae189f1651cb",
+      "request_sha256": "a23c95f4fd4bf830ff90c6afe2a9f716933a29cda340c736f7bc040f68373274",
+      "target": "推理框架/cards/w1-p1-runtime-output-practice.md",
+      "would_write": false
+    },
+    "sidecar_drift": [],
+    "template_registry_sha256": "358d0b6e1ee30ee06c0ae9636266ddafad6f2e81494f6d8975d68448e190996c",
+    "template_registry_version": "1.1.0"
+  },
+  "ok": true,
+  "schema_version": 1
+}
