@@ -2,19 +2,19 @@
 
 ## What This Repo Is
 
-This is not a code project. It is a Markdown personal knowledge vault for AI Infra interview preparation and long-term notes. Work here is mostly reading, writing, and editing Chinese Markdown. Keep English only for proper nouns such as `FlashAttention`, `PagedAttention`, framework names, paper titles, and CLI/tool names.
+这是面向 AI Infra 面试准备与长期学习的个人知识仓库，以中文 Markdown 为主，英文保留专有名词，例如 `FlashAttention`、`PagedAttention`、框架名、论文标题和 CLI/工具名。当前活动计划是八周证据冲刺，原 20 周计划冻结为长期候选排程。
 
 `README.md` is the canonical human entry point. Its resource subscription list (`§5`) is a projection; `.agent-skills-config/resource-planning.json` owns machine source/query scope and the managed registry owns dynamic resource state.
 
-There is no application build, dependency install, or automated test suite.
+仓库没有统一的应用构建或测试入口，但包含实践脚本、测试与上游源码；实践任务按对应目录和 Lesson 的约定运行。
 
 ## Project Structure
 
 - `计划/` is the planning control plane: `主计划.md`, `进度总表.md`, `学习断点.md`, legacy reports in `计划/周报/`, and new managed resource state under `计划/资源治理/`. The two old SOP paths are retirement notices kept for historical links.
 - `计划/八周冲刺进度/W1.md` through `W8.md` own the sprint's weekly completion, evidence, and remaining gaps. Detailed accepted contracts and stage history stay under `计划/八周冲刺进度/历史记录/`; technical artifacts stay in their module, and Claim-evidence / Case Card outputs stay in `面试准备/自我准备/`. The old EP-PD package path is a compatibility entry, not an active ledger.
 - Core study modules live at the top level: `推理框架/`, `PyTorch/`, `训练框架与分布式/`, `并行计算编程/`, `模型理论/`, `Leetcode/`, `编译器/`, and `TPUs/`.
-- Each core module must keep two anchor files: `学习指引.md` for stable curriculum and `进度.md` for progress tracking. Extra ad-hoc Markdown notes in module directories are expected.
-- `英语/` is a 22-week parallel listening/speaking sub-track. It has `学习指引.md`, `进度.md`, `review-workflow.md`, plus `log/`, `cards/`, and `references/`. Central `english-coach` owns coaching behavior; this vault no longer keeps a parallel system prompt.
+- 各核心模块保留 `学习指引.md` 与 `进度.md` 双锚文件，前者保存稳定课程，后者按证据登记进展。实际学习时长只写用户提供或确认的值，归入实际任务所属模块；不按对话长度、预计投入或运行耗时推算，不建立第二套专项累计工时。模块内可以另存专题 Markdown 笔记。
+- `英语/` 保留 22 周长期听力与口语资料体系，当前投入服从活动计划。目录包含 `学习指引.md`、`进度.md`、`review-workflow.md` 及 `log/`、`cards/`、`references/`；中央 `english-coach` 拥有教学反馈行为，仓库不维护平行 prompt。
 - `.agent-skills-config/guide-learning-profile.md` contains only PlanA's learner profile, state paths, single-writer ownership, duration attribution, and domain lenses. Central `guide-learning` owns teaching behavior.
 - `面试准备/` holds interview materials. `Job Description/` stores role descriptions by direction.
 - Assets should stay near the notes that reference them, for example `TPUs/pointwise-product.gif`.
@@ -39,8 +39,9 @@ Quote CJK paths in shell commands, for example `"训练框架与分布式/进度
 
 ## Planning Control Plane
 
-- `计划/主计划.md` is the 20-week schedule and weekly cadence. Do not modify it during routine work.
-- `计划/进度总表.md` is the global dashboard. It is normally updated on Sunday or during approved SOP flows.
+- `计划/主计划.md` 是冻结的 20 周长期候选排程，32.5h/周属于历史预算，不裁决当前活动状态；日常工作不修改。
+- [计划/高级AI框架开发工程师-八周证据冲刺计划.md](计划/高级AI框架开发工程师-八周证据冲刺计划.md) 拥有当前活动 Program 的目标、范围、预算与候选 Lesson；八个有效周不随日历自动推进。各周完成判断由 `计划/八周冲刺进度/W1.md` 至 `W8.md` 拥有，当前课程只从 `计划/学习断点.md` 发现。
+- `计划/进度总表.md` 是全局派生视图，在周日或经批准的周期触点更新，不反向裁决活动状态，也不代替模块实际工时记录。
 - `.agent-skills-config/resource-planning.json` is the static source/query, module, adapter, and storage fact source. `计划/资源治理/registry.json` becomes the sole dynamic resource fact source after the first confirmed refresh.
 - `计划/周报/2026-W18.md`, `2026-W26.md`, and `2026-W32.md` are immutable legacy evidence. Never append status, rewrite links, infer cursors, or turn their Top lists into approved candidates.
 - `计划/周更流程.md` and `计划/月底晋级评审.md` are retirement notices, not executable SOPs.
@@ -66,7 +67,9 @@ Treat each generated `.agent-skills-context.json` as a materializer-owned locato
 
 ## English Track Notes
 
-`英语/` is a daily 60-75 minute parallel track that extends to W22. Its audio material is produced by the sibling tool repo `../blog-voice`, not this vault. When work involves article cadence, topic selection, or generating listening audio, use `../blog-voice` and anchor on one new AI Infra article every 2-3 weeks.
+原 20 周排程中的“英语每日 60–75 分钟、排除在总预算外”是冻结的历史口径。八周 Program 活动期间，每个日历周目标 18h、上限 20h，已包含“英语与 Mock 2h”和“C++/算法 2h”，不叠加原有每日或每周预算。具体容量与分阶段口头验收规则以[活动计划 §5](计划/高级AI框架开发工程师-八周证据冲刺计划.md#5-时间预算与周节奏)为准。
+
+英语音频教材由同级工具仓库 `../blog-voice` 生产。文章节奏、选题或听力音频生成在该工具仓库处理，以每 2–3 周一篇新 AI Infra 文章为基准。
 
 ## Validation
 

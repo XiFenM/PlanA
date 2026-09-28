@@ -4,7 +4,7 @@
 >
 > **当前阶段**：[高级 AI 框架开发工程师八周证据冲刺](计划/高级AI框架开发工程师-八周证据冲刺计划.md)；原 20 周主计划当前冻结为长期候选排程。**长期定位**：作为我的二脑，沉淀资料、笔记、复盘、实战结果与新感悟。
 >
-> **学习进度**：各周完成项、依据与缺项统一见[八周冲刺进度 · W1](计划/八周冲刺进度/W1.md)及[计划中的各周入口](计划/高级AI框架开发工程师-八周证据冲刺计划.md)；精确恢复位置见[唯一学习断点](计划/学习断点.md)。
+> **学习进度**：各周完成项、依据与缺项见[W1](计划/八周冲刺进度/W1.md)、[W2](计划/八周冲刺进度/W2.md)及[计划中的各周入口](计划/高级AI框架开发工程师-八周证据冲刺计划.md)；当前课程与精确恢复位置只见[唯一学习断点](计划/学习断点.md)。
 
 ---
 
@@ -23,8 +23,8 @@
 PlanA/
 ├── README.md                       ← 本文件
 ├── 计划/                           ← 学习计划与进度的中枢
-│   ├── 主计划.md                   ← 20 周排程总表 + 时间预算
-│   ├── 进度总表.md                 ← 全局 sprint 进度（甘特 + 模块汇总）
+│   ├── 主计划.md                   ← 冻结的 20 周长期候选排程 + 时间预算
+│   ├── 进度总表.md                 ← 全局派生进度（甘特 + 模块汇总）
 │   ├── 周更流程.md                 ← 已退役入口（保留路径供历史链接跳转）
 │   ├── 月底晋级评审.md             ← 已退役入口（保留路径供历史链接跳转）
 │   ├── 学习断点.md                 ← 唯一稀疏 Checkpoint（仅语义变化时覆盖）
@@ -41,7 +41,7 @@ PlanA/
 ├── PyTorch/                        ← PyTorch Internals
 ├── 模型理论/                       ← Attention / MoE / 量化 / RL 后训练
 ├── Leetcode/                       ← 250 题，贯穿全程（并行子轨道）
-├── 英语/                           ← 听力/口语训练，22 周贯穿全程（并行子轨道）
+├── 英语/                           ← 听力/口语长期 22 周资料体系；当前投入服从活动计划
 │   学习指引.md + 进度.md（同样的"稳定版/进度"双锚文件）
 │   外加 review-workflow.md（路径、授权与交接适配）、log/ cards/ references/
 │   音频教材由同级工具仓库 ../blog-voice 生产
@@ -125,7 +125,7 @@ git submodule update --init --recursive -- .agent-skills
 ### 2.2 Skill 中央管线（version 2 受管配置）
 
 中央规范源以 [`.agent-skills`](.agent-skills) 子模块固定在
-`4ce41526b9b43ec0f434c06ffc008128bdc36ea8`。[`.agent-skills.json`](.agent-skills.json) 为 Codex 与 Claude
+`d9c36e9dcc09843bfb726a4cc1dce2373013e2df`。[`.agent-skills.json`](.agent-skills.json) 为 Codex 与 Claude
 同时选择 `guide-learning`、`study-log`、`english-coach`、`memo-cards`、
 `resource-planning` 和 `playwright-cli`，并为五个学习 Skill 引用
 [`.agent-skills-config/`](.agent-skills-config) 下的 Git-tracked 公共配置。`playwright-cli` 无需仓库配置。
