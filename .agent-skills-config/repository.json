@@ -18,7 +18,7 @@
     },
     "inference-progress": {
       "path": "推理框架/进度.md",
-      "description": "当前推理框架 Lesson 经用户确认的实际时长与模块进度事实"
+      "description": "推理框架模块进度与用户确认的实际时长"
     },
     "guide-learning-profile": {
       "path": ".agent-skills-config/guide-learning-profile.md",
@@ -40,7 +40,7 @@
     },
     "main-plan": {
       "path": "计划/主计划.md",
-      "description": "长期目标、范围与唯一总预算事实源"
+      "description": "冻结的 20 周长期候选排程：长期目标、范围与历史总预算；当前活动 Program 的周预算见八周证据冲刺计划 §5"
     },
     "resource-ranking-profile": {
       "path": ".agent-skills-config/resource-planning-profile.md",
