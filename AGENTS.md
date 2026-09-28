@@ -13,7 +13,7 @@
 - `计划/` is the planning control plane: `主计划.md`, `进度总表.md`, `学习断点.md`, legacy reports in `计划/周报/`, and new managed resource state under `计划/资源治理/`. The two old SOP paths are retirement notices kept for historical links.
 - `计划/八周冲刺进度/W1.md` through `W8.md` own the sprint's weekly completion, evidence, and remaining gaps. Detailed accepted contracts and stage history stay under `计划/八周冲刺进度/历史记录/`; technical artifacts stay in their module, and Claim-evidence / Case Card outputs stay in `面试准备/自我准备/`. The old EP-PD package path is a compatibility entry, not an active ledger.
 - Core study modules live at the top level: `推理框架/`, `PyTorch/`, `训练框架与分布式/`, `并行计算编程/`, `模型理论/`, `Leetcode/`, `编译器/`, and `TPUs/`.
-- 各核心模块保留 `学习指引.md` 与 `进度.md` 双锚文件，前者保存稳定课程，后者按证据登记进展。实际学习时长只写用户提供或确认的值，归入实际任务所属模块；不按对话长度、预计投入或运行耗时推算，不建立第二套专项累计工时。模块内可以另存专题 Markdown 笔记。
+- 各核心模块保留 `学习指引.md` 与 `进度.md` 双锚文件，前者保存稳定课程，后者记录模块进度与用户确认的实际时长（归属规则见 `.agent-skills-config/guide-learning-profile.md` §2）。模块内可以另存专题 Markdown 笔记。
 - `英语/` 保留 22 周长期听力与口语资料体系，当前投入服从活动计划。目录包含 `学习指引.md`、`进度.md`、`review-workflow.md` 及 `log/`、`cards/`、`references/`；中央 `english-coach` 拥有教学反馈行为，仓库不维护平行 prompt。
 - `.agent-skills-config/guide-learning-profile.md` contains only PlanA's learner profile, state paths, single-writer ownership, duration attribution, and domain lenses. Central `guide-learning` owns teaching behavior.
 - `面试准备/` holds interview materials. `Job Description/` stores role descriptions by direction.
@@ -40,7 +40,7 @@ Quote CJK paths in shell commands, for example `"训练框架与分布式/进度
 ## Planning Control Plane
 
 - `计划/主计划.md` 是冻结的 20 周长期候选排程，32.5h/周属于历史预算，不裁决当前活动状态；日常工作不修改。
-- [计划/高级AI框架开发工程师-八周证据冲刺计划.md](计划/高级AI框架开发工程师-八周证据冲刺计划.md) 拥有当前活动 Program 的目标、范围、预算与候选 Lesson；八个有效周不随日历自动推进。各周完成判断由 `计划/八周冲刺进度/W1.md` 至 `W8.md` 拥有，当前课程只从 `计划/学习断点.md` 发现。
+- [计划/高级AI框架开发工程师-八周证据冲刺计划.md](计划/高级AI框架开发工程师-八周证据冲刺计划.md) 拥有当前活动 Program 的目标、范围、预算与候选 Lesson；八个有效周不随日历自动推进。
 - `计划/进度总表.md` 是全局派生视图，在周日或经批准的周期触点更新，不反向裁决活动状态，也不代替模块实际工时记录。
 - `.agent-skills-config/resource-planning.json` is the static source/query, module, adapter, and storage fact source. `计划/资源治理/registry.json` becomes the sole dynamic resource fact source after the first confirmed refresh.
 - `计划/周报/2026-W18.md`, `2026-W26.md`, and `2026-W32.md` are immutable legacy evidence. Never append status, rewrite links, infer cursors, or turn their Top lists into approved candidates.
@@ -67,7 +67,7 @@ Treat each generated `.agent-skills-context.json` as a materializer-owned locato
 
 ## English Track Notes
 
-原 20 周排程中的“英语每日 60–75 分钟、排除在总预算外”是冻结的历史口径。八周 Program 活动期间，每个日历周目标 18h、上限 20h，已包含“英语与 Mock 2h”和“C++/算法 2h”，不叠加原有每日或每周预算。具体容量与分阶段口头验收规则以[活动计划 §5](计划/高级AI框架开发工程师-八周证据冲刺计划.md#5-时间预算与周节奏)为准。
+原 20 周排程中的“英语每日 60–75 分钟、排除在总预算外”是冻结的历史口径；八周 Program 活动期间，英语投入计入[活动计划 §5](计划/高级AI框架开发工程师-八周证据冲刺计划.md#5-时间预算与周节奏)的每周预算。
 
 英语音频教材由同级工具仓库 `../blog-voice` 生产。文章节奏、选题或听力音频生成在该工具仓库处理，以每 2–3 周一篇新 AI Infra 文章为基准。
 

@@ -13,13 +13,13 @@ The README (`README.md`) is the canonical human entry point. Its resource list (
 Each lives in its own top-level dir (Chinese names) and **always contains exactly two anchor files**:
 
 - `学习指引.md` — stable curriculum: graded resource list (🟥 必读 / 🟨 选读 / 🟩 背景), long-term subscriptions, self-test bank. Resource edits go through `resource-planning`: single-item additions use its light `adopt` path (one-slot diff plus current confirmation); batch or periodic governance uses an exact review transaction.
-- `进度.md` — 模块进度与实际学习时长。进展按证据登记；实际时长只写用户提供或确认的值，并归入实际任务所属模块，不按对话长度、预计投入或运行耗时推算，也不建立第二套专项累计工时。
+- `进度.md` — 模块进度与用户确认的实际学习时长；归属规则见 `.agent-skills-config/guide-learning-profile.md` §2。
 
 Modules: `推理框架/` `PyTorch/` `训练框架与分布式/` `并行计算编程/` `模型理论/` `Leetcode/` `编译器/` `TPUs/`. Module dirs may also accumulate ad-hoc `.md` files (paper notes, retros, kernel demos) over time — that's expected; only the two anchor files are mandatory.
 
 ## The 英语/ parallel track (listening + speaking)
 
-`英语/` 保留 22 周长期听力与口语资料体系，使用 `学习指引.md` 与 `进度.md` 双锚文件。原 20 周排程中的“英语每日 60–75 分钟、排除在总预算外”是冻结的历史口径；八周 Program 活动期间，每个日历周目标 18h、上限 20h，已包含“英语与 Mock 2h”和“C++/算法 2h”，不叠加原有每日或每周预算。具体容量与分阶段口头验收规则以[活动计划 §5](计划/高级AI框架开发工程师-八周证据冲刺计划.md#5-时间预算与周节奏)为准。英语目录还包含以下材料：
+`英语/` 保留 22 周长期听力与口语资料体系，使用 `学习指引.md` 与 `进度.md` 双锚文件。原 20 周排程中的“英语每日 60–75 分钟、排除在总预算外”是冻结的历史口径；八周 Program 活动期间，英语投入计入[活动计划 §5](计划/高级AI框架开发工程师-八周证据冲刺计划.md#5-时间预算与周节奏)的每周预算。英语目录还包含以下材料：
 
 - `学习指引.md` — the 5-phase plan: baseline-test SOP, daily time blocks, 4 practice SOPs (美剧 / 口语课 / AI Infra listening / mini-talk recording), Markji review policy, phase-by-phase detail, subscriptions.
 - `进度.md` — weekly 打卡 table, monthly comparison, phase checkpoints, 偷懒红线, daily log.
@@ -69,7 +69,7 @@ Cross-skill rules:
 
 - `主计划.md` — 冻结的 20 周长期候选排程，32.5h/周属于历史预算，不裁决当前活动状态；日常工作不修改。
 - [高级AI框架开发工程师-八周证据冲刺计划.md](计划/高级AI框架开发工程师-八周证据冲刺计划.md) — 当前活动 Program，拥有目标、范围、预算与候选 Lesson；八个有效周不随日历自动推进。
-- [八周冲刺进度/](计划/八周冲刺进度/) 下的 `W1.md` 至 `W8.md` — 各周完成项、证据与缺项的唯一进度入口；详细练习约定和阶段历史归 `历史记录/`，当前课程仍只从 `学习断点.md` 发现。
+- [八周冲刺进度/](计划/八周冲刺进度/) 下的 `W1.md` 至 `W8.md` — 各周完成项、证据与缺项的唯一进度入口；详细练习约定和阶段历史归 `历史记录/`。
 - `进度总表.md` — 全局派生视图，在周日或经批准的周期触点更新，不反向裁决活动状态，也不代替模块实际工时记录。
 - `周更流程.md` / `月底晋级评审.md` — retirement notices kept so historical links still resolve; never execute them as SOPs.
 - `周报/2026-W18.md`, `2026-W26.md`, `2026-W32.md` — immutable legacy evidence; never append status or infer current candidates/cursors from them.

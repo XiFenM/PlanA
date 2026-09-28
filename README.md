@@ -4,7 +4,7 @@
 >
 > **当前阶段**：[高级 AI 框架开发工程师八周证据冲刺](计划/高级AI框架开发工程师-八周证据冲刺计划.md)；原 20 周主计划当前冻结为长期候选排程。**长期定位**：作为我的二脑，沉淀资料、笔记、复盘、实战结果与新感悟。
 >
-> **学习进度**：各周完成项、依据与缺项见[W1](计划/八周冲刺进度/W1.md)、[W2](计划/八周冲刺进度/W2.md)及[计划中的各周入口](计划/高级AI框架开发工程师-八周证据冲刺计划.md)；当前课程与精确恢复位置只见[唯一学习断点](计划/学习断点.md)。
+> **学习进度**：各周完成项、依据与缺项见[八周冲刺进度](计划/八周冲刺进度/)；当前课程与精确恢复位置只见[唯一学习断点](计划/学习断点.md)。
 
 ---
 
@@ -124,8 +124,8 @@ git submodule update --init --recursive -- .agent-skills
 
 ### 2.2 Skill 中央管线（version 2 受管配置）
 
-中央规范源以 [`.agent-skills`](.agent-skills) 子模块固定在
-`d9c36e9dcc09843bfb726a4cc1dce2373013e2df`。[`.agent-skills.json`](.agent-skills.json) 为 Codex 与 Claude
+中央规范源是 [`.agent-skills`](.agent-skills) 子模块，固定版本以父仓库记录的 gitlink 为准
+（`git submodule status .agent-skills`），本文不另记提交号。[`.agent-skills.json`](.agent-skills.json) 为 Codex 与 Claude
 同时选择 `guide-learning`、`study-log`、`english-coach`、`memo-cards`、
 `resource-planning` 和 `playwright-cli`，并为五个学习 Skill 引用
 [`.agent-skills-config/`](.agent-skills-config) 下的 Git-tracked 公共配置。`playwright-cli` 无需仓库配置。
