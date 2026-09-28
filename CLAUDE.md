@@ -12,7 +12,7 @@ The README (`README.md`) is the canonical human entry point. Its resource list (
 
 Each lives in its own top-level dir (Chinese names) and **always contains exactly two anchor files**:
 
-- `学习指引.md` — stable curriculum: graded resource list (🟥 必读 / 🟨 选读 / 🟩 背景), long-term subscriptions, self-test bank. Resource edits require an exact `resource-planning` review transaction and current confirmation.
+- `学习指引.md` — stable curriculum: graded resource list (🟥 必读 / 🟨 选读 / 🟩 背景), long-term subscriptions, self-test bank. Resource edits go through `resource-planning`: single-item additions use its light `adopt` path (one-slot diff plus current confirmation); batch or periodic governance uses an exact review transaction.
 - `进度.md` — progress tracker: 📊 summary table + per-section rows. Updated daily, every 0.5h of study.
 
 Modules: `推理框架/` `PyTorch/` `训练框架与分布式/` `并行计算编程/` `模型理论/` `Leetcode/` `编译器/` `TPUs/`. Module dirs may also accumulate ad-hoc `.md` files (paper notes, retros, kernel demos) over time — that's expected; only the two anchor files are mandatory.
@@ -33,11 +33,12 @@ The canonical Skill source is the pinned `.agent-skills` submodule. `.agent-skil
 
 | Trigger | Skill |
 |---|---|
-| Teach, explain, start, continue, or resume learning; design or review a learning exercise | `guide-learning` — short global map, explain-first micro-cycles, post-explanation checks, evidence-gap practice, mastery, and sparse recovery. PlanA facts: `.agent-skills-config/guide-learning-profile.md` |
+| Teach, explain, start, continue, or resume learning; design or review a learning exercise | `guide-learning` — understanding-first teaching: depth ladder (mechanism → design rationale → real systems → boundaries → interview expression), checks that test understanding rather than computation, adaptive pacing, evidence-gap practice, and three-place sparse state. PlanA facts and learner profile: `.agent-skills-config/guide-learning-profile.md` |
 | 英语回顾 / "用英语回顾今天学的" (primary venue, post-study); or the user writes in English / technical discussion (ambient) | `english-coach` — 英语回顾 mock-dialogue over the day's study record, plus scoped turn-end English feedback; natural-language requests control depth, language, shadowing, or quiz behavior |
-| 制卡 / "读 `英语/log/day-NN.md` … 整理成墨墨表格，写到 `英语/cards/day-NN.md`" / turning article 〔面试问题Q&A〕 or 学习记录 into cards | `memo-cards` — Markji table-import TSV; accepts English daily logs and technical Q&A material |
-| 整理学习记录 / 提取对话记录 / 保存经审阅的可见文本对话 | `study-log` — structured process record to `{module}/log/`, or privacy-confirmed raw visible-text archive outside the Git worktree by default |
+| 制卡 / "读 `英语/log/day-NN.md` … 整理成墨墨表格，写到 `英语/cards/day-NN.md`" / turning article 〔面试问题Q&A〕 or 学习记录 into cards | `memo-cards` — managed Markdown plus one Markji XLSX per template, optional official API upload; per-batch soft targets apply to every new card; accepts English daily logs and technical Q&A material |
+| 整理学习记录 / 提取对话记录 / 保存经审阅的可见文本对话 | `study-log` — structured process record to `{module}/log/` by default; the raw visible-text archive is produced only on explicit request, same-named under sibling `{module}/log-raw/` after privacy confirmation |
 | Research or compare learning resources | `resource-planning`; research remains conversational unless an exact brief target is separately authorized |
+| Add or annotate one or two researched resources in a module's `学习指引.md` | `resource-planning` light `adopt` path: one-slot diff via `slot-edit`, current confirmation, no registry write |
 | Save a research brief, persistent source refresh, or curriculum review | `resource-planning`; use its managed context, exact prepare preview, current confirmation, publish, and verify. Configuration alone grants neither network access nor writes. |
 | Browser automation | `playwright-cli` — tool Skill; outside the learning-state pipeline |
 
@@ -74,7 +75,7 @@ Cross-skill rules:
 - `.agent-skills-config/guide-learning-profile.md` — PlanA article tone, lenses, and target collections; the reusable article structure lives in central `guide-learning`.
 - `学习断点.md` — the single sparse Checkpoint; overwrite only at a semantic session boundary or durable recovery change.
 
-The central `guide-learning` Skill owns teaching behavior. `.agent-skills-config/guide-learning-profile.md` contains only PlanA's state paths, single-writer ownership, duration attribution, and domain lenses.
+The central `guide-learning` Skill owns teaching behavior. `.agent-skills-config/guide-learning-profile.md` contains only PlanA's learner profile, state paths, single-writer ownership, duration attribution, and domain lenses. Record mappings are stable (the lesson mapping covers all of `计划/八周冲刺进度/`); the current lesson is pointed to only by `计划/学习断点.md`, so switching lessons never requires a config change.
 
 ## Conventions to preserve
 

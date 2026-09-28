@@ -15,7 +15,7 @@ There is no application build, dependency install, or automated test suite.
 - Core study modules live at the top level: `推理框架/`, `PyTorch/`, `训练框架与分布式/`, `并行计算编程/`, `模型理论/`, `Leetcode/`, `编译器/`, and `TPUs/`.
 - Each core module must keep two anchor files: `学习指引.md` for stable curriculum and `进度.md` for progress tracking. Extra ad-hoc Markdown notes in module directories are expected.
 - `英语/` is a 22-week parallel listening/speaking sub-track. It has `学习指引.md`, `进度.md`, `review-workflow.md`, plus `log/`, `cards/`, and `references/`. Central `english-coach` owns coaching behavior; this vault no longer keeps a parallel system prompt.
-- `.agent-skills-config/guide-learning-profile.md` contains only PlanA state paths, single-writer ownership, duration attribution, and domain lenses. Central `guide-learning` owns teaching behavior.
+- `.agent-skills-config/guide-learning-profile.md` contains only PlanA's learner profile, state paths, single-writer ownership, duration attribution, and domain lenses. Central `guide-learning` owns teaching behavior.
 - `面试准备/` holds interview materials. `Job Description/` stores role descriptions by direction.
 - Assets should stay near the notes that reference them, for example `TPUs/pointwise-product.gif`.
 
@@ -44,7 +44,7 @@ Quote CJK paths in shell commands, for example `"训练框架与分布式/进度
 - `.agent-skills-config/resource-planning.json` is the static source/query, module, adapter, and storage fact source. `计划/资源治理/registry.json` becomes the sole dynamic resource fact source after the first confirmed refresh.
 - `计划/周报/2026-W18.md`, `2026-W26.md`, and `2026-W32.md` are immutable legacy evidence. Never append status, rewrite links, infer cursors, or turn their Top lists into approved candidates.
 - `计划/周更流程.md` and `计划/月底晋级评审.md` are retirement notices, not executable SOPs.
-- `.agent-skills-config/guide-learning-profile.md` maps PlanA's Program, Lesson, event, Checkpoint, duration, and domain facts without duplicating the central workflow.
+- `.agent-skills-config/guide-learning-profile.md` maps PlanA's learner profile, Program, Lesson, event, Checkpoint, duration, and domain facts without duplicating the central workflow. Record mappings are stable (the lesson mapping covers all of `计划/八周冲刺进度/`); the current lesson is pointed to only by `计划/学习断点.md`, so switching lessons never requires a config change.
 - `计划/学习断点.md` is the single sparse Checkpoint. Overwrite it only at a semantic session boundary or durable recovery change.
 
 ## Central Agent Skills
@@ -53,11 +53,11 @@ The canonical Skill source is the pinned `.agent-skills` submodule. `.agent-skil
 
 Route work by intent:
 
-- `guide-learning` — source-grounded explanation, adaptive post-explanation checks, evidence-gap-driven practice, review, mastery, and sparse recovery. PlanA facts: `.agent-skills-config/guide-learning-profile.md`.
+- `guide-learning` — understanding-first teaching: depth ladder (mechanism → design rationale → real systems → boundaries → interview expression), checks that test understanding rather than computation, adaptive pacing, evidence-gap-driven practice, and three-place sparse state. PlanA facts and learner profile: `.agent-skills-config/guide-learning-profile.md`.
 - `english-coach` — post-study English review and scoped turn-end English feedback. PlanA paths and handoffs: `英语/review-workflow.md`.
-- `memo-cards` — Markji table-import cards from English logs, technical Q&A, or structured study records.
-- `study-log` — user-requested paired learning records inside the repository. Structured PlanA output stays under `{module}/log/`; its same-named visible-text archive stays under sibling `{module}/log-raw/`. Raw content still needs privacy review and is not a card input; saving does not authorize Git stage, commit, push, or public disclosure. Existing hashed structured sources may remain unchanged during archive migration.
-- `resource-planning` — managed research, source refresh, claim-level evidence, candidate review, and exact slot-scoped curriculum edits. Configured scope is not network or write authorization. Prepare an exact transaction, obtain current confirmation, publish, then verify.
+- `memo-cards` — managed Markdown plus one Markji XLSX per template, with optional official API upload, from English logs, technical Q&A, or structured study records. Per-batch soft targets apply to every new card.
+- `study-log` — user-requested learning records inside the repository. Structured PlanA output stays under `{module}/log/` by default; a same-named visible-text archive under sibling `{module}/log-raw/` is produced only on explicit request. Raw content still needs privacy review and is not a card input; saving does not authorize Git stage, commit, push, or public disclosure. Existing hashed structured sources may remain unchanged during archive migration.
+- `resource-planning` — managed research, light single-slot `adopt` edits of a module's `学习指引.md`, source refresh, claim-level evidence, candidate review, and exact slot-scoped curriculum edits. Configured scope is not network or write authorization. `adopt` previews one slot with `slot-edit` and applies after current confirmation; refresh and review prepare an exact transaction, obtain current confirmation, publish, then verify.
 - `playwright-cli` — browser automation; it is a tool Skill, not part of the learning-state pipeline.
 
 Cross-skill rules: broad resource governance stays with `resource-planning`; dialogue extraction stays with `study-log`; card generation stays with `memo-cards`. During English study, `english-coach` owns turn-end language feedback while `guide-learning` owns the learning flow. Articles, logs, cards, raw archives, and English review are explicit handoffs, never automatic wrap-up side effects.

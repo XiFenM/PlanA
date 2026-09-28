@@ -74,7 +74,11 @@
       ],
       "inventory_patterns": [
         "推理框架/cards/*.md"
-      ]
+      ],
+      "soft_target": {
+        "minimum": 4,
+        "maximum": 15
+      }
     },
     {
       "id": "pytorch-cards",
@@ -83,7 +87,11 @@
       ],
       "inventory_patterns": [
         "PyTorch/cards/*.md"
-      ]
+      ],
+      "soft_target": {
+        "minimum": 4,
+        "maximum": 15
+      }
     }
   ]
 }
