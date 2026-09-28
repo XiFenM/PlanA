@@ -1,0 +1,51 @@
+{
+  "included": {
+    "count": 26,
+    "templates": {
+      "technical-qa": 24,
+      "correction": 2
+    }
+  },
+  "deferred": [
+    {
+      "topic": "vLLM固定版本复制输入EP调用链快照卡",
+      "quality": "B",
+      "reason": "本批优先保留EP通信布局的常青纠错，固定调用位置先留在记录中。"
+    },
+    {
+      "topic": "SGLang DeepEP v2缓冲超限报错快照卡",
+      "quality": "B",
+      "reason": "已核验但属于单个版本实现细节，本批由过载与丢弃语义卡覆盖核心回忆目标。"
+    }
+  ],
+  "blocked": [
+    {
+      "topic": "用户历史profiler未见All-to-All的实际原因",
+      "reason": "未核对当时版本、配置、后端与trace，结构化记录标为遗留。"
+    },
+    {
+      "topic": "所有后端的传输去重、数值精度与性能保证",
+      "reason": "题设不构成真实实现或设备观测。"
+    }
+  ],
+  "semantic_duplicates": [
+    {
+      "canonical": "推理框架/cards/conv3d-evidence-backpressure.md",
+      "logical_ids": [
+        "mc-2740a1ec9b2d0f55348e1bea",
+        "mc-5dd39e4c218941d48acac5cc",
+        "mc-799f6796742c3dd3e2eabc24"
+      ],
+      "reason": "负载分流、端到端反压、过载拒绝和立即重试已有卡；本批只新增逐TP rank资源准入目标，不复制旧卡。"
+    },
+    {
+      "canonical": "推理框架/cards/vllm-full-session-review.md",
+      "logical_ids": [
+        "mc-7552190fc19fef1335707b7d",
+        "mc-a6c09dfcf93944cd2951b72d"
+      ],
+      "reason": "一般TP复制项和因果可见范围已有卡；本批新增矩阵分块归约与CP归一化机制，不重复一般事实。"
+    }
+  ],
+  "status": "published-and-verified"
+}

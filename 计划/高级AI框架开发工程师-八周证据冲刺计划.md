@@ -1,7 +1,7 @@
 # 高级 AI 框架开发工程师 · 八周证据冲刺计划
 
 > - 创建日期：2026-08-08
-> - 最近调整：2026-09-08（正式口头验收集中到 W4 及后续 Mock；沿用 2026-08-30 的源码、预算与排序基线）
+> - 最近调整：2026-09-28（用户确认 W2 单元一结课，单元二至四保持候选；保留既有范围、预算、W4 起口头验收及其他周次安排）
 > - 周进度：[W1](八周冲刺进度/W1.md) · [W2](八周冲刺进度/W2.md) · [W3](八周冲刺进度/W3.md) · [W4](八周冲刺进度/W4.md) · [W5](八周冲刺进度/W5.md) · [W6](八周冲刺进度/W6.md) · [W7](八周冲刺进度/W7.md) · [W8](八周冲刺进度/W8.md)
 > - Program 状态：[见唯一状态区](#program-plana-jd-ai-framework-4w)；精确学习位置只由[唯一学习断点](学习断点.md)裁决
 > - 目标岗位：[本地复合 JD](<../Job Description/AI框架方向/高级AI框架开发工程师.md>) / [市场岗位需求索引](<../Job Description/AI框架方向/市场岗位需求/README.md>)
@@ -18,31 +18,33 @@
 
 - **Program ID**：`plana-jd-ai-framework-4w`。该 ID 为稳定历史标识，不因计划延长而更改。
 - **状态**：`active`。
-- **前台 Lesson**：[W1「vLLM 执行链与扩展边界」](八周冲刺进度/W1.md#lesson-plana-jd-w1-vllm-execution-boundaries)。
-- **Checkpoint**：[唯一学习断点](学习断点.md)。本文件不复制精确 Pass、题目或下一动作。
-- **已授权范围**：W1。W2–W10 均为候选，不因出现在计划中而自动获得授权。
+- **当前位置**：当前前台课程与下一步只见[唯一学习断点](学习断点.md)；本文件不记录当前课、题目或下一动作。
+- **课程划分**：W2 按 2026-09-26 确认的四课划分推进；每课开课前取得用户授权。各课阶段、证据与结课结论只见 [`八周冲刺进度/`](八周冲刺进度/) 下的周进度页与验收记录。
 - **父 Program**：[主计划](主计划.md#program-plana-ai-infra-interview-20w)。
 - **返回位置**：[启动前返回快照](#161-启动前返回快照)。
-- **连续推进边界**：未授予。每周验收后由用户决定继续、暂停、调整或返回主线。
+- **连续推进**：未授予；每周验收后由用户决定继续、暂停、调整或返回主线。
 - **口头验收安排**：按用户 2026-09-08 的确认，统一采用 [§5.3](#53-每周统一验收门) 的分阶段规则；调整后续候选任务不等于启动 W4 或其他 Lesson。
 - **市场观察参考**：[AMD 岗位与开源参与机会研究](AMD_LLM_Inference_Framework_JD_Research_2026-09-04.md)按周滚动更新；只接入参考，既有 W4 完成后才考虑依据市场小幅调整，具体边界见 [§19.4](#194-市场观察与-w4-完成后的复核)。
 
-候选 Lessons：
+Lesson 安排：
 
-| 顺序 | Lesson ID                                 | 能力标题                              | 状态        |
-| ---: | ----------------------------------------- | ------------------------------------- | ----------- |
-|    1 | `plana-jd-w1-vllm-execution-boundaries` | vLLM 执行链与扩展边界                 | active      |
-|    2 | `plana-jd-w2-moe-ep`                    | MoE EP、并行策略与通信量              | candidate   |
-|    3 | `plana-jd-w3-pd-kv-rdma`                | PD、KV 生命周期与 RDMA                | candidate   |
-|    4 | `plana-jd-w4-validation-interview`      | 定量性能、案例证据与第一次面试闭环    | candidate   |
-|    5 | `plana-jd-w5-pytorch-cpp-runtime`       | PyTorch custom op、C++ 与异步 runtime | candidate   |
-|    6 | `plana-jd-w6-amd-rocm-upstream`         | ROCm/HIP/RCCL 迁移与上游工件          | candidate   |
-|    7 | `plana-jd-w7-training-systems-literacy` | 训练框架与分布式训练系统素养          | candidate   |
-|    8 | `plana-jd-w8-application-closure`       | 证据打包、Mock 与分层投递             | candidate   |
-|    9 | `plana-jd-w9-hardware-or-critical-gap`  | 硬件验证或唯一关键缺口                | conditional |
-|   10 | `plana-jd-w10-upstream-or-repair`       | 上游 review 或未过关项修复            | conditional |
+| 顺序 | Lesson ID                                 | 能力标题                              | 类型   |
+| ---: | ----------------------------------------- | ------------------------------------- | ------ |
+|    1 | `plana-jd-w1-vllm-execution-boundaries` | vLLM 执行链与扩展边界                 | 计划内 |
+|    2 | `plana-jd-w2-moe-ep`                    | W2 单元一：MoE／EP 原理与并行策略     | 计划内 |
+|   2a | `plana-jd-w2-moe-ep-source`             | W2 单元二：真实源码实现与横向对照     | 计划内 |
+|   2b | `plana-jd-w2-cpp-lifetime`              | W2 单元三：C++ 异步缓冲区生命周期     | 计划内 |
+|   2c | `plana-jd-w2-quantitative-evidence`      | W2 单元四：定量模型与项目证据         | 计划内 |
+|    3 | `plana-jd-w3-pd-kv-rdma`                | PD、KV 生命周期与 RDMA                | 计划内 |
+|    4 | `plana-jd-w4-validation-interview`      | 定量性能、案例证据与第一次面试闭环    | 计划内 |
+|    5 | `plana-jd-w5-pytorch-cpp-runtime`       | PyTorch custom op、C++ 与异步 runtime | 计划内 |
+|    6 | `plana-jd-w6-amd-rocm-upstream`         | ROCm/HIP/RCCL 迁移与上游工件          | 计划内 |
+|    7 | `plana-jd-w7-training-systems-literacy` | 训练框架与分布式训练系统素养          | 计划内 |
+|    8 | `plana-jd-w8-application-closure`       | 证据打包、Mock 与分层投递             | 计划内 |
+|    9 | `plana-jd-w9-hardware-or-critical-gap`  | 硬件验证或唯一关键缺口                | 条件   |
+|   10 | `plana-jd-w10-upstream-or-repair`       | 上游 review 或未过关项修复            | 条件   |
 
-本节是本专项唯一 Program control plane。Lesson ledger 保存目标、stage 和 evidence；Checkpoint 保存唯一恢复位置；模块 `进度.md` 保存实际资料和工时。本文件的周次、清单和岗位分析只负责规划，不反向伪造完成状态。
+本节是本专项唯一 Program control plane，只保存范围与候选课程；上表是规划顺序，不记录完成状态。各课阶段、证据与结课结论只见周进度页与验收记录；当前位置只见学习断点；模块 `进度.md` 保存实际资料和工时。本文件的周次、清单和岗位分析只负责规划，不反向伪造完成状态。
 
 ---
 
@@ -275,7 +277,7 @@ W1–W3 按前四项及本周具体技术门验收。口头项目在对应 Mock 
 
 ---
 
-> **候选 Lesson 边界**：下列 W1–W10 是规划展开。当前只有 W1 获得授权；后续内容不构成自动启动许可。
+> **Lesson 边界**：下列 W1–W10 是规划展开。W1 已完成，W2 的开课安排已确认；W3–W10 仍为候选，不构成自动启动许可。
 
 ## 6. W1：恢复 vLLM 执行链与证据基线
 
@@ -320,22 +322,44 @@ P1／P2 的实践要求不因概念与材料项完成而取消；本次结构调
 
 ### 7.1 本周目标
 
-把 MoE 从名词转换为 token、expert、rank、buffer 和通信量；同时关闭 XG 暴露的 C++ 基础红灯。
+把 MoE 从名词转换为 token、expert、rank、buffer 和通信量，进一步连接 vLLM／SGLang 的框架接入与 DeepEP／MORI-EP／Hybrid-EP 的通信实现；同时关闭 XG 暴露的 C++ 基础红灯。
 
 ### 7.2 主任务
 
-1. 用一个小 tensor 手算 `router → top-k → token count/capacity → permutation → dispatch → grouped GEMM → combine`。
-2. 追当前 vLLM Fused MoE 和一条 EP 接入路径；MORI/DeepEP 只用于接口对照。
-3. 分别给出单卡多专家、单机多卡和跨机 EP 数据路径。
-4. 计算 2 组 All-to-All 的 per-rank bytes，并在给定有效带宽后推导理想通信时间下界和负载倾斜影响。
-5. 完成 5 个组合题，覆盖 TP/PP/DP/SP/CP/EP 的 shape/collective/routing 手推；至少 1 题必须包含推理 DP 的 replica routing 或 backpressure。
-6. 写一个 producer-consumer/异步 buffer lifetime C++ 练习，使用 sanitizer 或等价工具验证。
-7. 完成一个小型 MatMul Roofline，并为 blocked/Col-major layout、Qwen3-32B/vLLM V1 异常建立 Case Card 草稿；奕行 Host Padding 另作 F2 回听卡，完整数据审计留到 W4。
+2026-09-24，用户确认四单元结构、五部分源码专题及 Hybrid-EP 的训练／推理适配研究，并安排于 2026-09-25 开始。详细路线唯一正文见 [W2 学习计划](八周冲刺进度/W2-学习计划.md)；本节保留范围入口，§7.3／§7.4 继续负责整周产出与验收门。
+
+用户提供的三天假期是集中学习窗口，不是全部单元必须三天完成的承诺；每日投入尚未细排，沿用 §5 容量边界。保存计划不等于已经开课或接受具体实践契约，不挤掉单元三、四。
+
+<a id="w2-unit-1-moe-parallelism"></a>
+
+#### 单元一：MoE／EP 原理与并行策略
+
+MoE 路由算例、拓扑与通信量推导、五个并行组合题；[详细安排](八周冲刺进度/W2-学习计划.md#w2-unit-1-moe-parallelism)。
+
+<a id="w2-unit-2-source-implementations"></a>
+
+#### 单元二：MoE／EP 真实源码实现与横向对照
+
+vLLM、SGLang、DeepEP、MORI-EP、DeepEP 的 Hybrid-EP 分支五部分；[详细安排与来源边界](八周冲刺进度/W2-学习计划.md#w2-unit-2-source-implementations)。Hybrid-EP 同时研究训练、推理 prefill／decode 的 EP 差异，以及框架接入、布局、同步、buffer 生命周期和验证方式的适配。
+
+这是原“仅追一条 vLLM EP 路径、MORI／DeepEP 只作接口对照”的明确扩展。§1 与 §5.2 的单链／不横向扩读约束在此按每个源码专题执行，五部分依次推进、形成同一证据包；§18 的降级规则不自动删除本次指定专题，缩减必需范围需再确认。可跨日历周完成，但不提高每日历周预算上限，不扩展完整 SGLang scheduler、Megatron 训练栈、全部传输后端或完整 MoE kernel 工程。
+
+<a id="w2-unit-3-cpp-lifetime"></a>
+
+#### 单元三：C++ 异步缓冲区生命周期
+
+producer-consumer／异步 buffer lifetime 小程序与 sanitizer 或等价工具验证；[详细安排](八周冲刺进度/W2-学习计划.md#w2-unit-3-cpp-lifetime)。
+
+<a id="w2-unit-4-quantitative-evidence"></a>
+
+#### 单元四：定量模型与项目证据
+
+小型 MatMul Roofline、layout 与 Qwen3-32B／vLLM V1 异常的 Case Card 草稿及 Host Padding F2 回听卡；[详细安排](八周冲刺进度/W2-学习计划.md#w2-unit-4-quantitative-evidence)。完整数据审计与正式口头 Mock 仍在 W4 及后续安排。
 
 ### 7.3 产出
 
 - EP routing worked example。
-- EP source/test map 和 Change Card。
+- 覆盖五个源码专题的 EP source/test map、横向对照与 Change Card，包含 Hybrid-EP 的训练／推理差异及适配表；作为同一证据包组织，标明版本、接口与实现差异、改造边界以及实际验证状态。
 - parallelism shape/bytes 题集。
 - C++ lifetime 小程序、测试与错误复盘。
 - 小型 MatMul Roofline、第二/第三张 Case Card 草稿。
@@ -344,6 +368,7 @@ P1／P2 的实践要求不因概念与材料项完成而取消；本次结构调
 
 - [ ] 独立通过书面推导或程序恢复 token 原序，并验证 send count 总量守恒；不附加口头时长要求。
 - [ ] 能区分 EP、EPLB、专家冗余和 placement 的时间尺度与作用。
+- [ ] 五个源码专题均有固定版本、代表性调用链及关键实现／测试锚点；能将框架接入与通信实现连接起来，解释布局、完成语义、资源生命周期及主要差异；Hybrid-EP 对照训练、prefill、decode，说明可复用机制、所需适配与验证方法；明确版本与硬件边界，未运行项不标为实测。
 - [ ] 5 个并行组合题中至少 4 题无提示正确，六类并行均被覆盖，collective 由切分推导而非背诵。
 - [ ] 推理 DP 不被误写成 tensor 切分；能解释 replica 级负载、queue/backpressure 和 DPLB 观测。
 - [ ] C++ 练习能解释 ownership、happens-before、析构和错误复现。
