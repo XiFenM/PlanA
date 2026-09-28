@@ -47,8 +47,8 @@
 ## 4. 受管上下文与历史产物
 
 version 2 配置把 `英语/log/` 声明为 `study-log` 的 structured 目标，并让 `english-coach`、`memo-cards`
-各自显式声明同一 tracked collection。该 handoff 只允许定位 Git-tracked UTF-8 成员；未跟踪文件不会进入
-materialized allowlist，也不会因为位于同一目录而获得读取权限。
+各自把它声明为素材目录。读取以用户明确指定的记录为准（包括本次对话中刚整理出的记录），与文件是否已被
+Git 跟踪或提交无关；目录中的其他文件不会因为位于同一目录而被自动读取。
 
 `英语/cards/` 是 `memo-cards` 的输出和 inventory root。现有无 manifest 的日志和卡片保持 legacy，
 不批量重写；只有用户明确刷新某个目标时，才预览 adoption diff。中央 Skill 的 Markji 3.8+ 模板 registry

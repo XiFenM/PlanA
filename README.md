@@ -131,9 +131,10 @@ git submodule update --init --recursive -- .agent-skills
 [`.agent-skills-config/`](.agent-skills-config) 下的 Git-tracked 公共配置。`playwright-cli` 无需仓库配置。
 
 materializer 会为有配置的 Skill 在两个宿主副本中生成逐字节一致的 `.agent-skills-context.json`。它只提供
-仓库事实定位、已核验路径的 tracked 输入 collection 和机械写入上限，不读取学习资料正文，也不保证
-资料格式或内容正确；实际类型读取与校验由对应 Skill 按需执行。配置不授予读取未跟踪文件、保存、覆盖、
-制卡、发布、提交或推送。`resource-planning` 的 context 只声明 source/query 静态范围、只读事实、存储位置与
+仓库事实定位、素材目录边界和机械写入上限，不读取学习资料正文，也不保证资料格式或内容正确；实际类型
+读取与校验由对应 Skill 按需执行。制卡与英语回顾读取用户明确指定的记录，与文件是否已被 Git 跟踪无关，
+暂存或提交记录与卡片也不需要重新 materialize。配置不授予自动扫描素材目录、保存、覆盖、制卡、发布、
+提交或推送。`resource-planning` 的 context 只声明 source/query 静态范围、只读事实、存储位置与
 八个课程空槽；首次 refresh、任何 research brief 和逐项 review 仍分别需要当次预览与明确确认。旧周报
 不属于新 registry，也不会因配置存在而被接管或改写。
 

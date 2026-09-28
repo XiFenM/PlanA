@@ -12,16 +12,14 @@
       "kind": "source-bundle",
       "patterns": [
         "计划/八周冲刺进度/历史记录/W1-学习验收记录.md"
-      ],
-      "producer": "guide-learning"
+      ]
     },
     {
       "id": "inference-study-article",
       "kind": "article",
       "patterns": [
         "推理框架/深入学习理解vLLM/1-Repository-and-Process-Architecture.md"
-      ],
-      "producer": "guide-learning"
+      ]
     },
     {
       "id": "english-study-logs",
@@ -49,8 +47,7 @@
       "kind": "article",
       "patterns": [
         "PyTorch/深入学习理解PyTorch/1-Internal-Overview.md"
-      ],
-      "producer": "guide-learning"
+      ]
     }
   ],
   "output_collections": [

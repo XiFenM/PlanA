@@ -61,7 +61,7 @@ Cross-skill rules:
 - **Artifacts are explicit handoffs**: articles, structured logs, raw archives, cards, and English review are never automatic session-close side effects. Propose them when useful, then wait for the relevant user authorization.
 - **english-coach has two entry points**: post-study 英语回顾 and scoped ambient English feedback. It stays off for pure-Chinese mechanical vault maintenance.
 - **Coexistence**: during English-track learning, `english-coach` owns turn-end language feedback and `guide-learning` owns the learning flow; never append duplicate feedback.
-- **Static config is not authorization**: repository facts, record collections, write roots, and module portfolios only bound possible inputs/targets. Saving, overwriting, card generation, publishing, committing, and pushing still need current natural-language authorization. Untracked files are never implied collection members.
+- **Static config is not authorization**: repository facts, record collections, write roots, and module portfolios only bound possible inputs/targets. Saving, overwriting, card generation, publishing, committing, and pushing still need current natural-language authorization. Collections are never scanned to pick inputs implicitly; a record the user names explicitly (including one study-log just produced) may be used whether or not it is Git-tracked, so never `git add` or re-materialize just to make a source usable.
 
 ## The 计划/ control plane
 

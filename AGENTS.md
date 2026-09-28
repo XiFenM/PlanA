@@ -62,7 +62,7 @@ Route work by intent:
 
 Cross-skill rules: broad resource governance stays with `resource-planning`; dialogue extraction stays with `study-log`; card generation stays with `memo-cards`. During English study, `english-coach` owns turn-end language feedback while `guide-learning` owns the learning flow. Articles, logs, cards, raw archives, and English review are explicit handoffs, never automatic wrap-up side effects.
 
-Treat each generated `.agent-skills-context.json` as a materializer-owned locator and mechanical allowlist, not as action authorization. Public configuration never grants saving, overwriting, card generation, publishing, committing, or pushing. Configured log/card directories do not authorize scanning untracked members.
+Treat each generated `.agent-skills-context.json` as a materializer-owned locator and mechanical allowlist, not as action authorization. Public configuration never grants saving, overwriting, card generation, publishing, committing, or pushing. Configured log/card directories do not authorize scanning for inputs; a record the user names explicitly (including one study-log just produced) may be used whether or not it is Git-tracked, so never `git add` or re-materialize just to make a source usable.
 
 ## English Track Notes
 
