@@ -13,14 +13,14 @@ start_message_id: "msg-558027878e53db1558a1"
 end_message_id: "msg-257ec36bd9bae7a5ce91"
 message_count: 324
 source_sha256: "a532d698be952144775a1d8cd2a6a404e473ba88f2326270b622284df56ea185"
-visible_content_sha256: "499e9562c5ebd9459ad0a8644e799555e0c0c1796ade7ddb0b0704f8db118dfe"
+visible_content_sha256: "0bf85b613b01f9d0db9b7cd0372bdf26e3e06cf90a160e6ddd47f2e83b151228"
 target_precondition_sha256: null
 first_message_at: "2026-08-30T05:19:16.080Z"
 last_message_at: "2026-09-08T09:23:16.211Z"
 created_at_utc: "2026-09-15T06:23:00.048794+00:00"
-updated_at_utc: "2026-09-29T01:31:06.396698+00:00"
+updated_at_utc: "2026-09-29T01:39:55.658928+00:00"
 normalization: {"version":"study-log-visible-v1","client_context":"stripped","adjacent_duplicates":"removed","assistant_commentary":"included","tools":"excluded","attachments":"not_embedded"}
-redaction: {"version":"study-log-redaction-v1","categories":["proprietary"],"applications":[{"category":"proprietary","rule":"local-path-to-description","count":12},{"category":"proprietary","rule":"project-name-generalized","count":1}],"preserved_from_sources":true}
+redaction: {"version":"study-log-redaction-v1","categories":["proprietary"],"applications":[{"category":"proprietary","rule":"local-path-to-description","count":12},{"category":"proprietary","rule":"project-name-generalized","count":1},{"category":"proprietary","rule":"chip-name-generalized","count":8},{"category":"proprietary","rule":"internal-identifier-generalized","count":2}],"preserved_from_sources":true}
 privacy_risks: {"categories":["proprietary"],"counts":{"proprietary":129}}
 structured_record: "推理框架/log/2026-09-08-vllm-full-session-review.md"
 message_phases: [null,"commentary","commentary","commentary","commentary","final_answer",null,"commentary","final_answer",null,"commentary","commentary","commentary","final_answer",null,"commentary","commentary","commentary","commentary","commentary","commentary","commentary","commentary","final_answer",null,"commentary","commentary","commentary","final_answer",null,"commentary","final_answer",null,"commentary","commentary","final_answer",null,"commentary","commentary","final_answer",null,"final_answer",null,"commentary","final_answer",null,"commentary","final_answer",null,"commentary","commentary","commentary","final_answer",null,"commentary","commentary","final_answer",null,"commentary","commentary","commentary","final_answer",null,"commentary","commentary","commentary","final_answer",null,"commentary","commentary","final_answer",null,"commentary","commentary","final_answer",null,"commentary","commentary","commentary","final_answer",null,"commentary","final_answer",null,"commentary","final_answer",null,"commentary","commentary","final_answer",null,"commentary","commentary","commentary","final_answer",null,"commentary","commentary","final_answer",null,null,"commentary","commentary","final_answer",null,"commentary","commentary","final_answer",null,"commentary","commentary","commentary","final_answer",null,"commentary","commentary","final_answer",null,"commentary","commentary","commentary","final_answer",null,"commentary","commentary","final_answer",null,"commentary","final_answer",null,"commentary","commentary","final_answer",null,"commentary","commentary","final_answer",null,"commentary","final_answer",null,"commentary","commentary","final_answer",null,"commentary","commentary","final_answer",null,"commentary","final_answer",null,"commentary","final_answer",null,"final_answer",null,"commentary","commentary","final_answer",null,"commentary","final_answer",null,"commentary","commentary","final_answer",null,"commentary","commentary","final_answer",null,"final_answer",null,"commentary","commentary","final_answer",null,"commentary","commentary","final_answer",null,"commentary","commentary","final_answer",null,"commentary","commentary","final_answer",null,"commentary","final_answer",null,"commentary","final_answer",null,"commentary","commentary","final_answer",null,"commentary","final_answer",null,"commentary","commentary","final_answer",null,"commentary","commentary","final_answer",null,"commentary","commentary","final_answer",null,"commentary","final_answer",null,"commentary","commentary","final_answer",null,"commentary","commentary","final_answer",null,"commentary","final_answer",null,"commentary",null,"commentary","commentary","commentary","final_answer",null,"commentary","commentary","final_answer",null,"final_answer",null,"commentary","commentary","commentary","commentary","commentary","final_answer",null,"commentary","final_answer",null,"commentary","final_answer",null,"commentary","final_answer",null,"commentary","final_answer",null,"commentary","final_answer",null,"commentary","final_answer",null,"commentary","final_answer",null,"final_answer",null,"final_answer",null,"final_answer",null,"commentary","commentary","final_answer",null,"commentary","commentary","final_answer",null,"commentary","final_answer",null,"commentary","commentary","final_answer",null,"commentary","commentary","final_answer",null,"commentary","commentary","final_answer",null,"commentary","final_answer",null,"commentary","commentary","commentary","final_answer",null,"commentary","final_answer",null,"commentary","commentary","final_answer",null,"commentary","final_answer",null,"commentary","commentary","final_answer",null,"commentary","commentary","final_answer"]
@@ -31,7 +31,7 @@ migration: {"schema":"study-log.migration/v1","preview_digest":"df69d31ca5f59384
 
 > 此文件是规则化提取的“可追溯可见文本对话”，不是完整客户端 Session，也不代表已经匿名化。
 > system、developer、reasoning、工具事件、客户端注入和附件正文默认不包含在内。
-> 2026-09-29：应用户要求，正文中指向自研插件本地源码的路径已改为文字描述，项目名泛化为“自研插件”；`visible_content_sha256` 按修改后的正文重算，改动前的逐字文本不再保留于本仓库。
+> 2026-09-29：应用户要求，正文中指向自研插件本地源码的路径已改为文字描述，自研芯片与插件的名称（含代码片段中的标识符）及内部类型名已泛化；`visible_content_sha256` 按修改后的正文重算，改动前的逐字文本不再保留于本仓库。
 
 结构化学习记录：[查看记录](<../log/2026-09-08-vllm-full-session-review.md>)
 
@@ -4423,7 +4423,7 @@ kernel的搬运单元就是512Bytes。
 
 **234 · 助手 / 过程更新** · `2026-09-07T07:10:38.169Z` · `msg-48f8d8d9fb8b8d1ea93e`
 
-容量预算也确认了：插件用新增的 `page_size_bytes_padded` 计算可分配块数，再按逻辑 shape 和 dtype 创建设备 tensor。另一个边界是，仓库里的 C++ 代码只负责向外部 DLC runtime 下发 kernel；具体 DMA 和 TensorStorage 自动补齐的实现不在这里，因此我会把代码可证实的规则与底层待验证部分分开说明。
+容量预算也确认了：插件用新增的 `page_size_bytes_padded` 计算可分配块数，再按逻辑 shape 和 dtype 创建设备 tensor。另一个边界是，仓库里的 C++ 代码只负责向外部的自研芯片 runtime 下发 kernel；具体 DMA 和设备底层存储自动补齐的实现不在这里，因此我会把代码可证实的规则与底层待验证部分分开说明。
 
 ---
 
@@ -4438,8 +4438,8 @@ kernel的搬运单元就是512Bytes。
 在插件对 KV cache 接口的页大小补丁中：
 
 ```python
-DLC_BF16_PADSIZE = 256
-DLC_FP32_PADSIZE = 128
+CHIP_BF16_PADSIZE = 256
+CHIP_FP32_PADSIZE = 128
 ```
 
 这两个数是**元素数**：
@@ -4528,9 +4528,9 @@ torch.zeros(kv_cache_tensor.size,
             device=self.device)
 ```
 
-见插件设备 Model Runner 的缓存分配。普通路径并不是在 Python 中显式 `F.pad(..., Dpad)`；它按 DLC 底层存储对齐规则进行预算和调用。
+见插件设备 Model Runner 的缓存分配。普通路径并不是在 Python 中显式 `F.pad(..., Dpad)`；它按自研芯片的底层存储对齐规则进行预算和调用。
 
-仓库中的 C++ 再通过外部 DLC runtime 下发 kernel，所以**实际 TensorStorage 如何补齐、每次 DMA 怎样搬运，还需要 `torch-dlc`／设备 kernel 的实现才能确认**。
+仓库中的 C++ 再通过外部的自研芯片 runtime 下发 kernel，所以**实际设备底层存储如何补齐、每次 DMA 怎样搬运，还需要 自研芯片 PyTorch 插件／设备 kernel 的实现才能确认**。
 
 你前面担心的浪费，在这份代码里确实被认真处理了：**一般 head 尺寸接受行级 padding，而常见的 BF16 D=128 则通过把 K 和 V 拼成一行，消除了本来可能翻倍的存储开销。**
 
@@ -4560,7 +4560,7 @@ torch.zeros(kv_cache_tensor.size,
 
 **第一个问题：当前两个字段承担了不同用途。**
 
-- `page_size_bytes_padded`：用于容量预算，计入 DLC 的对齐开销。
+- `page_size_bytes_padded`：用于容量预算，计入自研芯片的对齐开销。
 - 原 `page_size_bytes`：在当前 Runner 中，还用于从**逻辑 tensor 元素数**反推块数。
 
 关键代码在插件设备 Model Runner 中：
@@ -4593,7 +4593,7 @@ num_blocks = (
 - 逻辑 shape 单独计算，块数直接来自明确的配置，或使用单独的逻辑页大小；
 - 同步调整分配、reshape、stride 和其他消费者。
 
-所以，**你的统一思路是合理的重构方向；当前额外逻辑是一种兼容现有消费者的实现选择，不是数学上的必需。** 还要注意，DLC 的逐行隐藏 padding 与上游显式页尾 padding 并不完全相同，不能只设置同名字段就认定物理布局已经匹配。
+所以，**你的统一思路是合理的重构方向；当前额外逻辑是一种兼容现有消费者的实现选择，不是数学上的必需。** 还要注意，自研芯片的逐行隐藏 padding 与上游显式页尾 padding 并不完全相同，不能只设置同名字段就认定物理布局已经匹配。
 
 **第二个问题：可以确定直接限制，但还无法确定“为什么恰好选 256”的根本原因。**
 

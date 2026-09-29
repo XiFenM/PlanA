@@ -3,7 +3,7 @@
 > 研究日期：2026-09-14<br>
 > 文档用途：岗位判断、投递定位、技术复习、面试准备、开源贡献、与招聘方沟通<br>
 > 研究对象：用户提供的“AMD 大模型推理框架工程师”非正式内推截图<br>
-> 个人化依据：已知的 PyTorch 分布式、ProcessGroupDLCCL、集合通信、vLLM custom allreduce、CUDA IPC、CUDA 算子及性能调试经历
+> 个人化依据：已知的 PyTorch 分布式、自研芯片 ProcessGroup 后端、集合通信、vLLM custom allreduce、CUDA IPC、CUDA 算子及性能调试经历
 
 ---
 
@@ -844,7 +844,7 @@ P/D 传输期间，源 KV、目标 KV 和 staging buffer 可能同时存在。
 
 ### 8.1 当前最有竞争力的经历
 
-#### ProcessGroupDLCCL 与集合通信
+#### 自研芯片 ProcessGroup 后端与集合通信
 
 直接映射：
 
@@ -927,11 +927,11 @@ NCCL enqueue、collective 和同步路径的理解，可以迁移到：
 
 ### 8.4 30 秒自我介绍主线
 
-> 我目前主要做自研 AI 加速器上的 PyTorch 分布式和推理框架工作，包括 ProcessGroupDLCCL、collective、PyTorch C++ Extension，以及 vLLM custom allreduce。我在 CUDA IPC、barrier、stream/event 生命周期、通信正确性和性能定位方面有直接经验，也读过 NCCL 和 vLLM 的关键路径。这个岗位里，我与 MORI-IO、UMBP、vLLM/SGLang connector 及 C++ 数据面的匹配度最高；Rust 和 ROCm 是我当前重点补齐的部分。
+> 我目前主要做自研 AI 加速器上的 PyTorch 分布式和推理框架工作，包括自研芯片 ProcessGroup 后端、collective、PyTorch C++ Extension，以及 vLLM custom allreduce。我在 CUDA IPC、barrier、stream/event 生命周期、通信正确性和性能定位方面有直接经验，也读过 NCCL 和 vLLM 的关键路径。这个岗位里，我与 MORI-IO、UMBP、vLLM/SGLang connector 及 C++ 数据面的匹配度最高；Rust 和 ROCm 是我当前重点补齐的部分。
 
 ### 8.5 三段必须准备好的项目故事
 
-#### 故事 A：ProcessGroupDLCCL
+#### 故事 A：自研芯片 ProcessGroup 后端
 
 回答框架：
 
@@ -972,7 +972,7 @@ NCCL enqueue、collective 和同步路径的理解，可以迁移到：
 
 没有新增你的实做、实测或合并成果，故不调整 0.1 的启发式匹配比例。
 
-1. **主线不变：C++ / 通信 / 推理数据面。** ProcessGroupDLCCL 与集合通信用于解释 vLLM #56610 的跨组 warmup 顺序；custom allreduce 与 CUDA IPC 用于对照 #48247 的 DP group、IPC 资源与 fallback，不能混用 TP/EP 概念。
+1. **主线不变：C++ / 通信 / 推理数据面。** 自研芯片 ProcessGroup 后端与集合通信用于解释 vLLM #56610 的跨组 warmup 顺序；custom allreduce 与 CUDA IPC 用于对照 #48247 的 DP group、IPC 资源与 fallback，不能混用 TP/EP 概念。
 2. **本周优先复习三份案例：** MORI #653 的 serial order 与完成条件；vLLM #56610 的 prepare/commit 状态机；ATOM #2121 的布局变换、staging buffer 与 RDMA fence。产出每份一页“旧问题—不变量—修复—验证—限制”，明确是源码学习，不是个人贡献。[S53][S60][S61]
 3. **公开贡献优先做一条：** Infera #36 的行为兼容探测接口。后备选 MORI #632 的并发测试协作；SGLang lifecycle 先做既有 PR 的覆盖矩阵，不再从零提相同 timeout 修复。详见 19.11。
 4. **新增补课：** AIC 的源码 PyTorch/AITER ABI 组合与你的 C++ Extension 经验直接相连；学习如何识别 README、Dockerfile 注释和实际 RUN 命令不一致，而不是假设“版本新就兼容”。InferaSim 用于容量推理训练，不能替代 HIP/多卡/RDMA 实操。[S56][S58]
@@ -1200,7 +1200,7 @@ HBM = weights + KV + activations + graphs + RDMA\ buffers + staging + fragmentat
 
 ### 12.5 个人卖点
 
-- ProcessGroupDLCCL；
+- 自研芯片 ProcessGroup 后端；
 - collectives；
 - vLLM custom allreduce；
 - CUDA IPC + barrier；
@@ -1312,7 +1312,7 @@ HBM = weights + KV + activations + graphs + RDMA\ buffers + staging + fragmentat
 ### 15.3 对个人投递定位与准备优先级的影响
 
 1. **第一批：89398 + 89500。** 89398 与 P/D、Large-EP、通信和多机性能最直接；89500 对 vLLM/SGLang、KV、开源贡献与 C++ 的综合要求与现有经历最均衡。
-2. **冲刺档：89499。** 用 ProcessGroupDLCCL、NCCL 源码、custom allreduce、故障定位和性能数据证明“expert”深度，避免仅罗列概念。
+2. **冲刺档：89499。** 用自研芯片 ProcessGroup 后端、NCCL 源码、custom allreduce、故障定位和性能数据证明“expert”深度，避免仅罗列概念。
 3. **引擎 / 内核备选：89395。** 如果目标更偏 SGLang runtime、collective 与 GPU kernel，这条比控制面岗位更贴近当前优势。
 4. **级别校准：89498 / 87545。** 89498 是较宽的 3+ 年框架/内核岗；87545 明确 early-career。是否投递取决于个人年限、职级预期和招聘方是否支持同族 Req 调剂。
 5. **准备顺序微调：** Rust 仍是截图岗位的重要短板，但当前官方可投岗位更明确地要求 Python/C++、SGLang/vLLM、HIP/CUDA、kernel 与多机性能。因此近期准备应先产出一个可展示的 vLLM/SGLang + ROCm/HIP 或通信性能证据，再并行补 Rust async 控制面。
@@ -1473,7 +1473,7 @@ HBM = weights + KV + activations + graphs + RDMA\ buffers + staging + fragmentat
 
 ### 19.1 结论：可以参与，你的优势适合哪些贡献
 
-**可以，而且你的 ProcessGroupDLCCL、C++ Extension、custom allreduce、CUDA IPC、NCCL 源码和并发故障定位经历，能直接用于通信正确性、框架接口和资源生命周期问题。** 不必先成为 Rust 专家或拥有大规模 AMD 集群，才开始贡献；但设备通信、HIP 地址可达性和性能结论仍需要匹配的实机验证。
+**可以，而且你的自研芯片 ProcessGroup 后端、C++ Extension、custom allreduce、CUDA IPC、NCCL 源码和并发故障定位经历，能直接用于通信正确性、框架接口和资源生命周期问题。** 不必先成为 Rust 专家或拥有大规模 AMD 集群，才开始贡献；但设备通信、HIP 地址可达性和性能结论仍需要匹配的实机验证。
 
 这里把“能提 Issue / PR”拆成三件事：项目是否欢迎外部贡献、账号是否有相应操作权限、当前问题是否仍需要人做。公开仓库、Open 状态、没有 assignee，都不能单独回答全部三件事。
 
