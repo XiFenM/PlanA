@@ -68,7 +68,7 @@ Cross-skill rules:
 `计划/` is the planning hub and contains files you should treat as load-bearing:
 
 - `主计划.md` — frozen 20-week long-term candidate schedule; its 32.5h/week budget is historical and does not decide current state. Never modify during routine work.
-- [高级AI框架开发工程师-八周证据冲刺计划.md](计划/高级AI框架开发工程师-八周证据冲刺计划.md) — the active Program: goals, scope, time reference, and candidate lessons. Its eight effective weeks do not follow the calendar; progression depends only on capability gates, not hours.
+- [高级AI框架开发工程师-八周证据冲刺计划.md](计划/高级AI框架开发工程师-八周证据冲刺计划.md) — the active Program: goals, scope, time reference, and candidate lessons. Its effective weeks do not follow the calendar; progression depends only on capability gates, not hours.
 - [八周冲刺进度/](计划/八周冲刺进度/) — `W1.md`–`W8.md` are the single ledger of each week's completed items, evidence, and gaps; detailed practice contracts and stage history live in `历史记录/`.
 - `进度总表.md` — derived global view, updated on Sundays or at an approved touchpoint; it never decides active state or replaces module hour records.
 - `周更流程.md` / `月底晋级评审.md` — retirement notices kept so historical links still resolve; never execute them as SOPs.

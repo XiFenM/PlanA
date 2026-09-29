@@ -1,12 +1,12 @@
 # 高级 AI 框架开发工程师 · 八周证据冲刺计划
 
 > - 创建日期：2026-08-08
-> - 最近调整：2026-09-28（用户确认 W2 单元一结课，单元二至四保持候选；保留既有范围、预算、W4 起口头验收及其他周次安排）
+> - 最近调整：2026-09-29（工时改为排期参考、推进只看能力门；按 Claim 复核补入 W3 分页 KV 读取与模型结构差异表、W4 调度补验与多模态链路、W5 Autograd、W7 Ring／Tree 推导，并在 W4 后插入 W4a：SGLang 与 Speculative Decoding）
 > - 周进度：[W1](八周冲刺进度/W1.md) · [W2](八周冲刺进度/W2.md) · [W3](八周冲刺进度/W3.md) · [W4](八周冲刺进度/W4.md) · [W5](八周冲刺进度/W5.md) · [W6](八周冲刺进度/W6.md) · [W7](八周冲刺进度/W7.md) · [W8](八周冲刺进度/W8.md)
 > - Program 状态：[见唯一状态区](#program-plana-jd-ai-framework-4w)；精确学习位置只由[唯一学习断点](学习断点.md)裁决
 > - 目标岗位：[本地复合 JD](<../Job Description/AI框架方向/高级AI框架开发工程师.md>) / [市场岗位需求索引](<../Job Description/AI框架方向/市场岗位需求/README.md>)
 > - 诊断依据：[AMD AI 框架开发工程师胜任力诊断](../面试准备/自我准备/AMD-AI框架开发工程师胜任力诊断-2026-08-29.md)
-> - 周期：8 个有效周；另设 2 个条件机动周，不按连续日历自动推进
+> - 周期：8 个有效周，另在 W4 后插入 W4a（SGLang 与 Speculative Decoding）；另设 2 个条件机动周，不按连续日历自动推进
 > - 预算：每周约 18h 的参考节奏，包含专项、C++/算法、英语和 Mock；工时只作排期参考，推进只看能力门
 > - 重心：推理与性能约 55%，AMD/Kernel/通信约 20%，训练系统素养约 10%，工程/开源/表达约 15%
 
@@ -37,6 +37,7 @@ Lesson 安排：
 |   2c | `plana-jd-w2-quantitative-evidence`      | W2 单元四：定量模型与项目证据         | 计划内 |
 |    3 | `plana-jd-w3-pd-kv-rdma`                | PD、KV 生命周期与 RDMA                | 计划内 |
 |    4 | `plana-jd-w4-validation-interview`      | 定量性能、案例证据与第一次面试闭环    | 计划内 |
+|   4a | `plana-jd-w4a-sglang-specdec`           | SGLang 与 Speculative Decoding        | 计划内 |
 |    5 | `plana-jd-w5-pytorch-cpp-runtime`       | PyTorch custom op、C++ 与异步 runtime | 计划内 |
 |    6 | `plana-jd-w6-amd-rocm-upstream`         | ROCm/HIP/RCCL 迁移与上游工件          | 计划内 |
 |    7 | `plana-jd-w7-training-systems-literacy` | 训练框架与分布式训练系统素养          | 计划内 |
@@ -385,11 +386,12 @@ producer-consumer／异步 buffer lifetime 小程序与 sanitizer 或等价工�
 
 1. 追固定版本 `KVConnector` 的 scheduler/worker 边界、metadata、load/save、ready 和 cleanup。
 2. 画 PULL 与 PUSH 两种状态机，标出 ownership、ack、timeout、duplicate 和 process failure。
-3. 计算普通 MHA/GQA 的 per-rank KV bytes，再写出 MLA/hybrid cache 不能直接套公式的原因。
+3. 计算普通 MHA/MQA/GQA 的 per-rank KV bytes（含 TP 下 KV head 的切分或复制），再写出 MLA/hybrid cache 不能直接套公式的原因；据公开 config 整理 Qwen、Llama、DeepSeek、ERNIE、GLM 的模型结构差异表（注意力类型、KV head、head dim、MoE、位置编码、MTP），标明哪些实际适配过。
 4. 比较同 TP、异 TP 重分片、DCP/PCP 对 metadata 和 bytes 的影响；首版以 P/D 相同布局为基线。
 5. 建立 MR、QP、CQ、WR、doorbell、CPU proxy/GPU initiated、IB/RoCE、GPUDirect 的数据路径。
 6. 给出无 RDMA、仅 host staging、仅 collective 三种 fallback。
 7. 完成 PD/KV Change Card、failure matrix 和书面系统设计说明；原 15 分钟口头系统设计环节并入 W4 综合 Mock 的分布式部分，不作为 W3 完成门槛。
+8. 追固定版本 attention backend 如何读取分页 KV：block table、slot mapping 与序列长度等 metadata 在哪里构建、怎样传到 kernel 接口；到 metadata 与 kernel 接口层为止，不展开 kernel 内部算法。
 
 ### 8.3 验收门
 
@@ -399,6 +401,8 @@ producer-consumer／异步 buffer lifetime 小程序与 sanitizer 或等价工�
 - [ ] 能解释 PD 为什么可能改善 TTFT/ITL，又为什么不保证吞吐提升。
 - [ ] RDMA 与 IB/RoCE 的层级关系正确，MR/QP/CQ 职责清楚。
 - [ ] 无硬件时所有性能结果保持待验证，仍有可执行 test design。
+- [ ] 能从 block table／slot mapping 说明 attention backend 读取分页 KV 的路径，并指出对应的 metadata 字段与 kernel 接口参数。
+- [ ] 模型结构差异表每项都能回到公开 config，KV bytes 公式按注意力类型分别成立。
 
 ## 9. W4：定量性能、案例证据与第一次面试闭环
 
@@ -409,11 +413,13 @@ producer-consumer／异步 buffer lifetime 小程序与 sanitizer 或等价工�
 ### 9.2 主任务
 
 1. 将 W2 的小型 Roofline 升级为一个 MatMul 或 Conv3D 完整案例：`FLOPs → Bytes → Arithmetic Intensity → attainable performance upper bound / execution-time lower bound → measured efficiency`。
-2. 设计端到端 benchmark packet：模型、版本、shape、dtype、并发、输入/输出长度、warm-up、重复、raw data、正确性。
+2. 设计端到端 benchmark packet：模型、版本、shape、dtype、并发、输入/输出长度、warm-up、重复、raw data、正确性；其中包含一组调度参数（如 `max_num_batched_tokens`）对 TTFT、ITL 与吞吐影响的受控对比。
 3. 读一条 profiler trace，区分 Host、Kernel、copy、collective、allocator 和 idle。
 4. 完成 Conv3D、layout、Qwen3-32B/vLLM V1 异常三张 Case Card；第三张按项目档案中的最新口述基线说明根因、修复、回归范围与对外披露边界。
 5. 补 BF16/FP16/FP8、opmath dtype、AWQ/W4A16 的基础推导。
 6. 做第一次综合推理 Mock：承接 W1 的约 15 分钟 vLLM 主链口述与口头追问、一个项目／性能案例深挖，以及 W3 的 PD/KV 口头系统设计题。把这些内容作为同一既定 Mock 的题段组织，不额外叠加三场考试，也不将已通过的文字追问重新列为未完成。
+7. vLLM 调度补验：Continuous Batching 中请求如何逐步加入与退出批次、Chunked Prefill 如何按 token 预算切分，各完成一次无提示独立变式，并说明对 TTFT／ITL 的影响。
+8. 把 Conv3D Case Card 放回多模态推理链路：基于固定源码说明 processor、vision encoder、embedding 合并到语言模型的路径，以及 RoPE 与 M-RoPE 的位置计算（时间、高、宽分解）和实现位置。
 
 ### 9.3 验收门
 
@@ -424,6 +430,32 @@ producer-consumer／异步 buffer lifetime 小程序与 sanitizer 或等价工�
 - [ ] Mock 中先固定配置和单位，不再由面试官帮助收窄问题。
 - [ ] 在既定 Mock 内完成从 W1–W3 移交的口头主链、项目深挖和 PD/KV 系统题；只记录真实口述与追问结果，不用文稿或文字验收代替。
 - [ ] 完成面向 `87545` 的投递门槛复核；满足 §13.1 时可以边投边学。
+- [ ] Continuous Batching 与 Chunked Prefill 的独立变式无提示通过；调度参数对比同时报告绝对值与取舍。
+- [ ] 多模态链路与 M-RoPE 能对应到固定源码位置，并与 Conv3D 案例的输入 shape 衔接。
+
+## 9A. W4a：SGLang 与 Speculative Decoding
+
+W4 之后插入的有效周，承接 Claim 复核中 SGLang（`CL04`）、Speculative Decoding（`CL06`）与 MTP（`CL07`）的证据缺口。开课前另行授权，Lesson 账本在开课时建立。
+
+### 9A.1 本周目标
+
+把 SGLang 的前缀缓存、结构化输出与调度讲到源码层并与 vLLM 对照；讲清 Speculative Decoding 为什么能加速、什么时候不能加速，以及 MTP 如何充当草稿。
+
+### 9A.2 主任务
+
+1. 固定 SGLang 版本，追 RadixAttention 的前缀匹配、引用计数与淘汰，并与 vLLM 的 Prefix Cache 对照。
+2. 追结构化输出：语法约束如何在采样前生成 token mask，以及它对吞吐的影响。
+3. 追调度主线：批次如何形成、prefill 与 decode 如何调度，以及与 vLLM Scheduler 的差异；不追完整 scheduler 实现。
+4. 推导 Speculative Decoding 的加速比与接受率、草稿成本的关系，并说明拒绝采样为何保持目标分布。
+5. 在 vLLM 或 SGLang 的固定源码中追 draft、verify 与接受的执行路径；以 DeepSeek 的 MTP 作为草稿方法对照，说明 MTP 的训练目标与推理用法。
+
+### 9A.3 验收门
+
+- [ ] RadixAttention、结构化输出与调度三部分各有固定版本源码锚点，以及一次独立解释或预测变式。
+- [ ] 能说明 SGLang 与 vLLM 在前缀缓存和调度上的主要差异与取舍。
+- [ ] 加速比推导的假设清楚，能举出接受率低或草稿成本高时不加速的反例。
+- [ ] 拒绝采样保持分布的论证正确；能讲清 MTP 与独立草稿模型的差异。
+- [ ] 未运行的项目不写实测结论。
 
 ## 10. W5：PyTorch custom op、C++ 与异步 Runtime
 
@@ -433,12 +465,13 @@ producer-consumer／异步 buffer lifetime 小程序与 sanitizer 或等价工�
 
 ### 10.2 主任务
 
-1. 追一个真实 op 的 `schema → dispatcher → fake/meta → C++ registration → backend dispatch → test`。
+1. 追一个真实 op 的 `schema → dispatcher → fake/meta → C++ registration → backend dispatch → test`；backend dispatch 以 PrivateUse1 的注册路径为例。
 2. 实现或整理一个最小 custom op/harness；优先与 layout、copy 或异步 lifetime 相关，不另造无关项目。
 3. 明确 DeviceGuard、stream/event、allocator、storage lifetime、error propagation 和 build/ABI。
 4. 用 CPU reference 与可用设备 backend 做 correctness；有 profiler 时记录 trace。
 5. 将 Qwen3-32B/vLLM V1 异步 H2D/D2D 案例映射到 producer-consumer、completion 和 buffer lifetime；只使用用户确认的项目叙述说明根因与修复。
 6. 完成 C++ live coding：RAII 容器、线程同步、错误处理和最小测试。
+7. 追 Autograd：前向如何记录计算图、`autograd::Function` 如何注册反向、`.backward()` 如何由 backward engine 调度；为第 2 项的 custom op 补一个 backward，并用 gradcheck 验证。
 
 ### 10.3 验收门
 
@@ -448,6 +481,7 @@ producer-consumer／异步 buffer lifetime 小程序与 sanitizer 或等价工�
 - [ ] correctness 包含 reference、边界 shape、dtype 和失败测试。
 - [ ] 能解释同步操作为何可能掩盖 race，以及如何识别观察者效应。
 - [ ] C++ 现场实现可以编译、运行并通过 sanitizer/等价检查。
+- [ ] 能讲清计算图记录、反向注册与 engine 调度；custom op 的 backward 通过 gradcheck。
 
 ## 11. W6：AMD ROCm/HIP/RCCL 迁移与上游工件
 
@@ -513,6 +547,7 @@ producer-consumer／异步 buffer lifetime 小程序与 sanitizer 或等价工�
 5. 解释 mixed precision、loss scaling、gradient accumulation、activation checkpointing。
 6. 用单机可用环境做一个小型策略 sandbox，或在受限环境完成固定源码与精确实验设计。
 7. 做一场训练系统素养 Mock，问题边界控制在本节。
+8. 推导 Ring AllReduce = ReduceScatter + AllGather 的每 rank 通信量与 α–β 时间模型，比较 Ring 与 Tree 在消息大小和规模上的取舍，并对照 NCCL 的算法选择。
 
 ### 12.3 验收门
 
@@ -522,6 +557,7 @@ producer-consumer／异步 buffer lifetime 小程序与 sanitizer 或等价工�
 - [ ] 能从 collective bytes 和假定有效带宽估算一步通信时间下界。
 - [ ] 小型验证或 test design 有 correctness 和性能观察点。
 - [ ] Mock 中没有把“接触过 DeepSpeed/Megatron”扩大成完整训练所有权。
+- [ ] Ring／Tree AllReduce 的通信量与时间模型可复算，能说明两者分别适合的消息大小与规模。
 
 ## 13. W8：证据打包、Mock 与分层投递
 
@@ -702,7 +738,7 @@ producer-consumer／异步 buffer lifetime 小程序与 sanitizer 或等价工�
 
 本轮不展开：
 
-- 完整 SGLang scheduler、完整 TensorRT-LLM 或多个 serving 框架并行精读。
+- 完整 SGLang scheduler（W4a 只追调度主线）、完整 TensorRT-LLM 或多个 serving 框架并行精读。
 - 完整 FlashAttention、MoE Mega Kernel、EP/PD toy serving。
 - 完整 LLVM/MLIR/Inductor 编译器课程。
 - 完整 RDMA verbs 工程和厂商 NIC 驱动细节。
@@ -754,6 +790,7 @@ producer-consumer／异步 buffer lifetime 小程序与 sanitizer 或等价工�
 - [ ] 推理 DP/replica routing/backpressure/DPLB 的最小源码与验收说明。
 - [ ] MoE routing worked example、EP 数据路径和通信量模型。
 - [ ] PD/KV 状态机、failure matrix、KV bytes 与 RDMA/fallback 图。
+- [ ] SGLang 前缀缓存、结构化输出与调度的源码对照，以及 Speculative Decoding 的推导与执行路径（W4a）。
 - [ ] 三张审计 Case Card 和一张完整 Roofline/benchmark packet。
 - [ ] C++ 系统基础通过现场编码和 sanitizer/等价验证。
 - [ ] 一个 Python/C++/device custom op 或 runtime harness。

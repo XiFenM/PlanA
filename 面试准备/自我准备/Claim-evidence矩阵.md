@@ -36,26 +36,42 @@
 
 <a id="downgrade-restoration-evidence"></a>
 
-## 需降级 Claim 的恢复证据（2026-09-29）
+## 后续处理：改写口径与恢复证据（2026-09-29）
 
-- **用途**：W4 后开始投递前，据此判断哪些原说法可以恢复。上表 2026-09-14 的裁决不因本节改变，复审时再更新。
-- **口径**：本行证据全部满足才恢复原说法；只满足一部分时，只把已证实的部分并入“当前可用口径”。
-- **计划来源**：写明最可能产出该证据的位置。“项目事实”只能由你依据真实项目记录补充确认，学习无法替代；“计划外”表示八周计划目前没有安排。
+- **用途**：W4 后开始投递前，据此修订 CV 与面试口径；CV 目前保持原样。上表 2026-09-14 的裁决不因本节改变，复审时再更新。
+- **计划来源**：写明最可能产出证据的位置。“项目事实”只能由你依据真实项目记录补充确认，学习无法替代；“计划外”表示计划目前没有安排。
 - **审计后进展**：2026-09-14 之后已经取得、复审时可以计入的相关证据；它们本身还不足以恢复原说法。
+
+<a id="claim-wording-decisions-20260929"></a>
+
+### 改写口径
+
+以下说法不再追求恢复原文，改用新口径（用户 2026-09-29 决定；`CL09` 为建议，待确认）。
+
+| ID | 新口径 | 依据与状态 |
+|---|---|---|
+| `CL03` | 主要负责 Qwen2.5-VL、Qwen3-VL、ERNIE 4.5-VL 与 GLM-5.3-flash 的框架接入、精度对齐和性能优化；删去 Qwen3-Omni、Llama、DeepSeek | 前三个模型见[项目一口述](projects.md#project1-oral-baseline-20260902)；GLM-5.3-flash 待按[项目模板](projects.md#project-glm-template)补充描述 |
+| `CL09` | 建议：技能行改为“理解 DP、TP、PP、SP、EP 等并行策略的切分与通信语义”，删去“熟悉 DeepSpeed、Megatron-LM、FSDP”；经历行改为“在自研芯片训练适配中，基于 DeepSpeed、Megatron-LM 的测试调试通信后端基础功能；定位多 Stream 通信的调度开销，并实现可回退的单 Stream 方案” | 依据[项目四口述](projects.md#project4-oral-baseline-20260903)与 W2 单元一；你已说明对训练框架本身只做了基于测试的基础功能调试。ZeRO／FSDP 的理解在 W7 后再决定是否写入 |
+| `CL11` | 具备 Triton kernel 编写与调优实践经验；删去 TileLang | programming-lab Triton 01–06：本人实现 matmul、fused softmax 与 fused attention 前向，并做过 `GROUP_SIZE_M`、stages 等配置的受控对比实验 |
+| `CL14` | 会使用 PyTorch、vLLM 框架 Profile／Trace 和控制变量分析 Host、算子、拷贝、通信与 Layout 瓶颈；删去 Nsight | 与 `CL12` 同源的项目口述 |
+
+<a id="claim-restoration-evidence-20260929"></a>
+
+### 恢复原说法所需证据
+
+本行证据全部满足才恢复原说法；只满足一部分时，只把已证实的部分并入“当前可用口径”。
 
 | ID | 恢复原说法所需证据 | 计划来源 | 审计后进展 |
 |---|---|---|---|
-| `CL01` | ① 约 15 分钟 vLLM 主链口述并经追问；② 一次真实运行的 trace 或日志，把 Scheduler 决策、KV block 分配／复用和抢占对应到可观测行为；③ PagedAttention 的 kernel 侧：说明 attention backend 如何通过 block table／slot mapping 读取分页 KV（到后端 metadata 与 kernel 接口层即可）。 | ① W4 Mock（§9.2-6）；② W4 trace 解读（§9.2-3）；③ 计划外 | — |
-| `CL02` | Chunked Prefill 的无提示独立变式：给定 token 预算和混合的 prefill／decode 请求，预测本步切分，并解释对 TTFT／ITL 的影响；自我介绍属口头材料，还需在 W4 Mock 中口述通过。 | 变式计划未单列，可随时补一次；口述在 W4 Mock | — |
-| `CL03` | 对 Qwen3-Omni、Llama、DeepSeek 分别补齐与项目一同粒度的事实：本人职责，以及接入、精度对齐、性能、部署四阶段各做了什么；“源码级二次开发”至少给出一处可描述的改动（改了哪个模块或接口、为什么、如何验证），不需要公开代码。 | 项目事实；W4 Case Card 可作整理载体 | — |
-| `CL05` | ① Continuous Batching 独立验收：基于固定源码说明请求如何逐步加入、退出批次，并完成一次预测变式；② Chunked Prefill 同 `CL02`；③ “掌握”还需一次受控 benchmark：调整调度参数（如 `max_num_batched_tokens`），报告 TTFT、ITL 与吞吐的绝对值、方法和取舍。 | ①② 计划未单列，可随时补；③ W4 benchmark packet（§9.2-2） | — |
-| `CL06` | 四项分别满足：PD 分离通过 W3 验收门；量化在 W4 的 dtype／AWQ／W4A16 推导之外，另有一份可审查工件（量化前后的精度与性能对照，或已确认的项目经历）；Speculative Decoding 讲清 draft／verify、接受率与加速比推导，给出固定源码 map，并说明拒绝采样如何保持输出分布；多模态推理基于固定源码讲清 processor、encoder、embedding 合并与 M-RoPE 位置的链路，并与项目经历对应。 | PD：W3；量化推导：W4（工件计划外）；Speculative Decoding、多模态源码：计划外（§18 已排除 Speculative Decoding） | — |
-| `CL07` | 逐个结构讲清 shape、数据流和框架适配点。MoE：适配点指 vLLM／SGLang 的 MoE 层与 EP 通信后端如何接入。MHA／MQA／GQA：KV head 形状、每 rank KV 字节，以及 TP 下 KV head 的切分或复制。MLA：潜变量压缩的形状、KV 公式为何不同、后端支持情况。RoPE／M-RoPE：旋转公式和 M-RoPE 的时间／高／宽位置分解及实现位置。MTP：训练目标和推理时作为草稿的用法。每个模型家族再给一张基于公开 config 的结构差异表，标明哪些由你实际适配。若要写“在自研芯片上适配过 MoE 模型”，另需项目事实。 | MoE 适配点：W2 单元二；MHA／GQA／MLA 形状：W3（§8.2-3）；RoPE／M-RoPE、MTP、模型差异表：计划外 | W2 单元一已验收 MoE 路由、放置与通信量（shape 与数据流） |
-| `CL08` | 一个真实算子从 schema、dispatcher、fake／meta、C++ 注册、后端分发到测试的逐层文件与函数；allocator、storage 生命周期、device guard 和 stream 能讲清机制而非只列名词；本人的 custom op 注册与测试可运行；另需 Autograd（计算图、`autograd::Function`、backward engine 调度）与 PrivateUse1 后端注册路径的独立解释。 | W5 验收门；PrivateUse1 另见 W6 迁移矩阵；Autograd：计划外 | — |
-| `CL09` | 训练 step 的状态与生命周期、带明确假设的显存账本；DDP 与 FSDP／ZeRO-3 的分片对象、通信时机与峰值显存对比；TP／PP／SP／EP 在训练中的 shape、collective 与 bubble；FSDP 另需一次小型 sandbox 或固定源码证据；DeepSpeed／Megatron 需补项目事实：交付范围、实际并行组合、Loss 对齐方式与代码边界。 | W7 验收门；项目事实 | W2 单元一已验收推理侧 TP、SP、CP、PP、DP 的切分语义与基本通信（非训练框架） |
-| `CL10` | 独立推导 Ring AllReduce = ReduceScatter + AllGather、每 rank 通信量 `2(n−1)/n · S` 与 α–β 时间模型；说明 Tree 在小消息、大规模下的延迟优势和 Ring 的带宽优势；对照 NCCL 的 ring／tree 算法选择给出源码或文档锚点。 | 计划未单列，可随时补一次独立推导；W6 RCCL 对照与 W7 通信时间估算部分覆盖 | W2 单元一已验收“collective 由切分推导”（语义层），未涉及 Ring／Tree 算法 |
-| `CL11` | 本人编写的 kernel：有参考实现对比的正确性、profiler 或受控计时的性能数据，以及至少一轮有依据的调优（配置、tile 或访存改动及前后对比）；FlashAttention 讲清在线 softmax、分块与 IO 复杂度并有实现；TileLang 至少一个本人实现的 kernel。若要写成工作“经验”，还需生产项目中由你编写或调优 kernel 的项目事实；练习证据只支持“具备 Triton kernel 编写与调优实践”。 | programming-lab Triton 课程（PlanA 计划外）；有 AMD 环境时 W6 的 HIP custom op；TileLang：计划外 | programming-lab Triton 01–06 已结课，含本人实现并在 GPU 上验收的 fused attention 前向（在线 softmax），反向只到概念层 |
+| `CL01` | ① 约 15 分钟 vLLM 主链口述并经追问；② 一次真实运行的 trace 或日志，把 Scheduler 决策、KV block 分配／复用和抢占对应到可观测行为；③ PagedAttention 的 kernel 侧：说明 attention backend 如何通过 block table／slot mapping 读取分页 KV（到后端 metadata 与 kernel 接口层即可）。 | ① W4 Mock（§9.2-6）；② W4 trace 解读（§9.2-3）；③ W3（§8.2-8） | — |
+| `CL02` | Chunked Prefill 的无提示独立变式：给定 token 预算和混合的 prefill／decode 请求，预测本步切分，并解释对 TTFT／ITL 的影响；自我介绍属口头材料，还需在 W4 Mock 中口述通过。 | W4（§9.2-7）；口述在 W4 Mock | — |
+| `CL04` | 固定 SGLang 版本中，RadixAttention 的前缀匹配、引用计数与淘汰，结构化输出如何生成 token mask，调度如何形成批次并安排 prefill／decode，三部分各有一次独立解释或预测变式，并能与 vLLM 对照。 | W4a（§9A） | — |
+| `CL05` | ① Continuous Batching 独立验收：基于固定源码说明请求如何逐步加入、退出批次，并完成一次预测变式；② Chunked Prefill 同 `CL02`；③ “掌握”还需一次受控 benchmark：调整调度参数（如 `max_num_batched_tokens`），报告 TTFT、ITL 与吞吐的绝对值、方法和取舍。 | ①② W4（§9.2-7）；③ W4 benchmark packet（§9.2-2） | — |
+| `CL06` | 四项分别满足：PD 分离通过 W3 验收门；量化在 W4 的 dtype／AWQ／W4A16 推导之外，另有一份可审查工件（量化前后的精度与性能对照，或已确认的项目经历）；Speculative Decoding 讲清 draft／verify、接受率与加速比推导，给出固定源码的执行路径，并说明拒绝采样如何保持输出分布；多模态推理基于固定源码讲清 processor、encoder、embedding 合并与 M-RoPE 位置的链路，并与项目经历对应。 | PD：W3；量化推导：W4（工件计划外）；多模态：W4（§9.2-8）；Speculative Decoding：W4a（§9A） | — |
+| `CL07` | 逐个结构讲清 shape、数据流和框架适配点。MoE：适配点指 vLLM／SGLang 的 MoE 层与 EP 通信后端如何接入。MHA／MQA／GQA：KV head 形状、每 rank KV 字节，以及 TP 下 KV head 的切分或复制。MLA：潜变量压缩的形状、KV 公式为何不同、后端支持情况。RoPE／M-RoPE：旋转公式和 M-RoPE 的时间／高／宽位置分解及实现位置。MTP：训练目标和推理时作为草稿的用法。每个模型家族再给一张基于公开 config 的结构差异表，标明哪些由你实际适配。若要写“在自研芯片上适配过 MoE 模型”，另需项目事实。 | MoE 适配点：W2 单元二；MHA／MQA／GQA／MLA 与模型差异表：W3（§8.2-3）；RoPE／M-RoPE：W4（§9.2-8）；MTP：W4a（§9A） | W2 单元一已验收 MoE 路由、放置与通信量（shape 与数据流） |
+| `CL08` | 一个真实算子从 schema、dispatcher、fake／meta、C++ 注册、后端分发到测试的逐层文件与函数；allocator、storage 生命周期、device guard 和 stream 能讲清机制而非只列名词；本人的 custom op 注册与测试可运行；另需 Autograd（计算图、`autograd::Function`、backward engine 调度）与 PrivateUse1 后端注册路径的独立解释。 | W5（§10.2-1 含 PrivateUse1；§10.2-7 Autograd） | — |
+| `CL10` | 独立推导 Ring AllReduce = ReduceScatter + AllGather、每 rank 通信量 `2(n−1)/n · S` 与 α–β 时间模型；说明 Tree 在小消息、大规模下的延迟优势和 Ring 的带宽优势；对照 NCCL 的 ring／tree 算法选择给出源码或文档锚点。 | W7（§12.2-8） | W2 单元一已验收“collective 由切分推导”（语义层），未涉及 Ring／Tree 算法 |
 | `CL13` | 一个完整可复算案例：FLOPs、Bytes（写明读写次数与 cache reuse 假设）、AI、设备屋脊点、性能上界与时间下界、实测效率；再放回端到端链路，说明哪些算子受访存限制、哪些受计算限制及其占总时延的比例。 | W2 单元四（小型 Roofline）→ W4（§9.2-1 完整案例） | — |
 | `CL15` | 异步缓冲区生命周期程序能讲清 ownership、happens-before 与析构，并经 sanitizer 或等价工具验证；现场实现 RAII 容器、线程同步、错误处理与测试，可编译运行并通过 sanitizer；能解释 memory ordering 与 ABI／构建问题。 | W2 单元三；W5（§10.2-3、§10.2-6） | W1 P2 已通过自建程序的 ELF／动态库诊断与启动修复实操 |
-| `CL16` | 统一项目事实：确定模型是 Qwen2.5-VL-32B 还是 Qwen3-VL；固定输入（图像／视频尺寸、batch、并发）；给出优化前后 TTFT 绝对值与测量方法（预热、重复、统计量）；Conv3D 占 TTFT 的比例（profile 分母）；布局重构与 kernel 优化各自的收益；正确性核对。 | 项目事实；W4 Conv3D Case Card（§9.2-4）可作整理载体 | — |
-| `CL17` | 明确计时起止与链路，以及 Transformers 与 vLLM 各负责哪一段；输入／输出长度、并发、预热与统计方式；起止两个绝对值在同一条件下测得；Host 路径、小 shape 计算和权重布局三项优化各自的消融贡献。 | 项目事实；W4 未单列 ECG Case Card，可作为可选的第四张 | — |
+| `CL16` | ① 至少一组输入的优化前后 TTFT 具体值：口述只有近似值，优化后只记得一个上限；② 按口述的近似值，降幅远超 40%，需确认原稿“40%”对应哪一组，没有对应就改用核实后的数字；③ 实测组是 Qwen2.5-VL，原说法写的是 Qwen3-VL，模型名要与测量组一致；④ 建议补 Conv3D 在 TTFT 中的占比，支撑因果。收益写成与算子同事共同优化的结果时，不必拆分布局与 kernel 各自的贡献。 | 项目事实；W4 Conv3D Case Card（§9.2-4）可作整理载体 | [Conv3D Case Card](Conv3D-Case-Card.md) 已写明计时方法、三组输入与图片模型级回归 |
+| `CL17` | 口述中的起止数字与原说法不一致，需先确定采用哪一组；还缺测量条件：计时起止（是否含图像预处理，是否从请求发出算到完整输出）、生成长度、心电图图像尺寸与 prompt 长度、重复次数与统计方式，以及最终测量所在的运行栈（口述先说模型基于 Transformers，后说权重在 vLLM 中预排布）。口述已给出两个阶段的前后数字，可作阶段级归因，三项常规优化的单项收益可不强求。 | 项目事实；W4 未单列 ECG Case Card，可作为可选的第四张 | — |

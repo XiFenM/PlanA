@@ -40,7 +40,7 @@ Quote CJK paths in shell commands, for example `"训练框架与分布式/进度
 ## Planning Control Plane
 
 - `计划/主计划.md` 是冻结的 20 周长期候选排程，32.5h/周属于历史预算，不裁决当前活动状态；日常工作不修改。
-- [计划/高级AI框架开发工程师-八周证据冲刺计划.md](计划/高级AI框架开发工程师-八周证据冲刺计划.md) 拥有当前活动 Program 的目标、范围、预算与候选 Lesson；八个有效周不随日历自动推进。
+- [计划/高级AI框架开发工程师-八周证据冲刺计划.md](计划/高级AI框架开发工程师-八周证据冲刺计划.md) 拥有当前活动 Program 的目标、范围、预算与候选 Lesson；有效周不随日历自动推进。
 - `计划/进度总表.md` 是全局派生视图，在周日或经批准的周期触点更新，不反向裁决活动状态，也不代替模块实际工时记录。
 - `.agent-skills-config/resource-planning.json` is the static source/query, module, adapter, and storage fact source. `计划/资源治理/registry.json` becomes the sole dynamic resource fact source after the first confirmed refresh.
 - `计划/周报/2026-W18.md`, `2026-W26.md`, and `2026-W32.md` are immutable legacy evidence. Never append status, rewrite links, infer cursors, or turn their Top lists into approved candidates.
