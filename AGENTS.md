@@ -15,7 +15,7 @@
 - Core study modules live at the top level: `推理框架/`, `PyTorch/`, `训练框架与分布式/`, `并行计算编程/`, `模型理论/`, `Leetcode/`, `编译器/`, and `TPUs/`.
 - 各核心模块保留 `学习指引.md` 与 `进度.md` 双锚文件，前者保存稳定课程，后者记录模块进度与用户确认的实际时长（归属规则见 `.agent-skills-config/guide-learning-profile.md` §2）。模块内可以另存专题 Markdown 笔记。
 - `英语/` 保留 22 周长期听力与口语资料体系，当前投入服从活动计划。目录包含 `学习指引.md`、`进度.md`、`review-workflow.md` 及 `log/`、`cards/`、`references/`；中央 `english-coach` 拥有教学反馈行为，仓库不维护平行 prompt。
-- `.agent-skills-config/guide-learning-profile.md` contains only PlanA's learner profile, state paths, single-writer ownership, duration attribution, and domain lenses. Central `guide-learning` owns teaching behavior.
+- `.agent-skills-config/guide-learning-profile.md` contains only PlanA's learner profile, state paths, single-writer ownership, duration attribution, domain lenses, and article adaptation. Central `guide-learning` owns teaching behavior.
 - `面试准备/` holds interview materials. `Job Description/` stores role descriptions by direction.
 - Assets should stay near the notes that reference them, for example `TPUs/pointwise-product.gif`.
 
@@ -90,6 +90,7 @@ Pull requests should state the purpose, list touched modules or SOPs, and call o
 ## Things To Avoid
 
 - Do not reintroduce `.obsidian/`; Obsidian is no longer used for this vault.
+- Do not switch branches in a shared checkout. Codex works in the sibling worktree `../PlanA-codex` on branch `codex`, while `../PlanA` stays on `main`; rebase `codex` onto `main` before starting, and ask the user to fast-forward `main` when the work is ready.
 - Do not reformat or tidy stable curriculum files opportunistically.
 - Do not auto-promote weekly-report items to `学习指引.md`.
 - Do not create planning, decision, or summary Markdown files unless explicitly asked.
