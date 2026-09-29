@@ -1,7 +1,7 @@
 # 高级 AI 框架开发工程师 · 八周证据冲刺计划
 
 > - 创建日期：2026-08-08
-> - 最近调整：2026-09-29（工时改为排期参考、推进只看能力门；按 Claim 复核补入 W3 分页 KV 读取与模型结构差异表、W4 调度补验与多模态链路、W5 Autograd、W7 Ring／Tree 推导，并在 W4 后插入 W4a：SGLang 与 Speculative Decoding）
+> - 最近调整：2026-09-29（工时改为排期参考、推进只看能力门；按 Claim 复核补入 W3 分页 KV 读取与模型结构差异表、W4 调度补验、多模态链路与量化对照实验、W5 Autograd、W7 Ring／Tree 推导，并在 W4 后插入 W4a：SGLang 与 Speculative Decoding）
 > - 周进度：[W1](八周冲刺进度/W1.md) · [W2](八周冲刺进度/W2.md) · [W3](八周冲刺进度/W3.md) · [W4](八周冲刺进度/W4.md) · [W5](八周冲刺进度/W5.md) · [W6](八周冲刺进度/W6.md) · [W7](八周冲刺进度/W7.md) · [W8](八周冲刺进度/W8.md)
 > - Program 状态：[见唯一状态区](#program-plana-jd-ai-framework-4w)；精确学习位置只由[唯一学习断点](学习断点.md)裁决
 > - 目标岗位：[本地复合 JD](<../Job Description/AI框架方向/高级AI框架开发工程师.md>) / [市场岗位需求索引](<../Job Description/AI框架方向/市场岗位需求/README.md>)
@@ -416,7 +416,7 @@ producer-consumer／异步 buffer lifetime 小程序与 sanitizer 或等价工�
 2. 设计端到端 benchmark packet：模型、版本、shape、dtype、并发、输入/输出长度、warm-up、重复、raw data、正确性；其中包含一组调度参数（如 `max_num_batched_tokens`）对 TTFT、ITL 与吞吐影响的受控对比。
 3. 读一条 profiler trace，区分 Host、Kernel、copy、collective、allocator 和 idle。
 4. 完成 Conv3D、layout、Qwen3-32B/vLLM V1 异常三张 Case Card；第三张按项目档案中的最新口述基线说明根因、修复、回归范围与对外披露边界。
-5. 补 BF16/FP16/FP8、opmath dtype、AWQ/W4A16 的基础推导。
+5. 补 BF16/FP16/FP8、opmath dtype、AWQ/W4A16 的基础推导，并做一次小型量化对照：选一个公开小模型，用 vLLM 支持的一种量化方案（如 AWQ／W4A16 或 FP8）与 BF16 基线比较精度（固定评测集或输出一致性）和性能（显存、TTFT、ITL、吞吐），写明硬件、版本与测量方法。
 6. 做第一次综合推理 Mock：承接 W1 的约 15 分钟 vLLM 主链口述与口头追问、一个项目／性能案例深挖，以及 W3 的 PD/KV 口头系统设计题。把这些内容作为同一既定 Mock 的题段组织，不额外叠加三场考试，也不将已通过的文字追问重新列为未完成。
 7. vLLM 调度补验：Continuous Batching 中请求如何逐步加入与退出批次、Chunked Prefill 如何按 token 预算切分，各完成一次无提示独立变式，并说明对 TTFT／ITL 的影响。
 8. 把 Conv3D Case Card 放回多模态推理链路：基于固定源码说明 processor、vision encoder、embedding 合并到语言模型的路径，以及 RoPE 与 M-RoPE 的位置计算（时间、高、宽分解）和实现位置。
@@ -432,6 +432,7 @@ producer-consumer／异步 buffer lifetime 小程序与 sanitizer 或等价工�
 - [ ] 完成面向 `87545` 的投递门槛复核；满足 §13.1 时可以边投边学。
 - [ ] Continuous Batching 与 Chunked Prefill 的独立变式无提示通过；调度参数对比同时报告绝对值与取舍。
 - [ ] 多模态链路与 M-RoPE 能对应到固定源码位置，并与 Conv3D 案例的输入 shape 衔接。
+- [ ] 量化对照同时报告精度与性能的绝对值、测量方法和适用边界；没有可用硬件时只交完整实验设计，不写实测结论。
 
 ## 9A. W4a：SGLang 与 Speculative Decoding
 
