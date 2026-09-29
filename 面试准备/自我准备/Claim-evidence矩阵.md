@@ -46,14 +46,16 @@
 
 ### 改写口径
 
-以下说法不再追求恢复原文，改用新口径（用户 2026-09-29 决定；`CL09` 为建议，待确认）。
+以下说法不再追求恢复原文，改用新口径（用户 2026-09-29 决定）。
 
 | ID | 新口径 | 依据与状态 |
 |---|---|---|
 | `CL03` | 主要负责 Qwen2.5-VL、Qwen3-VL、ERNIE 4.5-VL 与 GLM-5.3-flash 的框架接入、精度对齐和性能优化；删去 Qwen3-Omni、Llama、DeepSeek | 前三个模型见[项目一口述](projects.md#project1-oral-baseline-20260902)；GLM-5.3-flash 待按[项目模板](projects.md#project-glm-template)补充描述 |
-| `CL09` | 建议：技能行改为“理解 DP、TP、PP、SP、EP 等并行策略的切分与通信语义”，删去“熟悉 DeepSpeed、Megatron-LM、FSDP”；经历行改为“在自研芯片训练适配中，基于 DeepSpeed、Megatron-LM 的测试调试通信后端基础功能；定位多 Stream 通信的调度开销，并实现可回退的单 Stream 方案” | 依据[项目四口述](projects.md#project4-oral-baseline-20260903)与 W2 单元一；你已说明对训练框架本身只做了基于测试的基础功能调试。ZeRO／FSDP 的理解在 W7 后再决定是否写入 |
-| `CL11` | 具备 Triton kernel 编写与调优实践经验；删去 TileLang | programming-lab Triton 01–06：本人实现 matmul、fused softmax 与 fused attention 前向，并做过 `GROUP_SIZE_M`、stages 等配置的受控对比实验 |
+| `CL09` | 技能行改为“理解 DP、TP、PP、SP、EP 等并行策略的切分与通信语义”，删去“熟悉 DeepSpeed、Megatron-LM、FSDP”；经历行改为“在自研芯片训练适配中，基于 DeepSpeed、Megatron-LM 的测试调试通信后端基础功能；定位多 Stream 通信的调度开销，并实现可回退的单 Stream 方案” | 依据[项目四口述](projects.md#project4-oral-baseline-20260903)与 W2 单元一；你已说明对训练框架本身只做了基于测试的基础功能调试；用户已确认该口径。ZeRO／FSDP 的理解在 W7 后再决定是否写入 |
+| `CL11` | 具备 Triton kernel 编写与调优实践经验，包括 FlashAttention 式的 fused attention 前向实现；删去 TileLang | programming-lab Triton 01–06：本人实现 matmul、fused softmax 与 fused attention 前向，并做过 `GROUP_SIZE_M`、stages 等配置的受控对比实验 |
 | `CL14` | 会使用 PyTorch、vLLM 框架 Profile／Trace 和控制变量分析 Host、算子、拷贝、通信与 Layout 瓶颈；删去 Nsight | 与 `CL12` 同源的项目口述 |
+| `CL16` | 在 Qwen2.5-VL／Qwen3-VL 视觉 Encoder 的 Conv3D 上完成模型侧布局重构，并与算子同事协同优化：算子 Profile 中 Conv3D 的 cycle 占比由约 95% 降至 0.03%，TTFT 从分钟级降到 5 秒以内 | [Conv3D Case Card](Conv3D-Case-Card.md) F4–F6；TTFT 实测组为 Qwen2.5-VL 的 3B 视频与 32B 图片。两个模型的视觉 Conv3D 都是 3 输入通道、时间步长 2，补齐问题相同；公开配置中两者权重形状不同，面试中不说“形状相同” |
+| `CL17` | ECG 多模态模型端到端时延从 30–40 秒降至 20 秒以内，达到客户验收目标 | [项目二口述与测量条件](projects.md#project2-oral-baseline-20260902)：`Transformers` 运行栈，含图像预处理、从请求发出算到完整输出，生成上限 1024、平均约 700–800 token，10 次平均（含首次运行） |
 
 <a id="claim-restoration-evidence-20260929"></a>
 
@@ -73,5 +75,3 @@
 | `CL10` | 独立推导 Ring AllReduce = ReduceScatter + AllGather、每 rank 通信量 `2(n−1)/n · S` 与 α–β 时间模型；说明 Tree 在小消息、大规模下的延迟优势和 Ring 的带宽优势；对照 NCCL 的 ring／tree 算法选择给出源码或文档锚点。 | W7（§12.2-8） | W2 单元一已验收“collective 由切分推导”（语义层），未涉及 Ring／Tree 算法 |
 | `CL13` | 一个完整可复算案例：FLOPs、Bytes（写明读写次数与 cache reuse 假设）、AI、设备屋脊点、性能上界与时间下界、实测效率；再放回端到端链路，说明哪些算子受访存限制、哪些受计算限制及其占总时延的比例。 | W2 单元四（小型 Roofline）→ W4（§9.2-1 完整案例） | — |
 | `CL15` | 异步缓冲区生命周期程序能讲清 ownership、happens-before 与析构，并经 sanitizer 或等价工具验证；现场实现 RAII 容器、线程同步、错误处理与测试，可编译运行并通过 sanitizer；能解释 memory ordering 与 ABI／构建问题。 | W2 单元三；W5（§10.2-3、§10.2-6） | W1 P2 已通过自建程序的 ELF／动态库诊断与启动修复实操 |
-| `CL16` | ① 至少一组输入的优化前后 TTFT 具体值：口述只有近似值，优化后只记得一个上限；② 按口述的近似值，降幅远超 40%，需确认原稿“40%”对应哪一组，没有对应就改用核实后的数字；③ 实测组是 Qwen2.5-VL，原说法写的是 Qwen3-VL，模型名要与测量组一致；④ 建议补 Conv3D 在 TTFT 中的占比，支撑因果。收益写成与算子同事共同优化的结果时，不必拆分布局与 kernel 各自的贡献。 | 项目事实；W4 Conv3D Case Card（§9.2-4）可作整理载体 | [Conv3D Case Card](Conv3D-Case-Card.md) 已写明计时方法、三组输入与图片模型级回归 |
-| `CL17` | 口述中的起止数字与原说法不一致，需先确定采用哪一组；还缺测量条件：计时起止（是否含图像预处理，是否从请求发出算到完整输出）、生成长度、心电图图像尺寸与 prompt 长度、重复次数与统计方式，以及最终测量所在的运行栈（口述先说模型基于 Transformers，后说权重在 vLLM 中预排布）。口述已给出两个阶段的前后数字，可作阶段级归因，三项常规优化的单项收益可不强求。 | 项目事实；W4 未单列 ECG Case Card，可作为可选的第四张 | — |
