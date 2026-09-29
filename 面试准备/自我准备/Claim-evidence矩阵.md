@@ -54,8 +54,8 @@
 | `CL09` | 技能行改为“理解 DP、TP、PP、SP、EP 等并行策略的切分与通信语义”，删去“熟悉 DeepSpeed、Megatron-LM、FSDP”；经历行改为“在自研芯片训练适配中，基于 DeepSpeed、Megatron-LM 的测试调试通信后端基础功能；定位多 Stream 通信的调度开销，并实现可回退的单 Stream 方案” | 依据[项目四口述](projects.md#project4-oral-baseline-20260903)与 W2 单元一；你已说明对训练框架本身只做了基于测试的基础功能调试；用户已确认该口径。ZeRO／FSDP 的理解在 W7 后再决定是否写入 |
 | `CL11` | 具备 Triton kernel 编写与调优实践经验，包括 FlashAttention 式的 fused attention 前向实现；删去 TileLang | programming-lab Triton 01–06：本人实现 matmul、fused softmax 与 fused attention 前向，并做过 `GROUP_SIZE_M`、stages 等配置的受控对比实验 |
 | `CL14` | 会使用 PyTorch、vLLM 框架 Profile／Trace 和控制变量分析 Host、算子、拷贝、通信与 Layout 瓶颈；删去 Nsight | 与 `CL12` 同源的项目口述 |
-| `CL16` | 在 Qwen2.5-VL／Qwen3-VL 视觉 Encoder 的 Conv3D 上完成模型侧布局重构，并与算子同事协同优化：算子 Profile 中 Conv3D 的 cycle 占比由约 95% 降至 0.03%，TTFT 从分钟级降到 5 秒以内 | [Conv3D Case Card](Conv3D-Case-Card.md) F4–F6；TTFT 实测组为 Qwen2.5-VL 的 3B 视频与 32B 图片。两个模型的视觉 Conv3D 都是 3 输入通道、时间步长 2，补齐问题相同；公开配置中两者权重形状不同，面试中不说“形状相同” |
-| `CL17` | ECG 多模态模型端到端时延从 30–40 秒降至 20 秒以内，达到客户验收目标 | [项目二口述与测量条件](projects.md#project2-oral-baseline-20260902)：`Transformers` 运行栈，含图像预处理、从请求发出算到完整输出，生成上限 1024、平均约 700–800 token，10 次平均（含首次运行） |
+| `CL16` | 在 Qwen2.5-VL／Qwen3-VL 视觉 Encoder 的 Conv3D 上完成模型侧布局重构，并与算子同事协同优化；在 Qwen2.5-VL-32B 图片输入测试组中，算子 Profile 里 Conv3D 的 cycle 占比由约 95% 降至 0.03%，TTFT 从分钟级降到 5 秒以内 | [Conv3D Case Card](Conv3D-Case-Card.md) F4–F6；数字均来自 Qwen2.5-VL-32B 图片输入测试组。两个模型的 Conv3D 走同一优化路径，但权重形状不同，面试中不说“形状相同” |
+| `CL17` | ECG 多模态模型端到端时延从 30–40 秒降至 20 秒以内，达到客户验收目标 | [项目二口述与测量条件](projects.md#project2-oral-baseline-20260902)：`Transformers` 运行栈，含图像预处理、从请求发出算到完整输出，生成上限 1024、平均约 700–800 token，优化前后都是 10 次平均、含首次运行（无预热编译） |
 
 <a id="claim-restoration-evidence-20260929"></a>
 
