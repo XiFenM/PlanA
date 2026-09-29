@@ -13,14 +13,14 @@ start_message_id: "msg-558027878e53db1558a1"
 end_message_id: "msg-257ec36bd9bae7a5ce91"
 message_count: 324
 source_sha256: "a532d698be952144775a1d8cd2a6a404e473ba88f2326270b622284df56ea185"
-visible_content_sha256: "b346c04b4c03097faf57259f7675d7c1b7eaf90530a027a7332246cca0b89c3d"
+visible_content_sha256: "499e9562c5ebd9459ad0a8644e799555e0c0c1796ade7ddb0b0704f8db118dfe"
 target_precondition_sha256: null
 first_message_at: "2026-08-30T05:19:16.080Z"
 last_message_at: "2026-09-08T09:23:16.211Z"
 created_at_utc: "2026-09-15T06:23:00.048794+00:00"
-updated_at_utc: "2026-09-15T06:23:00.048794+00:00"
+updated_at_utc: "2026-09-29T01:31:06.396698+00:00"
 normalization: {"version":"study-log-visible-v1","client_context":"stripped","adjacent_duplicates":"removed","assistant_commentary":"included","tools":"excluded","attachments":"not_embedded"}
-redaction: {"version":"study-log-redaction-v1","categories":[],"applications":[],"preserved_from_sources":true}
+redaction: {"version":"study-log-redaction-v1","categories":["proprietary"],"applications":[{"category":"proprietary","rule":"local-path-to-description","count":12},{"category":"proprietary","rule":"project-name-generalized","count":1}],"preserved_from_sources":true}
 privacy_risks: {"categories":["proprietary"],"counts":{"proprietary":129}}
 structured_record: "推理框架/log/2026-09-08-vllm-full-session-review.md"
 message_phases: [null,"commentary","commentary","commentary","commentary","final_answer",null,"commentary","final_answer",null,"commentary","commentary","commentary","final_answer",null,"commentary","commentary","commentary","commentary","commentary","commentary","commentary","commentary","final_answer",null,"commentary","commentary","commentary","final_answer",null,"commentary","final_answer",null,"commentary","commentary","final_answer",null,"commentary","commentary","final_answer",null,"final_answer",null,"commentary","final_answer",null,"commentary","final_answer",null,"commentary","commentary","commentary","final_answer",null,"commentary","commentary","final_answer",null,"commentary","commentary","commentary","final_answer",null,"commentary","commentary","commentary","final_answer",null,"commentary","commentary","final_answer",null,"commentary","commentary","final_answer",null,"commentary","commentary","commentary","final_answer",null,"commentary","final_answer",null,"commentary","final_answer",null,"commentary","commentary","final_answer",null,"commentary","commentary","commentary","final_answer",null,"commentary","commentary","final_answer",null,null,"commentary","commentary","final_answer",null,"commentary","commentary","final_answer",null,"commentary","commentary","commentary","final_answer",null,"commentary","commentary","final_answer",null,"commentary","commentary","commentary","final_answer",null,"commentary","commentary","final_answer",null,"commentary","final_answer",null,"commentary","commentary","final_answer",null,"commentary","commentary","final_answer",null,"commentary","final_answer",null,"commentary","commentary","final_answer",null,"commentary","commentary","final_answer",null,"commentary","final_answer",null,"commentary","final_answer",null,"final_answer",null,"commentary","commentary","final_answer",null,"commentary","final_answer",null,"commentary","commentary","final_answer",null,"commentary","commentary","final_answer",null,"final_answer",null,"commentary","commentary","final_answer",null,"commentary","commentary","final_answer",null,"commentary","commentary","final_answer",null,"commentary","commentary","final_answer",null,"commentary","final_answer",null,"commentary","final_answer",null,"commentary","commentary","final_answer",null,"commentary","final_answer",null,"commentary","commentary","final_answer",null,"commentary","commentary","final_answer",null,"commentary","commentary","final_answer",null,"commentary","final_answer",null,"commentary","commentary","final_answer",null,"commentary","commentary","final_answer",null,"commentary","final_answer",null,"commentary",null,"commentary","commentary","commentary","final_answer",null,"commentary","commentary","final_answer",null,"final_answer",null,"commentary","commentary","commentary","commentary","commentary","final_answer",null,"commentary","final_answer",null,"commentary","final_answer",null,"commentary","final_answer",null,"commentary","final_answer",null,"commentary","final_answer",null,"commentary","final_answer",null,"commentary","final_answer",null,"final_answer",null,"final_answer",null,"final_answer",null,"commentary","commentary","final_answer",null,"commentary","commentary","final_answer",null,"commentary","final_answer",null,"commentary","commentary","final_answer",null,"commentary","commentary","final_answer",null,"commentary","commentary","final_answer",null,"commentary","final_answer",null,"commentary","commentary","commentary","final_answer",null,"commentary","final_answer",null,"commentary","commentary","final_answer",null,"commentary","final_answer",null,"commentary","commentary","final_answer",null,"commentary","commentary","final_answer"]
@@ -31,6 +31,7 @@ migration: {"schema":"study-log.migration/v1","preview_digest":"df69d31ca5f59384
 
 > 此文件是规则化提取的“可追溯可见文本对话”，不是完整客户端 Session，也不代表已经匿名化。
 > system、developer、reasoning、工具事件、客户端注入和附件正文默认不包含在内。
+> 2026-09-29：应用户要求，正文中指向自研插件本地源码的路径已改为文字描述，项目名泛化为“自研插件”；`visible_content_sha256` 按修改后的正文重算，改动前的逐字文本不再保留于本仓库。
 
 结构化学习记录：[查看记录](<../log/2026-09-08-vllm-full-session-review.md>)
 
@@ -4404,7 +4405,7 @@ kernel的搬运单元就是512Bytes。
 
 **231 · 用户** · `2026-09-07T07:05:05.514Z` · `msg-ca02c89afd96bac5b474`
 
-在推理框架/references/vllm-cl
+在本地的自研插件仓库中
 
 ---
 
@@ -4428,13 +4429,13 @@ kernel的搬运单元就是512Bytes。
 
 **235 · 助手 / 正式回答** · `2026-09-07T07:11:27.997Z` · `msg-0af3afd9decf49e8ae10`
 
-看完了，依据是 `vllm-cl` 当前提交 `4fd99a4f`。**这份插件主要按 head 尾维的 512 B 对齐来计算 padding；普通 Attention 使用 256 Token 的 block，并为 BF16、head size 128 专门设计了 K/V 合并布局来减少浪费。**
+看完了，依据是自研插件当前提交 `4fd99a4f`。**这份插件主要按 head 尾维的 512 B 对齐来计算 padding；普通 Attention 使用 256 Token 的 block，并为 BF16、head size 128 专门设计了 K/V 合并布局来减少浪费。**
 
 这与前面“整页从 48 KiB 补到 64 KiB”的手算假设不同。
 
 **1. Padding 的计账单位是 head 尾维。**
 
-在 [patch_kv_cache_interface.py](/root/workspace/learning/PlanA/推理框架/references/vllm-cl/vllm_cl/patch/patch_kv_cache_interface.py:13) 中：
+在插件对 KV cache 接口的页大小补丁中：
 
 ```python
 DLC_BF16_PADSIZE = 256
@@ -4479,7 +4480,7 @@ block_size = 256
 [num_blocks, num_kv_heads, block_size, 2 × head_size]
 ```
 
-见 [Attention backend 的 shape 分支](/root/workspace/learning/PlanA/推理框架/references/vllm-cl/vllm_cl/attention/attention.py:104)。
+见插件 Attention backend 的 shape 分支。
 
 每个 Token、每个 KV head 的一行变成：
 
@@ -4490,7 +4491,7 @@ block_size = 256
 
 这样就用有效 K/V 数据填满一个 512 B 行，避免 K、V 分别补成两个 512 B 行。
 
-这不只是改 shape。[CPU 参考写入实现](/root/workspace/learning/PlanA/推理框架/references/vllm-cl/vllm_cl/_custom_ops.py:1072) 明确将前 128 个元素写 K、后 128 个写 V；设备侧也分别选择合并布局的[写入 kernel](/root/workspace/learning/PlanA/推理框架/references/vllm-cl/csrc/cache.cpp:56)和[Attention 读取 kernel](/root/workspace/learning/PlanA/推理框架/references/vllm-cl/csrc/attention.cpp:248)。
+这不只是改 shape。插件的 CPU 参考写入实现明确将前 128 个元素写 K、后 128 个写 V；设备侧也分别选择合并布局的写入 kernel 和 Attention 读取 kernel。
 
 按插件公式，几个**单层、单 block** 的例子是：
 
@@ -4504,7 +4505,7 @@ MLA 使用独立公式，不乘普通 Attention 的 K/V 系数 2。以上是源�
 
 **3. `block_size=256` 是当前 backend/kernel 的支持约束。**
 
-[platform.py](/root/workspace/learning/PlanA/推理框架/references/vllm-cl/vllm_cl/platform.py:128) 在未指定时设置默认值 256；普通 Attention backend 的 `get_supported_kernel_block_sizes()` 直接返回 `[256]`。
+插件的平台配置在未指定时设置默认值 256；普通 Attention backend 的 `get_supported_kernel_block_sizes()` 直接返回 `[256]`。
 
 这里容易混淆两个“256”：
 
@@ -4517,7 +4518,7 @@ MLA 使用独立公式，不乘普通 Attention 的 K/V 系数 2。以上是源�
 
 **4. Padding 已纳入容量预算，但实际存储由更底层实现。**
 
-插件新增了 **`page_size_bytes_padded`**，并没有直接覆盖原来的 `page_size_bytes`。[容量计算代码](/root/workspace/learning/PlanA/推理框架/references/vllm-cl/vllm_cl/patch/patch_kv_cache_utils.py:279) 使用 padded 页大小计算可分配块数，防止仅按紧凑数据大小高估容量。
+插件新增了 **`page_size_bytes_padded`**，并没有直接覆盖原来的 `page_size_bytes`。插件的容量计算补丁使用 padded 页大小计算可分配块数，防止仅按紧凑数据大小高估容量。
 
 不过，实际创建 tensor 时仍传入逻辑 shape 和 dtype：
 
@@ -4527,7 +4528,7 @@ torch.zeros(kv_cache_tensor.size,
             device=self.device)
 ```
 
-见 [Runner 的缓存分配](/root/workspace/learning/PlanA/推理框架/references/vllm-cl/vllm_cl/worker/dlc_model_runner.py:6866)。普通路径并不是在 Python 中显式 `F.pad(..., Dpad)`；它按 DLC 底层存储对齐规则进行预算和调用。
+见插件设备 Model Runner 的缓存分配。普通路径并不是在 Python 中显式 `F.pad(..., Dpad)`；它按 DLC 底层存储对齐规则进行预算和调用。
 
 仓库中的 C++ 再通过外部 DLC runtime 下发 kernel，所以**实际 TensorStorage 如何补齐、每次 DMA 怎样搬运，还需要 `torch-dlc`／设备 kernel 的实现才能确认**。
 
@@ -4562,7 +4563,7 @@ torch.zeros(kv_cache_tensor.size,
 - `page_size_bytes_padded`：用于容量预算，计入 DLC 的对齐开销。
 - 原 `page_size_bytes`：在当前 Runner 中，还用于从**逻辑 tensor 元素数**反推块数。
 
-关键代码在 [dlc_model_runner.py:6940](/root/workspace/learning/PlanA/推理框架/references/vllm-cl/vllm_cl/worker/dlc_model_runner.py:6940)：
+关键代码在插件设备 Model Runner 中：
 
 ```python
 num_blocks = (
@@ -4600,11 +4601,11 @@ num_blocks = (
 
 1. Platform 默认设置 256。
 2. 普通 Attention backend 明确只声明支持 `[256]`。
-3. BF16、D=128 的 K/V 合并布局明确绑定 `block_size=256`。见 [backend 的支持声明与布局分支](/root/workspace/learning/PlanA/推理框架/references/vllm-cl/vllm_cl/attention/attention.py:59)。
+3. BF16、D=128 的 K/V 合并布局明确绑定 `block_size=256`。见插件 Attention backend 的支持声明与布局分支。
 
 我还检查了相关本地提交历史，未找到把 256 与片上容量、kernel tile 或性能测试直接联系起来的设计说明。实际设备 kernel 内部也不在这个仓库。
 
-另外，[另一条 paged-attention 封装](/root/workspace/learning/PlanA/推理框架/references/vllm-cl/csrc/attention.cpp:24)还保留了非 256 时选择通用 kernel 的分支。因此：
+另外，另一条 paged-attention 封装还保留了非 256 时选择通用 kernel 的分支。因此：
 
 > 能说“当前普通 backend／K/V 合并路径的支持范围限定为 256”，不能说“这颗芯片从硬件上只能支持 256 Token 的 block”。
 

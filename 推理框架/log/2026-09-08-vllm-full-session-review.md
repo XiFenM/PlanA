@@ -5,7 +5,7 @@
 > 结构化提取 source SHA-256：`7cbdb629a6efa75de559753604b17c52448575aa51e5cc655cb6cbf153d5898c`。
 > 可追溯文本：私有归档 `sl-22e6e0a4514b45e3aa993aa12959fc91`，状态 `final`，可见内容 SHA-256 为 `b346c04b4c03097faf57259f7675d7c1b7eaf90530a027a7332246cca0b89c3d`。归档时 source SHA-256 为 `f0ce3162b9d0957d1eb206fdfda9d93a80e5ef841541365f1c1de1d8533f032f`；期间仅选定终点之外的操作继续追加，选定消息及 ID 未变。
 > 关联：[请求生命周期与输出处理](../深入学习理解vLLM/2-Request-Lifecycle-and-Output.md)、[仓库与进程架构](../深入学习理解vLLM/1-Repository-and-Process-Architecture.md)、[项目档案](../../面试准备/自我准备/projects.md)、[Lesson 证据](../EP-PD自研芯片适配设计与验证包.md#lesson-plana-jd-w1-vllm-execution-boundaries)。
-> 事实范围：vLLM 实现结论固定为 `v0.26.0 @ 568afb3a13806beb53bb2e6bd518269357b237c0`，执行侧限定 MRV1；插件旁支另用 `vllm-cl @ 4fd99a4f21d720347c6dec54253504f8321c0437`。项目数字保留为用户自述或待核事项，不等同于本轮实测。
+> 事实范围：vLLM 实现结论固定为 `v0.26.0 @ 568afb3a13806beb53bb2e6bd518269357b237c0`，执行侧限定 MRV1；插件旁支另用自研插件提交 `4fd99a4f21d720347c6dec54253504f8321c0437`。项目数字保留为用户自述或待核事项，不等同于本轮实测。
 > 覆盖说明：检查了整个选定会话，包含早期规划、项目复盘、Pass A–B 复习、Pass C–E、KV 账本和整段复述。修复旧 IDE 包装识别后补回 16 条用户作答，原有 308 条消息 ID 保持不变。可追溯文本不含隐藏推理、工具结果、客户端注入或附件正文；本记录不替代文章、课程状态或最终能力结论。
 
 ## 早期项目复盘与证据边界
