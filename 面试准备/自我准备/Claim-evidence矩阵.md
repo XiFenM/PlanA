@@ -33,3 +33,29 @@
 | `CL19` | [CV／自我介绍“vLLM V1 异步 H2D／D2D 异常目前根因闭环中”](projects.md#project3-oral-baseline-20260902) | 已证明 | 新项目基线已覆盖旧状态：按用户口述，根因为 `CPU Padding 完成 → H2D 提交 → 设备拷贝完成 → 消费` 依赖不完整，已修复；168 条请求×5 轮，共 840 次在当前请求集中未再观察到原异常。本表不采用已撤回 diff，也不扩张为全部 Runtime 实现归属或所有 workload 零故障。 | 当前文稿的“根因闭环中”已滞后；可改为“定位两阶段 Host 准备与异步 H2D 间的依赖缺口，通过统一异步任务标记与等待机制完成修复；修复后在现场 168 条请求×5 轮回归范围内未再复现”。 |
 
 **矩阵结果**：`已证明` 2 条，`需降级` 14 条，`待补证` 3 条，共 19 条。这一结果完成 W1 的当前 Claim 审计门，但不代表原文稿已经改写，也不代表其他 W1 任务完成。后续修订外部文稿时以本表为当前裁决入口，项目事实和数字仍回到各项目的待核字段关闭。
+
+<a id="downgrade-restoration-evidence"></a>
+
+## 需降级 Claim 的恢复证据（2026-09-29）
+
+- **用途**：W4 后开始投递前，据此判断哪些原说法可以恢复。上表 2026-09-14 的裁决不因本节改变，复审时再更新。
+- **口径**：本行证据全部满足才恢复原说法；只满足一部分时，只把已证实的部分并入“当前可用口径”。
+- **计划来源**：写明最可能产出该证据的位置。“项目事实”只能由你依据真实项目记录补充确认，学习无法替代；“计划外”表示八周计划目前没有安排。
+- **审计后进展**：2026-09-14 之后已经取得、复审时可以计入的相关证据；它们本身还不足以恢复原说法。
+
+| ID | 恢复原说法所需证据 | 计划来源 | 审计后进展 |
+|---|---|---|---|
+| `CL01` | ① 约 15 分钟 vLLM 主链口述并经追问；② 一次真实运行的 trace 或日志，把 Scheduler 决策、KV block 分配／复用和抢占对应到可观测行为；③ PagedAttention 的 kernel 侧：说明 attention backend 如何通过 block table／slot mapping 读取分页 KV（到后端 metadata 与 kernel 接口层即可）。 | ① W4 Mock（§9.2-6）；② W4 trace 解读（§9.2-3）；③ 计划外 | — |
+| `CL02` | Chunked Prefill 的无提示独立变式：给定 token 预算和混合的 prefill／decode 请求，预测本步切分，并解释对 TTFT／ITL 的影响；自我介绍属口头材料，还需在 W4 Mock 中口述通过。 | 变式计划未单列，可随时补一次；口述在 W4 Mock | — |
+| `CL03` | 对 Qwen3-Omni、Llama、DeepSeek 分别补齐与项目一同粒度的事实：本人职责，以及接入、精度对齐、性能、部署四阶段各做了什么；“源码级二次开发”至少给出一处可描述的改动（改了哪个模块或接口、为什么、如何验证），不需要公开代码。 | 项目事实；W4 Case Card 可作整理载体 | — |
+| `CL05` | ① Continuous Batching 独立验收：基于固定源码说明请求如何逐步加入、退出批次，并完成一次预测变式；② Chunked Prefill 同 `CL02`；③ “掌握”还需一次受控 benchmark：调整调度参数（如 `max_num_batched_tokens`），报告 TTFT、ITL 与吞吐的绝对值、方法和取舍。 | ①② 计划未单列，可随时补；③ W4 benchmark packet（§9.2-2） | — |
+| `CL06` | 四项分别满足：PD 分离通过 W3 验收门；量化在 W4 的 dtype／AWQ／W4A16 推导之外，另有一份可审查工件（量化前后的精度与性能对照，或已确认的项目经历）；Speculative Decoding 讲清 draft／verify、接受率与加速比推导，给出固定源码 map，并说明拒绝采样如何保持输出分布；多模态推理基于固定源码讲清 processor、encoder、embedding 合并与 M-RoPE 位置的链路，并与项目经历对应。 | PD：W3；量化推导：W4（工件计划外）；Speculative Decoding、多模态源码：计划外（§18 已排除 Speculative Decoding） | — |
+| `CL07` | 逐个结构讲清 shape、数据流和框架适配点。MoE：适配点指 vLLM／SGLang 的 MoE 层与 EP 通信后端如何接入。MHA／MQA／GQA：KV head 形状、每 rank KV 字节，以及 TP 下 KV head 的切分或复制。MLA：潜变量压缩的形状、KV 公式为何不同、后端支持情况。RoPE／M-RoPE：旋转公式和 M-RoPE 的时间／高／宽位置分解及实现位置。MTP：训练目标和推理时作为草稿的用法。每个模型家族再给一张基于公开 config 的结构差异表，标明哪些由你实际适配。若要写“在自研芯片上适配过 MoE 模型”，另需项目事实。 | MoE 适配点：W2 单元二；MHA／GQA／MLA 形状：W3（§8.2-3）；RoPE／M-RoPE、MTP、模型差异表：计划外 | W2 单元一已验收 MoE 路由、放置与通信量（shape 与数据流） |
+| `CL08` | 一个真实算子从 schema、dispatcher、fake／meta、C++ 注册、后端分发到测试的逐层文件与函数；allocator、storage 生命周期、device guard 和 stream 能讲清机制而非只列名词；本人的 custom op 注册与测试可运行；另需 Autograd（计算图、`autograd::Function`、backward engine 调度）与 PrivateUse1 后端注册路径的独立解释。 | W5 验收门；PrivateUse1 另见 W6 迁移矩阵；Autograd：计划外 | — |
+| `CL09` | 训练 step 的状态与生命周期、带明确假设的显存账本；DDP 与 FSDP／ZeRO-3 的分片对象、通信时机与峰值显存对比；TP／PP／SP／EP 在训练中的 shape、collective 与 bubble；FSDP 另需一次小型 sandbox 或固定源码证据；DeepSpeed／Megatron 需补项目事实：交付范围、实际并行组合、Loss 对齐方式与代码边界。 | W7 验收门；项目事实 | W2 单元一已验收推理侧 TP、SP、CP、PP、DP 的切分语义与基本通信（非训练框架） |
+| `CL10` | 独立推导 Ring AllReduce = ReduceScatter + AllGather、每 rank 通信量 `2(n−1)/n · S` 与 α–β 时间模型；说明 Tree 在小消息、大规模下的延迟优势和 Ring 的带宽优势；对照 NCCL 的 ring／tree 算法选择给出源码或文档锚点。 | 计划未单列，可随时补一次独立推导；W6 RCCL 对照与 W7 通信时间估算部分覆盖 | W2 单元一已验收“collective 由切分推导”（语义层），未涉及 Ring／Tree 算法 |
+| `CL11` | 本人编写的 kernel：有参考实现对比的正确性、profiler 或受控计时的性能数据，以及至少一轮有依据的调优（配置、tile 或访存改动及前后对比）；FlashAttention 讲清在线 softmax、分块与 IO 复杂度并有实现；TileLang 至少一个本人实现的 kernel。若要写成工作“经验”，还需生产项目中由你编写或调优 kernel 的项目事实；练习证据只支持“具备 Triton kernel 编写与调优实践”。 | programming-lab Triton 课程（PlanA 计划外）；有 AMD 环境时 W6 的 HIP custom op；TileLang：计划外 | programming-lab Triton 01–06 已结课，含本人实现并在 GPU 上验收的 fused attention 前向（在线 softmax），反向只到概念层 |
+| `CL13` | 一个完整可复算案例：FLOPs、Bytes（写明读写次数与 cache reuse 假设）、AI、设备屋脊点、性能上界与时间下界、实测效率；再放回端到端链路，说明哪些算子受访存限制、哪些受计算限制及其占总时延的比例。 | W2 单元四（小型 Roofline）→ W4（§9.2-1 完整案例） | — |
+| `CL15` | 异步缓冲区生命周期程序能讲清 ownership、happens-before 与析构，并经 sanitizer 或等价工具验证；现场实现 RAII 容器、线程同步、错误处理与测试，可编译运行并通过 sanitizer；能解释 memory ordering 与 ABI／构建问题。 | W2 单元三；W5（§10.2-3、§10.2-6） | W1 P2 已通过自建程序的 ELF／动态库诊断与启动修复实操 |
+| `CL16` | 统一项目事实：确定模型是 Qwen2.5-VL-32B 还是 Qwen3-VL；固定输入（图像／视频尺寸、batch、并发）；给出优化前后 TTFT 绝对值与测量方法（预热、重复、统计量）；Conv3D 占 TTFT 的比例（profile 分母）；布局重构与 kernel 优化各自的收益；正确性核对。 | 项目事实；W4 Conv3D Case Card（§9.2-4）可作整理载体 | — |
+| `CL17` | 明确计时起止与链路，以及 Transformers 与 vLLM 各负责哪一段；输入／输出长度、并发、预热与统计方式；起止两个绝对值在同一条件下测得；Host 路径、小 shape 计算和权重布局三项优化各自的消融贡献。 | 项目事实；W4 未单列 ECG Case Card，可作为可选的第四张 | — |
