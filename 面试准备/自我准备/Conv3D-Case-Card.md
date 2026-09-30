@@ -3,7 +3,7 @@
 # Conv3D Case Card v1（工作稿）
 
 > 来源标签：本卡的项目经历与测试结果均为“项目口述”，包含本人按历史记录自核后的说明，尚未完成原始代码、快照或 Benchmark 的独立审计。“待核”字段列明缺口与核验方式。精确硬件对齐粒度和未确认可披露的性能数值不进入本稿。
-> 来源入口：[项目一口述基线](projects.md#project1-oral-baseline-20260902)、[当前 Claim 口径 CL16](Claim-evidence矩阵.md#claim-wording-decisions-20260929)。本卡的学习验收由[练习证据账本](../../计划/八周冲刺进度/历史记录/W1-学习验收记录.md#w1-conv3d-case-card-practice-20260914)维护。
+> 来源入口：[项目一口述基线](projects/multimodal-inference-project.md#project1-oral-baseline-20260902)、[当前 Claim 口径 CL16](Claim-evidence矩阵.md#claim-wording-decisions-20260929)。本卡的学习验收由[练习证据账本](../../计划/八周冲刺进度/历史记录/W1-学习验收记录.md#w1-conv3d-case-card-practice-20260914)维护。
 
 ## F1：主张与适用范围
 

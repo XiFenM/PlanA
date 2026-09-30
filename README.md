@@ -62,7 +62,7 @@ PlanA/
 │   └── 自我准备/
 │       ├── CV.md
 │       ├── CV.html
-│       ├── projects.md
+│       ├── projects/                ← 代表项目档案，一个项目一个文件；README.md 为总览，含新项目模板
 │       ├── self-introduction.md
 │       └── AMD-AI框架开发工程师胜任力诊断-2026-08-29.md
 │

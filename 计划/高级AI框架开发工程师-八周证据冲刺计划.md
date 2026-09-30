@@ -57,7 +57,7 @@ Lesson 安排：
 2. **MORI 从唯一中心改为拉伸组件**：近期主目标是 AMD 上海 `87545/78999` 一类通用框架岗位；MORI/EP/PD 继续保留，但不再吞噬 C++、Kernel、ROCm、benchmark、上游和训练素养。
 3. **不重启 W1**：2026-08-09 已完成的 Pass A–B 继续有效，从当前 Checkpoint 恢复。
 4. **以面试失分驱动 P0**：vLLM 主链、C++/Linux、Roofline、TP/EP 手推、数字和 ownership 校准必须在前两个有效周进入验收。
-5. **项目材料已成型**：[代表项目档案](../面试准备/自我准备/projects.md)已有 3+1 个故事，不再沿用“尚无成型内容”的旧判断。
+5. **项目材料已成型**：[代表项目档案](../面试准备/自我准备/projects/README.md)已有 3+1 个故事，不再沿用“尚无成型内容”的旧判断。
 6. **删除未经现有材料支持的起点假设**：不再把“KV Cache +30%”“独立手写融合 Kernel”“通信多流改单流约 10 倍”预设为已验证事实。
 7. **训练改为有界目标**：本轮做到一次训练 step、显存/通信账本和并行策略选择，不展开训练 Principal 全栈。
 
@@ -223,7 +223,7 @@ AMD AI framework readiness pack
 → 回归、限制和未完成项
 ```
 
-首批固定为 Conv3D、blocked/Col-major layout、`projects.md` 中 Qwen3-32B/vLLM V1 的低概率 H2D/D2D 异常。第三项的当前根因、修复与回归状态由[项目三口述基线](../面试准备/自我准备/projects.md#project3-oral-baseline-20260902)维护；本计划不复制或另行裁决。
+首批固定为 Conv3D、blocked/Col-major layout、`projects.md` 中 Qwen3-32B/vLLM V1 的低概率 H2D/D2D 异常。第三项的当前根因、修复与回归状态由[项目三口述基线](../面试准备/自我准备/projects/vLLM-V1-async-H2D-project.md#project3-oral-baseline-20260902)维护；本计划不复制或另行裁决。
 
 ## 5. 时间预算与周节奏
 
@@ -269,7 +269,7 @@ W1–W3 按前四项及本周具体技术门验收。口头项目在对应 Mock 
 
 原“每周固定抽一个项目”的口头要求调整为：W1–W3 整理 Case Card、事实证据与书面机制问答，不要求每周口头深挖；从 W4 起，在已授权的 Mock 中抽取一个项目作为深挖环节，不固定同一个项目，也不按预设顺序机械轮换。每次使用既有“英语与 Mock 2h”中的约 25–30 分钟，不在综合 Mock 之外另加一场，也不构成后续 Lesson 的自动授权。
 
-- **选择**：从 [3+1 项目总览](../面试准备/自我准备/projects.md#project-overview-3-plus-1)中选择与本周主题最相关、且仍有重要未知字段的一个项目。同一项目尚未通过时可以连续复测，不为覆盖数量强行换题。
+- **选择**：从 [3+1 项目总览](../面试准备/自我准备/projects/README.md#project-overview-3-plus-1)中选择与本周主题最相关、且仍有重要未知字段的一个项目。同一项目尚未通过时可以连续复测，不为覆盖数量强行换题。
 - **过程**：先做 2 分钟无稿全景，再围绕 `workload、baseline、root cause、ownership、result、regression、limitation` 追问；加入一个与本周主题相关的条件变化或反例，最后重答最薄弱的一问。
 - **结果**：事实或证据缺口回到该项目既有“待核验字段”，按原始资料和验证证据关闭，不要求等待口头 Mock；口头表达缺口在 Mock 中重答，并以不同问法或条件复测。两类结果分别记录。
 - **阶段安排**：W1 准备 vLLM 主链与 Conv3D 材料，W2–W3 准备并行、PD/KV 和异步案例的书面证据；相应口头环节从 W4 综合 Mock 承接。W4 优先 vLLM 主链、Conv3D 和一个分布式题；W5 后续 Mock 可选择异步 Runtime，W6 选择非 CUDA 迁移并纳入英文陈述，W7 使用既定训练 Mock，W8 按目标岗位冷抽或复测最弱项。此处是候选安排，不改变各周授权状态。
@@ -294,7 +294,7 @@ W1–W3 按前四项及本周具体技术门验收。口头项目在对应 Mock 
 |    2 | 追`request → processor → EngineCoreRequest → scheduler → KV manager → model runner → attention backend`                                                   | sequence diagram、8–12 个文件 source map |
 |    3 | 说明 V1 与实际 model runner/backend/fallback，以及 DP replica routing/backpressure/DPLB 的选择边界                                                                | 运行路径指纹；无环境时交源码决策树        |
 |    4 | 完成 KV block、Prefix Cache、PagedAttention 的概念与生命周期对照                                                                                                  | 单位严格的 KV 小账本                      |
-|    5 | 审计[CV](../面试准备/自我准备/CV.md)、[projects](../面试准备/自我准备/projects.md) 和[自我介绍](../面试准备/自我准备/self-introduction.md)中的“熟悉/掌握/深入理解” | claim-evidence 矩阵首版                   |
+|    5 | 审计[CV](../面试准备/自我准备/CV.md)、[projects](../面试准备/自我准备/projects/README.md) 和[自我介绍](../面试准备/自我准备/self-introduction.md)中的“熟悉/掌握/深入理解” | claim-evidence 矩阵首版                   |
 |    6 | 做 C++/Linux 基线测试：RAII、override/name hiding、ELF、shared library、ownership                                                                                 | 红黄绿缺口表                              |
 |    7 | 将 Conv3D 案例写成第一张 Case Card                                                                                                                                | shape、基线、正确性、个人职责和待核数据   |
 
@@ -585,7 +585,7 @@ W4 之后插入的有效周，承接 Claim 复核中 SGLang（`CL04`）、Specul
 
 1. 整理 readiness pack 索引，逐项链接证据和未完成项。
 2. 按 `87545`、`78999`、`89398/MORI` 分别生成一页 claim-evidence 对照。
-3. 校准 [CV](../面试准备/自我准备/CV.md)、[projects](../面试准备/自我准备/projects.md) 和[自我介绍](../面试准备/自我准备/self-introduction.md)；实际修改前单独确认事实口径。
+3. 校准 [CV](../面试准备/自我准备/CV.md)、[projects](../面试准备/自我准备/projects/README.md) 和[自我介绍](../面试准备/自我准备/self-introduction.md)；实际修改前单独确认事实口径。
 4. 做两场推理 Mock：一场框架/性能，一场分布式/AMD；W7 训练 Mock 计作第三场。
 5. 每场记录：问题、原答、缺口类型、修正答、证据链接和是否通过复测。
 6. 准备中文／英文项目陈述、三个 STAR、反问问题和未知问题处理材料，并在本周两场推理 Mock 内演练约 5 分钟陈述；不另加独立口头验收。
@@ -762,7 +762,7 @@ W4 之后插入的有效周，承接 Claim 复核中 SGLang（`CL04`）、Specul
 - 胜任力结论以[2026-08-29 诊断](../面试准备/自我准备/AMD-AI框架开发工程师胜任力诊断-2026-08-29.md)为基线。
 - 面试现场证据来自[面试问题经验目录](../面试准备/面试问题经验/README.md)。
 - 简历事实以[CV.md](../面试准备/自我准备/CV.md)为真源；HTML 不单独维护事实。
-- 项目故事以[projects.md](../面试准备/自我准备/projects.md)为真源。
+- 项目故事以[projects/](../面试准备/自我准备/projects/README.md)为真源。
 - 市场岗位以[市场岗位需求索引](<../Job Description/AI框架方向/市场岗位需求/README.md>)和企业官方页面为准；投递前重新核对状态。
 
 ### 19.3 状态边界
