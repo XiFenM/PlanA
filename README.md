@@ -33,7 +33,7 @@ PlanA/
 │   │   └── 2026-W18.md             ← 第一份 legacy 报告（DeepSeek V4 周）
 │   └── 资源治理/                   ← 新 registry、不可变 reports/ 与按需 briefs/
 │
-├── .agent-skills-config/           ← 五个学习 Skill 的 version 2 公共环境配置
+├── .agent-skills-config/           ← 六个学习 Skill 的 version 2 公共环境配置
 │   └── guide-learning-profile.md   ← PlanA 状态路径、单写者、时长归属与领域透镜
 ├── 推理框架/                       ← Track A 第一优先级
 ├── 训练框架与分布式/               ← Track A 第二优先级（含 §J GPU 通信子专题）
@@ -65,6 +65,8 @@ PlanA/
 │       ├── projects/                ← 代表项目档案，一个项目一个文件；README.md 为总览，含新项目模板
 │       ├── self-introduction.md
 │       └── AMD-AI框架开发工程师胜任力诊断-2026-08-29.md
+│
+├── 课程网页/                       ← lesson-pages 离线课程网页，按课程或模块分子目录（八周计划/、推理框架/ …）
 │
 ├── Job Description/                ← 目标岗位 JD 集合，按方向分类
 │   ├── AI框架方向/                 ← 历史 JD + 市场岗位需求分类索引
@@ -126,8 +128,8 @@ git submodule update --init --recursive -- .agent-skills
 
 中央规范源是 [`.agent-skills`](.agent-skills) 子模块，固定版本以父仓库记录的 gitlink 为准
 （`git submodule status .agent-skills`），本文不另记提交号。[`.agent-skills.json`](.agent-skills.json) 为 Codex 与 Claude
-同时选择 `guide-learning`、`study-log`、`english-coach`、`memo-cards`、
-`resource-planning` 和 `playwright-cli`，并为五个学习 Skill 引用
+同时选择 `guide-learning`、`lesson-pages`、`study-log`、`english-coach`、`memo-cards`、
+`resource-planning` 和 `playwright-cli`，并为六个学习 Skill 引用
 [`.agent-skills-config/`](.agent-skills-config) 下的 Git-tracked 公共配置。`playwright-cli` 无需仓库配置。
 
 materializer 会为有配置的 Skill 在两个宿主副本中生成逐字节一致的 `.agent-skills-context.json`。它只提供
@@ -175,9 +177,13 @@ uv run --no-project python .agent-skills/tools/materialize_skills.py --repo . --
 作为提醒，不构成运行或评审前置。[周更流程](计划/周更流程.md) 与
 [月底晋级评审](计划/月底晋级评审.md) 仅保留退役入口，行为以中央 `resource-planning` 为准。
 
+`lesson-pages` 的 context 只登记 `课程网页/` 一个页面目录作为写入上限，每门课程或模块在其中建子目录
+（如 `课程网页/八周计划/`、`课程网页/推理框架/`）；具体页面路径仍随 `guide-learning` 的开课确认逐课确认，
+配置不授予建页、覆盖、启动本地服务或对外发布。
+
 **两条并行子轨道**：[Leetcode/](Leetcode) 和 [英语/](英语) 继续使用各自的 `学习指引.md` + `进度.md` 双锚文件管理。原 20 周计划中“英语每日 60–75min、排除在 650h 外”属于冻结排程的历史预算；当前八周 Program 将 Leetcode、英语和 Mock 一并计入每个日历周 18h 的目标容量，不再叠加隐藏负担。音频教材仍由同级工具仓库 `../blog-voice` 生产。
 
-**AI 学习工作流（6 个 Skills）**：中央 [`.agent-skills`](.agent-skills) 是 Skill 规范源，
+**AI 学习工作流（7 个 Skills）**：中央 [`.agent-skills`](.agent-skills) 是 Skill 规范源，
 `.agents/skills/` 与 `.claude/skills/` 只是生成的宿主发现视图。Agent 侧路由表与管线图见
 [CLAUDE.md](CLAUDE.md)；[`.agent-skills-config/guide-learning-profile.md`](.agent-skills-config/guide-learning-profile.md)
 只定义 PlanA 的状态路径、单写者、时长归属与领域透镜，不复制中央教学流程：
@@ -186,6 +192,7 @@ uv run --no-project python .agent-skills/tools/materialize_skills.py --repo . --
 |---|---|---|
 | `resource-planning` | **供给侧**：research → refresh → review 的受管资源生命周期 | 「研究／比较资料」；持久动作须精确预览与当次确认 |
 | `guide-learning` | **主干**：来源化教学 → 讲后检查 → 按证据缺口练习 → mastery → 稀疏恢复 | 教我／带我学／继续或恢复 Lesson |
+| `lesson-pages` | **呈现层**：与 `guide-learning` 同时运行，把讲解写进逐段生长的离线课程网页；对话只留指路、检查题与反馈 | 「用网页讲」「把这课做成页面」／本课已有页面 |
 | `study-log` | **按需交接**：仓库内同名配对的结构化记录与 raw 可见文本；原文仍须确认边界与隐私 | 「整理学习记录／保存原始对话」 |
 | `memo-cards` | **记忆侧**：成熟素材 → Markdown／XLSX 复习卡，可通过官方 API 上传到指定 Markji 章节 | 「制卡」「上传卡片」 |
 | `english-coach` | **英语轨**：学后「英语回顾」专项（主）+ 技术对话轮末反馈（辅） | 「英语回顾」/ 直接写英文 |

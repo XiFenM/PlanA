@@ -1,0 +1,10 @@
+{
+  "schema": "agent-skills.lesson-pages/v1",
+  "skill": "lesson-pages",
+  "page_targets": [
+    {
+      "id": "course-pages",
+      "collection": "课程网页"
+    }
+  ]
+}
