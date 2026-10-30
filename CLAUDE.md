@@ -88,7 +88,7 @@ The central `guide-learning` Skill owns teaching behavior. `.agent-skills-config
 - **Date format**: convert relative dates to absolute (`本周日` → `2026-05-10`) when writing into files that will be re-read months later. Today's date is available in the harness context.
 - **CJK filenames**: many files have Chinese names with no ASCII fallback. When using Bash, quote them (`"Job Description"`, `"训练框架与分布式"`).
 - **`.obsidian/` is retired**; `.gitignore` excludes the whole directory. Do not add it back.
-- **Working copies**: this checkout stays on `main`; Codex works in the sibling worktree `../PlanA-codex` on branch `codex`. Never switch branches here, and bring Codex work in with `git merge --ff-only codex` only when the user asks.
+- **Working copies**：Codex 与 Claude 直接在当前 `PlanA` 仓库工作，保留当前分支和已有的未提交修改。`../PlanA-codex` 已停用，不再使用该工作区或要求从 `codex` 分支快进合并；不要自动切换分支、提交或推送。
 
 ## Things to avoid
 

@@ -84,13 +84,15 @@ PlanA/
 
 | 子模块 | 本地路径 | 当前比较位置 | 父仓库 Gitlink |
 |---|---|---|---|
-| vLLM | [`推理框架/references/vllm`](推理框架/references/vllm) | 上游 `main` 快照（2026-08-30 更新） | `1dc464d42681d22f38caf1fdc1eb632dc4421c45` |
-| SGLang | [`推理框架/references/sglang`](推理框架/references/sglang) | 上游 `main` 快照（2026-08-30 更新） | `78fa921189e3a66c7278733940c60a1e6fe6e467` |
-| PyTorch | [`PyTorch/references/pytorch`](PyTorch/references/pytorch) | 上游 `main` 快照（2026-08-30 更新） | `460948b96a67002b7257ac4f3d6a192f70d61d27` |
+| vLLM | [`推理框架/references/vllm`](推理框架/references/vllm) | 上游 `main` 快照（2026-10-21 更新） | `d7ada3aace051fecec553c185225db2259c2ac6a` |
+| SGLang | [`推理框架/references/sglang`](推理框架/references/sglang) | 上游 `main` 快照（2026-10-21 更新） | `43a3f956cb0c9fe9b7b7a042af8d8743176b9dba` |
+| PyTorch | [`PyTorch/references/pytorch`](PyTorch/references/pytorch) | 上游 `main` 快照（2026-10-21 更新） | `0bd89deb431509d893177a84cfa4768aa0399809` |
+| DeepEP | [`推理框架/references/deepep`](推理框架/references/deepep) | 上游 `main` 快照（2026-10-21 加入） | `f6aa38fe06cd4a0489e7730365d4e0114970a2f3` |
+| MORI | [`推理框架/references/mori`](推理框架/references/mori) | 上游 `main` 快照（2026-10-21 加入） | `2d4c3e2748b9329b2e0fc90e12f449231b4691ed` |
 
-`main` 是移动引用，表中日期只是核对日；父仓库记录的完整 SHA gitlink 才是当前比较快照的精确版本事实源。W1 已形成 evidence 的教学基线仍是 vLLM `v0.26.0`、SGLang `v0.5.17` 与 PyTorch `v2.11.0`，选择理由、用途和当前快照之间的关系见 [W1 详细验收记录 · 固定源码基线](计划/八周冲刺进度/历史记录/W1-学习验收记录.md#02-固定源码基线)。
+`main` 是移动引用，表中日期只是核对日；父仓库记录的完整 SHA gitlink 才是当前比较快照的精确版本事实源。W1 已形成 evidence 的教学基线仍是 vLLM `v0.26.0`、SGLang `v0.5.17` 与 PyTorch `v2.11.0`，选择理由、用途和当前快照之间的关系见 [W1 详细验收记录 · 固定源码基线](计划/八周冲刺进度/历史记录/W1-学习验收记录.md#02-固定源码基线)。W2 单元一的窄核验固定在 vLLM `1dc464d`、SGLang `78fa921`；单元二的教学基线见 [W2 验收记录 · 单元二源码基线](计划/八周冲刺进度/历史记录/W2-学习验收记录.md#w2-u2-source-baselines)。DeepEP 的 `hybrid-ep` 等实验分支不单独建子模块，需要时按课程账本记录的 commit 浅取到 DeepEP 子模块中阅读。
 
-根目录 [`.gitmodules`](.gitmodules) 登记了上游地址，并为三个源码子模块启用浅克隆。`shallow = true` 只减少这些仓库自身的历史下载量，不会阻止递归初始化它们的下级子模块。需要复现某个父仓库 revision 时，应先检出该 revision，再按其 gitlink 初始化子模块。
+根目录 [`.gitmodules`](.gitmodules) 登记了上游地址，并为五个源码子模块启用浅克隆。`shallow = true` 只减少这些仓库自身的历史下载量，不会阻止递归初始化它们的下级子模块。需要复现某个父仓库 revision 时，应先检出该 revision，再按其 gitlink 初始化子模块。
 
 首次克隆（Windows 建议先启用长路径，以免 PyTorch 的深层目录检出失败）：
 
@@ -99,7 +101,7 @@ git config --global core.longpaths true
 git clone git@github.com:XiFenM/PlanA.git
 Set-Location PlanA
 git submodule sync
-git submodule update --init --depth 1 --recommend-shallow -- PyTorch/references/pytorch "推理框架/references/vllm" "推理框架/references/sglang"
+git submodule update --init --depth 1 --recommend-shallow -- PyTorch/references/pytorch "推理框架/references/vllm" "推理框架/references/sglang" "推理框架/references/deepep" "推理框架/references/mori"
 git submodule update --init --recursive -- .agent-skills
 ```
 
@@ -107,7 +109,7 @@ git submodule update --init --recursive -- .agent-skills
 
 ```powershell
 git submodule sync
-git submodule update --init --depth 1 --recommend-shallow -- PyTorch/references/pytorch "推理框架/references/vllm" "推理框架/references/sglang"
+git submodule update --init --depth 1 --recommend-shallow -- PyTorch/references/pytorch "推理框架/references/vllm" "推理框架/references/sglang" "推理框架/references/deepep" "推理框架/references/mori"
 git submodule update --init --recursive -- .agent-skills
 ```
 
@@ -116,11 +118,11 @@ git submodule update --init --recursive -- .agent-skills
 ```powershell
 git pull --recurse-submodules=no
 git submodule sync
-git submodule update --init --depth 1 --recommend-shallow -- PyTorch/references/pytorch "推理框架/references/vllm" "推理框架/references/sglang"
+git submodule update --init --depth 1 --recommend-shallow -- PyTorch/references/pytorch "推理框架/references/vllm" "推理框架/references/sglang" "推理框架/references/deepep" "推理框架/references/mori"
 git submodule update --init --recursive -- .agent-skills
 ```
 
-源码子模块的初始化命令有意不带 `--recursive`，因此只检出 PyTorch、vLLM 和 SGLang 本体；`.agent-skills` 因包含所需的官方依赖而单独递归初始化。不要对整个仓库执行无路径限制的 `git submodule update --init --recursive`。子模块处于 `detached HEAD` 是固定版本时的正常状态。当前 gitlink 的 depth-1 checkout 不保证包含旧教学 tag；历史 evidence 默认依靠固定 commit 链接复查，需要本地旧树时再按需浅取相应 tag，核对后用父仓库的 `git submodule update -- <path>` 恢复当前 gitlink。
+源码子模块的初始化命令有意不带 `--recursive`，因此只检出 PyTorch、vLLM、SGLang、DeepEP 和 MORI 本体；`.agent-skills` 因包含所需的官方依赖而单独递归初始化。不要对整个仓库执行无路径限制的 `git submodule update --init --recursive`。子模块处于 `detached HEAD` 是固定版本时的正常状态。当前 gitlink 的 depth-1 checkout 不保证包含旧教学 tag；历史 evidence 默认依靠固定 commit 链接复查，需要本地旧树时再按需浅取相应 tag，核对后用父仓库的 `git submodule update -- <path>` 恢复当前 gitlink。
 
 日常学习不要在子模块内直接 `pull`，也不要执行 `git submodule update --remote`；需要升级上游版本时，应显式修改父仓库记录的 gitlink，并同步更新本节的当前比较快照。已启动 Lesson 的教学基线只有在单独授权的重基线事务中才会迁移。
 

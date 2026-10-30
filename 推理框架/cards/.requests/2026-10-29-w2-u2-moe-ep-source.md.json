@@ -1,0 +1,1186 @@
+{
+  "schema": "memo-cards.request/v1",
+  "output_collection": "inference-cards",
+  "target": "推理框架/cards/2026-10-29-w2-u2-moe-ep-source.md",
+  "selection": "complete",
+  "sources": [
+    {
+      "id": "w2-u2-log",
+      "collection": "inference-study-logs",
+      "path": "推理框架/log/2026-10-29-w2-u2-moe-ep-source.md",
+      "sha256": "1fdb5dd6149d08b8c2f233ac08abf9ff79949dbe36fe504156f4cc6a00c801fc",
+      "summary": "用户明确指定的 W2 单元二结构化学习日志；取已核验的稳定机制与真实纠错，未使用 raw、遗留或未验证芯片实现作为事实。"
+    }
+  ],
+  "cards": [
+    {
+      "key": "input-and-routing-skew",
+      "rank": 1,
+      "domain": "moe-communication",
+      "recall_target": "区分输入倾斜与路由倾斜对全量汇聚和定向通信热点的影响",
+      "assessment": "mechanism",
+      "layer": "mechanism",
+      "fact_scope": {
+        "kind": "evergreen"
+      },
+      "quality": "A",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 5,
+      "template_id": "correction",
+      "fields": {
+        "意图": "在 MoE 专家并行中，如何区分输入数量不均与专家路由倾斜，并判断换通信后端能改变什么？",
+        "场景": "比较 AgRs（AllGather＋ReduceScatter，全量汇聚输入）与只向目标 rank 发送 Token 的定向 All-to-All；Token 向量大小和 top-k 固定。分别考虑输入不变但路由集中，以及输入不均但路由均匀。",
+        "正确": "先分开输入在哪与目标专家在哪：固定输入时，路由倾斜不改变全量汇聚的激活通信量，却可改变定向通信的热点；输入不均时，均匀路由也不能消除最忙发送方。",
+        "错误": "allgather_reducescatter可能受影响更大",
+        "说明": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "错误在于把输入归属与专家目标混成一种不均；应分别沿发送端和接收端定位。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "某 rank 持有的 Token 多，它可能在两种后端中都成为发送瓶颈；总通信量不变不代表各方向均衡。"
+                }
+              ],
+              "label": "输入端"
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "全量汇聚不按专家选择删减输入，定向发送的目标分布则随路由改变。"
+                }
+              ],
+              "label": "目标端"
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "这里比较激活通信；AgRs 的通信量不变，不表示专家计算负载也不变。"
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "source_ids": [
+        "w2-u2-log"
+      ],
+      "content_summary": "输入倾斜与路由倾斜的诊断；日志 msg-b5465a61f417efa7f284 至 msg-e4082364be91580724fe；A理由：防止把输入负载不均误诊为通信后端问题，导致选错优化层。",
+      "depends_on": []
+    },
+    {
+      "key": "received-rows-vs-expert-tasks",
+      "rank": 2,
+      "domain": "moe-communication",
+      "recall_target": "区分通信接收行数与逻辑专家任务数的变化",
+      "assessment": "discrimination",
+      "layer": "atomic",
+      "fact_scope": {
+        "kind": "evergreen"
+      },
+      "quality": "B",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 3,
+      "template_id": "correction",
+      "fields": {
+        "意图": "保持每个 Token 选择的专家不变，从全量汇聚切换到定向发送后，如何分别判断收到的激活行数和有效专家任务数？",
+        "场景": "原路径向各 rank 汇聚输入；新路径只向需要处理该 Token 的目标 rank 发送，且同一 Token 发往同一目标 rank 至多传一份激活。只比较数据传输，不改变路由和专家函数。",
+        "正确": "逻辑专家任务集合不变；收到的激活行数由发送策略决定。原汇聚若包含本卡不需要的行，定向发送可以减少这些行。",
+        "错误": "不会改变收到的行数",
+        "说明": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "错误在于用专家选择不变，推出通信搬来的行数也不变。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "一行激活可能被本卡多个专家使用，通信行数与 Token／专家分配数不能混算。"
+                }
+              ],
+              "label": "两种口径"
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "若每个目标 rank 本来都需要所有输入，定向发送不一定减少行数；不预设固定节省比例。"
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "source_ids": [
+        "w2-u2-log"
+      ],
+      "content_summary": "收到的行数与有效专家任务分离；日志 msg-8e6587f51eeaf023328f 至 msg-39258735807febc64986",
+      "depends_on": []
+    },
+    {
+      "key": "format-vs-integration",
+      "rank": 3,
+      "domain": "moe-backend-adaptation",
+      "recall_target": "沿调用和双向数据转换检查新通信与专家计算库接入",
+      "assessment": "mechanism",
+      "layer": "mechanism",
+      "fact_scope": {
+        "kind": "evergreen"
+      },
+      "quality": "B",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 3,
+      "template_id": "technical-qa",
+      "fields": {
+        "问题": "某 MoE 框架按 dispatch、输入转换、专家计算、输出转换、combine 执行。接入新的通信库与 GEMM 库时，应如何判断哪些层能复用，而不只检查张量 shape？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "格式兼容、库调用适配和返回路径契约要分别核对，已有实现满足对应职责时才能复用。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "需要有实际调用新通信库和新计算库的适配层；shape 相同不能代替这些 API 调用。"
+                }
+              ],
+              "label": "调用"
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "输入要满足专家计算布局，计算结果也要恢复为 combine 接受的布局、路由与加权约定。"
+                }
+              ],
+              "label": "双向转换"
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "某层可以不新增的前提是已有实现已经覆盖新库契约，而不是仅仅名称或维度看起来一致。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "调用是否存在 → 输入能否消费 → 结果能否回传",
+        "来源": "W2 单元二学习日志 · SGLang 接入追问"
+      },
+      "source_ids": [
+        "w2-u2-log"
+      ],
+      "content_summary": "由格式相容转向完整接口适配；日志 msg-cd242279ff3dbbe261e0 至 msg-e11af1bd6506dfdf24de",
+      "depends_on": []
+    },
+    {
+      "key": "two-kinds-routing-state",
+      "rank": 4,
+      "domain": "moe-state-ownership",
+      "recall_target": "区分专家计算路由与返回原Token的逆向路由状态",
+      "assessment": "discrimination",
+      "layer": "atomic",
+      "fact_scope": {
+        "kind": "evergreen"
+      },
+      "quality": "B",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 3,
+      "template_id": "technical-qa",
+      "fields": {
+        "问题": "一次 MoE dispatch 返回了独立的激活张量。要判断后续 dispatch 会不会影响这批专家计算与 combine，除激活数据外，还需要分别追踪哪两类路由信息？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "分别追踪行交给哪个本地专家计算，以及结果送回哪个来源 rank 的原 Token。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "行与专家的对应关系可能由布局、有效行数或逐行专家标识提供。"
+                }
+              ],
+              "label": "计算所需"
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "combine 需要来源及原位置映射；它可能由独立 handle 持有，也可能保存在通信对象内部。"
+                }
+              ],
+              "label": "回传所需"
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "激活独立只证明数据张量不共用；两类路由的归属和覆写时机仍须单独检查。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "行 → 本地专家；结果 → 来源与原位置",
+        "来源": "W2 单元二学习日志 · 两类路由与假想库 Y"
+      },
+      "source_ids": [
+        "w2-u2-log"
+      ],
+      "content_summary": "区分独立数据与独立路由状态；日志 msg-3c29e30f014f680127da 至 msg-01cf4c895e5c9d2863c1",
+      "depends_on": []
+    },
+    {
+      "key": "capacity-vs-traffic",
+      "rank": 5,
+      "domain": "communication-memory",
+      "recall_target": "区分预分配容量上限和本次有效通信载荷",
+      "assessment": "discrimination",
+      "layer": "atomic",
+      "fact_scope": {
+        "kind": "evergreen"
+      },
+      "quality": "B",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 3,
+      "template_id": "correction",
+      "fields": {
+        "意图": "通信缓冲区按容量上限预分配，传输按实际有效行数进行。本次 Token、路由和数据类型不变，仅把容量上限翻倍，应怎样判断内存、有效载荷和耗时？",
+        "场景": "区分预留存储、本次实际发送字节与完整调用延迟；不假设为满容量传输。",
+        "正确": "预留空间随上限增大，但本次有效载荷不因上限单独改变；不能据此推出通信时延或整步延迟翻倍。",
+        "错误": "使得通信字节量增大",
+        "说明": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "错误在于把可容纳多少数据等同于本次实际发送多少数据。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "若输出张量也按上限分配，它的占用同样可能增加。"
+                }
+              ],
+              "label": "存储"
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "耗时还取决于实际传输、整理、同步和计算，需按相同工作量比较。"
+                }
+              ],
+              "label": "时间"
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "若某实现实际传输 padding 或固定容量区域，应按该实现的真实发送规则重新计量。"
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "source_ids": [
+        "w2-u2-log"
+      ],
+      "content_summary": "容量、流量与延迟不能互相直接代替；日志 msg-213da940761ce5e646da 至 msg-1c493574a996a1f9eca1",
+      "depends_on": []
+    },
+    {
+      "key": "partitioned-vs-shared-pool",
+      "rank": 6,
+      "domain": "communication-buffer-allocation",
+      "recall_target": "比较发送方固定分段与共享接收池的空间利用和协调代价",
+      "assessment": "mechanism",
+      "layer": "mechanism",
+      "fact_scope": {
+        "kind": "evergreen"
+      },
+      "quality": "B",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 3,
+      "template_id": "technical-qa",
+      "fields": {
+        "问题": "多个发送方把数据交给同一接收端。方案甲为每个发送方保留固定分段，方案乙让所有发送方从一个接收池按需领位置。在负载偏斜时，两者的容量利用与协调代价如何取舍？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "共享池可跨发送方利用闲置容量，但需要协调位置分配；固定分段隔离简单，却可能一段满而其他段空。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "某发送方不能自然借用其他发送方的空余空间，所以总剩余空间大也可能局部超限。"
+                }
+              ],
+              "label": "固定分段"
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "发送方共同分配位置，可减少分段闲置；要付出共享分配协调成本，降低总上限可能增加溢出风险，需检查是否仍覆盖允许的到达量。"
+                }
+              ],
+              "label": "共享池"
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "区别在于分配范围由谁共用，不能只凭计数器放在哪张卡判断布局。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "共享范围决定能否借用闲置容量",
+        "来源": "W2 单元二学习日志 · MORI 与 V2 布局比较"
+      },
+      "source_ids": [
+        "w2-u2-log"
+      ],
+      "content_summary": "分段隔离与共享池复用的取舍；日志 msg-399b4eca85d61636702d 至 msg-39b7a8578708aa702d95",
+      "depends_on": []
+    },
+    {
+      "key": "device-count-host-sync",
+      "rank": 7,
+      "domain": "device-host-dependencies",
+      "recall_target": "解释设备端小元数据进入主机精确分配时的同步依赖",
+      "assessment": "mechanism",
+      "layer": "mechanism",
+      "fact_scope": {
+        "kind": "evergreen"
+      },
+      "quality": "B",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 3,
+      "template_id": "technical-qa",
+      "fields": {
+        "问题": "MoE 路由计数由设备前向产生，主机想按精确接收量分配输出。有人建议把计数搬到 CPU 统计，因为元数据很小。应沿什么依赖链判断这能否消除等待？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "主机必须先得到设备已完成产生的计数；字节少不等于这条控制依赖不存在。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "设备产生路由／计数 → 主机取得可用计数 → 完成所需交换与统计 → 按结果分配。"
+                }
+              ],
+              "label": "依赖链"
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "区分搬运字节的成本与等待设备完成、再启动后续工作的成本。"
+                }
+              ],
+              "label": "分析重点"
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "若使用主机已知上界或可复用布局，依赖链可能改变；需核对实际路径，不能仅凭元数据大小作判断。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "字节量小 ≠ 控制依赖消失",
+        "来源": "W2 单元二学习日志 · HT 主机计数与分配"
+      },
+      "source_ids": [
+        "w2-u2-log"
+      ],
+      "content_summary": "CPU 精确分配的前置依赖；日志 msg-00f78fbfaac95c3d4afc 至 msg-e11af1bd6506dfdf24de",
+      "depends_on": []
+    },
+    {
+      "key": "lifetime-vs-execution-order",
+      "rank": 8,
+      "domain": "async-memory-safety",
+      "recall_target": "区分存储生命周期保护与异步读写的执行依赖",
+      "assessment": "mechanism",
+      "layer": "mechanism",
+      "fact_scope": {
+        "kind": "evergreen"
+      },
+      "quality": "A",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 5,
+      "template_id": "technical-qa",
+      "fields": {
+        "问题": "某机制能让张量存储在通信流使用期间不被分配器回收。应用同时在计算流准备下一批输入并启动 GEMM。还必须怎样约束输入覆写与输出消费？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "存储仍存活不等于读写已按正确顺序发生；要分别保护输入读完之前的覆写，以及输出就绪之前的读取。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "通信仍读取输入时，调用方不能在别的流上原地覆写这块存储。"
+                }
+              ],
+              "label": "输入"
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "消费流必须在接收与整理完成后再读取结果；同流用执行顺序，跨流建立对应的完成依赖。"
+                }
+              ],
+              "label": "输出"
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "分配器保护不禁止主动原地修改；保持对象引用也不能替代执行依赖。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "不被回收、未被覆写、已经可读是三件事",
+        "来源": "W2 单元二学习日志 · HT 生命周期与异步依赖"
+      },
+      "source_ids": [
+        "w2-u2-log"
+      ],
+      "content_summary": "存储寿命与执行顺序分离；日志 msg-00f78fbfaac95c3d4afc 至 msg-e11af1bd6506dfdf24de；A理由：防止把对象存活误当成并发读写安全，造成难复现的数据污染。",
+      "depends_on": []
+    },
+    {
+      "key": "double-buffer-reuse",
+      "rank": 9,
+      "domain": "async-communication-protocols",
+      "recall_target": "根据完成依赖而非槽位轮换判断双缓冲安全复用",
+      "assessment": "mechanism",
+      "layer": "mechanism",
+      "fact_scope": {
+        "kind": "evergreen"
+      },
+      "quality": "A",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 5,
+      "template_id": "technical-qa",
+      "fields": {
+        "问题": "通信库轮换使用 B0、B1 两份内部缓冲区，发送与接收可分两段提交。应用连续发起调用时，应以什么条件判断某份缓冲区可以重新使用？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "必须证明待复用的数据区与控制状态已不再被上一轮使用；槽位轮换本身不构成完成证明。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "按库的发送、接收与状态清理协议建立跨调用顺序，不能把 CPU 返回或只提交发送视为整轮完成。"
+                }
+              ],
+              "label": "完成边界"
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "安排接收阶段，并通过同流顺序或跨流 event 保证后续复用不越过前置操作。"
+                }
+              ],
+              "label": "调用方责任"
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "不要求任何时刻都有一份全局空闲，但必须满足实际复用所需的依赖；不能把两份缓冲区当作无限积压队列。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "轮换选位置，协议与依赖保证复用",
+        "来源": "W2 单元二学习日志 · 双缓冲跨会话追问"
+      },
+      "source_ids": [
+        "w2-u2-log"
+      ],
+      "content_summary": "双缓冲的复用判据；日志 msg-aedd4102796e1b87223a 至 msg-db2722a1efa647880e95；A理由：防止把双缓冲误用成自动管理空闲槽的队列，覆盖仍在使用的数据或信号。",
+      "depends_on": []
+    },
+    {
+      "key": "captured-address-lifetime",
+      "rank": 10,
+      "domain": "execution-graph-lifetimes",
+      "recall_target": "解释固定地址执行图在缓冲区扩容后的有效性责任",
+      "assessment": "mechanism",
+      "layer": "mechanism",
+      "fact_scope": {
+        "kind": "evergreen"
+      },
+      "quality": "A",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 5,
+      "template_id": "technical-qa",
+      "fields": {
+        "问题": "一个执行图在捕获时保存设备地址与张量形状。通信缓冲区随后扩容并更换了地址，应用仍保留旧图和一个带代次检查的 Python handle。应如何判断旧图能否继续重放？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "普通 handle 的检查不会自动改写或使已捕获的图失效；必须处理旧图仍引用旧地址的风险。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "重放可能继续访问捕获时的存储，而不是当前 Python 对象指向的新缓冲区。"
+                }
+              ],
+              "label": "风险"
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "在图有效期间禁止不兼容扩容，或显式停用旧图、按新地址重新建立图，并处理旧存储的未完成使用。"
+                }
+              ],
+              "label": "责任"
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "固定容量不是可录图或长期安全重放的充分条件；动态有效行数与捕获的地址／形状须分开管理。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "对象更新不等于图中的地址更新",
+        "来源": "W2 单元二学习日志 · Hybrid-EP graph 档位复查"
+      },
+      "source_ids": [
+        "w2-u2-log"
+      ],
+      "content_summary": "图捕获地址与资源代次的边界；日志 msg-0b11a3f01d08750d1938 至 msg-04357ec5c2c2e17e7571；A理由：防止扩容后继续重放旧地址，引入越界、旧数据或悬空访问。",
+      "depends_on": []
+    },
+    {
+      "key": "small-batch-fixed-overheads",
+      "rank": 11,
+      "domain": "communication-performance-models",
+      "recall_target": "解释小批量下通信字节缩小与端到端延迟不成比例",
+      "assessment": "mechanism",
+      "layer": "mechanism",
+      "fact_scope": {
+        "kind": "evergreen"
+      },
+      "quality": "B",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 3,
+      "template_id": "technical-qa",
+      "fields": {
+        "问题": "并行规模相同，从较大 Token 批次切换到小批量 decode 后，通信字节显著减少，但调用仍包含元数据交换、等待与预处理。为什么时延不一定按字节量同比下降？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "字节传输只是总成本的一部分；小批量时，额外调用、同步和预处理的固定开销占比可能更高。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "区分随载荷变化的传输成本与不能同比缩小的启动、等待、scan 等成本。"
+                }
+              ],
+              "label": "成本拆分"
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "压缩比例、绝对节省字节与完整链路延迟分别报告，不能由其中一个直接推出另一个。"
+                }
+              ],
+              "label": "比较口径"
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "这是成本分析方法，不是某个库或某类负载必然更快的实测结论。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "相对比例、绝对字节、固定开销分开看",
+        "来源": "W2 单元二学习日志 · Hybrid-EP 训练与 decode 取舍"
+      },
+      "source_ids": [
+        "w2-u2-log"
+      ],
+      "content_summary": "小批量的固定开销占比；日志 msg-9329c4b20defdb06330a 至 msg-4be32abee930fcef52d1",
+      "depends_on": []
+    },
+    {
+      "key": "timeout-vs-cancellation",
+      "rank": 12,
+      "domain": "distributed-failure-semantics",
+      "recall_target": "区分异步通信超时检测与资源可安全重用的证明",
+      "assessment": "mechanism",
+      "layer": "mechanism",
+      "fact_scope": {
+        "kind": "evergreen"
+      },
+      "quality": "A",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 5,
+      "template_id": "technical-qa",
+      "fields": {
+        "问题": "一次异步专家通信被外部超时检测判为失败。调用方准备立即复用原缓冲区重试。需要哪些完成或中止证据，才能决定这一操作是否安全？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "超时只表明没有在期限内完成，不能证明设备或远端已停止使用原资源。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "需要确认旧操作已经完成或被可靠中止，且相关通信状态已恢复到可重新使用的约定状态。"
+                }
+              ],
+              "label": "重试前提"
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "停止继续使用受影响实例并上报，保留诊断信息；恢复和重试条件继续核对。"
+                }
+              ],
+              "label": "证据不足时"
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "不能把错误被发现、主机函数返回或结果被丢弃，等同于所有在途访问已经结束。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "检测失败 ≠ 取消完成 ≠ 可以复用",
+        "来源": "W2 单元二学习日志 · 通信卡住后的处置边界"
+      },
+      "source_ids": [
+        "w2-u2-log"
+      ],
+      "content_summary": "超时与取消／复用边界；日志 msg-99ff094769014856582f 至 msg-eb00d3c44be4fb8d8a0e；A理由：防止通信超时后在未隔离旧操作时重试，破坏缓冲区与跨 rank 状态。",
+      "depends_on": []
+    },
+    {
+      "key": "overflow-count-and-mapping",
+      "rank": 13,
+      "domain": "moe-capacity-semantics",
+      "recall_target": "区分溢出标志专家分段与有效贡献映射的职责",
+      "assessment": "mechanism",
+      "layer": "mechanism",
+      "fact_scope": {
+        "kind": "evergreen"
+      },
+      "quality": "B",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 3,
+      "template_id": "technical-qa",
+      "fields": {
+        "问题": "一条允许丢弃部分专家分配的训练路径按专家分段，并可能为 GEMM 加入 padding。某 rank 的溢出标志已置位。沿检测、计算、回传三步，应如何确定哪些贡献最终可以合回原 Token？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "溢出标志说明本轮发生过问题，专家计数／分段约束计算范围，分配级映射或有效标记决定哪些结果贡献可回传。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "rank 级标志不能定位每条丢弃分配；分段中可能仍包含参与计算的 padding。"
+                }
+              ],
+              "label": "检测与计算"
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "要用对应 Token／专家分配的有效映射排除无输出位置或无效贡献，不能只靠一个总标志。"
+                }
+              ],
+              "label": "回传"
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "本题已限定允许丢弃的训练语义，不把这种处理自动推广为推理服务可以静默丢弃。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "发生过溢出、计算范围、有效贡献分开判断",
+        "来源": "W2 单元二学习日志 · Hybrid-EP overflow 与 padding"
+      },
+      "source_ids": [
+        "w2-u2-log"
+      ],
+      "content_summary": "溢出标志与逐分配有效性；日志 msg-d762ecbfb4d55cff810b 至 msg-015b0394ddbba83d8977",
+      "depends_on": []
+    },
+    {
+      "key": "oral-async-moe-safety",
+      "rank": 14,
+      "domain": "moe-adaptation-interview",
+      "recall_target": "向面试官串联异步MoE的数据路由状态与缓冲复用责任",
+      "assessment": "oral",
+      "layer": "oral",
+      "fact_scope": {
+        "kind": "evergreen"
+      },
+      "quality": "A",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 5,
+      "template_id": "oral",
+      "fields": {
+        "问题": "向面试官用 60–90 秒解释一个异步 MoE 通信方案的安全边界：dispatch 返回独立激活，逆向路由按调用保存，内部有两份轮换通信区。沿数据、路由状态与完成顺序说明为什么仅有独立张量或双缓冲还不够；若使用捕获地址的执行图，再说明一次资源扩容的风险。",
+        "参考回答": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "需要把数据存储、路由状态和执行依赖分别管理，再把它们按同一调用关联起来。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "专家计算需要行与专家的对应关系，combine 还需要来源和原位置映射；激活独立不能证明路由状态也独立。"
+                }
+              ],
+              "label": "数据与路由"
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "输入在通信读完前不能被覆写，消费者要等输出就绪。两份内部区只负责轮换，下一次复用仍须满足前一轮数据与控制状态的完成依赖，CPU 返回不等于设备完成。"
+                }
+              ],
+              "label": "完成与复用"
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "图可能继续引用捕获时的地址；扩容后更新普通对象不会自动使旧图失效，应禁止不兼容扩容或显式重建并管理旧资源。"
+                }
+              ],
+              "label": "执行图"
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "这些是需要验证的接口与顺序契约，不能仅凭设计说明宣称具体设备实现已经通过验证。"
+                }
+              ]
+            }
+          ]
+        },
+        "评分锚点": [
+          "数据与两类路由状态分开",
+          "对象存活与执行依赖分开",
+          "双缓冲按完成条件复用",
+          "捕获地址随资源变更受控"
+        ],
+        "来源": "W2 单元二学习日志 · 生命周期、双缓冲与图重放"
+      },
+      "source_ids": [
+        "w2-u2-log"
+      ],
+      "content_summary": "串联同批已核验子卡，不引入实现结果；日志异步与图重放相关条目；A理由：直接支撑一道关于异步通信适配正确性的系统面试题。",
+      "depends_on": [
+        "two-kinds-routing-state",
+        "lifetime-vs-execution-order",
+        "double-buffer-reuse",
+        "captured-address-lifetime"
+      ]
+    },
+    {
+      "key": "jit-bound-vs-runtime-count",
+      "rank": 15,
+      "domain": "jit-runtime-boundaries",
+      "recall_target": "区分容量特化参数与运行时有效计数的变化",
+      "assessment": "mechanism",
+      "layer": "mechanism",
+      "fact_scope": {
+        "kind": "evergreen"
+      },
+      "quality": "B",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 3,
+      "template_id": "technical-qa",
+      "fields": {
+        "问题": "某 JIT 通信 kernel 将容量上限 M 用于模板特化，实际有效行数 n 作为运行参数，每步可能不同。怎样解释 M 与 n 的变化对代码复用和处理范围的不同影响？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "容量特化参数影响编译出的代码或布局，运行计数决定同一份代码本轮处理哪些有效数据，两者不应混为一谈。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "可能需要新的特化和相应存储布局，但不代表每轮都实际处理满 M。"
+                }
+              ],
+              "label": "改变 M"
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "在已支持的范围内，运行参数变化可以复用同一份代码；精确输出分配是否引入主机同步是另一条路径问题。"
+                }
+              ],
+              "label": "改变 n"
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "结论限定题面声明的参数角色，不外推任何具体库的默认 JIT 策略或录图支持。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "编译容量与运行计数各司其职",
+        "来源": "W2 单元二学习日志 · DeepEP V2 的 M 与计数追问"
+      },
+      "source_ids": [
+        "w2-u2-log"
+      ],
+      "content_summary": "容量参数与实际计数分离；日志 msg-572418169362c2f6c4d0 至 msg-0240f26975e51eee1550",
+      "depends_on": []
+    },
+    {
+      "key": "graph-error-flag-vs-recovery",
+      "rank": 16,
+      "domain": "execution-graph-failure-handling",
+      "recall_target": "解释执行图内标错与图后拒绝结果的边界",
+      "assessment": "mechanism",
+      "layer": "mechanism",
+      "fact_scope": {
+        "kind": "evergreen"
+      },
+      "quality": "B",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 3,
+      "template_id": "technical-qa",
+      "fields": {
+        "问题": "一个执行图使用固定容量，已设计写入前的安全超限检测。检测结果只能留在设备标志中，不能在图中途调用 Python fallback。调用方应怎样处理结果，不能据此承诺什么？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "可以在图结束后检查标志，拒绝无效结果，再按既定策略报错或重算；不必把主机 fallback 放进图中途。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "检测与数据写入之间必须已有防止越界或非法贡献的保护。"
+                }
+              ],
+              "label": "安全前提"
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "若越界写已经发生，仅检查标志或丢弃输出并不能证明资源与状态安全。"
+                }
+              ],
+              "label": "恢复边界"
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "实际重算与恢复还要满足通信中止、资源复用及多 rank 协调条件。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "图内报告，图后处理，越界前保护",
+        "来源": "W2 单元二学习日志 · 综合验收中的图后处理"
+      },
+      "source_ids": [
+        "w2-u2-log"
+      ],
+      "content_summary": "图内错误标志与图后处理；日志 msg-7364d634a002abb3179a 至 msg-ab2e9b1835238bcd5dc9",
+      "depends_on": []
+    },
+    {
+      "key": "sm-budget-overlap-opportunity",
+      "rank": 17,
+      "domain": "gpu-overlap-performance",
+      "recall_target": "按可重叠工作判断通信资源预算的优化价值",
+      "assessment": "mechanism",
+      "layer": "mechanism",
+      "fact_scope": {
+        "kind": "evergreen"
+      },
+      "quality": "B",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 3,
+      "template_id": "technical-qa",
+      "fields": {
+        "问题": "一块 GPU 允许通信和计算重叠，准备减少通信 kernel 使用的 SM。如何判断这一调整是否值得尝试，为什么不能只看通信占用的 SM 数？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "应看节省的资源能否被独立计算实际利用，以及完整链路的时间变化，而不是把少占资源本身当成收益。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "若执行仍串行，腾出的资源可能闲置，通信阶段却可能因资源减少而变慢。"
+                }
+              ],
+              "label": "没有重叠工作"
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "保持工作量与正确性条件一致，对照通信、拷出、等待和计算的总耗时；单批共享专家也可能提供候选窗口。"
+                }
+              ],
+              "label": "存在候选时"
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "是否真实并发、哪一阶段占用资源以及最终收益，都需要针对具体实现验证。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "资源释放要有消费者，收益看完整链路",
+        "来源": "W2 单元二学习日志 · V2 SM 预算与共享专家"
+      },
+      "source_ids": [
+        "w2-u2-log"
+      ],
+      "content_summary": "通信资源预算与重叠机会；日志 msg-0307955549c557089157 至 msg-98a2af8a3ef74f623c34",
+      "depends_on": []
+    }
+  ]
+}

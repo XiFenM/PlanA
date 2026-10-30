@@ -1,0 +1,3216 @@
+{
+  "schema": "memo-cards.request/v1",
+  "output_collection": "inference-cards",
+  "target": "推理框架/cards/2026-10-29-w2-u2-implementations.md",
+  "selection": "complete",
+  "sources": [
+    {
+      "id": "w2-card",
+      "collection": "inference-w2-u2-evidence",
+      "path": "面试准备/自我准备/ChangeCard-02-MoE-EP-dispatch-combine.md",
+      "sha256": "9b9a02a5d8b00a348e0403a251004430c028f04e8a0e566b33b8d24ba9b840c3",
+      "summary": "已审核的接入契约与源码纠正；只采用公开固定源码事实，不将用户芯片说明或待验证结果转为确定实现。"
+    },
+    {
+      "id": "w2-ledger",
+      "collection": "inference-w2-u2-evidence",
+      "path": "计划/八周冲刺进度/历史记录/W2-学习验收记录.md",
+      "sha256": "b16f02d4dcbe65acc25723d0a4b580eb0513e99d151808f2db8d00bd7f1aafa4",
+      "summary": "单元二固定源码基线、节点检查及已确认的Hybrid-EP场景表；用于确定学习范围和来源锚点，不将mastery状态当知识事实。"
+    },
+    {
+      "id": "w2-lesson",
+      "collection": "inference-w2-u2-evidence",
+      "path": "课程网页/八周计划/plana-jd-w2-moe-ep-source.html",
+      "sha256": "68341403389ef6be12a10c15ebe60d867dd042ebca2a00d8b210893b835a27bf",
+      "summary": "既有源码串讲与横向对照讲义；本批逐项核对固定提交，过强简写以本批明确范围和代码依据为准。"
+    }
+  ],
+  "cards": [
+    {
+      "key": "vllm-qwen3-modular-moe-path",
+      "rank": 1,
+      "domain": "vllm-moe-implementation",
+      "recall_target": "追踪Qwen3 MoE未量化modular路径的路由到通信计算主链",
+      "assessment": "mechanism",
+      "layer": "mechanism",
+      "fact_scope": {
+        "kind": "snapshot",
+        "product": "vLLM",
+        "commit": "d7ada3aace051fecec553c185225db2259c2ac6a"
+      },
+      "quality": "A",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 5,
+      "template_id": "technical-qa",
+      "fields": {
+        "问题": "在 vLLM d7ada3a 的 Qwen3 MoE 中，采用未量化 modular 路径，不考虑 LoRA、延后 finalize 或额外融合。如何从模型的 MoE 调用追到路由选择、专家计算和结果回传？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "模型把隐状态交给 factory 创建的 MoE 执行对象；MoERunner 组织 gate 与 top-k，权重方法再进入由 P/F 和 Experts 组成的 modular kernel。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "label": "模型到路由",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "Qwen3MoeSparseMoeBlock 调用 self.experts；该对象持有 gate，MoERunner 计算 logits，再由 router.select_experts 生成 topk_weights 与 topk_ids。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "label": "权重到内核",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "RoutedExperts.forward_modular 调用 quant_method.apply；未量化方法把隐状态、专家权重、路由和 expert_map 传给 FusedMoEKernel。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "label": "内核内顺序",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "modular 实现依次执行 _prepare、_fused_experts、_finalize：P/F 处理通信及约定的准备／收尾，Experts 执行专家计算，并按实现承担布局或局部加权归约。"
+                }
+              ]
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "这条链限定 modular 分支；monolithic 路径会把 router logits 交给组合实现，不能套用“先由 router.select_experts 选完再执行”的顺序。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "模型 → runner/router → 权重方法 → prepare／Experts／finalize",
+        "来源": "课程网页 synthesis §一；Change Card 02 §1–2；框架节点检查"
+      },
+      "source_ids": [
+        "w2-lesson",
+        "w2-card",
+        "w2-ledger"
+      ],
+      "content_summary": "追踪Qwen3 MoE未量化modular路径的路由到通信计算主链；材料：课程网页 synthesis §一；Change Card 02 §1–2；框架节点检查；固定源码核验：vLLM@d7ada3aace051fecec553c185225db2259c2ac6a: vllm/model_executor/models/qwen3_moe.py:203–232；fused_moe/runner/moe_runner.py:598–643、904–936；fused_moe/routed_experts.py:1369–1404；fused_moe/unquantized_fused_moe_method.py:276–315；fused_moe/modular_kernel.py:1525–1581；证据为固定源码的调用与条件，不是设备运行或性能实测。；A理由：回答面试中“从模型入口讲清真实MoE执行主链”，防止仅列通信库和GEMM名称而无法连接调用关系。",
+      "depends_on": []
+    },
+    {
+      "key": "vllm-backend-selection-gates",
+      "rank": 2,
+      "domain": "vllm-moe-configuration",
+      "recall_target": "解释并行通信与Experts选择怎样共同决定modular实现",
+      "assessment": "mechanism",
+      "layer": "mechanism",
+      "fact_scope": {
+        "kind": "snapshot",
+        "product": "vLLM",
+        "commit": "d7ada3aace051fecec553c185225db2259c2ac6a"
+      },
+      "quality": "A",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 5,
+      "template_id": "technical-qa",
+      "fields": {
+        "问题": "在 vLLM d7ada3a 的 CUDA／ROCm 未量化 modular 路径中，不使用 passthrough 或 LoRA。为什么只设置 all2all_backend 还不能确定最终 MoE 实现？沿并行配置、P/F 选择与 Experts 选择说明。",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "并行配置先决定是否进入专用 all-to-all 分支；通信后端选择 P/F，计算后端还需满足设备、精度和激活布局约定。三者不是任意可互换的开关。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "label": "并行门槛",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "use_all2all_kernels 要求 use_ep，并且 dp_size>1、pcp_size>1 或 is_sequence_parallel 至少一项成立；因此仅开启 EP 并填写后端名不保证进入专用分支。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "label": "通信工厂",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "未量化构造使用 allow_new_interface=True；门槛不满足时，工厂可提前选 naive DP／EP 或 NoDPEP。进入专用分支后才按具体后端构造对应 P/F。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "label": "计算选择",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "未量化 oracle 根据配置推断 Standard／BatchedExperts，再检查候选 Experts 的支持条件；显式指定的计算后端不支持时可报错，而非保证自动回退。"
+                }
+              ]
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "最终 FusedMoEKernel 仍断言两侧 activation_format 一致；OOT 自建 kernel 与其他特殊入口不由本题这条普通选择流程完全涵盖。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "是否通信 → 怎样通信 → 哪个计算实现兼容",
+        "来源": "Change Card 02 §1、§4；课程网页 comparison 表A；框架节点检查"
+      },
+      "source_ids": [
+        "w2-lesson",
+        "w2-card",
+        "w2-ledger"
+      ],
+      "content_summary": "解释并行通信与Experts选择怎样共同决定modular实现；材料：Change Card 02 §1、§4；课程网页 comparison 表A；框架节点检查；固定源码核验：vLLM@d7ada3aace051fecec553c185225db2259c2ac6a: vllm/model_executor/layers/fused_moe/config.py:1034–1038；all2all_utils.py:182–230、453；oracle/unquantized.py:253–261、283–317、518–551；modular_kernel.py:1739–1747；证据为固定源码的调用与条件，不是设备运行或性能实测。；A理由：防止把后端配置名当成实际执行路径，误判未进入目标通信实现或不兼容的Experts组合。",
+      "depends_on": []
+    },
+    {
+      "key": "vllm-oot-modular-initialization",
+      "rank": 3,
+      "domain": "vllm-backend-adaptation",
+      "recall_target": "明确OOT注册之后建立未量化modular内核的责任",
+      "assessment": "mechanism",
+      "layer": "mechanism",
+      "fact_scope": {
+        "kind": "snapshot",
+        "product": "vLLM",
+        "commit": "d7ada3aace051fecec553c185225db2259c2ac6a"
+      },
+      "quality": "B",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 3,
+      "template_id": "technical-qa",
+      "fields": {
+        "问题": "在 vLLM d7ada3a 中，一个 OOT 平台注册了 UnquantizedFusedMoEMethod 子类，但继续沿用基类的权重加载与 forward。为什么仅有注册还不足以获得可运行的 P/F＋Experts 路径？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "OOT 注册只替换类入口；普通 oracle 不会为该平台选出 Experts，插件仍需接管权重处理与 kernel 初始化。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "label": "默认分支",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "未量化 oracle 对 OOT 返回 OOT 与 None；正常权重处理遇到 OOT 后提前返回，不建立 moe_kernel。默认 forward_oot 转到 forward_native，而后者要求 moe_kernel 已存在。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "label": "插件责任",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "子类须按设备契约准备权重和 moe_quant_config，构造匹配的 P/F、Experts 与 FusedMoEKernel，并把它们接入实际加载和执行生命周期。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "label": "预处理权重",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "已经预处理的权重走重建 kernel 分支；也要被插件正确接管，不能落到要求 experts_cls 非空的默认初始化。"
+                }
+              ]
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "直接组装可以绕过普通 P/F 工厂，但不会自动保证设备支持、并行组、布局或权重格式正确，也不等于已经完成真实平台适配。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "注册替入口，插件建权重与kernel",
+        "来源": "Change Card 02 §4 OOT 子类责任"
+      },
+      "source_ids": [
+        "w2-card"
+      ],
+      "content_summary": "明确OOT注册之后建立未量化modular内核的责任；材料：Change Card 02 §4 OOT 子类责任；固定源码核验：vLLM@d7ada3aace051fecec553c185225db2259c2ac6a: vllm/model_executor/custom_op.py:107–126、167–170、326–340；fused_moe/oracle/unquantized.py:231–232；fused_moe/unquantized_fused_moe_method.py:200–232、294–315；证据为固定源码的调用与条件，不是设备运行或性能实测。",
+      "depends_on": []
+    },
+    {
+      "key": "vllm-prepare-layout-metadata",
+      "rank": 4,
+      "domain": "vllm-moe-contracts",
+      "recall_target": "按vLLM激活布局解释专家计数与逐行路由的不同职责",
+      "assessment": "discrimination",
+      "layer": "atomic",
+      "fact_scope": {
+        "kind": "snapshot",
+        "product": "vLLM",
+        "commit": "d7ada3aace051fecec553c185225db2259c2ac6a"
+      },
+      "quality": "B",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 3,
+      "template_id": "technical-qa",
+      "fields": {
+        "问题": "在 vLLM d7ada3a 的 prepare 接口中，对照 DeepEP LL 的 [E,C,H] 专家槽位布局与 Standard 的 [M,H] 行布局：专家计数与 topk ids／weights 分别解决什么问题，为什么不能把二者互相代替？E是本卡专家数，C是每专家容量，H是隐藏维度，M是当前行数。",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "专家优先布局已经用第0维标明专家，计数说明每个专家槽位中的有效行；普通行布局则通常还需逐行路由来决定该行由哪些本地专家处理。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "label": "DeepEP LL",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "prepare 返回激活、可选scale和每专家有效计数，不返回替代的topk ids／weights；框架保留原路由供最终combine使用。BatchedTritonExperts读取计数处理专家槽位。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "label": "Standard",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "行的顺序或集合改变且后续仍依赖逐行路由时，要返回与新行匹配的ids／weights；计数本身不能表示每行的专家选择。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "label": "None的含义",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "kernel仅在返回值非None时替换原路由；NoDPEP虽然也是Standard，却可返回None沿用原ids／weights，不能只凭布局枚举断言这些项必填。"
+                }
+              ]
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "有效计数的具体含义仍由组合决定；不能把MoRI提供的总有效行数机械当成每专家计数。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "布局定专家，计数定有效行，ids定逐行路由",
+        "来源": "Change Card 02 §2；课程网页 synthesis“路由信息分两类”"
+      },
+      "source_ids": [
+        "w2-card",
+        "w2-lesson"
+      ],
+      "content_summary": "按vLLM激活布局解释专家计数与逐行路由的不同职责；材料：Change Card 02 §2；课程网页 synthesis“路由信息分两类”；固定源码核验：vLLM@d7ada3aace051fecec553c185225db2259c2ac6a: vllm/model_executor/layers/fused_moe/modular_kernel.py:157–163、286–319、1293–1297；prepare_finalize/deepep_ll.py:324–338；prepare_finalize/no_dp_ep.py:63–84；experts/fused_batched_moe.py:923–925；prepare_finalize/mori.py:121–130；证据为固定源码的调用与条件，不是设备运行或性能实测。",
+      "depends_on": []
+    },
+    {
+      "key": "vllm-topk-reduction-contracts",
+      "rank": 5,
+      "domain": "vllm-moe-contracts",
+      "recall_target": "按Experts输出与P/F能力选择topk加权归约契约",
+      "assessment": "discrimination",
+      "layer": "atomic",
+      "fact_scope": {
+        "kind": "snapshot",
+        "product": "vLLM",
+        "commit": "d7ada3aace051fecec553c185225db2259c2ac6a"
+      },
+      "quality": "A",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 5,
+      "template_id": "technical-qa",
+      "fields": {
+        "问题": "在 vLLM d7ada3a 的 modular MoE 中，先限定 apply_router_weight_on_input=False。Experts 分别交出：已加权归约的行、未加权的 [M,K,H] 行、需由通信combine处理的专家槽位。NoOP、Contiguous、Delegate 如何对应这些契约，为什么不能只按“由P/F做”来选？M为Token行数，K为top-k，H为隐藏维度。",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "返回值表达Experts已经完成哪些工作以及剩余数据适合怎样处理；它们不是固定的执行地点标签。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "label": "NoOP",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "用于Experts已完成加权与top-k归约的输出；后续不再重复做这两项操作，但仍可能需要通信或跨rank归约。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "label": "Contiguous",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "提供针对[M,K,H]未归约结果的加权与沿K求和实现；P/F调用它时必须满足该形状及权重语义，不是所有“P/F负责”的通用标记。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "label": "Delegate",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "把具体收尾交给P/F选择；DeepEP HT可选Contiguous后再combine，DeepEP LL则要求Delegate并在combine内完成加权归约。"
+                }
+              ]
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "若apply_router_weight_on_input=True，权重可能已在prepare施加；DeepEP LL在top-k=1的该分支给combine改传全1。Delegate不能证明原权重尚未用过。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "已完成什么 → 剩余布局 → 谁选择收尾实现",
+        "来源": "Change Card 02 §2；框架节点检查中的接口补差"
+      },
+      "source_ids": [
+        "w2-card",
+        "w2-ledger"
+      ],
+      "content_summary": "按Experts输出与P/F能力选择topk加权归约契约；材料：Change Card 02 §2；框架节点检查中的接口补差；固定源码核验：vLLM@d7ada3aace051fecec553c185225db2259c2ac6a: vllm/model_executor/layers/fused_moe/topk_weight_and_reduce.py:11–118；prepare_finalize/deepep_ht.py:383–394；prepare_finalize/deepep_ll.py:278–284、378–403；experts/fused_batched_moe.py:861–863；证据为固定源码的调用与条件，不是设备运行或性能实测。；A理由：防止适配时选择错误的加权归约契约、重复乘路由权重或对不匹配布局执行归约。",
+      "depends_on": []
+    },
+    {
+      "key": "vllm-output-is-reduced-meaning",
+      "rank": 6,
+      "domain": "vllm-moe-contracts",
+      "recall_target": "正确解释output_is_reduced与runner条件性all-reduce",
+      "assessment": "discrimination",
+      "layer": "atomic",
+      "fact_scope": {
+        "kind": "snapshot",
+        "product": "vLLM",
+        "commit": "d7ada3aace051fecec553c185225db2259c2ac6a"
+      },
+      "quality": "B",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 3,
+      "template_id": "technical-qa",
+      "fields": {
+        "问题": "在 vLLM d7ada3a 中，P/F的output_is_reduced()描述哪一层归约？比较单rank与多rank配置，为什么不能仅凭返回False就断言输出不完整或必定再次all-reduce？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "它声明finalize输出是否已完成跨rank归约，不是top-k加权或卡内求和的完成标志；后续归约由runner和模型路径共同决定。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "label": "默认late路径",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "非SP、未启用skip_final_all_reduce、TP或EP规模大于1且输出尚未归约时，runner才对最终状态做tensor-parallel all-reduce。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "label": "单rank反例",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "NoDPEP返回False；单rank没有其他rank的贡献需要合入，结果仍可完整，默认late路径也不会执行额外all-reduce。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "label": "适配约定",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "P/F应按实际跨rank语义报告；不能因为某个配置恰好跳过后续归约，就填入与实现不符的值。"
+                }
+              ]
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "SP、模型接管归约或提前归约等路径需要分别核对；本卡不把所有结果收尾统一成一种collective。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "跨rank标志 ≠ top-k归约标志",
+        "来源": "Change Card 02 §2；同日源码审稿补正"
+      },
+      "source_ids": [
+        "w2-card",
+        "w2-ledger"
+      ],
+      "content_summary": "正确解释output_is_reduced与runner条件性all-reduce；材料：Change Card 02 §2；同日源码审稿补正；固定源码核验：vLLM@d7ada3aace051fecec553c185225db2259c2ac6a: vllm/model_executor/layers/fused_moe/modular_kernel.py:249–252、1749–1753；prepare_finalize/no_dp_ep.py:60–61；runner/moe_runner.py:453–515；证据为固定源码的调用与条件，不是设备运行或性能实测。",
+      "depends_on": []
+    },
+    {
+      "key": "vllm-dp-idle-graph-agreement",
+      "rank": 7,
+      "domain": "vllm-distributed-execution",
+      "recall_target": "解释普通DP协作步中idle参与与graph模式形状一致性",
+      "assessment": "mechanism",
+      "layer": "mechanism",
+      "fact_scope": {
+        "kind": "snapshot",
+        "product": "vLLM",
+        "commit": "d7ada3aace051fecec553c185225db2259c2ac6a"
+      },
+      "quality": "A",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 5,
+      "template_id": "technical-qa",
+      "fields": {
+        "问题": "在 vLLM d7ada3a 的 V2 GPU ModelRunner 普通DP协作分支中，关闭DBO和投机解码，每请求每步decode一个Token，且不跳过DP协调。组内仍有任务，一个rank因批次不适合录图已选择eager，另一个rank没有请求：空闲rank能否跳过，本步怎样决定graph与padding？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "空闲rank仍通过dummy batch参与协作；普通同步分支只要任一rank选择eager，全组选择eager，本步不再按共同graph档位补齐。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "label": "空闲参与",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "execute_dummy_batch使用一行dummy输入，并进入模型执行和DP同步；跳过该参与会破坏其他rank预期的集体调用。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "label": "共同决定",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "各rank通过CPU all-reduce交换本地Token数和graph模式等信息；普通分支取共同模式，eager时保留各rank本步长度。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "label": "可录图时",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "若全组走graph，使用全组最大Token数匹配共同档位，并将各rank的同步Token数更新为该档位长度。"
+                }
+              ]
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "这里只检查V2 GPU ModelRunner的代表性非DBO分支及给定单Token decode条件；不把结论无条件套到旧GPUModelRunner、投机解码或其他执行分支，也不把所有prefill都认定为eager。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "仍参与 → 协商模式 → 再决定padding",
+        "来源": "框架节点检查：DP同步／补齐；课程网页 synthesis §二 AgRs基线"
+      },
+      "source_ids": [
+        "w2-lesson",
+        "w2-ledger"
+      ],
+      "content_summary": "覆盖o1：V2 GPU ModelRunner普通DP协作、idle与graph一致性。材料：框架节点检查节点3、讲义AgRs基线。源码d7ada3a：vllm/v1/worker/gpu_worker.py:1442-1448；v1/worker/gpu/model_runner.py:918-925、1806-1824、1855-1859；v1/worker/gpu/dp_utils.py:64-81、148-198。限定非DBO、无投机且decode_query_len=1；A理由：防止空闲rank跳过集体调用或各rank自行选择不兼容的执行模式。",
+      "depends_on": []
+    },
+    {
+      "key": "vllm-shared-expert-combine-window",
+      "rank": 8,
+      "domain": "vllm-moe-overlap",
+      "recall_target": "定位modular内部共享专家计算与异步combine的实际窗口",
+      "assessment": "mechanism",
+      "layer": "mechanism",
+      "fact_scope": {
+        "kind": "snapshot",
+        "product": "vLLM",
+        "commit": "d7ada3aace051fecec553c185225db2259c2ac6a"
+      },
+      "quality": "B",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 3,
+      "template_id": "technical-qa",
+      "fields": {
+        "问题": "在 vLLM d7ada3a 中，已选MK内部共享专家重叠路径，P/F支持异步且不启用DBO。源码把共享专家计算插在dispatch还是combine窗口？请用实际调用顺序说明，并指出另选窗口需要改变什么。",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "MK内部路径在finalize_async发起之后、接收hook／receiver之前计算共享专家，因此对应combine窗口。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "label": "顺序",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "_finalize先调用finalize_async，再调用_maybe_apply_shared_experts，然后处理接收hook并执行receiver。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "label": "dispatch路径",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "_prepare在prepare_async之后直接处理hook／receiver，没有在这里调用共享专家；不能只读“overlap dispatch”的注释判断实际窗口。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "label": "另一窗口",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "如果要把共享专家移到dispatch发送与接收之间，必须调整调度和恰好执行一次的责任，不能同时声称沿用未修改的kernel调度。"
+                }
+              ]
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "这是MK内部路径，不涵盖辅助stream的另一种共享专家调度；EPLB及后端安全名单可能禁用重叠，源码存在窗口也不等于具体硬件已有性能收益。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "finalize_async → shared Experts → recv hook／receiver",
+        "来源": "Change Card 02 §8；课程网页 comparison 表A；源码审稿补正"
+      },
+      "source_ids": [
+        "w2-card",
+        "w2-lesson",
+        "w2-ledger"
+      ],
+      "content_summary": "定位modular内部共享专家计算与异步combine的实际窗口；材料：Change Card 02 §8；课程网页 comparison 表A；源码审稿补正；固定源码核验：vLLM@d7ada3aace051fecec553c185225db2259c2ac6a: vllm/model_executor/layers/fused_moe/modular_kernel.py:1255–1291、1435–1465、1714–1718；runner/shared_experts.py:79–121；证据为固定源码的调用与条件，不是设备运行或性能实测。",
+      "depends_on": []
+    },
+    {
+      "key": "sglang-moe-ordinary-runner-path",
+      "rank": 9,
+      "domain": "sglang-moe-implementation",
+      "recall_target": "追踪SGLang普通MoE的dispatcher到runner再到combine链路",
+      "assessment": "mechanism",
+      "layer": "mechanism",
+      "fact_scope": {
+        "kind": "snapshot",
+        "product": "SGLang",
+        "commit": "43a3f956cb0c9fe9b7b7a042af8d8743176b9dba"
+      },
+      "quality": "B",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 3,
+      "template_id": "technical-qa",
+      "fields": {
+        "问题": "在 SGLang 43a3f95 中，TopKOutput已经生成，进入FusedMoE的普通forward_impl。排除fused_func、DispatchMoeRunnerCore直通与deferred finalize：dispatch的结果怎样经过专家计算，再交给combine？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "FusedMoE先调用dispatcher，计算方法把结果交给MoeRunner；普通runner执行pre-permute、runner_core、post-permute，再由原dispatcher完成combine。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "label": "框架入口",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "forward_impl通过_dispatch_with_pre_quant取得DispatchOutput，再调用run_moe_core；后者经quant_method.apply选择相应runner及计算所需信息。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "label": "计算交接",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "MoeRunner按dispatch格式与runner后端选择输入转换，执行runner_core，再转换成该dispatcher可接受的CombineInput。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "label": "回传",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "FusedMoE把CombineInput传给dispatcher.combine，并继续处理输出形状与配置要求的结果归约。"
+                }
+              ]
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "该版本还存在fused_func和直接消费DispatchOutput的runner等快路；它们不一定逐个经过这两个转换函数。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "dispatcher → quant_method/MoeRunner → 双向转换与core → combine",
+        "来源": "课程网页 synthesis §一SGLang代码地图、comparison表A；框架节点检查"
+      },
+      "source_ids": [
+        "w2-lesson",
+        "w2-ledger"
+      ],
+      "content_summary": "追踪SGLang普通MoE的dispatcher到runner再到combine链路；材料：课程网页 synthesis §一SGLang代码地图、comparison表A；框架节点检查；固定源码核验：SGLang@43a3f956cb0c9fe9b7b7a042af8d8743176b9dba: python/sglang/srt/layers/moe/fused_moe_triton/layer.py:1597–1682；layers/quantization/unquant.py:1185–1218；layers/moe/moe_runner/runner.py:195–269；证据为固定源码的调用与条件，不是设备运行或性能实测。",
+      "depends_on": []
+    },
+    {
+      "key": "sglang-format-pair-registration",
+      "rank": 10,
+      "domain": "sglang-backend-adaptation",
+      "recall_target": "按格式与runner双向键完成普通转换路径接入",
+      "assessment": "discrimination",
+      "layer": "atomic",
+      "fact_scope": {
+        "kind": "snapshot",
+        "product": "SGLang",
+        "commit": "43a3f956cb0c9fe9b7b7a042af8d8743176b9dba"
+      },
+      "quality": "B",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 3,
+      "template_id": "technical-qa",
+      "fields": {
+        "问题": "在 SGLang 43a3f95 中，新dispatcher的库调用已接好，返回新格式F；计算侧复用已有deep_gemm runner，走普通pre/post-permute路径。为什么只登记F到deep_gemm的转换仍不完整，首次前向按哪些键找两条转换？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "普通runner按两个有方向的键查表：输入用(F, deep_gemm)，输出用(deep_gemm, F)；格式声明、双向转换和库调用是不同的接入责任。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "label": "输入查找",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "dispatch_output.format.value与runner_core.runner_backend.value组成pre-permute键，转换结果供runner_core消费。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "label": "输出查找",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "runner执行后，以runner后端名和原dispatch格式字符串查post-permute，生成该通信路径的CombineInput；只有其他格式的转换不能替代它。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "label": "缺项表现",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "PermuteMethodPool在查询缺失键时断言失败；库对象创建成功不代表第一次MoE前向能通过转换查表。"
+                }
+              ]
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "本题已限定普通转换路径；复用runner还要求其算子和数据契约适用于平台，不能由格式名注册推出设备支持。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "(dispatch格式,runner) ↔ (runner,combine格式)",
+        "来源": "框架节点检查：SGLang新格式复查；课程网页 synthesis §一、comparison表A"
+      },
+      "source_ids": [
+        "w2-lesson",
+        "w2-ledger"
+      ],
+      "content_summary": "按格式与runner双向键完成普通转换路径接入；材料：框架节点检查：SGLang新格式复查；课程网页 synthesis §一、comparison表A；固定源码核验：SGLang@43a3f956cb0c9fe9b7b7a042af8d8743176b9dba: python/sglang/srt/layers/moe/moe_runner/runner.py:239–269；layers/moe/moe_runner/base.py:210–292；证据为固定源码的调用与条件，不是设备运行或性能实测。",
+      "depends_on": []
+    },
+    {
+      "key": "sglang-dp-auto-mode-coupling",
+      "rank": 11,
+      "domain": "sglang-distributed-execution",
+      "recall_target": "解释attention-DP信息同步对DeepEP auto与TBO的全组约束",
+      "assessment": "mechanism",
+      "layer": "mechanism",
+      "fact_scope": {
+        "kind": "snapshot",
+        "product": "SGLang",
+        "commit": "43a3f956cb0c9fe9b7b7a042af8d8743176b9dba"
+      },
+      "quality": "B",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 3,
+      "template_id": "technical-qa",
+      "fields": {
+        "问题": "在 SGLang 43a3f95 的普通attention-DP协作组中，正常执行调度元数据的跨rank同步（未跳过、非DWDP），DeepEP设置为auto且TBO开关已启用。同步时非空闲rank的forward mode混有普通EXTEND与DECODE：为什么一个decode rank不能独自坚持LL和原decode图，并自行开启TBO？不考虑投机或其他特殊forward mode。",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "DeepEP模式、decode图资格和TBO资格依赖全组交换的信息，不能由本rank仅有decode请求来决定。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "label": "通信模式",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "同步信息对is_extend_in_batch取全组最大值；auto在出现extend时解析为NORMAL，否则为LOW_LATENCY，dispatcher按该结果选实现。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "label": "图与TBO",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "普通EXTEND对decode图资格投False，全组取共同结果；TBO还要求开关启用、各rank可拆分，并且排除idle／prebuilt后forward mode一致。题设的EXTEND与DECODE混合不满足该一致性。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "label": "空闲rank",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "其他rank有任务时，本地无batch也会创建idle batch参与；初始idle输入为0行，不能据没有本地请求跳过共同通信。"
+                }
+              ]
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "此处限制的是该步共同decode路径；不把它改写成SGLang所有prefill或所有graph机制都不支持录图。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "全组extend标志 → auto模式；共同资格 → graph与TBO",
+        "来源": "框架节点检查：SGLang混跑诊断；课程网页 comparison表A"
+      },
+      "source_ids": [
+        "w2-lesson",
+        "w2-ledger"
+      ],
+      "content_summary": "覆盖o1：attention-DP同步约束DeepEP auto、decode图与TBO。材料：框架节点检查节点4、讲义comparison。源码43a3f95：python/sglang/srt/managers/scheduler_components/dp_attn.py:286-294、355-380、630-682；layers/moe/utils.py:254-272；token_dispatcher/deepep.py:1097-1105；batch_overlap/two_batch_overlap.py:404-416、455-499；schedule_batch.py:3597-3607。题面限定正常同步、非DWDP、TBO开启及普通EXTEND/DECODE混合。",
+      "depends_on": []
+    },
+    {
+      "key": "sglang-tbo-sbo-execution-granularity",
+      "rank": 12,
+      "domain": "sglang-moe-overlap",
+      "recall_target": "区分SGLang的双微批阶段交错与单批内部重叠",
+      "assessment": "mechanism",
+      "layer": "mechanism",
+      "fact_scope": {
+        "kind": "snapshot",
+        "product": "SGLang",
+        "commit": "43a3f956cb0c9fe9b7b7a042af8d8743176b9dba"
+      },
+      "quality": "B",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 3,
+      "template_id": "technical-qa",
+      "fields": {
+        "问题": "在 SGLang 43a3f95 的DeepSeek主模型中，共享专家已启用。比较各自开关已启用且满足运行条件的TBO与SBO；SBO以非Blackwell NVIDIA平台的DeepEP LL＋DeepGEMM路径为例。二者分别在哪个粒度组织可重叠工作，为什么没有拆micro-batch也不等于没有重叠机制？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "TBO把一批切成两个子批，交错执行阶段列表；SBO保留单批，在其内部把共享专家或部分GEMM工作与通信配合调度。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "label": "TBO",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "model_forward_stages先切分输入，为两个子批建立各自状态，再以不同阶段偏移执行同一操作序列，最后合并结果。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "label": "SBO",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "在题设的非Blackwell、非NextN路径中，dispatch hook安排共享专家；支持的DeepGEMM路径还可为down GEMM与combine配置独立stream、事件和细粒度信号。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "label": "选择依据",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "二者依赖的可并行工作与状态管理不同；是否值得启用需核对模型、计算后端和平台条件，不能只看名称或是否有两个子批。"
+                }
+              ]
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "本卡只描述固定版本存在的实现机制，不承诺任意后端支持或必有加速；Blackwell与其他runner的SBO分支必须另按条件核对。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "TBO：批间阶段交错；SBO：批内窗口与流水",
+        "来源": "课程网页 comparison表A；框架节点检查：TBO／SBO"
+      },
+      "source_ids": [
+        "w2-lesson",
+        "w2-ledger"
+      ],
+      "content_summary": "区分SGLang的双微批阶段交错与单批内部重叠；材料：课程网页 comparison表A；框架节点检查：TBO／SBO；固定源码核验：SGLang@43a3f956cb0c9fe9b7b7a042af8d8743176b9dba: python/sglang/srt/batch_overlap/two_batch_overlap.py:949–1009；batch_overlap/single_batch_overlap.py:28–59、81–144；models/deepseek_v2.py:1529–1535、1572–1615；证据为固定源码的调用与条件，不是设备运行或性能实测。；追加限定：DeepEP LL为compute_overlap_args所需的三维专家槽位布局；single_batch_overlap.py:32–52要求SBO启用并按runner及Blackwell分支选择机制，models/deepseek_v2.py:1530排除NextN。",
+      "depends_on": []
+    },
+    {
+      "key": "vllm-expert-parallel-group-semantics",
+      "rank": 13,
+      "domain": "vllm-parallel-configuration",
+      "recall_target": "区分全局TP配置与启用EP后的专家TP和EP组范围",
+      "assessment": "mechanism",
+      "layer": "mechanism",
+      "fact_scope": {
+        "kind": "snapshot",
+        "product": "vLLM",
+        "commit": "d7ada3aace051fecec553c185225db2259c2ac6a"
+      },
+      "quality": "B",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 3,
+      "template_id": "technical-qa",
+      "fields": {
+        "问题": "在 vLLM d7ada3a 原生并行组构造中，TP=8、DP=4、PCP=1，开启EP、不启用SP，且没有插件自定义拆组。MoE专家的TP和EP规模怎样确定？为什么不能把它解释成专家继续TP=8、仅在4个DP rank之间做EP？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "原生构造先合并TP、DP、PCP的设备范围；开启EP后每张卡持有完整的专家子集，因此MoE内部专家TP变为1，EP规模为32。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "flatten_tp_across_dp_and_pcp先得到8×4×1的设备范围；启用EP后把该范围赋给ep_size，同时把专家tp_size/tp_rank设为1/0。"
+                }
+              ],
+              "label": "配置转换"
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "全局TP=8仍可服务attention等非专家路径；它不等于专家权重继续按8份TP切分。"
+                }
+              ],
+              "label": "不同层次"
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "这只裁决原生构造。插件另分通信组时以实际manager world size核验；不能由这个数推断节点拓扑、实际通信量或性能。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "全局TP配置 ≠ 专家内部TP；EP看实际组",
+        "来源": "W2 单元二 · 固定源码与已审核接入契约"
+      },
+      "source_ids": [
+        "w2-card"
+      ],
+      "content_summary": "覆盖o1/o4：把模型并行配置映射到专家并行组。材料：ChangeCard02§4并行配置与审稿补充。源码d7ada3a fused_moe/config.py:1106-1114、1198-1244；v0.30.0同类路径已窄对照。8×4×1=32由工具复算，不作为性能数据。",
+      "depends_on": []
+    },
+    {
+      "key": "vllm-batched-capacity-interfaces",
+      "rank": 14,
+      "domain": "vllm-experts-buffer-contracts",
+      "recall_target": "将P/F每rank上限与dispatcher数量映射到每专家总容量",
+      "assessment": "mechanism",
+      "layer": "mechanism",
+      "fact_scope": {
+        "kind": "snapshot",
+        "product": "vLLM",
+        "commit": "d7ada3aace051fecec553c185225db2259c2ac6a"
+      },
+      "quality": "A",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 5,
+      "template_id": "technical-qa",
+      "fields": {
+        "问题": "在 vLLM d7ada3a 中，P/F交给BatchedTritonExperts的激活形状为[E,C,H]。E为本卡专家数，H为隐藏维度，每发送rank最多T行，实际dispatcher数为D，库约定C=T×D。max_num_tokens_per_rank()与num_dispatchers()应分别返回什么，怎样检查workspace匹配？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "两个接口分别提供T与D，现有BatchedTritonExperts按T×D形成每专家容量；不能把总容量C再当T传入。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "未量化oracle把max_num_tokens_per_rank()传为max_num_tokens，把num_dispatchers()传给Experts。"
+                }
+              ],
+              "label": "构造"
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "workspace和输出中的每专家槽数按max_num_tokens×num_dispatchers计算，应与库的C相等；还须核对激活、权重和计数语义，不能只比较布局枚举。"
+                }
+              ],
+              "label": "形状核对"
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "要保证每发送rank实际有效行数不超过T，且每行至多分配给同一物理专家一次；TP复制的逻辑Token仍按各发送rank的行计数。"
+                }
+              ],
+              "label": "上限前提"
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "自有Experts可定义不同尺寸契约，但必须显式适配；C=T×D的公式不能替代运行输入限制或超限保护。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "T与D分别传入，C只计算一次",
+        "来源": "W2 单元二 · 固定源码与已审核接入契约"
+      },
+      "source_ids": [
+        "w2-card"
+      ],
+      "content_summary": "覆盖o2/o4：P/F容量接口与Experts工作区。材料：ChangeCard02§5容量映射。源码d7ada3a oracle/unquantized.py:533-546；experts/fused_batched_moe.py:865-885；all2all_utils.py:251-270。A理由：防止总容量被再次乘dispatcher数量，造成通信输出与计算workspace契约不一致。",
+      "depends_on": []
+    },
+    {
+      "key": "vllm-deepep-ll-input-weighting",
+      "rank": 15,
+      "domain": "vllm-router-weight-placement",
+      "recall_target": "解释DeepEP LL输入施权模式如何避免combine重复加权",
+      "assessment": "mechanism",
+      "layer": "mechanism",
+      "fact_scope": {
+        "kind": "snapshot",
+        "product": "vLLM",
+        "commit": "d7ada3aace051fecec553c185225db2259c2ac6a"
+      },
+      "quality": "A",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 5,
+      "template_id": "technical-qa",
+      "fields": {
+        "问题": "在 vLLM d7ada3a 的 DeepEP LL P/F 中，apply_router_weight_on_input=True且top-k=1。prepare与finalize怎样处理路由权重？为什么看到Experts返回Delegate，也不能无条件把原权重传给combine？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "prepare已经在专家计算前把激活乘上路由权重，因此finalize给combine换成全1；Delegate只委托收尾方式，不证明此前没有施权。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "prepare检查该模式的top-k=1约束，再对输入激活乘权重。"
+                }
+              ],
+              "label": "前半段"
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "finalize发现输入加权标志后构造ones_like(topk_weights)，避免combine再次乘原系数。"
+                }
+              ],
+              "label": "后半段"
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "自有P/F必须支持对应语义，或显式拒绝不支持的配置；不能因采用未量化路径就忽略这个标志。"
+                }
+              ],
+              "label": "接入责任"
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "本题追踪该实现的输入加权分支，不把输入施权与输出施权视为对任意非线性专家都数学等价，也不外推top-k>1。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "Delegate不记录施权历史；看输入加权标志",
+        "来源": "W2 单元二 · 固定源码与已审核接入契约"
+      },
+      "source_ids": [
+        "w2-card",
+        "w2-ledger"
+      ],
+      "content_summary": "覆盖o1/o4：输入加权分支的源码补正。材料：ChangeCard02§2与§3加权责任，审稿记录。源码d7ada3a prepare_finalize/deepep_ll.py:278-284、378-403；modular_kernel.py:286-307、375-396。A理由：避免已在输入端施权后combine再次乘原权重，改变输出数值。",
+      "depends_on": []
+    },
+    {
+      "key": "deepep-ht-hierarchical-forwarding",
+      "rank": 16,
+      "domain": "moe-communication-topology",
+      "recall_target": "解释DeepEP V1 HT跨节点两级转发与反向局部归并",
+      "assessment": "mechanism",
+      "layer": "mechanism",
+      "fact_scope": {
+        "kind": "snapshot",
+        "product": "DeepEP",
+        "commit": "d4f41e4e93602a15e95f55f6ee8df8f1aaa0e4bb"
+      },
+      "quality": "B",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 3,
+      "template_id": "technical-qa",
+      "fields": {
+        "问题": "DeepEP V1 HT（d4f41e4）在节点内经 NVLink 互访、跨节点同 GPU 索引之间经 RDMA 通信。一个 Token 命中远端同一节点内多张卡上的专家时，dispatch 怎样转发，combine 怎样反向归并？这种组织优先节省哪段传输？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "先利用跨节点通路把数据送到目标节点，再做节点内分发；combine 先汇合节点内部分结果，再跨节点回传，减少较慢跨域链路上的重复载荷。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "按目标 RDMA 节点去重，经同 GPU 索引的通路发送，再根据节点内目标掩码经 NVLink 分发；不必为同一远端节点中的每个目标 GPU 各跨节点发一份完整载荷。"
+                }
+              ],
+              "label": "dispatch"
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "反向先汇合节点内相关 GPU 的部分结果，再经 RDMA 回传，最后形成源卡结果。"
+                }
+              ],
+              "label": "combine"
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "这是该固定实现利用域内与跨域带宽差异的组织方式，不表示零复制，也不保证任意拓扑下都更快。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "跨域去重传输，域内分发与归并",
+        "来源": "DeepEP d4f41e4 · HT 分层传输"
+      },
+      "source_ids": [
+        "w2-lesson",
+        "w2-ledger"
+      ],
+      "content_summary": "B理由：回答拓扑感知通信为何采用两级转发。材料：讲义 synthesis/comparison；验收记录§路线节点5。源码 d4f41e4：deep_ep/buffers/legacy.py:334-337；csrc/kernels/legacy/internode.cu:628-677、968-993、2079-2129。",
+      "depends_on": []
+    },
+    {
+      "key": "deepep-ht-notify-exact-allocation",
+      "rank": 17,
+      "domain": "moe-allocation-protocols",
+      "recall_target": "定位DeepEP V1 HT计数等待与动态输出分配及例外",
+      "assessment": "mechanism",
+      "layer": "mechanism",
+      "fact_scope": {
+        "kind": "snapshot",
+        "product": "DeepEP",
+        "commit": "d4f41e4e93602a15e95f55f6ee8df8f1aaa0e4bb"
+      },
+      "quality": "B",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 3,
+      "template_id": "technical-qa",
+      "fields": {
+        "问题": "DeepEP V1 HT（d4f41e4）的非缓存 dispatch，为什么在搬运 Token 前先做 layout 和 notify？CPU 等待发生在哪里，哪些已有接口能绕过这次动态计数等待？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "默认非缓存路径先在设备上计数并交换，再由 CPU 等实际接收计数，据此分配输出；异步完成选项不会消除这次分配前的主机等待。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "get_dispatch_layout 产生每目标 rank／专家计数及 Token→rank 关系；notify 交换计数、建立前缀信息并写入主机可读的映射计数区，CPU 等就绪后分配 recv_x。"
+                }
+              ],
+              "label": "计数到分配"
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "指定 num_worst_tokens 可按上界分配并绕过该等待；跨节点 Python 分支明确拒绝此参数。"
+                }
+              ],
+              "label": "节点内上界"
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "路由及布局可复用时，可带 cached handle 跳过重新计算布局；不能对改变后的路由随意套用旧 handle。"
+                }
+              ],
+              "label": "缓存布局"
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "上述例外针对分配前的动态计数等待，不等于整条框架路径自动满足录图或并发安全条件。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "设备计数 → 主机获数 → 分配；例外看参数与缓存条件",
+        "来源": "DeepEP d4f41e4 · HT notify 与分配"
+      },
+      "source_ids": [
+        "w2-lesson",
+        "w2-ledger"
+      ],
+      "content_summary": "B理由：避免把HT主机同步写成无例外通则。材料：讲义HT步骤及验收6参考；验收记录节点5、验收6。源码 d4f41e4：deep_ep/buffers/legacy.py:293-319、354-355、377-401；csrc/legacy/buffer.hpp:532-539、549-603、1084-1108。",
+      "depends_on": []
+    },
+    {
+      "key": "deepep-ht-token-layout-handle",
+      "rank": 18,
+      "domain": "moe-routing-layouts",
+      "recall_target": "辨别DeepEP HT收到的Token行专家路由与逆向handle",
+      "assessment": "mechanism",
+      "layer": "mechanism",
+      "fact_scope": {
+        "kind": "snapshot",
+        "product": "DeepEP",
+        "commit": "d4f41e4e93602a15e95f55f6ee8df8f1aaa0e4bb"
+      },
+      "quality": "B",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 3,
+      "template_id": "technical-qa",
+      "fields": {
+        "问题": "DeepEP V1 HT 节点内非缓存路径（d4f41e4）中，一个 Token 选中了同一目标 rank 的两个专家。该 rank 收到几行激活，怎样知道这一行交给哪些专家，combine 又靠什么送回原 Token？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "激活按目标 rank 去重，只收到一行；该行的专家选择与返回源位置分别由收到的 top-k 信息和通信 handle 表达。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "recv_topk_idx 将本 rank 的专家转成本地编号，其他选择置为 −1；一行可带多个本地专家选择，专家侧仍需按这些选择组织计算。"
+                }
+              ],
+              "label": "专家路由"
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "handle 保存来源索引、rank／channel 前缀和发送位置等信息，combine 用它恢复回传路径。"
+                }
+              ],
+              "label": "逆向布局"
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "HT combine 对激活做无权相加；可选 topk_weights 也是另一路被归并的数据，不代表 combine 自动用它乘激活。"
+                }
+              ],
+              "label": "加权职责"
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "本题描述库的节点内接口；框架可再转换专家编号，不能把库的本地编号直接当成框架全局编号。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "一行对应目标rank；top-k管专家，handle管回程",
+        "来源": "DeepEP d4f41e4 · HT 输出与 handle"
+      },
+      "source_ids": [
+        "w2-lesson",
+        "w2-card"
+      ],
+      "content_summary": "B理由：补齐实际接口中的两类路由载体。材料：讲义add-10-1及布局表；ChangeCard§2。源码 d4f41e4：csrc/kernels/legacy/intranode.cu:362-392；deep_ep/buffers/legacy.py:388-405、408-455。",
+      "depends_on": []
+    },
+    {
+      "key": "deepep-ll-message-granularity-and-slots",
+      "rank": 19,
+      "domain": "moe-routing-layouts",
+      "recall_target": "解释DeepEP LL按专家发送与固定接收分段",
+      "assessment": "mechanism",
+      "layer": "mechanism",
+      "fact_scope": {
+        "kind": "snapshot",
+        "product": "DeepEP",
+        "commit": "d4f41e4e93602a15e95f55f6ee8df8f1aaa0e4bb"
+      },
+      "quality": "B",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 3,
+      "template_id": "technical-qa",
+      "fields": {
+        "问题": "DeepEP V1 LL（d4f41e4）中，每个源 rank 最多输入 M 个 Token，共 R 个 rank，每卡有 E_local 个专家，H 为激活隐藏维度；每个 Token 的 K 个专家选择互异且有效。若其中两个专家在同一张卡上，LL 会像 HT 那样合成一份激活发送吗？接收槽位如何容纳它们？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "LL 按 (Token, expert) 发送，不按目标卡去重；同卡两个专家各得到一条消息，并分别占用所属专家的接收槽位。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "接收区按“本地专家 × 来源 rank”分段，每段预留 M 个消息槽；普通输出容量为 [E_local, R×M, H]。"
+                }
+              ],
+              "label": "容量结构"
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "槽号由发送端按目标专家维护的本地原子计数器领取，再写入远端对应分段；这里不是向接收方共享池做远程原子申请。"
+                }
+              ],
+              "label": "领取位置"
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "固定分段让发送方不先交换全组计数就能确定空间，代价是按上限预留，以及同卡多专家的重复载荷。"
+                }
+              ],
+              "label": "设计取舍"
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "题面已限定专家选择互异、有效且每源输入不超过 M；容量是预留空间，不代表每轮实际发送满 M。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "消息按专家，接收按专家×来源分段",
+        "来源": "DeepEP d4f41e4 · LL 粒度与容量"
+      },
+      "source_ids": [
+        "w2-lesson",
+        "w2-ledger"
+      ],
+      "content_summary": "B理由：解释HT与LL的消息量和布局差异。材料：讲义LL步骤、布局表及两类路由补充；验收记录节点6。源码 d4f41e4：csrc/kernels/legacy/internode_ll.cu:209、253-277；csrc/legacy/config.hpp:134-166；csrc/legacy/buffer.hpp:1516-1521。",
+      "depends_on": []
+    },
+    {
+      "key": "deepep-ll-send-recv-hook",
+      "rank": 20,
+      "domain": "moe-completion-protocols",
+      "recall_target": "解释DeepEP LL分段提交完成信号与零SM窗口边界",
+      "assessment": "mechanism",
+      "layer": "mechanism",
+      "fact_scope": {
+        "kind": "snapshot",
+        "product": "DeepEP",
+        "commit": "d4f41e4e93602a15e95f55f6ee8df8f1aaa0e4bb"
+      },
+      "quality": "B",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 3,
+      "template_id": "technical-qa",
+      "fields": {
+        "问题": "DeepEP V1 LL（d4f41e4）设置 return_recv_hook=True 后，第一次调用和后续 hook 各做什么？接收端怎样区分“零行已发完”与“尚未到达”，不占 SM 的重叠窗口又适用于哪部分传输？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "第一次只提交 SEND，hook 再启动 RECV；两个阶段之间可以由网卡推进 RDMA，但发送和接收 kernel 本身仍使用 SM。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "hook 模式使用调用时的计算流；应用把不依赖接收结果的计算安排在两次启动之间，不必要求两个 kernel 同时占据 SM。"
+                }
+              ],
+              "label": "执行阶段"
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "dispatch 把完成计数编码为 −发送行数−1：0 表示未到达，−1 表示已完成但零行。RECV 等非零计数后读取并整理数据。"
+                }
+              ],
+              "label": "到达计数"
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "可经 P2P／NVLink 访问的目标由 GPU 在 SEND 中拷贝；不可直接访问的目标走非阻塞 IBGDA put，网卡可以在两次启动之间继续搬运。"
+                }
+              ],
+              "label": "搬运者"
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "不能把间隔中的零SM窗口扩张为两个阶段都不占SM，也不能由此认定节点内P2P拷贝同样不占SM；实际重叠收益仍需验证。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "SEND提交 → 独立计算窗口 → RECV确认与整理",
+        "来源": "DeepEP d4f41e4 · LL recv hook"
+      },
+      "source_ids": [
+        "w2-lesson",
+        "w2-card"
+      ],
+      "content_summary": "B理由：准确区分分段kernel和网卡推进。材料：讲义LL步骤；ChangeCard§3、§5。源码 d4f41e4：csrc/legacy/buffer.hpp:1507-1513、1577-1592；csrc/kernels/legacy/internode_ll.cu:263-271、323-338、379-407。",
+      "depends_on": []
+    },
+    {
+      "key": "deepep-ll-packed-output-and-zero-copy",
+      "rank": 21,
+      "domain": "moe-buffer-ownership",
+      "recall_target": "辨别DeepEP LL普通输出与zero-copy发送视图及调用方输出",
+      "assessment": "mechanism",
+      "layer": "mechanism",
+      "fact_scope": {
+        "kind": "snapshot",
+        "product": "DeepEP",
+        "commit": "d4f41e4e93602a15e95f55f6ee8df8f1aaa0e4bb"
+      },
+      "quality": "B",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 3,
+      "template_id": "technical-qa",
+      "fields": {
+        "问题": "DeepEP V1 LL（d4f41e4）内部只有两套轮换通信区。普通 dispatch 返回的 packed_recv_x 是否是内部区的视图？combine 的 out= 与 zero_copy=True 分别改变什么？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "普通 dispatch 的 packed_recv_x 在实际 C++ 实现中另行分配；out= 指定最终结果存储，而 zero_copy=True 指定 combine 输入已在内部发送区，三者不是同一种零复制承诺。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "接收阶段把来源分段中的有效行集中拷入新输出；src_info 与 layout_range 记录来源、块起点和行数，随 handle 交给 combine。"
+                }
+              ],
+              "label": "普通输出"
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "out= 使 combine 直接写入调用方张量，可省去适配层额外结果复制，但不表示整条通信没有拷贝。"
+                }
+              ],
+              "label": "最终输出"
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "zero_copy=True 要求专家结果已经写入 get_next_low_latency_combine_buffer() 提供的内部发送区，该显式视图另受槽位复用协议约束。"
+                }
+              ],
+              "label": "内部发送视图"
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "结论按该提交实际实现裁决，不沿用Python文档关于普通返回张量复用两份buffer的笼统警告；普通调用分配也不直接外推为graph每次重放都新建对象。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "独立packed输出；out定结果位置；zero_copy定发送输入",
+        "来源": "DeepEP d4f41e4 · LL 输出归属"
+      },
+      "source_ids": [
+        "w2-card",
+        "w2-lesson"
+      ],
+      "content_summary": "B理由：纠正普通输出与内部发送视图的混淆。材料：ChangeCard§5；讲义两类路由补充。源码 d4f41e4：csrc/legacy/buffer.hpp:1516-1521、1655-1663、1717-1728；csrc/kernels/legacy/internode_ll.cu:408-436；deep_ep/buffers/legacy.py:610-621、646-652。",
+      "depends_on": []
+    },
+    {
+      "key": "deepep-v2-sync-expand-output",
+      "rank": 22,
+      "domain": "moe-output-allocation",
+      "recall_target": "按DeepEP V2的同步与展开开关判断输出容量和有效行",
+      "assessment": "mechanism",
+      "layer": "mechanism",
+      "fact_scope": {
+        "kind": "snapshot",
+        "product": "DeepEP",
+        "commit": "d4f41e4e93602a15e95f55f6ee8df8f1aaa0e4bb"
+      },
+      "quality": "A",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 5,
+      "template_id": "technical-qa",
+      "fields": {
+        "问题": "DeepEP V2 ElasticBuffer（d4f41e4）进行非缓存 dispatch；R 为 rank 数，M 为每 rank 输入容量，K 为 top-k，E_local 为本卡专家数，H 为激活隐藏维度。do_cpu_sync 与 do_expand 分别如何影响输出分配？为什么收到 [R×M,H] 张量不能认为全部行都有效？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "do_cpu_sync 决定是否等实际计数再分配，do_expand 决定输出是否按专家分配展开；按上限分配的张量并不保证每一行都已填入有效数据。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "do_cpu_sync=True 时CPU等待计数；非expand按实际去重Token行数分配，expand按统计到的、已作专家对齐的分配计数之和分配。"
+                }
+              ],
+              "label": "同步路径"
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "do_cpu_sync=False 时，非expand预留R×M行；expand先按R×M×min(K,E_local)预留，再加各专家的对齐余量并整体对齐，不能漏算padding。"
+                }
+              ],
+              "label": "免同步路径"
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "copy epilogue从设备前缀计数取得真实数量；下游建立专家路由时必须遵守有效数量或无效标记，不能把未初始化尾部当作真实Token。"
+                }
+              ],
+              "label": "有效范围"
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "prefill／decode只是框架常见选配，库层按这两个开关裁决；本题排除cached路径，不将免CPU等待等同于完整框架录图已经验证。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "同步决定精确或上界；展开决定Token行或专家分配行",
+        "来源": "DeepEP d4f41e4 · V2 分配分支"
+      },
+      "source_ids": [
+        "w2-lesson",
+        "w2-ledger"
+      ],
+      "content_summary": "A理由：防止固定容量输出的无效尾部污染真实路由和结果。材料：讲义V2步骤及计数表；验收记录节点7。源码 d4f41e4：deep_ep/buffers/elastic.py:758-764；csrc/elastic/buffer.hpp:977-1050；deep_ep/include/deep_ep/impls/dispatch_copy_epilogue.cuh:57-80、102-116。",
+      "depends_on": []
+    },
+    {
+      "key": "deepep-v2-local-slot-and-copy-epilogue",
+      "rank": 23,
+      "domain": "moe-dispatch-pipelines",
+      "recall_target": "解释DeepEP V2本地领槽并行计数与拷出流水",
+      "assessment": "mechanism",
+      "layer": "mechanism",
+      "fact_scope": {
+        "kind": "snapshot",
+        "product": "DeepEP",
+        "commit": "d4f41e4e93602a15e95f55f6ee8df8f1aaa0e4bb"
+      },
+      "quality": "B",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 3,
+      "template_id": "technical-qa",
+      "fields": {
+        "问题": "DeepEP V2（d4f41e4）的非 hybrid、非缓存 dispatch 中，发送方尚未拿到其他发送方的计数，怎样确定远端写入位置？num_max_tokens_per_rank=M 在这里是什么角色，最后为什么还需要 copy epilogue？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "目标接收区按来源rank固定分段，发送方在自己的段内本地领槽，因此不必先等全组计数；拷出阶段再利用完整计数压紧并可按专家展开。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "每个来源段预留M槽；按目标rank去重后，用发送端本地计数器领取段内槽号。M决定分段布局并进入JIT模板，实际Token数是另一个运行参数。"
+                }
+              ],
+              "label": "固定地址结构"
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "发送warp写数据，notify warp同时统计并交换rank／专家计数；本地领取的槽号直接决定远端位置，不是先构造本地按目标卡重排的张量。"
+                }
+              ],
+              "label": "并行推进"
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "copy epilogue等待主dispatch的数据完成依赖，按设备前缀计数去掉来源段之间的空洞；do_expand=True时再将各本地专家的分配排成连续区。"
+                }
+              ],
+              "label": "拷出职责"
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "这里限定该提交的非hybrid主路径；M必须满足当前输入和已分配通信区的容量约束，不代表每轮处理满M。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "固定段起点让发送先行，计数到齐后再压紧",
+        "来源": "DeepEP d4f41e4 · V2 direct 数据流"
+      },
+      "source_ids": [
+        "w2-lesson",
+        "w2-ledger"
+      ],
+      "content_summary": "B理由：解释V2与HT先等计数再发送的不同流水。材料：讲义V2步骤；验收记录节点7-8。源码 d4f41e4：deep_ep/include/deep_ep/impls/dispatch.cuh:78-105、150-157、246-262、330-384、391-402；csrc/kernels/elastic/dispatch.hpp:126-151；impls/dispatch_copy_epilogue.cuh:57-80、111-116。",
+      "depends_on": []
+    },
+    {
+      "key": "deepep-version-and-hybrid-identity",
+      "rank": 24,
+      "domain": "moe-library-version-boundaries",
+      "recall_target": "区分DeepEP版本接口传输模式与独立HybridEP分支",
+      "assessment": "discrimination",
+      "layer": "mechanism",
+      "fact_scope": {
+        "kind": "snapshot",
+        "product": "DeepEP",
+        "version": "V1/V2 commit d4f41e4e93602a15e95f55f6ee8df8f1aaa0e4bb; hybrid-ep commit 4e890fd19a3a52f23cc7bd38a0d9b0b1276f70d6; V2.5 commit f6aa38fe06cd4a0489e7730365d4e0114970a2f3"
+      },
+      "quality": "B",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 3,
+      "template_id": "technical-qa",
+      "fields": {
+        "问题": "按 DeepEP d4f41e4、hybrid-ep 分支 4e890fd 和 V2.5 f6aa38f 三个固定快照，V2 的 allow_hybrid_mode、独立 HybridEPBuffer、V2.5 的 EPBuffer 分别是什么？维护旧 Buffer／ElasticBuffer 接入时，哪些不能当作只改一个开关的替换？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "传输模式、独立分支和版本接口演进是三件事：V2 hybrid是同一实现内的拓扑选项，HybridEPBuffer是另一分支接口，V2.5又改变了公开Buffer接口。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "同时导出V1 Buffer和V2 ElasticBuffer。V2 hybrid采用scale-out RDMA加scale-up NVLink分层；direct把全组纳入一个逻辑直接通信域，NVLink可达目标直接访问，其余可走RDMA。"
+                }
+              ],
+              "label": "d4f41e4"
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "hybrid-ep分支导出独立的HybridEPBuffer，不是ElasticBuffer的allow_hybrid_mode开关别名。"
+                }
+              ],
+              "label": "4e890fd"
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "V2.5把ElasticBuffer拆分为EPBuffer等接口，并移除V1；旧Buffer／ElasticBuffer调用不能仅凭包名未变就假定兼容。"
+                }
+              ],
+              "label": "f6aa38f"
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "这里只比较三个固定快照的接口与模式，不代表已验证旧框架代码在新版本上的兼容性或性能。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "模式看开关，分支看实现，升级看API",
+        "来源": "DeepEP d4f41e4／Hybrid-EP 4e890fd／V2.5 f6aa38f"
+      },
+      "source_ids": [
+        "w2-ledger",
+        "w2-lesson"
+      ],
+      "content_summary": "B理由：防止把相近名称当成兼容接口。材料：验收记录源码基线表及名称区分；讲义代码地图。源码：d4f41e4 deep_ep/__init__.py:87-97、csrc/kernels/backend/nccl.cu:56-59、102-120；4e890fd deep_ep/hybrid_ep_buffer.py:60；f6aa38f README.md:11-18、deep_ep/__init__.py:59-79。",
+      "depends_on": []
+    },
+    {
+      "key": "mori-intranode-shared-reservation",
+      "rank": 25,
+      "domain": "moe-shared-receive-pools",
+      "recall_target": "解释MORI IntraNode两级领槽与容量控制",
+      "assessment": "mechanism",
+      "layer": "mechanism",
+      "fact_scope": {
+        "kind": "snapshot",
+        "product": "MORI-EP",
+        "commit": "2d4c3e2748b9329b2e0fc90e12f449231b4691ed"
+      },
+      "quality": "B",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 3,
+      "template_id": "technical-qa",
+      "fields": {
+        "问题": "MORI-EP（2d4c3e2）的通用 IntraNode dispatch 主体中，多个发送方共用接收池。一个block如何先获得连续空间，再给其中的Token分配位置？max_total_recv_tokens控制什么？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "block先数出去重后的目标rank行数，再对每个有数据的目标远程领取一段连续空间，最后在块内逐行分配；不是每个Token都必须做一次远程原子。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "同一Token命中同卡多个专家时按目标rank去重，block统计发往各目标的行数。"
+                }
+              ],
+              "label": "本地计数"
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "block对每个有数据的目标做一次远程fetch-add领取整段，再用块内本地计数器给各Token发号并直接写入对端；行序由竞争顺序决定。"
+                }
+              ],
+              "label": "两级领槽"
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "max_total_recv_tokens用于导出构造时的接收容量，不是本轮实收计数；导出值还经过按world size向上分摊及每rank输入上限约束，未必严格等于该参数。"
+                }
+              ],
+              "label": "容量参数"
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "题面限定通用IntraNode主体，不推广为所有kernel类型的原子次数；压低容量必须另核超限保护，不能按文档笼统假定所有路径都会干净报错。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "本地数行 → 远程领整段 → 块内逐行发号",
+        "来源": "MORI-EP 2d4c3e2 · IntraNode 分配池"
+      },
+      "source_ids": [
+        "w2-lesson",
+        "w2-ledger"
+      ],
+      "content_summary": "B理由：说明共享池在真实实现中的分配粒度与代价。材料：讲义MORI步骤；验收记录节点8。源码 2d4c3e2：src/ops/dispatch_combine/intranode.hpp:121-165、167-214；include/mori/ops/dispatch_combine/dispatch_combine.hpp:160-169。",
+      "depends_on": []
+    },
+    {
+      "key": "mori-completion-and-valid-row-metadata",
+      "rank": 26,
+      "domain": "moe-completion-metadata",
+      "recall_target": "辨别MORI共享池分配完成与有效行总数语义",
+      "assessment": "mechanism",
+      "layer": "mechanism",
+      "fact_scope": {
+        "kind": "snapshot",
+        "product": "MORI-EP",
+        "commit": "2d4c3e2748b9329b2e0fc90e12f449231b4691ed"
+      },
+      "quality": "A",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 5,
+      "template_id": "technical-qa",
+      "fields": {
+        "问题": "MORI-EP（2d4c3e2）的通用 IntraNode dispatch 用共享池尾指针领槽。为什么接收方不能只看尾指针就宣布完成？普通Python dispatch返回的第五项与每个专家的计数有什么区别？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "尾指针说明空间已被领取，不证明全部发送方已结束或载荷写完；完成需要各来源信号，第五项total_recv则是本卡有效Token行总数。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "每个发送rank等本地所有block完成后，按release顺序写“发送行数+1”；接收方等各来源正值信号并acquire，减1后累加。加1能表示已完成但零行。"
+                }
+              ],
+              "label": "完成信号"
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "total_recv形状为(1,)，不是长度等于本地专家数的数组。可选local_expert_count另扫描有效行的专家编号，统计本卡各专家分配。"
+                }
+              ],
+              "label": "返回计数"
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "out_indices每行仍携带源Token完整的K个全局专家号，K是每Token的专家选择数；框架需过滤非本卡专家，一行可对应多个本地专家分配。"
+                }
+              ],
+              "label": "行的路由"
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "这里的完成是设备kernel及相应流依赖完成，不是Python提交函数已经返回；有效Token行总数也不能当作专家分配总数。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "领到空间不等于写完；总Token行数不等于每专家计数",
+        "来源": "MORI-EP 2d4c3e2 · 信号与 total_recv"
+      },
+      "source_ids": [
+        "w2-lesson",
+        "w2-card"
+      ],
+      "content_summary": "A理由：防止把未完成载荷或错误计数交给Experts，污染真实结果。材料：讲义MORI步骤、两类路由补充及验收4；ChangeCard§2。源码 2d4c3e2：src/ops/dispatch_combine/intranode.hpp:200-203、259-299；python/mori/ops/dispatch_combine.py:1347-1400；src/ops/dispatch_combine/ep_local_expert_count.hpp:29-40。",
+      "depends_on": []
+    },
+    {
+      "key": "mori-view-state-and-routing-handle",
+      "rank": 27,
+      "domain": "moe-buffer-ownership",
+      "recall_target": "诊断MORI交错调用中的数据视图和路由状态覆盖",
+      "assessment": "mechanism",
+      "layer": "mechanism",
+      "fact_scope": {
+        "kind": "snapshot",
+        "product": "MORI-EP",
+        "commit": "2d4c3e2748b9329b2e0fc90e12f449231b4691ed"
+      },
+      "quality": "A",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 5,
+      "template_id": "technical-qa",
+      "fields": {
+        "问题": "MORI-EP（2d4c3e2）用同一EpDispatchCombineOp按 A.dispatch → B.dispatch → A.Experts → A.combine 顺序提交，A、B代表两个micro-batch。若把A路由用return_routing=True单独保存，是否足以安全交错？请按数据、路由和combine输出说明。",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "独立routing handle只解决一部分路由状态归属，不复制普通dispatch的激活和专家号视图，因此单独使用它不足以使这段交错安全。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "默认dispatch返回激活、权重、专家号和总数的内部存储视图；后续调用可原地覆盖。默认combine还读取op中的逆向映射和源Token数。"
+                }
+              ],
+              "label": "数据与路由"
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "return_routing=True把路由状态交给调用方，combine用routing=带回；此路径只支持IntraNode和InterNodeV1，收到的数据与专家号仍在共用缓冲区。"
+                }
+              ],
+              "label": "routing接口"
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "combine返回值也复用op缓冲区；上一轮结果须在下一次覆盖前消费或复制。分micro-batch建op可以隔离这类状态，代价是额外注册缓冲资源。"
+                }
+              ],
+              "label": "输出复用"
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "仅复制激活也不能自动保护全部路由；即使取消交错，仍须管理combine输出有效期及设备执行依赖。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "routing快照不等于数据快照，combine输出也有有效期",
+        "来源": "MORI-EP 2d4c3e2 · 视图与 routing handle"
+      },
+      "source_ids": [
+        "w2-lesson",
+        "w2-ledger",
+        "w2-card"
+      ],
+      "content_summary": "A理由：定位真实后端的micro-batch交错污染，而非只做一般生命周期提醒。材料：讲义两类路由补充及验收2；验收记录验收2；ChangeCard§2、§3。源码 2d4c3e2：python/mori/ops/dispatch_combine.py:992-1013、1100-1130、1184-1212、1361-1400、1509-1513、1784-1805；src/ops/dispatch_combine/intranode.hpp:188-190、578-588。",
+      "depends_on": []
+    },
+    {
+      "key": "mori-internode-v1-relay-path",
+      "rank": 28,
+      "domain": "moe-communication-topology",
+      "recall_target": "解释MORI InterNodeV1跨节点中继与完成条件",
+      "assessment": "mechanism",
+      "layer": "mechanism",
+      "fact_scope": {
+        "kind": "snapshot",
+        "product": "MORI-EP",
+        "commit": "2d4c3e2748b9329b2e0fc90e12f449231b4691ed"
+      },
+      "quality": "B",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 3,
+      "template_id": "technical-qa",
+      "fields": {
+        "问题": "MORI-EP（2d4c3e2）选择 InterNodeV1 时，dispatch 怎样把跨节点 Token 送到最终专家卡，与通用 IntraNode 路径有什么不同？接收方需等到什么，而不能仅凭 RDMA 请求已提交就消费输出？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "跨节点部分先进入staging，经RDMA送到目标节点的同轨proxy，再经节点内XGMI分发；完成需覆盖RDMA到达、节点内转发和接收计数，提交请求本身不够。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "Python路径先启动CopyToStaging，再启动InterNodeV1主kernel；主kernel把block分给跨节点发送／接收与本节点直接分发。IntraNode无需这条跨节点staging和proxy路径。"
+                }
+              ],
+              "label": "执行组织"
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "发送方按目标节点判断哪些Token需要发送，经RDMA送到远端local rank相同的proxy；proxy等chunk到达信号后读取路由，按最终目标rank去重、领取目标接收槽，再通过节点内访问写入激活和元数据。"
+                }
+              ],
+              "label": "两级传输"
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "RDMA块有chunk及节点结束信号；节点内转发完成后还交换最终接收计数。DispatchSync收齐本节点转发者的计数并执行对proxy的quiet，消费者仍须遵守设备执行及流依赖。"
+                }
+              ],
+              "label": "完成条件"
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "本题限定该提交的InterNodeV1 dispatch，不把流程推广到InterNode、InterNodeV1LL或AsyncLL，也不由block分工宣称已经测得传输重叠收益。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "staging → 同轨RDMA → 域内分发；到达与转发都要完成",
+        "来源": "MORI-EP 2d4c3e2 · InterNodeV1 dispatch"
+      },
+      "source_ids": [
+        "w2-lesson",
+        "w2-ledger"
+      ],
+      "content_summary": "B理由：补齐MORI跨节点路径与节点内路径的实现差异。材料：讲义comparison传输行及图10.2说明；验收记录源码基线指定MORI-EP-GUIDE。源码2d4c3e2：python/mori/ops/dispatch_combine.py:1284-1296；src/ops/dispatch_combine/internode_v1.cpp:150-231、274-284、361-397、414-471、623-681。",
+      "depends_on": []
+    },
+    {
+      "key": "hybrid-metadata-payload-pipeline",
+      "rank": 29,
+      "domain": "ai-infra-moe",
+      "recall_target": "解释Hybrid-EP全收集路由元数据如何决定后续载荷传输与专家布局",
+      "assessment": "mechanism",
+      "layer": "mechanism",
+      "fact_scope": {
+        "kind": "snapshot",
+        "product": "DeepEP Hybrid-EP",
+        "commit": "4e890fd19a3a52f23cc7bd38a0d9b0b1276f70d6"
+      },
+      "quality": "B",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 3,
+      "template_id": "technical-qa",
+      "fields": {
+        "问题": "在 DeepEP Hybrid-EP 4e890fd 中，为什么先 all-gather 路由元数据，再传 Token 激活？请把元数据预处理、dispatch/permute、专家计算与 combine 连成一条数据流，并说明全收集没有替代什么。",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "先共享路由信息来确定布局，再按布局传激活；路由元数据全收集不等于把全部 Token 激活复制给每张卡。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "各 rank 取得全组路由后，GPU 计算发送与接收映射、每专家计数及重排索引，并将这些信息保存在 handle 中。"
+                }
+              ],
+              "label": "布局"
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "dispatch 搬运激活；dispatch_with_permute 把接收行按本地专家展开、分段并按需补齐，再交给专家计算。"
+                }
+              ],
+              "label": "载荷"
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "combine_with_unpermute 利用 handle 还原对应关系并回传结果。permute/unpermute 可以独立执行，也可以与通信融合。"
+                }
+              ],
+              "label": "还原"
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "全收集并未消除非阻塞输出的容量选择；本卡描述固定版本的数据流，不声称已经完成框架接入或取得性能收益。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "路由元数据／激活载荷／handle／专家布局",
+        "来源": "W2 单元二课程讲义·操作顺序与接收空间；DeepEP Hybrid-EP 4e890fd"
+      },
+      "source_ids": [
+        "w2-lesson",
+        "w2-ledger"
+      ],
+      "content_summary": "B：具有跨库迁移价值，可区分控制信息与实际载荷。材料：课程HTML synthesis、comparison，W2历史o3场景表。源码4e890fd：csrc/hybrid_ep/hybrid_ep.cu:136-170；csrc/hybrid_ep/executor/executor.cu:23-72、158-198；deep_ep/hybrid_ep_buffer.py:599-651、668-717；docs/Hybrid-EP_Implementation.md:352-363、418-459。",
+      "depends_on": []
+    },
+    {
+      "key": "hybrid-hierarchical-warp-pipeline",
+      "rank": 30,
+      "domain": "ai-infra-moe",
+      "recall_target": "解释Hybrid-EP分层传输与warp流水分别优化的路径环节",
+      "assessment": "mechanism",
+      "layer": "mechanism",
+      "fact_scope": {
+        "kind": "snapshot",
+        "product": "DeepEP Hybrid-EP",
+        "commit": "4e890fd19a3a52f23cc7bd38a0d9b0b1276f70d6"
+      },
+      "quality": "B",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 3,
+      "template_id": "technical-qa",
+      "fields": {
+        "问题": "在 DeepEP Hybrid-EP 4e890fd 的多节点 dispatch 中，Token 为什么先经跨节点 peer，再在目标节点内分发？TMA 和不同 warp group 在这条路径中分别起什么作用？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "跨节点 peer 与节点内分发组织两层互联路径；TMA、共享内存 FIFO 和 warp 分工让不同 chunk 沿这条路径流水推进。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "peer 是不同节点中 local rank 相同的 GPU。先经 RDMA 把目标节点所需数据送到 peer，再经节点内 NVLink 分发，分别利用跨节点和本地互联。"
+                }
+              ],
+              "label": "分层"
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "不同 warp group 分别承担 RDMA、全局内存到共享内存、共享内存到远端缓冲区。TMA 承担批量异步搬运，共享内存循环 FIFO 连接各阶段，完成信号约束数据何时可消费。"
+                }
+              ],
+              "label": "流水"
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "融合 permute 时，额外的 permute block 等待 chunk-ready 信号后，将就绪数据重排到专家分段输出。"
+                }
+              ],
+              "label": "融合"
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "这些是源码中的设计机制；实际收益依赖互联、资源与负载，不能据此断言所有拓扑或 prefill/decode 都更快。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "peer／RDMA与NVLink／TMA／chunk流水",
+        "来源": "W2 单元二课程讲义·传输与硬件；DeepEP Hybrid-EP 4e890fd"
+      },
+      "source_ids": [
+        "w2-lesson",
+        "w2-ledger"
+      ],
+      "content_summary": "B：用于迁移分析通信路径和硬件依赖，不要求背诵warp数量。材料：课程HTML synthesis第七节、comparison传输行。源码4e890fd：docs/Hybrid-EP_Implementation.md:465-501、507-519；csrc/hybrid_ep/executor/executor.cu:255-295；csrc/hybrid_ep/backend/hybrid_ep_backend.cuh:126-135、1364-1402、1665-1682。",
+      "depends_on": []
+    },
+    {
+      "key": "hybrid-ragged-token-slots",
+      "rank": 31,
+      "domain": "ai-infra-moe",
+      "recall_target": "解释Hybrid-EP不等长输入如何借助统一槽位数保持布局一致并区分padding成本",
+      "assessment": "mechanism",
+      "layer": "mechanism",
+      "fact_scope": {
+        "kind": "snapshot",
+        "product": "DeepEP Hybrid-EP",
+        "commit": "4e890fd19a3a52f23cc7bd38a0d9b0b1276f70d6"
+      },
+      "quality": "B",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 3,
+      "template_id": "technical-qa",
+      "fields": {
+        "问题": "在 DeepEP Hybrid-EP 4e890fd 的 EP 通信组中，各 rank 本步实际 Token 数 T_r 不同，甚至有 rank 为零。调用方应怎样设置统一槽位数 S（num_of_tokens_per_rank）？内部 padding 会不会增加通信和专家计算？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "所有 rank 必须使用同一个 S，且 S 不小于任一 rank 的实际 Token 数；补齐路由行不会产生有效专家任务，但仍进入路由元数据全收集。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "通常先取全组实际 Token 数的最大值，再由实现将 S 向上对齐到16、且至少为16。统一槽位使各 rank 使用兼容的元数据布局，全组空输入也有合法槽位。"
+                }
+              ],
+              "label": "统一布局"
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "真实 hidden 保持各自 T_r 行；仅路由张量补全 False 或 -1 的无路由行。这些行不产生 Token 载荷或专家 GEMM 行，combine 返回本 rank 原有的 T_r 行。"
+                }
+              ],
+              "label": "有效数据"
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "补齐后的路由张量仍被 all-gather，所以过大的 S 会扩大元数据空间与处理量；不能把“没有额外Token载荷”说成“完全没有通信成本”。"
+                }
+              ],
+              "label": "成本"
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "本卡考查统一布局及成本归属，不要求死记对齐常数；使用哪个框架同步结果必须按实际EP通信组换算。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "全组统一S／本地T_r／无路由padding／元数据成本",
+        "来源": "W2 o3 场景表·prefill②及空行通信更正；DeepEP Hybrid-EP 4e890fd"
+      },
+      "source_ids": [
+        "w2-lesson",
+        "w2-ledger"
+      ],
+      "content_summary": "B：可迁移到ragged collective的统一形状设计。材料：W2历史记录o3 prefill②、导师对空行通信的更正；课程HTML参数对照。源码4e890fd：deep_ep/hybrid_ep_buffer.py:165-232、368-374；csrc/hybrid_ep/executor/executor.cu:32-60；docs/Hybrid-EP_Implementation.md:235-248。",
+      "depends_on": []
+    },
+    {
+      "key": "hybrid-training-handle-generation",
+      "rank": 32,
+      "domain": "ai-infra-moe",
+      "recall_target": "判断Hybrid-EP训练前后向缓存handle的复用前提与buffer代次失效",
+      "assessment": "mechanism",
+      "layer": "mechanism",
+      "fact_scope": {
+        "kind": "snapshot",
+        "product": "DeepEP Hybrid-EP",
+        "commit": "4e890fd19a3a52f23cc7bd38a0d9b0b1276f70d6"
+      },
+      "quality": "A",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 5,
+      "template_id": "technical-qa",
+      "fields": {
+        "问题": "准备将 DeepEP Hybrid-EP 4e890fd 接入训练。同一个 micro-batch 的前后向沿用同一路由，为什么可以缓存 dispatch 的 handle？如果两者之间一次更大的调用触发 buffer 扩容，旧 handle 还能继续使用吗？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "handle 可复用同一路由的预处理元数据，但只能绑定创建时的那一代通信缓冲区；扩容后旧 handle 必须失效。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "handle 保存路由映射、计数、重排信息及创建时的 buffer generation；同一路由的对应通信可以重用它，跳过重复预处理。"
+                }
+              ],
+              "label": "复用内容"
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "扩容会释放并重新注册通信缓冲区、重置信号协议，并增加 generation。API 对比 handle 配置与运行时 generation，不一致时拒绝使用。"
+                }
+              ],
+              "label": "失效原因"
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "训练接入应为预期最大 micro-batch 预留容量，在autograd上下文中保存对应handle；发生扩容后重建元数据，不能认为Python对象仍存在就可继续使用。"
+                }
+              ],
+              "label": "接入责任"
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "这里只证明库的缓存和拒绝机制，不证明某训练框架已接入。上游有缓存重放与旧handle拒绝测试，本轮未在设备上运行。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "同一路由／缓存元数据／buffer generation／扩容失效",
+        "来源": "W2 o3 场景表·训练①与prefill①；DeepEP Hybrid-EP 4e890fd"
+      },
+      "source_ids": [
+        "w2-lesson",
+        "w2-ledger"
+      ],
+      "content_summary": "A理由：防止前后向间复用失效通信状态，导致错误结果或无法完成的等待。材料：W2历史o3训练①、prefill①；课程HTML完成与复用。源码4e890fd：deep_ep/hybrid_ep_buffer.py:191-209、390-426、611-630；csrc/hybrid_ep/hybrid_ep.cu:109-133；tests/test_ragged_hybrid_ep.py:274-297、452-494。",
+      "depends_on": []
+    },
+    {
+      "key": "hybrid-graph-padded-capacity",
+      "rank": 33,
+      "domain": "ai-infra-moe",
+      "recall_target": "为Hybrid-EP非阻塞录图输出建立计入每专家padding的无丢弃容量条件",
+      "assessment": "mechanism",
+      "layer": "mechanism",
+      "fact_scope": {
+        "kind": "snapshot",
+        "product": "DeepEP Hybrid-EP",
+        "commit": "4e890fd19a3a52f23cc7bd38a0d9b0b1276f70d6"
+      },
+      "quality": "A",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 5,
+      "template_id": "technical-qa",
+      "fields": {
+        "问题": "在 DeepEP Hybrid-EP 4e890fd 的 dispatch_with_permute 中，decode 希望使用 CUDA graph 且不丢弃专家分配。设本地专家数为 E_local、每个专家的有效分配数为 n_e、GEMM对齐单位为正整数 q、输出预留行数为 P；EP组有 R 个rank，每rank最多 S 个Token槽位，每个Token对同一专家至多分配一次。为什么仅设置 non_blocking=True 不够？P 应满足什么条件？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "非阻塞省去了主机等待精确计数，调用方必须预先提供P，并将每个专家各自的padding算入容量；能录图不等于不会丢弃。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "启用padding时P必须是q的倍数。每专家先向上对齐再相加，不能只按未补齐的有效分配总数预留。"
+                }
+              ],
+              "label": "必要条件"
+            },
+            {
+              "type": "display",
+              "parts": [
+                {
+                  "type": "formula",
+                  "katex": "P \\geq \\sum_{e=1}^{E_{\\mathrm{local}}}\\left\\lceil\\frac{n_e}{q}\\right\\rceil q"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "由题面的每Token每专家至多一次可得 n_e≤R·S，因此 E_local·ceil(R·S/q)·q 是一个保守充分上界；它可能很宽松，不是最小容量或性能推荐。"
+                }
+              ],
+              "label": "无丢弃上界"
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "同一已捕获图内P和地址固定；P必须覆盖该档位允许的所有输入／路由的逐专家对齐总行数，不能每步按当前计数重新选择P后继续重放原图。容量或底层地址改变时要显式处理旧图，预留尾部不能当作有效结果。"
+                }
+              ],
+              "label": "回放边界"
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "容量公式来自固定源码布局与题设的数学推导；未证明任意路由回放或任何设备上的实际性能。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "非阻塞／逐专家padding／P上界／graph形状与地址",
+        "来源": "W2 o3 场景表·decode①及padding更正；DeepEP Hybrid-EP 4e890fd"
+      },
+      "source_ids": [
+        "w2-lesson",
+        "w2-ledger"
+      ],
+      "content_summary": "A理由：防止将能录图误当作无丢弃，以及忽略逐专家padding造成容量不足。材料：W2历史o3 decode①、padding更正；课程HTML计数与接收空间。源码4e890fd：deep_ep/hybrid_ep_buffer.py:515-538、576-581；csrc/hybrid_ep/executor/executor.cu:171-198；csrc/hybrid_ep/hybrid_ep.cu:333-340；csrc/hybrid_ep/backend/hybrid_ep_backend.cuh:5370-5408。保守上界按题设由源码布局推导，不是实测建议。",
+      "depends_on": []
+    },
+    {
+      "key": "hybrid-overflow-model-policy",
+      "rank": 34,
+      "domain": "ai-infra-moe",
+      "recall_target": "区分Hybrid-EP容量截断机制与模型训练中的路由丢弃策略",
+      "assessment": "mechanism",
+      "layer": "mechanism",
+      "fact_scope": {
+        "kind": "snapshot",
+        "product": "DeepEP Hybrid-EP",
+        "commit": "4e890fd19a3a52f23cc7bd38a0d9b0b1276f70d6"
+      },
+      "quality": "A",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 5,
+      "template_id": "technical-qa",
+      "fields": {
+        "问题": "在 DeepEP Hybrid-EP 4e890fd 的非阻塞 permute 路径中，输出容量P不足。overflow_flag 表示什么，库按什么规则截断？为什么不能直接把这种行为当作训练所需的 capacity-factor 路由策略？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "overflow_flag只报告本rank发生了超限；库按输出位置截断，不是按路由概率执行模型的容量策略。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "输出按本地专家顺序排列，前面专家的有效行及padding先占容量，后面的专家可能只保留部分或全部被截断；被丢弃的(Token,专家)映射写成-1，后续使用截断后的计数。"
+                }
+              ],
+              "label": "截断规则"
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "flag不是逐Token标记，也不替调用方选择该丢哪条分配。一个Token选择多个专家时，可能仅丢掉其中部分专家贡献，从而改变模型输出。"
+                }
+              ],
+              "label": "语义差异"
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "允许丢弃的训练配方应在router中明确实现所需策略；dropless路径则需确保容量足够，或把overflow当作失败，不能把截断后的结果当正常输出。"
+                }
+              ],
+              "label": "模型责任"
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "这里描述该commit的非阻塞permute实现，不外推其他后端或框架的默认丢弃行为；未运行故障或训练验证。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "每rank标志／专家顺序截断／分配对／router策略",
+        "来源": "W2 o3 场景表·训练②；DeepEP Hybrid-EP 4e890fd"
+      },
+      "source_ids": [
+        "w2-lesson",
+        "w2-ledger"
+      ],
+      "content_summary": "A理由：防止把实现层容量保护当作模型语义，静默改变输出。材料：W2历史o3训练②；课程HTML计数与接收空间。源码4e890fd：csrc/hybrid_ep/executor/executor.cu:158-169；csrc/hybrid_ep/jit/compiler.cu:315-329（调用端传入enable_permute）；csrc/hybrid_ep/backend/hybrid_ep_backend.cuh:5380-5411、5646-5650；deep_ep/hybrid_ep_buffer.py:268-269、534。",
+      "depends_on": []
+    },
+    {
+      "key": "hybrid-shared-buffer-overlap",
+      "rank": 35,
+      "domain": "ai-infra-moe",
+      "recall_target": "区分Hybrid-EP独立计算输出与内部共享通信区的并发复用约束",
+      "assessment": "mechanism",
+      "layer": "mechanism",
+      "fact_scope": {
+        "kind": "snapshot",
+        "product": "DeepEP Hybrid-EP",
+        "commit": "4e890fd19a3a52f23cc7bd38a0d9b0b1276f70d6"
+      },
+      "quality": "A",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 5,
+      "template_id": "technical-qa",
+      "fields": {
+        "问题": "DeepEP Hybrid-EP 4e890fd 使用默认 use_shared_buffer=True。dispatch 已返回普通调用中新分配的输出张量，为什么这仍不足以允许 dispatch(i+1) 与 combine(i) 在两条stream上并发？它与“一个micro-batch计算、另一个通信”有什么区别？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "独立输出解除了专家计算对内部接收区的读取依赖，但dispatch与combine仍共享内部通信存储，不能据此让两次通信并发复用。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "默认共享模式下，dispatch接收区与combine输入区指向同一块通信buffer。新输出张量属于另一层对象，并未改变这项内部别名关系。"
+                }
+              ],
+              "label": "两层归属"
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "调用方应在同一通信stream上保持操作顺序，或用event建立必要依赖，并保持各rank的通信顺序一致。dispatch完成后，专家计算读取独立输出，可以与后续使用内部通信区的工作按依赖编排。"
+                }
+              ],
+              "label": "依赖安排"
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "拆分通信缓冲区或使用独立实例可以消除这项存储别名冲突，但不自动证明任意并发调度安全、能够重叠或更快。"
+                }
+              ],
+              "label": "拆分边界"
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "新张量的说法限定普通调用；图重放另有地址复用约束。真实并发与资源调度未在本轮设备上验证。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "独立输出／内部别名／跨调用顺序／拆分非充分条件",
+        "来源": "W2 o3 场景表·训练③；DeepEP Hybrid-EP 4e890fd"
+      },
+      "source_ids": [
+        "w2-lesson",
+        "w2-ledger"
+      ],
+      "content_summary": "A理由：防止把返回新张量误推为通信内部状态可以任意并发复用。材料：W2历史o3训练③；课程HTML完成与复用。源码4e890fd：csrc/hybrid_ep/buffer/intranode.cu:204-212；csrc/hybrid_ep/hybrid_ep.cu:333-340；csrc/hybrid_ep/executor/executor.cu:396-408、461-467、491-493；docs/Hybrid-EP_Implementation.md:320-324。",
+      "depends_on": []
+    },
+    {
+      "key": "hybrid-mixed-prefill-decode-costs",
+      "rank": 36,
+      "domain": "ai-infra-moe",
+      "recall_target": "在Hybrid-EP混合prefill与decode部署中区分常驻容量和每步处理规模",
+      "assessment": "mechanism",
+      "layer": "mechanism",
+      "fact_scope": {
+        "kind": "snapshot",
+        "product": "DeepEP Hybrid-EP",
+        "commit": "4e890fd19a3a52f23cc7bd38a0d9b0b1276f70d6"
+      },
+      "quality": "B",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 3,
+      "template_id": "technical-qa",
+      "fields": {
+        "问题": "DeepEP Hybrid-EP 4e890fd 的同一实例交替处理大的prefill和小的decode。M=max_num_of_tokens_per_rank、S=num_of_tokens_per_rank、P=num_permuted_tokens分别控制什么？M按prefill上限定好后，能否直接断言decode每步也承担最大规模工作，因此必须另建一份buffer？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "不能仅凭M大就断言decode每步按最大规模处理；M、S、P分别控制常驻容量、当次路由槽位和按专家展开后的输出分配。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "M控制常驻通信buffer容量及相关配置；S是本次全组统一的路由槽位数，影响本次路由all-gather和元数据规模；P是按专家展开、补齐后的输出预留行数。"
+                }
+              ],
+              "label": "三种规模"
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "大M会增加常驻显存并与KV cache竞争，但不等于每步都按M交换路由；decode可使用较小且合法的S、P。"
+                }
+              ],
+              "label": "代价归属"
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "是否另建buffer或拆分实例，应结合显存预算、真实调用路径与计时对照决定，而不是只比较M。需要覆盖大prefill后再运行decode的生命周期边界。"
+                }
+              ],
+              "label": "部署判断"
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "在相同S下增大M究竟如何影响decode耗时仍待实测；本卡不声称分离部署或共用buffer一定更快。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "常驻M／每步S／输出P／显存与实测",
+        "来源": "W2 o3 场景表·prefill①与decode②；DeepEP Hybrid-EP 4e890fd"
+      },
+      "source_ids": [
+        "w2-lesson",
+        "w2-ledger"
+      ],
+      "content_summary": "B：避免把容量参数与每步工作量混为一谈，可迁移到其他预分配通信库。材料：W2历史o3 prefill①、decode②；课程HTML参数对照。源码4e890fd：deep_ep/hybrid_ep_buffer.py:308-315、587-609；csrc/hybrid_ep/buffer/intranode.cu:126-130、198-201；csrc/hybrid_ep/executor/executor.cu:32-60、103-149；csrc/hybrid_ep/hybrid_ep.cu:333-340。",
+      "depends_on": []
+    },
+    {
+      "key": "oral-framework-moe-integration",
+      "rank": 37,
+      "domain": "moe-framework-comparison",
+      "recall_target": "向面试官对照vLLM和SGLang的真实MoE接入主链",
+      "assessment": "oral",
+      "layer": "oral",
+      "fact_scope": {
+        "kind": "snapshot",
+        "product": "vLLM + SGLang",
+        "version": "vLLM d7ada3a / SGLang 43a3f95"
+      },
+      "quality": "A",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 5,
+      "template_id": "oral",
+      "fields": {
+        "问题": "向面试官用60–90秒对照 vLLM d7ada3a 的未量化modular路径与 SGLang 43a3f95 的普通runner路径：从路由结果到dispatch、专家计算、combine，说明两框架怎样接新通信库与计算库，以及为何接口不能任意拼接。排除LoRA、monolithic、fused_func及直通runner等快路。",
+        "参考回答": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "两者都把路由后的激活送往专家，再还原结果，但交接契约的组织方式不同。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "模型进入MoERunner后选择top-k，经权重方法调用P/F与Experts组成的kernel。并行配置先决定专用all-to-all是否生效，P/F与计算后端还要匹配布局和元数据。"
+                }
+              ],
+              "label": "vLLM"
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "dispatcher交出带格式的结果，普通MoeRunner按输入格式与runner名找pre-permute，再执行计算并按反向键找post-permute，最后交回dispatcher做combine。"
+                }
+              ],
+              "label": "SGLang"
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "既要有实际调用新库的层，也要让双向数据和加权契约吻合；格式声明或后端名字存在，并不等于整条路径已可运行。"
+                }
+              ],
+              "label": "接入核对"
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "以上限定列出的固定分支；真实设备接入与性能需要另行验证。"
+                }
+              ]
+            }
+          ]
+        },
+        "评分锚点": [
+          "两框架端到端调用链",
+          "并行与通信/计算选择分开",
+          "布局与元数据契约",
+          "双向转换和实际库调用"
+        ],
+        "来源": "W2 单元二 · 固定版本主链与横向对照"
+      },
+      "source_ids": [
+        "w2-lesson",
+        "w2-card",
+        "w2-ledger"
+      ],
+      "content_summary": "覆盖o1/o4，组合本请求5张已核验框架子卡；不增加子卡以外的实现结论。A理由：支撑面试中完整解释两套真实框架接入边界，避免只列组件名称。",
+      "depends_on": [
+        "vllm-qwen3-modular-moe-path",
+        "vllm-backend-selection-gates",
+        "vllm-prepare-layout-metadata",
+        "sglang-moe-ordinary-runner-path",
+        "sglang-format-pair-registration"
+      ]
+    },
+    {
+      "key": "oral-receive-capacity-four-paths",
+      "rank": 38,
+      "domain": "moe-communication-implementation-comparison",
+      "recall_target": "按计数容量和布局比较HT LL V2与MORI的实现取舍",
+      "assessment": "oral",
+      "layer": "oral",
+      "fact_scope": {
+        "kind": "snapshot",
+        "product": "DeepEP + MORI-EP",
+        "version": "DeepEP V1/V2 d4f41e4 / MORI-EP 2d4c3e2"
+      },
+      "quality": "A",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 5,
+      "template_id": "oral",
+      "fields": {
+        "问题": "面试官请你用60–90秒比较 DeepEP d4f41e4 的V1 HT、V1 LL、V2，以及 MORI-EP 2d4c3e2通用IntraNode路径。围绕“何时知道接收数量、怎样准备空间、有效行数如何表达”说明差异；不要求给性能排名。",
+        "参考回答": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "四条路径对计数、预分配和布局的分工不同，应先说明接口与空间代价再谈负载适用性。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "HT默认非缓存路径先notify，主机等计数后精确分配；LL按专家和来源预留固定槽，每个Token/专家一条消息，免去先交换全组计数才能定位置的步骤。"
+                }
+              ],
+              "label": "HT与LL"
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "非缓存V2按do_cpu_sync决定等真实数量还是预留上界，do_expand决定是否展开专家任务；分配容量不等于全部有效。"
+                }
+              ],
+              "label": "V2"
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "通用IntraNode用接收方共享池，block远程领一段再本地发号；完成信号与尾指针不同，total_recv是总有效Token行数，不是每专家计数。"
+                }
+              ],
+              "label": "MORI"
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "上界、主机等待与共享分配各有代价；不能仅按prefill/decode名称或容量数字给出普遍性能结论。"
+                }
+              ]
+            }
+          ]
+        },
+        "评分锚点": [
+          "HT计数与精确分配",
+          "LL粒度与固定分段",
+          "V2同步与展开开关",
+          "MORI共享池与有效计数"
+        ],
+        "来源": "W2 单元二 · 固定版本主链与横向对照"
+      },
+      "source_ids": [
+        "w2-lesson",
+        "w2-card",
+        "w2-ledger"
+      ],
+      "content_summary": "覆盖o2/o4，组合5张同请求已核验实现卡；不承诺跨平台性能排名。A理由：回答面试中的四路径取舍问题，防止把容量、计数与有效布局混为同一种机制。",
+      "depends_on": [
+        "deepep-ht-notify-exact-allocation",
+        "deepep-ll-message-granularity-and-slots",
+        "deepep-v2-sync-expand-output",
+        "mori-intranode-shared-reservation",
+        "mori-completion-and-valid-row-metadata"
+      ]
+    },
+    {
+      "key": "oral-hybrid-training-prefill-decode",
+      "rank": 39,
+      "domain": "hybrid-ep-scenario-adaptation",
+      "recall_target": "向面试官解释HybridEP在训练变长prefill与graph decode中的适配",
+      "assessment": "oral",
+      "layer": "oral",
+      "fact_scope": {
+        "kind": "snapshot",
+        "product": "DeepEP Hybrid-EP",
+        "commit": "4e890fd19a3a52f23cc7bd38a0d9b0b1276f70d6"
+      },
+      "quality": "A",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 5,
+      "template_id": "oral",
+      "fields": {
+        "问题": "面试官问：“DeepEP Hybrid-EP 4e890fd已有一套通信机制，你会怎样分别接入训练、变长prefill和CUDA graph decode？”请用60–90秒围绕路由元数据、容量与生命周期说明调整，并区分源码事实与待验证结果。",
+        "参考回答": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "先用全组路由元数据形成布局，再传实际激活并按专家重排；不同场景主要改变容量与状态复用策略。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "同一路由可复用handle，但不能跨buffer代次使用。独立专家输出允许按依赖编排计算与通信，默认共享通信区上的两次通信仍不能直接并发复用。"
+                }
+              ],
+              "label": "训练"
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "各rank实际长度不同时仍要选择统一合法槽位S；通信容量应覆盖预期调用范围，避免前后向或录图后触发重新注册。"
+                }
+              ],
+              "label": "变长prefill"
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "为每个录制档固定合法输出容量P，并计入逐专家padding及该档位允许的路由范围；非阻塞本身不保证无丢弃，地址变化也不会自动修复旧图。"
+                }
+              ],
+              "label": "graph decode"
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "这些是固定源码中的机制与接入要求，实际框架集成、重叠收益和延迟仍需验证。"
+                }
+              ]
+            }
+          ]
+        },
+        "评分锚点": [
+          "路由元数据与载荷分开",
+          "handle代次与共享缓冲依赖",
+          "ragged输入统一S",
+          "固定P包含padding及回放范围"
+        ],
+        "来源": "W2 单元二 · 固定版本主链与横向对照"
+      },
+      "source_ids": [
+        "w2-lesson",
+        "w2-card",
+        "w2-ledger"
+      ],
+      "content_summary": "覆盖o3/o4，组合5张同请求Hybrid-EP快照子卡。A理由：支撑训练/prefill/decode迁移面试题，并防止将设计推导包装成生产性能证据。",
+      "depends_on": [
+        "hybrid-metadata-payload-pipeline",
+        "hybrid-ragged-token-slots",
+        "hybrid-training-handle-generation",
+        "hybrid-graph-padded-capacity",
+        "hybrid-shared-buffer-overlap"
+      ]
+    }
+  ]
+}

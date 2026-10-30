@@ -13,3 +13,11 @@
 [submodule ".agent-skills"]
 	path = .agent-skills
 	url = ../agent-skills.git
+[submodule "deepep"]
+	path = 推理框架/references/deepep
+	url = https://github.com/deepseek-ai/DeepEP.git
+	shallow = true
+[submodule "mori"]
+	path = 推理框架/references/mori
+	url = https://github.com/ROCm/mori.git
+	shallow = true

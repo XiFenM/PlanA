@@ -208,6 +208,8 @@ AMD AI framework readiness pack
 4. PyTorch custom op 到 C++/device Kernel。
 5. collective/stream/allocator 到 ROCm/HIP/RCCL 或目标后端。
 
+完成方式（2026-10-28 用户调整）：Change Card 服务于学习理解和面试准备，不要求为某款硬件做真实适配。导师按上述骨架逐段提问并给出选项，学习者选择、补充并提供芯片信息（只记录可公开的抽象能力），导师据此逐段成稿；学习者在问答中的选择与判断就是实践证据，不要求独立写完整卡片。
+
 ### 4.4 Case Card 模板
 
 ```text
@@ -360,7 +362,7 @@ producer-consumer／异步 buffer lifetime 小程序与 sanitizer 或等价工�
 ### 7.3 产出
 
 - EP routing worked example。
-- 覆盖五个源码专题的 EP source/test map、横向对照与 Change Card，包含 Hybrid-EP 的训练／推理差异及适配表；作为同一证据包组织，标明版本、接口与实现差异、改造边界以及实际验证状态。
+- 覆盖五个源码专题的 EP source/test map、横向对照与 Change Card，包含 Hybrid-EP 的训练／推理差异及适配表；作为同一证据包组织，标明版本、接口与实现差异、改造边界以及实际验证状态。2026-10-28 起，横向对照由导师整理进课程网页，Change Card 按 §4.3 的问答共建方式完成。
 - parallelism shape/bytes 题集。
 - C++ lifetime 小程序、测试与错误复盘。
 - 小型 MatMul Roofline、第二/第三张 Case Card 草稿。

@@ -91,7 +91,7 @@ Pull requests should state the purpose, list touched modules or SOPs, and call o
 ## Things To Avoid
 
 - Do not reintroduce `.obsidian/`; Obsidian is no longer used for this vault.
-- Do not switch branches in a shared checkout. Codex works in the sibling worktree `../PlanA-codex` on branch `codex`, while `../PlanA` stays on `main`; rebase `codex` onto `main` before starting, and ask the user to fast-forward `main` when the work is ready.
+- Codex 直接在当前 `PlanA` 仓库工作，保留当前分支与用户已有的未提交修改。`../PlanA-codex` 已停用，不再在那里编辑，也不再要求通过 `codex` 分支快进合并；不要自动切换分支、提交或推送。
 - Do not reformat or tidy stable curriculum files opportunistically.
 - Do not auto-promote weekly-report items to `学习指引.md`.
 - Do not create planning, decision, or summary Markdown files unless explicitly asked.
