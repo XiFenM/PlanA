@@ -23,3 +23,8 @@
 
 # resource-planning 原子发布事务日志（失败恢复用，不入库）
 /计划/.resource-planning-journal.json
+
+# W2-U3 一次性运行产物仅在本机保留；验收摘要与可复现源码正常入库。
+/推理框架/实践/W2-U3/artifacts/
+/推理框架/实践/W2-U3/results.json
+/推理框架/实践/W2-U3/__pycache__/

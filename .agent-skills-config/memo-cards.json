@@ -45,6 +45,13 @@
       ]
     },
     {
+      "id": "inference-w2-u3-lesson",
+      "kind": "source-bundle",
+      "patterns": [
+        "课程网页/八周计划/plana-jd-w2-cpp-lifetime.html"
+      ]
+    },
+    {
       "id": "pytorch-study-logs",
       "kind": "structured-log",
       "patterns": [

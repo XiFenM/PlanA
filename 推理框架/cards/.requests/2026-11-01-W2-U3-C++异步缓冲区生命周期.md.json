@@ -1,0 +1,1028 @@
+{
+  "schema": "memo-cards.request/v1",
+  "output_collection": "inference-cards",
+  "target": "推理框架/cards/2026-11-01-W2-U3-C++异步缓冲区生命周期.md",
+  "selection": "selected",
+  "sources": [
+    {
+      "id": "log",
+      "collection": "inference-study-logs",
+      "path": "推理框架/log/2026-11-01-W2-U3-C++异步缓冲区生命周期.md",
+      "sha256": "bb4cb3b30a94011df77079565d3e023a0b97537872c9aaa2aac3289345435df2",
+      "summary": "用户指定的W2-U3结构化过程记录；使用技术问答、代码Review转折与实测解释，不使用raw原文。"
+    },
+    {
+      "id": "lesson",
+      "collection": "inference-w2-u3-lesson",
+      "path": "课程网页/八周计划/plana-jd-w2-cpp-lifetime.html",
+      "sha256": "a39dc47c4b9c78ad727abf2ced0008625e21ca54ac09847ce79bfd9a2d4f278f",
+      "summary": "用户指定的W2-U3课程网页：节点1–7、导师串讲、已关闭检查题与参考要点；以C++20 N4861及约定内观察为依据。"
+    },
+    {
+      "id": "evidence",
+      "collection": "inference-w2-u2-evidence",
+      "path": "计划/八周冲刺进度/历史记录/W2-学习验收记录.md",
+      "sha256": "967946435eda6d31b9f8a5b926eb91ad1d07a00d8a279bed37570f524050352a",
+      "summary": "仅使用W2-U3的开课来源、综合检查、P1约定与Review/ASan/变式证据；不把mastery状态或其他单元内容制卡。"
+    }
+  ],
+  "cards": [
+    {
+      "key": "local-owner-before-join",
+      "rank": 1,
+      "domain": "cpp-concurrency",
+      "recall_target": "诊断生产线程局部缓冲区提前析构且外层join不能补救的生命周期错误",
+      "assessment": "mechanism",
+      "layer": "mechanism",
+      "fact_scope": {
+        "kind": "evergreen"
+      },
+      "quality": "A",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 5,
+      "template_id": "technical-qa",
+      "fields": {
+        "问题": "一个 C++ 生产线程用局部 vector 保存缓冲区 B。消费者线程只借用元素指针并同步读取，没有其他异步使用者；它还有元素将在生产线程返回后读取。生产线程看到 closing 后返回，主线程随后 join 两者。请沿析构与读取顺序分析这套安排，并说明应怎样调整持有人或退出时机。",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "生产线程返回时，局部 vector 析构并释放元素存储；消费者后续读取失效，主线程稍后的 join 无法延长已经结束的对象生命周期。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "让生产线程继续持有 B，直到通过同步协议确认消费者最后一次读取完成，再返回。"
+                }
+              ],
+              "label": "保留原持有人"
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "让主线程持有 B，并在所有实际使用者结束后释放；本场景中可由主线程成功 join 两个工作线程后回收。"
+                }
+              ],
+              "label": "改变持有人"
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "这里由消费者线程同步完成全部读取；若它又提交了外部异步任务，还必须确认那些实际使用者已完成。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "先找实际持有人，再找最后一次读取",
+        "来源": "W2-U3 课程页·综合检查1；学习日志·所有者变式"
+      },
+      "source_ids": [
+        "lesson",
+        "log",
+        "evidence"
+      ],
+      "content_summary": "A理由：防止把外层 join 误当成延长线程局部缓冲区生命周期的手段。",
+      "depends_on": []
+    },
+    {
+      "key": "locked-pointer-unlocked-read",
+      "rank": 2,
+      "domain": "cpp-concurrency",
+      "recall_target": "诊断只在锁内取得指针却在锁外访问共享元素的保护范围缺口",
+      "assessment": "mechanism",
+      "layer": "mechanism",
+      "fact_scope": {
+        "kind": "evergreen"
+      },
+      "quality": "A",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 5,
+      "template_id": "technical-qa",
+      "fields": {
+        "问题": "共享 vector 的普通非原子元素始终存活，存储不会扩容。生产者持 mutex m 修改元素；消费者持同一个 m 取得 data() 指针，然后解锁并读取元素。除此之外没有交接协议，主线程最后 join 两者。请分析实际元素读写之间建立了哪些同步关系，是否足以支持安全读取。",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "不能据此保证安全：锁内完成的只是取得地址，实际元素读取发生在解锁后，可能与生产者的写入缺少 happens-before 顺序。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "逐条核对实际元素的读和写，而不是只核对取得指针时是否持锁；存储存活解决不了读写排序。"
+                }
+              ],
+              "label": "定位访问"
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "可以把实际读取纳入同一锁的保护，也可以建立在读取结束前禁止生产者覆写的交接协议。"
+                }
+              ],
+              "label": "补齐协议"
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "最后的 join 只把各线程完成接到主线程后续动作上，不会追溯地为此前两个工作线程的冲突访问排序。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "保护实际访问；地址有效不等于读取已同步",
+        "来源": "W2-U3 课程页·节点3–4、检查2"
+      },
+      "source_ids": [
+        "lesson",
+        "log",
+        "evidence"
+      ],
+      "content_summary": "A理由：防止以锁内取指针代替对后续元素读取的同步，造成数据竞争。",
+      "depends_on": []
+    },
+    {
+      "key": "mutual-exclusion-and-ready",
+      "rank": 3,
+      "domain": "cpp-concurrency",
+      "recall_target": "区分互斥排序与本批数据就绪并建立发布到读取的同步链",
+      "assessment": "mechanism",
+      "layer": "mechanism",
+      "fact_scope": {
+        "kind": "evergreen"
+      },
+      "quality": "B",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 3,
+      "template_id": "technical-qa",
+      "fields": {
+        "问题": "生产者更新一批共享输入，消费者读取并求和；两段完整循环都持同一个 mutex。怎样判断消费者是否一定读到本次更新后的数据？若业务要求使用这一批新数据，应怎样把数据发布接到消费者读取上？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "互斥可以排序两段访问，却不保证生产者先取得锁；消费者可能安全地读到初始化数据。还要表达并等待本批已就绪。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "生产者在同一锁内先写完整批，再发布 ready 状态，随后解锁。"
+                }
+              ],
+              "label": "发布"
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "消费者持锁检查 ready；未就绪时释放锁等待，就绪后才读取。"
+                }
+              ],
+              "label": "领取"
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "写入先于生产者解锁，同一 mutex 的解锁与消费者后续成功加锁同步，再接到读取，形成 happens-before 链。"
+                }
+              ],
+              "label": "同步依据"
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "要求的是消费前本批已就绪，不必固定哪个线程先抢到锁；通知不能替代数据与状态的同步。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "互斥管访问顺序，ready 管业务前提",
+        "来源": "W2-U3 课程页·节点4–5；学习日志·就绪条件补准"
+      },
+      "source_ids": [
+        "lesson",
+        "log",
+        "evidence"
+      ],
+      "content_summary": "B：强化互斥与业务就绪的独立职责及其组合方式。",
+      "depends_on": []
+    },
+    {
+      "key": "predicate-wait-protocol",
+      "rank": 4,
+      "domain": "cpp-concurrency",
+      "recall_target": "解释条件变量谓词等待的检查解锁等待重加锁闭环",
+      "assessment": "mechanism",
+      "layer": "mechanism",
+      "fact_scope": {
+        "kind": "evergreen"
+      },
+      "quality": "B",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 3,
+      "template_id": "technical-qa",
+      "fields": {
+        "问题": "单次发布场景中，ready 初始为 false，生产者与消费者都用同一个 mutex m 访问它。消费者调用 cv.wait(lk, predicate)，其中 lk 是关联 m 的 unique_lock，predicate 检查 ready。这个等待怎样工作，为什么能应对先通知后等待和虚假唤醒？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "谓词版 wait 在持锁时检查状态；条件为假才原子地解锁并进入等待，恢复后重新加锁并重查，条件为真才返回。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "同锁保护使生产者不能在消费者仍持锁检查时改变 ready；原子解锁并进入等待避免两者之间出现通知空档。"
+                }
+              ],
+              "label": "检查与等待"
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "通知不保存为凭证；若生产者已经把 ready 设为 true，后来到达的消费者首次检查便直接返回。"
+                }
+              ],
+              "label": "提前通知"
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "离开底层等待不等于 ready 已成立；重获锁后仍为 false 就继续等待。"
+                }
+              ],
+              "label": "虚假唤醒"
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "本例普通共享 ready 的读写必须遵守同锁协议；unique_lock 允许 wait 暂时解锁并重新加锁。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "状态被保存；唤醒后持锁重查",
+        "来源": "W2-U3 课程页·节点5；关闭时机变式"
+      },
+      "source_ids": [
+        "lesson",
+        "log",
+        "evidence"
+      ],
+      "content_summary": "B：保留可迁移的等待机制，避免只背通知与等待的调用顺序。",
+      "depends_on": []
+    },
+    {
+      "key": "slot-occupation-and-reuse",
+      "rank": 5,
+      "domain": "cpp-concurrency",
+      "recall_target": "用占用状态连接锁外读取与下一批覆写的安全交接",
+      "assessment": "mechanism",
+      "layer": "mechanism",
+      "fact_scope": {
+        "kind": "evergreen"
+      },
+      "quality": "A",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 5,
+      "template_id": "technical-qa",
+      "fields": {
+        "问题": "单生产者、单消费者复用主线程持有的缓冲区 B。状态 FREE 表示可写下一批，READY 表示可领取，READING 表示被读取工作占用。消费者希望领取后解锁计算。如何安排领取和交还，使生产者即使拿到 mutex 也不会提前覆写？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "消费者在锁内把 READY 改为 READING 后才解锁；本批最后一次读取结束后，再持同一把锁发布 FREE。生产者每次写入前都须持锁确认 FREE。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "先登记占用再允许其他线程取得锁；读取虽在锁外进行，生产者仍受占用状态约束。"
+                }
+              ],
+              "label": "领取"
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "最后一次读取完成后，持锁改为 FREE、解锁并通知；仅提交延迟读取任务尚不足以交还。"
+                }
+              ],
+              "label": "交还"
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "旧读取先于交还时的解锁，生产者后续成功加锁并确认 FREE 后才写入，形成读取到下一次覆写的 happens-before 链。"
+                }
+              ],
+              "label": "顺序"
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "所有参与者都要遵守该协议；多批同时在途时，还需辨认完成事实属于哪一批。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "先登记占用；最后读取后交还",
+        "来源": "W2-U3 课程页·节点6、检查3"
+      },
+      "source_ids": [
+        "lesson",
+        "log",
+        "evidence"
+      ],
+      "content_summary": "A理由：防止锁外读取期间或仅提交读取后就交还缓冲区，导致输入被下一批覆写。",
+      "depends_on": []
+    },
+    {
+      "key": "close-wait-and-drain",
+      "rank": 6,
+      "domain": "cpp-concurrency",
+      "recall_target": "让关闭同时改变等待退出条件和后续操作许可并保留已接受批次",
+      "assessment": "mechanism",
+      "layer": "mechanism",
+      "fact_scope": {
+        "kind": "evergreen"
+      },
+      "quality": "A",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 5,
+      "template_id": "technical-qa",
+      "fields": {
+        "问题": "单槽程序要求关闭后拒绝新批，但所有已接受批次仍须处理；共享状态受同一个 mutex 保护。生产者可能在等空槽，消费者可能在等数据。请分析只在调用 wait 前检查一次 closing 的实现：若 closing 在等待期间改变，等待返回条件与后续操作许可应怎样设计？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "wait 期间会释放锁，closing 可能随后改变；关闭既要让等待者能结束等待，也要让它们重新判断下一步是否仍获准执行。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "关闭线程在同锁下设置 closing，并通知两类等待者；谓词要允许它们观察关闭，而不是永远只等正常工作条件。"
+                }
+              ],
+              "label": "唤醒与重查"
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "结束等待后，在同锁下先判断 closing；已经关闭就返回拒绝，不能因为刚好等到 FREE（空槽）又接收新批。"
+                }
+              ],
+              "label": "生产者"
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "有 READY（已接受、待领取）批次时仍处理；关闭且无剩余批次时退出。正在读取的批次保留到实际读取结束。"
+                }
+              ],
+              "label": "消费者"
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "closing 表示停止接收的请求，不等于槽已经空闲，也不等于所有访问已结束。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "能结束等待，与获准继续工作是两件事",
+        "来源": "W2-U3 课程页·节点7；学习日志·关闭协议 Review"
+      },
+      "source_ids": [
+        "lesson",
+        "log",
+        "evidence"
+      ],
+      "content_summary": "A理由：覆盖本次实际出现的关闭后永久等待和关闭后接收新批两类缺陷。",
+      "depends_on": []
+    },
+    {
+      "key": "join-lock-cycle",
+      "rank": 7,
+      "domain": "cpp-concurrency",
+      "recall_target": "沿锁与线程退出的等待依赖诊断持锁join死锁",
+      "assessment": "discrimination",
+      "layer": "atomic",
+      "fact_scope": {
+        "kind": "evergreen"
+      },
+      "quality": "A",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 5,
+      "template_id": "technical-qa",
+      "fields": {
+        "问题": "关闭线程持有 mutex m，设置 closing 后仍持锁调用 worker.join()。worker 已读完数据，但退出前还要取得 m 更新共享状态。画出等待关系，并说明应调整哪个顺序。",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "关闭线程等 worker 退出，worker 等关闭线程释放 m；关闭线程又要等 join 返回才释放 m，形成循环等待。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "先在锁内发布关闭请求，再结束对 m 的持有，随后 join worker；必要的通知也要按关闭协议发出。"
+                }
+              ],
+              "label": "调整"
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "判断依据是被等待线程退出前还需要哪些锁；并非任何 join 都绝对不能持有任何锁。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "join 等退出；退出还要拿到谁的锁",
+        "来源": "W2-U3 课程页·节点7"
+      },
+      "source_ids": [
+        "lesson"
+      ],
+      "content_summary": "A理由：防止析构线程持有 worker 收尾所需的锁，形成无法退出的等待环。",
+      "depends_on": []
+    },
+    {
+      "key": "reader-lock-tradeoff",
+      "rank": 8,
+      "domain": "cpp-concurrency",
+      "recall_target": "比较同步读取回调全程持锁与锁外占用协议的代价",
+      "assessment": "discrimination",
+      "layer": "atomic",
+      "fact_scope": {
+        "kind": "evergreen"
+      },
+      "quality": "B",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 3,
+      "template_id": "technical-qa",
+      "fields": {
+        "问题": "单生产者、单消费者的单槽程序中，reader 同步读取本批，正常返回、不重入，也不保存借用。比较“reader 全程持锁”与“锁内登记占用状态 READING，解锁后执行 reader”两种方案：各自简化或增加了什么责任，对关闭协调有何影响？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "全程持锁用同一临界区直接保护读取，协议较简单；锁外读取缩短持锁时间，但必须另用占用状态约束生产者并在读取完成后交还。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "其他需要状态锁的操作会等待 reader，包括 close；若接口允许 close 等锁，这仍是正确实现。"
+                }
+              ],
+              "label": "全程持锁"
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "其他线程可以取得锁检查状态，但取得锁不代表获准覆写；必须一直保留 READING 的约束。"
+                }
+              ],
+              "label": "锁外读取"
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "两种方案都须保持本批内容有效。是否采用锁外回调应依据接口和协调需求，不能把它当成正确性的必要门槛。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "简单临界区，与更细的占用协议",
+        "来源": "W2-U3 课程页·节点6；P1练习约定"
+      },
+      "source_ids": [
+        "lesson",
+        "log",
+        "evidence"
+      ],
+      "content_summary": "B：记住同一正确性目标可以用不同策略达成，比较的是协调成本与协议责任。",
+      "depends_on": []
+    },
+    {
+      "key": "async-ownership-choices",
+      "rank": 9,
+      "domain": "cpp-concurrency",
+      "recall_target": "比较保留原所有者复制和移动三种异步数据持有安排的成本",
+      "assessment": "discrimination",
+      "layer": "atomic",
+      "fact_scope": {
+        "kind": "evergreen"
+      },
+      "quality": "B",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 3,
+      "template_id": "technical-qa",
+      "fields": {
+        "问题": "异步队列会在提交函数返回后才读取一批数据，原先这批数据由调用方管理。比较三种安排：调用方继续持有、复制一份交给任务、移动所有权给任务。它们分别把成本或责任放在哪里？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "继续持有需要调用方配合完成协议；复制增加数据复制与独立存储成本；移动转交管理责任，原持有人不再负责被移走资源的所有权。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "调用方须保证原存储和本批内容持续有效，直到实际读取结束，才能释放或复用。"
+                }
+              ],
+              "label": "继续持有"
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "让任务持有独立副本，换来与原输入后续生命周期的分离；副本仍须由任务有效管理。"
+                }
+              ],
+              "label": "复制"
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "把能够管理资源的对象交给任务保存，让所有权覆盖延迟访问；仅按值捕获裸指针没有完成这项转交。"
+                }
+              ],
+              "label": "移动"
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "具体类型是否真正执行移动、是否复制，以及其移动后状态，要遵守该类型的语义。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "完成协议成本｜复制成本｜所有权转交",
+        "来源": "W2-U3 课程页·节点1–2"
+      },
+      "source_ids": [
+        "lesson"
+      ],
+      "content_summary": "B：比较持有方案的代价，避免重复已有卡对 get、reset 和裸借用的定义复述。",
+      "depends_on": []
+    },
+    {
+      "key": "join-submitter-evidence",
+      "rank": 10,
+      "domain": "cpp-concurrency",
+      "recall_target": "限定join提交线程对任务提交和外部完成所提供的证据",
+      "assessment": "discrimination",
+      "layer": "atomic",
+      "fact_scope": {
+        "kind": "evergreen"
+      },
+      "quality": "B",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 3,
+      "template_id": "technical-qa",
+      "fields": {
+        "问题": "主机提交线程依次向外部执行队列提交三个异步任务，然后退出；主线程成功 join 了提交线程。如何区分 join 直接证明的事实、需要提交控制流程才能证明的事实，以及仍需外部完成接口证明的事实？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "join 直接证明提交线程已结束；任务是否全部成功提交取决于提交结果与控制流程；外部任务是否完成须依据其完成接口。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "若题设保证三次提交都正常成功，才可据该流程说明工作已被接收；不能仅从 join 返回推出提交成功。"
+                }
+              ],
+              "label": "控制流程"
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "外部任务可能尚未开始，也可能已经完成部分或全部。缺少完成保证不等于证明它们全都未完成。"
+                }
+              ],
+              "label": "外部执行"
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "应核对提交接口返回时承诺了什么；某个接口若额外保证完成，判断要纳入那项保证。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "线程退出｜提交成功｜实际完成",
+        "来源": "W2-U3 课程页·综合检查2与提交语义澄清；学习日志"
+      },
+      "source_ids": [
+        "lesson",
+        "log",
+        "evidence"
+      ],
+      "content_summary": "B：保留本次对证据措辞的具体补准，不再重复一张泛化的异步完成概念卡。",
+      "depends_on": []
+    },
+    {
+      "key": "object-specific-last-use",
+      "rank": 11,
+      "domain": "cpp-concurrency",
+      "recall_target": "按不同对象的最后使用者选择独立完成事件和回收时机",
+      "assessment": "mechanism",
+      "layer": "mechanism",
+      "fact_scope": {
+        "kind": "evergreen"
+      },
+      "quality": "A",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 5,
+      "template_id": "technical-qa",
+      "fields": {
+        "问题": "已成功异步提交 dispatch→GEMM→combine。dispatch 写输入 B 与路由句柄 H；GEMM 读 B、写独立输出 Y；combine 读 Y 和 H，不访问 B。H 使用独立存储，不持有或引用 B。E_D、E_G、E_C 分别标记三阶段完成，除此之外没有使用者。应如何安排 B 复用与 H 销毁，才能兼顾安全和等待范围？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "B 可在确认 E_G 完成后复用，H 须等 E_C 完成后销毁；两者不必统一等到同一事件。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "dispatch 完成只说明输入写好；GEMM 还要读取 B，因此它完成才关闭 B 的本批使用期。"
+                }
+              ],
+              "label": "追踪 B"
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "GEMM 结束后，combine 仍要读取 H 恢复路由，因此 H 保留至 combine 完成。"
+                }
+              ],
+              "label": "追踪 H"
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "这是题面给定的访问契约；真实设备 API 必须确实保证相应阶段最后访问已结束，且不能遗漏额外别名或使用者。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "逐对象追踪最后使用者，再选完成事件",
+        "来源": "W2-U3 课程页·综合检查2；学习日志·AI Infra迁移"
+      },
+      "source_ids": [
+        "lesson",
+        "log",
+        "evidence"
+      ],
+      "content_summary": "A理由：防止统一按最早事件回收导致悬空访问，或忽略对象差异造成不必要等待。",
+      "depends_on": []
+    },
+    {
+      "key": "asan-three-stack-diagnosis",
+      "rank": 12,
+      "domain": "cpp-concurrency",
+      "recall_target": "用ASan分配释放和非法访问栈构建生命周期因果链并选择修正边界",
+      "assessment": "mechanism",
+      "layer": "mechanism",
+      "fact_scope": {
+        "kind": "evergreen"
+      },
+      "quality": "B",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 3,
+      "template_id": "technical-qa",
+      "fields": {
+        "问题": "一个 C++ 延迟读取程序被 ASan 报告 heap-use-after-free。报告给出 previously allocated、freed by 和错误访问栈。怎样把报告对应到代码中的生命周期事件，并判断修正是否真正延长了数据的有效使用期？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "先在三组栈中找到自己的代码位置，把同一存储的分配、释放和释放后的访问连接起来，再把释放移到实际最后使用完成之后。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "分配栈确定被访问的存储从哪里来，释放栈确定谁结束它的生命周期，访问栈确定哪个使用者仍在读写。"
+                }
+              ],
+              "label": "定位"
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "明确由谁继续持有存储，以及哪个完成事实允许回收；若读取全部由 consumer 线程同步完成，可在其成功 join 后释放。"
+                }
+              ],
+              "label": "修正依据"
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "保留原反例并用相同输入与检测设置运行修正版，核对业务输出和报告是否符合修正依据。"
+                }
+              ],
+              "label": "对照"
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "如果 consumer 只是把读取提交给另一执行者，其 join 不足以证明实际读取结束。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "同一存储的分配→释放→非法访问",
+        "来源": "W2-U3 学习日志·ASan反例分析；P1-A4修正对照"
+      },
+      "source_ids": [
+        "lesson",
+        "log",
+        "evidence"
+      ],
+      "content_summary": "B：训练报告到源码因果链的诊断能力，不记错误地址、行号或固定输出值。",
+      "depends_on": []
+    },
+    {
+      "key": "validation-evidence-boundary",
+      "rank": 13,
+      "domain": "cpp-concurrency",
+      "recall_target": "限定并发功能测试和ASan无报告所能支持的正确性结论",
+      "assessment": "discrimination",
+      "layer": "atomic",
+      "fact_scope": {
+        "kind": "evergreen"
+      },
+      "quality": "B",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 3,
+      "template_id": "technical-qa",
+      "fields": {
+        "问题": "某个单槽程序在“先关闭空槽，再启动工作线程”的受控测试中按预期退出，ASan 没有报告错误。评审时应如何表述这项证据，并说明还需要什么依据来评价并发正确性？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "这次执行支持该测试路径符合预期，且没有观察到 ASan 可检测的内存错误；不能据此证明全部线程交错都无数据竞争或死锁。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "单次受控顺序只覆盖实际发生的路径，未执行的交错仍需结合代码分析。"
+                }
+              ],
+              "label": "覆盖范围"
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "ASan 主要检测越界、释放后访问等内存错误，不能用它的无报告替代数据竞争或死锁判断。"
+                }
+              ],
+              "label": "检测范围"
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "核对共享状态与实际读写的 happens-before 关系、等待依赖及对象最后访问；按待验证的主张补相应对照。"
+                }
+              ],
+              "label": "进一步依据"
+            }
+          ]
+        },
+        "锚点": "测试路径与工具检测范围都有限",
+        "来源": "W2-U3 学习日志·实测证据边界；P1-A4关闭变式"
+      },
+      "source_ids": [
+        "lesson",
+        "log",
+        "evidence"
+      ],
+      "content_summary": "B：防止把测试通过、内存检查通过和并发协议证明混为一谈。",
+      "depends_on": []
+    },
+    {
+      "key": "single-slot-lifecycle-explanation",
+      "rank": 14,
+      "domain": "cpp-concurrency",
+      "recall_target": "沿CPU单槽数据交接完整解释持有发布占用交还关闭与析构",
+      "assessment": "oral",
+      "layer": "oral",
+      "fact_scope": {
+        "kind": "evergreen"
+      },
+      "quality": "A",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 4,
+      "template_id": "oral",
+      "fields": {
+        "问题": "向面试官解释一个单生产者、单消费者的 CPU 单槽设计：主线程持有缓冲区及同步对象，消费者同步完成读取，业务要求关闭后不接新批但处理完已接受批次。请沿一批数据从发布到最终销毁的路径，说明如何同时保证存活、读写顺序和关闭收尾。",
+        "参考回答": "主线程持有缓冲区和同步对象，直到所有使用者结束。生产者持锁确认槽可写且仍开放，写完整批后发布 READY；消费者持同一锁确认就绪并登记 READING，再读取本批。若读取放在锁外，生产者仍须遵守占用状态；消费者完成最后一次读取后，持锁发布 FREE，才允许下一批覆写。关闭线程在锁内设置关闭状态并通知等待者；生产者停止接收，消费者继续处理已接受批次，关闭且无剩余批次才退出。主线程先释放工作线程收尾需要的锁，再 join 它们，最后销毁共享对象。整个过程分别用持有人保证存活、同锁交接建立访问顺序、实际完成事实允许复用与回收。",
+        "评分锚点": [
+          "持有人覆盖全部实际访问",
+          "完整写入后同锁发布与领取",
+          "最后读取完成后才交还复用",
+          "关闭后拒新批并处理已接受批次",
+          "释放收尾所需锁后join再析构"
+        ],
+        "来源": "W2-U3 课程页·节点4–7与导师串讲；P1练习约定"
+      },
+      "source_ids": [
+        "lesson",
+        "evidence"
+      ],
+      "content_summary": "A理由：用于面试中完整解释单槽生命周期协议，将所有权、访问顺序和关闭依赖连接起来。",
+      "depends_on": [
+        "local-owner-before-join",
+        "mutual-exclusion-and-ready",
+        "slot-occupation-and-reuse",
+        "close-wait-and-drain",
+        "join-lock-cycle"
+      ]
+    }
+  ]
+}
