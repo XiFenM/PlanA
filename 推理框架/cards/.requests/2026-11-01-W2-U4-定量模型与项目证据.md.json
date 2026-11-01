@@ -1,0 +1,1028 @@
+{
+  "schema": "memo-cards.request/v1",
+  "output_collection": "inference-cards",
+  "target": "推理框架/cards/2026-11-01-W2-U4-定量模型与项目证据.md",
+  "selection": "selected",
+  "sources": [
+    {
+      "id": "log",
+      "collection": "inference-study-logs",
+      "path": "推理框架/log/2026-11-01-W2-U4-定量模型与项目证据.md",
+      "sha256": "559e2750f5bc1f38f6cb5d5e9fff5c9fb6a9830dc737d67ddd54b940eb52f1f5",
+      "summary": "本课已配对归档的结构化学习过程：原答、纠错、题设澄清与项目证据边界"
+    },
+    {
+      "id": "lesson",
+      "collection": "inference-w2-u4-lesson",
+      "path": "课程网页/八周计划/plana-jd-w2-quantitative-evidence.html",
+      "sha256": "a5840c9696a52cc9122cf107fb87989c3154b3a36848a53a358baaf9e56c3911",
+      "summary": "用户明确要求纳入的讲解网页：GEMM账本、Roofline、布局与项目证据，含节点和闭题参考要点"
+    }
+  ],
+  "cards": [
+    {
+      "key": "gemm-ledger",
+      "rank": 1,
+      "domain": "performance-modeling",
+      "recall_target": "按稠密矩阵乘语义、各矩阵存储精度与冷 HBM 读写假设建立 FLOPs 和最低流量账本",
+      "assessment": "mechanism",
+      "layer": "mechanism",
+      "fact_scope": {
+        "kind": "evergreen"
+      },
+      "quality": "A",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 5,
+      "template_id": "technical-qa",
+      "fields": {
+        "问题": "估算一次稠密 C=AB：A[M,K]、B[K,N]、C[M,N]；A、B、C 每个元素的存储大小分别为 s_A、s_B、s_C 字节。按一次 FMA 计 2 FLOP，采用 FP32 累加。假设 A、B 是冷数据，各从 HBM 读取一次，C 只写回一次且不读旧 C，部分和留在片上。怎样建立计算量 F 与 HBM 最低流量 Q_min，并处理存储精度和累加精度的区别？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "计算量 F=2MNK FLOP；最低流量 Q_min=s_A·MK+s_B·KN+s_C·MN 字节。HBM 字节数由各矩阵的存储类型和实际读写决定，不能直接由 FP32 累加精度决定。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "每个输出元素沿 K 维完成 K 次乘加，输出共有 MN 个元素。FMA 的乘法和加法按两次浮点运算计数；这是工作量口径，不是机器指令条数。"
+                }
+              ],
+              "label": "计算"
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "读取 A 的 MK 个元素，读取 B 的 KN 个元素，写出 C 的 MN 个元素；每一项都乘其自身的存储字节数。若 C 存为 FP32，输出项使用 4 字节；不能因为输入是 BF16 就把输出也按 2 字节计算。"
+                }
+              ],
+              "label": "流量"
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "FP32 累加器保留在片上时，不会仅因精度为 FP32 就多出一份 HBM 工作区读写；最终写回按 C 的存储类型计数。"
+                }
+              ],
+              "label": "累加"
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "Q_min 是冷数据和理想复用条件下的乐观模型。重复读取、显存工作区、填充或起始缓存驻留会改变相应流量；F 只计这项矩阵乘的有效乘加，不含其他算子和地址计算。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "操作语义 → 各矩阵存储字节 → HBM 读写边界",
+        "来源": "《定量模型与项目证据》课程网页 #node-1、#node-2、#q-a1；同课结构化日志“输入存储与输出存储精度不同”。"
+      },
+      "source_ids": [
+        "log",
+        "lesson"
+      ],
+      "content_summary": "建立可复算的 GEMM 工作量与流量模型。A 级理由：防止把累加精度当成存储精度、遗漏输出读写或把最低流量冒充实测，从起点算错 Roofline。",
+      "depends_on": []
+    },
+    {
+      "key": "roofline-bounds",
+      "rank": 2,
+      "domain": "performance-modeling",
+      "recall_target": "从同一工作量与计时边界推导 Roofline 的时间下界和性能上界，并解释重叠与可达性的边界",
+      "assessment": "mechanism",
+      "layer": "mechanism",
+      "fact_scope": {
+        "kind": "evergreen"
+      },
+      "quality": "A",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 5,
+      "template_id": "technical-qa",
+      "fields": {
+        "问题": "一次算子在同一计时边界内完成 F 次浮点运算，并产生 Q 字节 HBM 总读写流量。匹配该计算方式的算力上限为 P_max（FLOP/s），相同存储层级和读写口径的带宽上限为 β（B/s）。怎样由这两项约束得到时间下界与性能上界？计算与搬运可能重叠，会怎样影响公式与实测时间的解释？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "时间必须同时满足计算和搬运的约束，取较大者作为下界；平均吞吐同时受两种能力限制，取较小者作为上界。"
+                }
+              ]
+            },
+            {
+              "type": "display",
+              "parts": [
+                {
+                  "type": "formula",
+                  "katex": "\\begin{aligned}t&\\ge\\max\\!\\left(\\frac{F}{P_{\\max}},\\frac{Q}{\\beta}\\right)\\\\P=\\frac{F}{t}&\\le\\min\\!\\left(P_{\\max},\\frac{\\beta F}{Q}\\right)\\end{aligned}"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "完成计算至少需要 F/P_max 秒，完成搬运至少需要 Q/β 秒。即使较短的一项完全被覆盖，也不能越过较长的一项约束。"
+                }
+              ],
+              "label": "独立约束"
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "分块流水可以在处理已到达的数据时准备后续数据，因此不能把两项直接相加作为一般模型；只有额外确认串行关系时，才考虑相应的串行约束。max 关系本身不承诺两项一定完美重叠。"
+                }
+              ],
+              "label": "重叠"
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "令 I=F/Q，单位为 FLOP/B，则带宽项 βI 的单位为 FLOP/s，性能上界写成 min(P_max,βI)。 两项相等时 I*=P_max/β，这个屋脊点区分带宽项与算力项较低的区域。"
+                }
+              ],
+              "label": "性能"
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "上下界以工作量、流量、能力与计时口径成立为前提。启动、同步、并行度不足等开销可能让实测更慢；模型上界不是必须达到的性能，也不是一次运行时间的预测值。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "两项时间约束取 max；两项吞吐约束取 min",
+        "来源": "《定量模型与项目证据》课程网页 #node-3、#node-4；同课结构化日志“只提升算力或带宽”。"
+      },
+      "source_ids": [
+        "log",
+        "lesson"
+      ],
+      "content_summary": "把资源约束连到时间和吞吐，区分下界与实测。A 级理由：直接支撑单算子性能估算面试题，防止把可能重叠的阶段相加或把理论上界当作承诺性能。",
+      "depends_on": []
+    },
+    {
+      "key": "packed-update-contract",
+      "rank": 3,
+      "domain": "tensor-layout",
+      "recall_target": "根据权重更新对象与消费者布局契约确定 packed 刷新和完成依赖",
+      "assessment": "mechanism",
+      "layer": "mechanism",
+      "fact_scope": {
+        "kind": "evergreen"
+      },
+      "quality": "A",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 5,
+      "template_id": "technical-qa",
+      "fields": {
+        "问题": "一个 MatMul 从预排布权重缓冲区 packed 读取 B。B 的数值每轮更新，shape 和 dtype 不变；普通布局 B 与 packed 是独立存储。生产者可能更新普通 B，也可能直接按约定的 packed 地址规则写入本轮数值。怎样判断本轮 GEMM 前需要哪些刷新与等待，保证消费的是本轮正确权重？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "先确认本轮数值写入了哪份存储，再建立该表示更新完成到 GEMM 读取的依赖；是否需要转换，取决于消费者将读取的 packed 是否已经包含本轮数据。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "label": "更新普通布局",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "若生产者更新普通 B，而独立的 packed 仍是旧副本，必须先用本轮 B 刷新 packed，并在刷新完成后让 GEMM 消费它。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "label": "直接更新 packed",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "若生产者已经按消费者约定的地址规则直接更新 packed，并且本轮更新完成，则不需要再重复执行普通布局到 packed 的转换。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "label": "读取契约",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "生产者与消费者必须对同一逻辑坐标使用匹配的存储映射。即使数值已更新，消费者仍按旧布局地址读取，也可能取得其他坐标的值。"
+                }
+              ]
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "shape、dtype 相同不能证明独立副本已经更新；仅说明 B 每轮变化，也不足以判断是否需要转换，必须交代更新对象和完成边界。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "更新对象 → 刷新或直接写入 → 完成 → 匹配布局读取",
+        "来源": "W2-U4 讲解网页：节点 5、综合检查 3（题设澄清）；2026-11-01 W2-U4 结构化日志：布局迁移与计时范围。"
+      },
+      "source_ids": [
+        "log",
+        "lesson"
+      ],
+      "content_summary": "A 级理由：避免权重更新后复用过期 packed 导致错误结果，也避免把直接更新 packed 的合法路径误判为必须重排；来源中的追问是题设澄清，不作为学习者纠错。",
+      "depends_on": []
+    },
+    {
+      "key": "prepack-total-cost",
+      "rank": 4,
+      "domain": "tensor-layout",
+      "recall_target": "按权重复用与更新频率比较完整预排布方案的累计耗时",
+      "assessment": "mechanism",
+      "layer": "mechanism",
+      "fact_scope": {
+        "kind": "evergreen"
+      },
+      "quality": "A",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 5,
+      "template_id": "technical-qa",
+      "fields": {
+        "问题": "比较普通布局 GEMM 与预排布方案：普通 GEMM 每次耗时 t_old，预排布后的 GEMM 每次耗时 t_new，一次完整转换耗时 t_pack。比较 J 次调用，J≥1；转换和各次计算串行、没有重叠，双方相同的其他开销不计。若 B 始终不变，或生产者每轮只能更新普通 B、packed 必须完整刷新，两种场景分别怎样计算总耗时并判断预排布是否划算？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "比较包含转换的总耗时：静态权重可以在 J 次调用间分摊一次转换；每轮普通 B 都更新且必须完整重排时，每轮都要承担转换成本。仅有 t_new 小于 t_old 不足以确定方案更快。"
+                }
+              ]
+            },
+            {
+              "type": "display",
+              "parts": [
+                {
+                  "type": "formula",
+                  "katex": "\\begin{aligned}T_{\\mathrm{plain}}&=Jt_{\\mathrm{old}}\\\\T_{\\mathrm{static}}&=t_{\\mathrm{pack}}+Jt_{\\mathrm{new}}\\\\T_{\\mathrm{update}}&=J(t_{\\mathrm{pack}}+t_{\\mathrm{new}})\\end{aligned}"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "label": "选择条件",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "静态权重方案更快，需要 J·(t_old−t_new)>t_pack。逐轮完整刷新方案更快，需要 t_pack+t_new<t_old；两边相等时，在这份耗时模型中没有时间收益。"
+                }
+              ]
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "这些式子依赖串行、无重叠及题设中的刷新方式。若生产者直接生成 packed，或转换可以与其他工作重叠，应重新建立成本模型；不能继续收取题设中不存在的转换成本。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "静态一次转换可分摊；逐轮刷新每轮付费；比较完整成本",
+        "来源": "W2-U4 讲解网页：节点 5“只改变转换发生的时机”、综合检查 3；2026-11-01 W2-U4 结构化日志：每轮重排与 GEMM 的公平比较。"
+      },
+      "source_ids": [
+        "log",
+        "lesson"
+      ],
+      "content_summary": "A 级理由：可直接回答加载期预排布何时值得采用的面试问题，并防止只比较 GEMM 时间、遗漏重复转换而选错方案。",
+      "depends_on": []
+    },
+    {
+      "key": "async-fix-regression",
+      "rank": 5,
+      "domain": "async-validation",
+      "recall_target": "验证异步依赖修复时区分补丁效果与阻塞或诊断等待的掩盖",
+      "assessment": "mechanism",
+      "layer": "mechanism",
+      "fact_scope": {
+        "kind": "evergreen"
+      },
+      "quality": "A",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 5,
+      "template_id": "technical-qa",
+      "fields": {
+        "问题": "CPU 后台准备数据、提交异步 H2D、设备消费这条链出现概率性异常。调试时改为阻塞或加入额外诊断等待后，异常消失。补丁已试图补齐依赖，怎样安排修复后的回归，才能区分补丁有效与规避措施仍在掩盖问题？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "回归应恢复原先触发问题的异步配置，撤掉临时阻塞和额外诊断等待，再在明确的输入与运行条件下验证修复。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "阻塞或额外等待本身会改变执行时序；若一直保留它们，即使异常不再出现，也无法区分是补丁补齐了依赖，还是规避措施仍在发挥作用。"
+                }
+              ],
+              "label": "控制因素"
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "保持可比较的请求、采样与运行配置，记录补丁版本、实际执行次数和异常结果；同时说明等待所覆盖的 CPU 准备、提交及设备完成关系。"
+                }
+              ],
+              "label": "验证边界"
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "有限请求集回归支持的是已声明条件下的结果，不证明所有输入和并发永不失败。没有修复前同条件统计时，不补造失败率下降幅度。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "恢复触发配置 → 撤掉掩盖因素 → 声明回归范围",
+        "来源": "《定量模型与项目证据》课程网页·节点6 #node-6；2026-11-01同课学习日志·修复归属与回归配置"
+      },
+      "source_ids": [
+        "log",
+        "lesson"
+      ],
+      "content_summary": "A理由：防止仍保留阻塞或诊断等待时，把不复现误写成异步依赖补丁已被验证。",
+      "depends_on": []
+    },
+    {
+      "key": "batch-reuse",
+      "rank": 6,
+      "domain": "performance-modeling",
+      "recall_target": "解释输入行数增大时固定权重流量的摊薄，以及计算量、最低流量、计算强度和耗时的不同变化",
+      "assessment": "mechanism",
+      "layer": "mechanism",
+      "fact_scope": {
+        "kind": "evergreen"
+      },
+      "quality": "B",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 3,
+      "template_id": "technical-qa",
+      "fields": {
+        "问题": "对稠密 A[M,K]×B[K,N]→C[M,N]，三类矩阵都以 BF16 存储，每个元素占 2 字节；假设 A、B 每个元素各从 HBM 读取一次，C 每个元素写回一次。现在只把 M 翻倍，K、N 和同一份权重 B 不变。F、Q_min、计算强度 I=F/Q_min 分别怎样变化，为什么不能据此直接推断整次调用的耗时变化？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "F 精确翻倍；Q_min 增加但不到原来的两倍；I 增加但也不到原来的两倍。相同权重被更多输入行复用，但单次调用承担的总工作量同时增加。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "输入 A 与输出 C 的元素数随 M 翻倍，权重 B 的 KN 个元素保持不变。计算要为新增的每行输入再完成同样的乘加，因此 F 翻倍，固定的权重读取却没有翻倍。"
+                }
+              ],
+              "label": "共享权重"
+            },
+            {
+              "type": "display",
+              "parts": [
+                {
+                  "type": "formula",
+                  "katex": "\\begin{aligned}Q_{\\min}&=2M(K+N)+2KN\\\\Q_{\\min}^{\\prime}&=4M(K+N)+2KN\\\\\\frac{I^{\\prime}}{I}&=\\frac{2Q_{\\min}}{Q_{\\min}^{\\prime}},\\qquad 1<\\frac{I^{\\prime}}{I}<2\\end{aligned}"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "更高的计算强度可能提高吞吐上界，但不等于整次调用更快结束。耗时还取决于工作量、算力与带宽约束，以及实现的利用率和开销。"
+                }
+              ],
+              "label": "耗时"
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "比例关系要求正尺寸及题设的理想 HBM 复用继续成立。若新增输入行改变分块、缓存效果或重复读取，实际流量和实测时间还要重新核对。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "输入输出随 M 增长；同一份 B 的流量保持不变",
+        "来源": "《定量模型与项目证据》课程网页 #node-2、#node-4、#q-1；同课结构化日志“输入行数 M 翻倍”。"
+      },
+      "source_ids": [
+        "log",
+        "lesson"
+      ],
+      "content_summary": "区分 batch 扩大带来的权重摊薄、总工作量增加和吞吐／延迟变化，用于迁移到不同推理批量。",
+      "depends_on": []
+    },
+    {
+      "key": "lower-bound-audit",
+      "rank": 7,
+      "domain": "performance-modeling",
+      "recall_target": "诊断实测低于 HBM 主导的冷数据时间下界时应核对的前提，并区分带宽约束与算力约束",
+      "assessment": "mechanism",
+      "layer": "mechanism",
+      "fact_scope": {
+        "kind": "evergreen"
+      },
+      "quality": "B",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 3,
+      "template_id": "technical-qa",
+      "fields": {
+        "问题": "用冷数据假设为一个 MatMul 建模，得到时间下界 max(F/P_max,Q_min/β)，其中 HBM 项 Q_min/β 更大；F 是浮点运算量，Q_min 是冷数据下的最低 HBM 流量，P_max（FLOP/s）与 β（B/s）是所采用的算力和带宽上限。若实测时间比这个下界更短，应优先核对哪些直接影响该约束的前提？仅把 P_max 调高，为什么不能单独解释结果？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "先核对本次实际 HBM 流量、计时覆盖与带宽口径。HBM 项主导时，仅提高算力只会缩短计算项，不能改变 Q_min/β 这条约束。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "例如权重在计时开始前已驻留片上缓存，本次就不再满足冷数据前提，跨 HBM 的流量可能少于原估计。还应核对输入输出存储类型、读写次数与流量统计层级。"
+                }
+              ],
+              "label": "数据"
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "检查计时是否真正覆盖模型约定的全部工作，并等待所需的完成条件；若只测了较窄的一段，就不能与整项工作的下界直接比较。"
+                }
+              ],
+              "label": "计时"
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "β 必须对应本次设备、同一存储层级和同一总读写口径；采用了错误的能力基准，也会使理论与实测失去可比性。"
+                }
+              ],
+              "label": "能力"
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "在全部前提与能力上限确实成立时，执行不应快于相应下界。观察到更短时间应先查明不一致来自哪里，而不是直接宣称突破物理限制。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "实际流量 → 计时覆盖 → 带宽口径；先看主导项",
+        "来源": "《定量模型与项目证据》课程网页 #node-2、#node-4、#q-a1；同课结构化日志“实测比冷数据模型的时间下界更快”。"
+      },
+      "source_ids": [
+        "log",
+        "lesson"
+      ],
+      "content_summary": "以缓存、计时和带宽基准解释看似快于理论下界的结果，避免用不相关的算力变化解释 HBM 约束。",
+      "depends_on": []
+    },
+    {
+      "key": "bank-hidden-pipeline",
+      "rank": 8,
+      "domain": "performance-diagnosis",
+      "recall_target": "按稳态流水中的限制阶段判断片上bank冲突是否影响吞吐",
+      "assessment": "mechanism",
+      "layer": "mechanism",
+      "fact_scope": {
+        "kind": "evergreen"
+      },
+      "quality": "B",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 3,
+      "template_id": "technical-qa",
+      "fields": {
+        "问题": "理想稳态流水中，相邻批次的 HBM 搬运与后续 shared memory 访问及计算可充分重叠，资源独立、缓冲充足，忽略启动和排空。每批搬运需 100 μs；片上阶段有 bank conflict 时需 30 μs，消除冲突后需 20 μs。若搬运进一步缩短至 25 μs，消除冲突在前后两种情况下怎样影响稳态完成间隔？这说明什么？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "搬运为 100 μs 时，消除冲突不改变完成间隔；搬运变为 25 μs 后，间隔可由 30 μs 降至 25 μs。局部冲突是否限制吞吐，取决于它是否拖慢了当前限制阶段。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "在给定理想流水条件下，稳态周期取两个阶段耗时的较大者。max(100,30) 与 max(100,20) 都是 100 μs，片上额外耗时被较慢的搬运阶段覆盖。"
+                }
+              ],
+              "label": "原条件"
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "搬运缩短后，max(25,30)=30 μs；消除冲突后 max(25,20)=25 μs，限制重新转到搬运。因此存在冲突不等于它正限制吞吐，消除所有片上冲突也不是达到 HBM 带宽上界的必要条件。"
+                }
+              ],
+              "label": "条件改变"
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "这些数值来自理想模型，不是硬件实测；完成间隔不同于单批端到端延迟。该反例明确讨论数据已到 shared memory 后的访问冲突，不直接替 HBM 搬运路径定性。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "局部耗时 → 当前限制阶段 → 稳态完成间隔",
+        "来源": "《定量模型与项目证据》课程网页·节点5补充 #add-5-1；2026-11-01同课学习日志·bank层级与流水"
+      },
+      "source_ids": [
+        "log",
+        "lesson"
+      ],
+      "content_summary": "B：将局部冲突与整体吞吐分开，保留经过题设澄清的流水模型；不把原撤题作为学习者错误。",
+      "depends_on": []
+    },
+    {
+      "key": "bank-stage-scope",
+      "rank": 9,
+      "domain": "memory-hierarchy",
+      "recall_target": "结合存储层级与访问阶段归属bank冲突造成的等待",
+      "assessment": "discrimination",
+      "layer": "atomic",
+      "fact_scope": {
+        "kind": "evergreen"
+      },
+      "quality": "B",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 3,
+      "template_id": "technical-qa",
+      "fields": {
+        "问题": "数据先从 HBM 搬入片上 shared memory，计算随后读取其中的 Tile。分析 bank conflict 的耗时时，为什么既要说明 bank 所在的存储层级，又要说明是哪次访问？怎样区分搬运写入端的冲突与搬运完成后的读取冲突？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "耗时应沿实际受影响的访问路径归属，不能只凭“片上”或“bank conflict”这个名称决定它属于搬运还是后续处理。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "如果冲突发生在 HBM→片上存储的搬运写入端，即使 bank 位于片上，也可能拖慢搬运阶段；需要检查这次写入的访问关系。"
+                }
+              ],
+              "label": "搬运期间"
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "如果 Tile 已在 shared memory，随后读取不同地址时出现同 bank 竞争，则这次片上访问可以变慢，而不需要新增 HBM 读取。"
+                }
+              ],
+              "label": "搬运之后"
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "具体映射与串行方式由目标存储和接口裁决。不能将 CUDA shared-memory 示例直接作为某款自研芯片 HBM／DMA 路径的事实。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "存储层级 × 访问阶段",
+        "来源": "《定量模型与项目证据》课程网页·节点5及补充 #add-5-1；2026-11-01同课学习日志·bank耗时归属追问"
+      },
+      "source_ids": [
+        "log",
+        "lesson"
+      ],
+      "content_summary": "B：防止把同名bank冲突一律放到HBM阶段或片上计算阶段；来源为已完成的题设澄清。",
+      "depends_on": []
+    },
+    {
+      "key": "layout-backend-control",
+      "rank": 10,
+      "domain": "performance-diagnosis",
+      "recall_target": "用固定后端或合法四组合对照区分布局收益与后端收益",
+      "assessment": "discrimination",
+      "layer": "mechanism",
+      "fact_scope": {
+        "kind": "evergreen"
+      },
+      "quality": "B",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 3,
+      "template_id": "technical-qa",
+      "fields": {
+        "问题": "同一个 MatMul 的 shape、dtype 和输入不变，新配置同时更换权重布局与 GEMM 后端。新配置更快，输出满足既定容差，实际 HBM 字节数近似不变；计时窗口、缓存条件已对齐，重复结果稳定，两个后端都支持两种布局。现有观察最多支持什么收益结论？怎样安排对照，识别布局贡献是否依赖后端？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "现有观察只支持新布局与新后端的组合在所测条件下更快，不能把联合收益独立归给布局。应固定后端比较布局，并按需要检查这一收益是否随后端变化。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "label": "固定后端",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "保持输入、正确性标准、缓存条件和计时边界一致，在同一个后端上比较普通布局与新布局。这个差异对应该后端下的布局选择效果。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "label": "四组合对照",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "若四种组合均合法，可比较“旧布局×旧后端、旧布局×新后端、新布局×旧后端、新布局×新后端”。分别观察两个后端上的布局差异，判断两项改变是否存在相互影响，而非假定收益可直接相加。"
+                }
+              ]
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "方案更快且 HBM 字节数不变，仍不能确定是哪种微观访问机制改善。具体 bank conflict 等根因需要对应层级的机制证据；缺少工具时保留归因边界。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "联合观察只证明组合；固定后端测布局；四组合看相互影响",
+        "来源": "W2-U4 讲解网页：节点 6、检查 3 参考要点；2026-11-01 W2-U4 结构化日志：性能归因、bank 层级与流水。"
+      },
+      "source_ids": [
+        "log",
+        "lesson"
+      ],
+      "content_summary": "B 级选材依据：学习者已正确提出固定后端对照，本卡保留可迁移的实验设计方法，区分方案收益与独立机制归因，不重复制作泛化 bank 纠错卡。",
+      "depends_on": []
+    },
+    {
+      "key": "timing-scope",
+      "rank": 11,
+      "domain": "performance-diagnosis",
+      "recall_target": "区分完整方案有效吞吐与 GEMM 本体吞吐并匹配 Roofline 计量边界",
+      "assessment": "discrimination",
+      "layer": "mechanism",
+      "fact_scope": {
+        "kind": "evergreen"
+      },
+      "quality": "B",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 3,
+      "template_id": "technical-qa",
+      "fields": {
+        "问题": "一次调用先把普通布局 B 重排，再执行 GEMM，两阶段串行且无额外重叠。从普通 B 就绪到结果就绪的总时间为 t_total 秒；F_GEMM 是该矩阵乘的数学浮点运算量。研究者报告 F_GEMM/t_total。怎样使用这个指标比较方案、继续定位耗时，并与 GEMM 本体的 Roofline 作口径一致的分析？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "F_GEMM/t_total 是完整方案每秒完成的 GEMM 有效工作量，不能称为 GEMM 本体吞吐。总计时用于选择方案，另保留重排与 GEMM 的分段计时，仍可继续分析耗时来源。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "label": "分段计时",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "分别记录重排时间 t_pack 与 GEMM 时间 t_GEMM；题设下 t_total=t_pack+t_GEMM。GEMM 本体吞吐使用 F_GEMM/t_GEMM，因此总方案变快与 GEMM 阶段变快是不同判断。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "label": "模型边界",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "评价 GEMM 时，使精度、存储层级、流量及缓存假设与该段计时匹配；建立完整方案模型时，还要计入转换的额外流量及串行阶段关系，不能直接把 GEMM 上界当作完整方案的时间预测。"
+                }
+              ]
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "F_GEMM 没有统计转换阶段的全部指令工作。用它除以总时间可以比较完成同一矩阵乘任务的效率，但不能据此声称整个方案的硬件执行算力或单独 GEMM 的利用率。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "总时间选方案；分段时间做归因；分子、分母与模型边界一致",
+        "来源": "W2-U4 讲解网页：节点 6、综合检查 3 参考要点；2026-11-01 W2-U4 结构化日志：总耗时比较与分段归因可以同时保留。"
+      },
+      "source_ids": [
+        "log",
+        "lesson"
+      ],
+      "content_summary": "B 级选材依据：巩固导师补准的计量边界，避免把包含转换的总耗时当作 GEMM 本体耗时，也避免误认为总计时排除了进一步分段归因。",
+      "depends_on": []
+    },
+    {
+      "key": "layout-roofline-invariant",
+      "rank": 12,
+      "domain": "performance-diagnosis",
+      "recall_target": "解释布局在数学工作量与理想 HBM 流量不变时仍可能改善实际执行",
+      "assessment": "mechanism",
+      "layer": "mechanism",
+      "fact_scope": {
+        "kind": "evergreen"
+      },
+      "quality": "B",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 3,
+      "template_id": "technical-qa",
+      "fields": {
+        "问题": "在同一设备上，一次稠密 MatMul 只改变权重布局，逻辑 shape、存储 dtype 与计算任务不变，也没有新增 Padding。按 A、B 各从 HBM 读取一次、C 写回一次得到的理想流量 Q_min 不变，实际执行却更快。怎样从理想流量、实际 HBM 流量和执行效率解释这一现象，并确定还需核对哪些观测？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "数学工作量 F 和理想流量 Q_min 不变，只表示在相同设备能力与复用假设下，基础 Roofline 上界不变；它们不固定真实耗时。布局仍可能改变实际搬运量或执行效率，使实现更接近这一上界。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "label": "真实流量",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "理想的每个元素只读一次，不保证实际实现能够做到。布局可能改变重复读取或事务中的额外字节；应核对同一层级的实际 Q_HBM，不能把 Q_min 当作计数器观测值。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "label": "执行效率",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "即使 Q_HBM 近似不变，传输组织、可并行的访存请求或片上读取过程也可能改善。结合分段耗时及可获得的访存观测，判断是否在搬运相同数据时减少了等待或提高了有效执行效率。"
+                }
+              ]
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "地址更连续或总耗时下降，不能单独确定具体改善机制，更不能泛化为某处 bank conflict 已消除。需要保持其他配置可比较，并按可获得的证据限定结论。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "F、Q_min 约束理想上界；Q_HBM 与执行效率决定实际距离",
+        "来源": "W2-U4 讲解网页：节点 4、节点 5 及补充；2026-11-01 W2-U4 结构化日志：性能归因、布局迁移与计时范围。"
+      },
+      "source_ids": [
+        "log",
+        "lesson"
+      ],
+      "content_summary": "B 级选材依据：保留布局优化与 Roofline 之间的核心机制联系，解释理想账本未变而实际更快的合法原因，并区分流量变化和效率变化两条证据路径。",
+      "depends_on": []
+    },
+    {
+      "key": "roofline-interview",
+      "rank": 13,
+      "domain": "performance-modeling",
+      "recall_target": "向面试官串联矩阵乘资源账本性能边界与预排布取舍",
+      "assessment": "oral",
+      "layer": "oral",
+      "fact_scope": {
+        "kind": "evergreen"
+      },
+      "quality": "B",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 3,
+      "template_id": "oral",
+      "fields": {
+        "问题": "向面试官说明：对稠密 C=AB，其中 A 为 [M,K]、B 为 [K,N]，如何从 shape、存储精度和读写假设估算性能边界，并判断静态权重预排布是否值得采用？请沿资源账本、上下界、测量核对与转换成本组织一段回答。",
+        "参考回答": "我先固定操作和计时边界。按一次乘加计两次浮点运算，F=2MNK；再按存储类型、读写次数和缓存条件计算所选层级的流量Q，得到I=F/Q。若匹配精度的算力上限为P、同层级带宽为β，性能上界是min(P,βI)，时间下界是max(F/P,Q/β)。上界不是实测预测；测量不一致时，先核对缓存驻留、流量和计时范围。预排布不必改变数学F或最低流量，却可能改变实际传输与执行效率。是否采用，还要比较一次转换加后续复用的总成本；若普通权重每轮更新，则每轮转换都要计入。",
+        "评分锚点": [
+          "shape、精度、存储层级与读写前提",
+          "F、Q与I的关系",
+          "性能min与时间max及单位匹配",
+          "实测不一致时核对模型前提",
+          "预排布实际效率与转换复用成本"
+        ],
+        "来源": "《定量模型与项目证据》课程网页·节点1–5及导师串讲 #synthesis；2026-11-01同课结构化学习日志"
+      },
+      "source_ids": [
+        "log",
+        "lesson"
+      ],
+      "content_summary": "B：组合本批五张子卡形成面试中的完整性能分析叙述，不加入未经子卡支持的新事实。",
+      "depends_on": [
+        "gemm-ledger",
+        "roofline-bounds",
+        "lower-bound-audit",
+        "prepack-total-cost",
+        "layout-roofline-invariant"
+      ]
+    },
+    {
+      "key": "blocked-address-contract",
+      "rank": 14,
+      "domain": "tensor-layout",
+      "recall_target": "用块坐标与块内坐标建立块间列主序权重布局的寻址契约",
+      "assessment": "mechanism",
+      "layer": "mechanism",
+      "fact_scope": {
+        "kind": "evergreen"
+      },
+      "quality": "B",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 3,
+      "template_id": "technical-qa",
+      "fields": {
+        "问题": "权重 B 的逻辑形状为 [K,N]，原存储为整矩阵行主序。现在按 BK 行、BN 列分块，块内逐行排列，块之间先沿 K 方向排完，再进入下一组 N 列；K、N 分别能被正整数 BK、BN 整除，不加 Padding。索引从 0 开始，0≤k<K、0≤n<N。对于逻辑坐标 B[k,n]，如何由块坐标与块内坐标得到新存储的元素偏移，并说明消费者为何必须改变寻址规则？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "先确定元素位于第几列、几行块，再计算该块内的行主序偏移。逻辑数值没有改变，但它的物理位置改变；继续按旧的 kN+n 读取，可能取得其他坐标的值。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "label": "块编号",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "K 方向共有 K/BK 个块。块行号为 floor(k/BK)，块列号为 floor(n/BN)；因为块间先沿 K 排列，块编号为 floor(n/BN)·(K/BK)+floor(k/BK)。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "label": "元素偏移",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "每块有 BK·BN 个元素。用块编号乘 BK·BN，再加块内行主序偏移 (k mod BK)·BN+(n mod BN)，就是新的元素偏移。字节偏移还要乘该权重元素的存储字节数。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "label": "生产与消费",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "重排时把原 B[k,n] 放到这个位置，计算时用同一个映射取回。块内整块连续和块间排列规则不等于普通的元素级列主序；固定 n 增加 k 时，通常仍跨 BN 个元素。"
+                }
+              ]
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "这是题设定义的布局；非整除尺寸、Padding 或其他硬件格式要另定映射。地址对应正确只保证取回同一逻辑元素，不单独证明性能收益或具体微观瓶颈。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "块列×K方向块数＋块行 → 块起点＋块内行主序偏移",
+        "来源": "《定量模型与项目证据》课程网页·节点5 #node-5；2026-11-01同课结构化日志·案例共建中的范围收紧"
+      },
+      "source_ids": [
+        "log",
+        "lesson"
+      ],
+      "content_summary": "B：补足本课blocked Col-major主例的核心寻址机制，防止逻辑shape不变时继续使用旧地址公式；具体映射来自课程页，而非未经核实的项目硬件格式。",
+      "depends_on": []
+    }
+  ]
+}
