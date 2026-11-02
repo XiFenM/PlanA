@@ -1,0 +1,354 @@
+<!doctype html>
+<!-- Markdown source: 简历-W2版本.md; source SHA-256: 3bc75e3bf752512e7659bd727d2f777900b6ed0681b0ca8512f3a97e2498661a -->
+<html lang="zh-CN" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light dark">
+<title>xxx · 简历-W2版本</title>
+<script>
+document.documentElement.classList.add('js');
+try { if (localStorage.getItem('plana-resume-w2-theme') === 'dark') document.documentElement.dataset.theme = 'dark'; } catch (_) {}
+</script>
+<style>
+:root {
+  color-scheme: light;
+  --canvas: #f1f2ee;
+  --paper: #fffefa;
+  --ink: #243237;
+  --ink-soft: #58656a;
+  --muted: #6c797d;
+  --rule: #dce2dd;
+  --accent: #226b61;
+  --accent-wash: #e5eeE7;
+  --cover: #172f35;
+  --cover-ink: #f5f7ef;
+  --cover-muted: #cad6d2;
+  --focus: #288c78;
+  --mono: "SFMono-Regular", Consolas, "Noto Sans Mono CJK SC", monospace;
+  --sans: "Noto Sans CJK SC", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --canvas: #111b20;
+  --paper: #19262c;
+  --ink: #e0e7e4;
+  --ink-soft: #bdc9c5;
+  --muted: #a0b2ad;
+  --rule: #35464b;
+  --accent: #9ad9c8;
+  --accent-wash: #253e3d;
+  --cover: #102329;
+  --cover-ink: #f1f6ef;
+  --cover-muted: #c3d2cd;
+  --focus: #9ad9c8;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; scroll-padding-top: 34px; }
+body {
+  margin: 0;
+  background: var(--canvas);
+  color: var(--ink);
+  font-family: var(--sans);
+  font-size: 16px;
+  line-height: 1.85;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+a { color: inherit; }
+button { font: inherit; }
+:focus-visible { outline: 2px solid var(--focus); outline-offset: 5px; border-radius: 3px; }
+::selection { background: var(--accent-wash); color: var(--ink); }
+.layout {
+  display: grid;
+  grid-template-columns: 174px minmax(0, 900px);
+  gap: 40px;
+  max-width: 1178px;
+  margin: 0 auto;
+  padding: 48px 32px 80px;
+  align-items: start;
+}
+.sidebar { position: sticky; top: 48px; min-width: 0; padding-top: 9px; }
+.section-nav { display: flex; flex-direction: column; gap: 3px; }
+.section-nav a {
+  position: relative;
+  display: flex;
+  min-height: 44px;
+  align-items: center;
+  padding: 8px 15px;
+  border-radius: 5px;
+  color: var(--ink-soft);
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: .045em;
+  transition: background-color 150ms, color 150ms;
+}
+.section-nav a:hover { color: var(--accent); background: var(--accent-wash); }
+.section-nav a[aria-current="location"] { background: var(--accent-wash); color: var(--accent); font-weight: 700; }
+.tools { display: none; gap: 8px; margin: 25px 0 0 8px; padding-top: 19px; border-top: 1px solid var(--rule); }
+.js .tools { display: flex; }
+.icon-button {
+  display: inline-flex;
+  width: 44px;
+  height: 44px;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--rule);
+  border-radius: 50%;
+  background: transparent;
+  color: var(--ink-soft);
+  cursor: pointer;
+  transition: background-color 150ms, color 150ms;
+}
+.icon-button:hover { color: var(--accent); background: var(--accent-wash); }
+.icon-button svg { width: 19px; height: 19px; fill: none; stroke: currentColor; stroke-width: 1.65; stroke-linecap: round; stroke-linejoin: round; }
+#resume { min-width: 0; background: var(--paper); border: 1px solid var(--rule); border-radius: 8px; overflow: clip; }
+.resume-header { padding: 39px 52px 34px; background: var(--cover); color: var(--cover-ink); }
+h1 { margin: 0 0 21px; font-size: 49px; font-weight: 650; line-height: 1.2; letter-spacing: .035em; }
+.contact-list { display: grid; grid-template-columns: max-content max-content; gap: 7px 36px; padding: 0; margin: 0; list-style: none; font-size: 13px; line-height: 1.85; color: var(--cover-muted); }
+.contact-list li { padding: 0; margin: 0; min-width: 0; }
+.contact-list li:last-child { grid-column: 1 / -1; }
+.contact-list strong { color: var(--cover-ink); font-weight: 550; }
+.resume-section { padding: 31px 52px 32px; scroll-margin-top: 24px; }
+.resume-section + .resume-section { border-top: 1px solid var(--rule); }
+h2 { margin: 0 0 18px; color: var(--accent); font-size: 16px; line-height: 1.6; font-weight: 700; letter-spacing: .095em; }
+h3 { margin: 0 0 11px; font-size: 18px; line-height: 1.6; font-weight: 650; letter-spacing: .005em; text-wrap: pretty; }
+p { margin: 0 0 16px; overflow-wrap: anywhere; }
+p:last-child { margin-bottom: 0; }
+.resume-section > p { color: var(--ink-soft); }
+.resume-section ul { margin: 0; padding-left: 1.25em; }
+.resume-section li { padding-left: .23em; margin: 0 0 10px; overflow-wrap: anywhere; }
+.resume-section li:last-child { margin-bottom: 0; }
+.resume-section li::marker { color: var(--muted); font-size: .7em; }
+.resume-section strong { font-weight: 650; color: var(--accent); }
+.entry + .entry { margin-top: 28px; padding-top: 28px; border-top: 1px solid var(--rule); }
+.date { margin: -3px 0 13px; color: var(--muted); font-size: 13px; font-variant-numeric: tabular-nums; line-height: 1.7; }
+code { font-family: var(--mono); font-size: .87em; border-radius: 3px; padding: .08em .28em; background: var(--accent-wash); color: var(--accent); overflow-wrap: anywhere; }
+@media (min-width: 1001px) { .resume-header { min-height: 206px; } }
+@media (max-width: 1000px) {
+  html { scroll-padding-top: 88px; }
+  .layout { display: block; max-width: 900px; padding: 0 24px 48px; }
+  .sidebar { position: sticky; z-index: 5; top: 0; display: flex; gap: 14px; align-items: center; padding: 10px 0; background: var(--canvas); }
+  .section-nav { flex: 1; min-width: 0; flex-direction: row; overflow-x: auto; gap: 0; scrollbar-width: none; }
+  .section-nav::-webkit-scrollbar { display: none; }
+  .section-nav a { flex: 0 0 auto; padding: 9px 12px; font-size: 12px; letter-spacing: 0; }
+  .tools { flex: 0 0 auto; margin: 0; padding: 0; gap: 6px; border: 0; }
+  .icon-button { width: 44px; height: 44px; }
+  .resume-header { padding: 36px 38px 31px; }
+  .resume-section { padding: 28px 38px; scroll-margin-top: 20px; }
+}
+@media (max-width: 560px) {
+  body { font-size: 15.5px; line-height: 1.85; }
+  .layout { padding: 0 0 24px; }
+  .sidebar { padding: 7px 12px; gap: 7px; border-bottom: 1px solid var(--rule); }
+  .section-nav a { padding-inline: 10px; }
+  #resume { border: 0; border-radius: 0; }
+  .resume-header { padding: 31px 25px 28px; }
+  h1 { font-size: 42px; margin-bottom: 18px; }
+  .contact-list { column-gap: 25px; font-size: 12.5px; }
+  .resume-section { padding: 26px 25px; }
+  h2 { margin-bottom: 16px; font-size: 15px; }
+  h3 { font-size: 17px; }
+  .date { font-size: 12px; }
+  .entry + .entry { margin-top: 25px; padding-top: 25px; }
+  .resume-section li { margin-bottom: 13px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { transition: none !important; }
+}
+@page { size: A4; margin: 14mm 16mm 15mm; }
+@media print {
+  :root, :root[data-theme="dark"] {
+    color-scheme: light;
+    --paper: #fff;
+    --ink: #202a2d;
+    --ink-soft: #303b3e;
+    --muted: #536166;
+    --rule: #cbd3d0;
+    --accent: #234d46;
+    --accent-wash: transparent;
+  }
+  html { background: #fff; scroll-behavior: auto; }
+  body { background: #fff; font-size: 10pt; line-height: 1.55; }
+  .sidebar { display: none !important; }
+  .layout { display: block; width: auto; max-width: none; margin: 0; padding: 0; }
+  #resume { border: 0; border-radius: 0; overflow: visible; }
+  .resume-header { min-height: 0; padding: 0 0 5mm; background: transparent; color: var(--ink); border-bottom: 1px solid var(--rule); }
+  h1 { font-size: 27pt; line-height: 1.1; margin-bottom: 3mm; }
+  .contact-list { gap: 1mm 9mm; font-size: 9pt; color: var(--ink-soft); }
+  .contact-list strong { color: var(--ink); }
+  .resume-section { padding: 4.5mm 0 0; border: 0 !important; }
+  h2 { font-size: 12pt; margin: 0 0 2.2mm; letter-spacing: .06em; }
+  h3 { font-size: 10.8pt; margin: 0 0 1.7mm; }
+  .date { font-size: 8.5pt; margin: 0 0 1.8mm; }
+  .entry { break-inside: avoid; }
+  .entry + .entry { margin-top: 3.5mm; padding-top: 0; border: 0; }
+  p { margin-bottom: 2mm; }
+  .resume-section li { margin-bottom: 1.8mm; }
+  h1, h2, h3, .date { break-after: avoid; }
+  .resume-section li { break-inside: avoid; }
+  p, li { orphans: 3; widows: 3; }
+  code { padding: 0; background: transparent; }
+  a { text-decoration: none; }
+}
+</style>
+</head>
+<body>
+<div class="layout">
+<aside class="sidebar" aria-label="简历导航与显示设置">
+<nav class="section-nav" aria-label="简历目录"><a href="#section-1">个人概述</a>
+<a href="#section-2">专业能力</a>
+<a href="#section-3">工作经历</a>
+<a href="#section-4">代表项目</a>
+<a href="#section-5">个人技术实践</a>
+<a href="#section-6">教育背景</a></nav>
+<div class="tools">
+<button type="button" id="theme-toggle" class="icon-button" aria-label="切换深色" aria-pressed="false" title="切换深色"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20.5 13.2A8.7 8.7 0 0 1 10.8 3.5 8.7 8.7 0 1 0 20.5 13.2Z"/></svg></button>
+<button type="button" id="print-resume" class="icon-button" aria-label="打印简历" title="打印简历"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 8V3h10v5M6 17H4a1 1 0 0 1-1-1v-6a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v6a1 1 0 0 1-1 1h-2"/><path d="M7 14h10v7H7zM17 11h1"/></svg></button>
+</div>
+</aside>
+<main id="resume">
+<header class="resume-header"><h1>xxx</h1>
+<ul class="contact-list">
+<li><strong>手机</strong>：</li>
+<li><strong>邮箱</strong>：</li>
+<li><strong>求职方向</strong>：AI 框架开发 / 大模型推理优化 / 模型部署与性能优化</li>
+</ul>
+</header>
+<section class="resume-section" id="section-1" aria-labelledby="section-1-title">
+<h2 id="section-1-title">个人概述</h2>
+<p>具备 3 年以上软件开发经验，2024 年起专注自研非 CUDA 加速芯片上的 PyTorch、vLLM 适配与推理优化。主要负责模型接入、框架侧布局与内存优化、精度与性能问题定位，能够结合源码、Profile、数值对照和请求重放，从模型执行链路追踪到算子接口、通信后端与运行时依赖。具备 Triton GPU 算子编写能力。</p>
+</section>
+<section class="resume-section" id="section-2" aria-labelledby="section-2-title">
+<h2 id="section-2-title">专业能力</h2>
+<ul>
+<li><strong>推理框架</strong>：具备 vLLM、PyTorch 源码级修改与后端调试经验；熟悉 vLLM V1 的请求执行链、Scheduler、Worker／ModelRunner 分工及设备扩展边界，能够解释 KV block 管理和 Prefix Cache 的命中、引用与复用关系。</li>
+<li><strong>并行与 MoE</strong>：理解 DP、TP、PP、SP、CP、EP 的切分与通信语义，能够推导 MoE 路由后的张量形状及 dispatch／combine 通信量；能够分析 Fused MoE 与 EP 通信后端之间的布局、元数据、完成依赖和缓冲区复用契约。</li>
+<li><strong>性能与数值分析</strong>：使用 PyTorch／vLLM Profile、Trace、受控实验和确定性重放分析 Host、算子、拷贝及通信开销；能够根据 shape、dtype、读写与复用假设建立 Roofline，估算性能上界和时间下界，区分算子耗时与包含布局转换的完整方案耗时。</li>
+<li><strong>算子与工程开发</strong>：具备 Triton 分块计算、归约、在线 Softmax 和矩阵乘编程能力；熟练使用 Python、Linux、Git、Bash，具备 C++ 框架适配与调试经验，理解 RAII、对象所有权、条件变量同步及异步缓冲区生命周期。</li>
+</ul>
+</section>
+<section class="resume-section" id="section-3" aria-labelledby="section-3-title">
+<h2 id="section-3-title">工作经历</h2>
+<div class="entry">
+<h3>中昊芯英 / 上海泰则｜AI 框架开发工程师</h3>
+<p class="date">2024.06 — 至今</p>
+<ul>
+<li>主要负责 Qwen2.5-VL、Qwen3-VL、GLM-5.3-Flash等模型在自研芯片上的框架接入、精度对齐与性能优化，维护模型执行层、PyTorch 后端与算子库之间的接口；承担新模型插件适配、客户部署和问题回归。</li>
+<li>在训练适配中，基于 DeepSpeed、Megatron-LM 的测试调试通信后端基础功能；定位多 Stream 通信的调度开销，修改 PyTorch 通信适配层与通信库，实现可回退的单 Stream 方案，并进行单例与训练负载验证。</li>
+<li>协同模型、算子、通信、运行时及云服务团队处理跨层问题，支持信通院国测、上海 AI Lab 等外部测评；沉淀模型压测和布局适配文档，Col-major MatMul 相关专利申请获受理。</li>
+</ul>
+</div>
+<div class="entry">
+<h3>国药控股数字科技｜助理架构师</h3>
+<p class="date">2023.04 — 2024.04（2023.04 — 2023.06 为实习）</p>
+<ul>
+<li>参与数据质量监控平台建设，连接数据入湖、质量规则、异常监控与可视化流程；开发数据看板解析工具，辅助指标血缘追踪和异常定位。</li>
+</ul>
+</div>
+</section>
+<section class="resume-section" id="section-4" aria-labelledby="section-4-title">
+<h2 id="section-4-title">代表项目</h2>
+<div class="entry">
+<h3>GLM-5.3-Flash 推理适配与性能优化</h3>
+<p class="date">2026.09 — 2026.10</p>
+<ul>
+<li>独立负责该模型在既有 vLLM 硬件插件中的接入，完成模型执行路径、权重映射、混合 KV cache 与状态池适配，验收并接入算子团队交付的 KDA、KPool、mHC 和稀疏 MLA 融合路径。交付 8 卡自研芯片、TP=8、AWQ 4-bit 权重／BF16 激活的文本推理版本，由云服务团队正式生产上线。</li>
+<li>修正缓存分组、页容量核算与 Padding，解决两次启动 OOM；在相同部署配置与显存预算下，KV cache 容量由 <strong>45,409 提升至 148,762 tokens</strong>。定位非连续状态页导致的 Host 逐元素搬运，将卷积与递推状态拆为连续池；同一短 prompt 下，prefill／decode 单步 Host 耗时分别由约 <strong>179 s／120 s 降至 5.7 s／2.6 s</strong>。</li>
+<li>根据 Profile 合并 metadata H2D、复用持久 buffer、消除长阻塞 D2H，并通过融合算子减少下发次数；完成 decode Graph 的 metadata 与 Padding 边界适配，保留 prefill／chunked prefill 的 eager 执行路径。</li>
+<li>通过首个 NaN 出现位置和高地址对照实验，定位 KDA 地址换算回绕，由算子同事修改代码后完成验收；独立定位并修复 warmup 污染 sparse MLA null block 的问题，完成服务回归。插件发布定向回归 <strong>161 项通过</strong>。</li>
+<li>最终在单请求、输入／输出各 128 token、Graph 与 replay cache 均开启的条件下，预热 0 次、正式测量 3 次取平均：输出吞吐 <strong>17.12 tokens/s</strong>，TTFT p50 <strong>243.89 ms</strong>，TPOT p50 <strong>58.39 ms/token</strong>。</li>
+<li>端到端验收采用 OpenCompass，在 AIME26 上每题生成一次、全数据集运行一轮、<code>temperature=0</code>，由 LLM-as-judge 检查数学等价性；云服务团队反馈 <strong>30/30</strong>，与团队在 <strong>8 卡 H100</strong> 上运行同一模型的准确率一致。</li>
+</ul>
+</div>
+<div class="entry">
+<h3>Qwen3-32B / vLLM V1 异步 H2D 精度异常修复</h3>
+<ul>
+<li>针对标签不闭合、乱码、空回复和重复循环等低概率异常，建立确定性请求重放与异步／阻塞对照，从首个分叉 Token、logits 及中间 Tensor 缩小范围；结合诊断操作改变复现条件的现象，追踪输入准备与设备消费的时序。</li>
+<li>定位到原等待未覆盖后台 CPU Padding 及后续 H2D 提交的问题。在框架／后端层补齐 Padded Tensor 的异步标记与等待，使消费者同步覆盖 CPU 准备、拷贝提交和设备完成；复用既有 Runtime 能力完成修复。</li>
+<li>恢复原异步配置并撤掉临时阻塞与额外诊断等待后，对 <strong>168 条现场请求连续重放 5 轮</strong>，共 840 次执行，未再观察到原异常。</li>
+</ul>
+</div>
+<div class="entry">
+<h3>多模态视觉 Encoder 的 Conv3D 布局优化</h3>
+<ul>
+<li>在 Qwen2.5-VL／Qwen3-VL 适配中，从视频输入 OOM 追踪到 Conv3D 通道末置处理：小通道维反复补齐，造成临时存储膨胀。负责单例提取、显存行为分析、模型调用重构及初始化阶段的权重布局调整，与算子同事共同确定接口方案。</li>
+<li>保留二维展平输入与权重，并传递原始维度信息，由算子团队实现专用 Conv3D。完成 CPU 参考下的算子容差检查；在 Qwen2.5-VL-32B 的 10 个图片测例中，模型输出 Token 与 CPU Conv3D 路径一致。</li>
+<li>布局重构与专用算子的联合方案消除了已观察到的 OOM；在上述 <strong>32B 图片测试组</strong>中，平均 TTFT 从分钟级降至 <strong>5 秒以内</strong>。</li>
+</ul>
+</div>
+<div class="entry">
+<h3>ECG 多模态模型部署与权重预排布</h3>
+<ul>
+<li>负责基于 Transformers 的客户模型部署、精度验证和性能优化。通过 Profile 识别 Host 调度、小 Shape 计算和权重访存开销，调整执行路径、接入融合算子，并以 Roofline 初步估算辅助选择优化方向。</li>
+<li>在 PyTorch 框架侧实现 Tensor 扩展，在模型加载阶段完成静态权重的 blocked Col-major 预排布，避免每次推理重复转换；与算子团队协作接入，完成 MatMul 数值对照及模型 logits、输出 Token 回归。该技术随后也复用于 vLLM。</li>
+<li>经联合优化，单请求端到端平均时延由 <strong>30–40 秒降至 20 秒以内</strong>，达到客户验收目标并完成服务交付。前后均取 10 次平均，计时包含图像预处理和完整输出，平均生成约 700–800 token。</li>
+</ul>
+</div>
+</section>
+<section class="resume-section" id="section-5" aria-labelledby="section-5-title">
+<h2 id="section-5-title">个人技术实践</h2>
+<div class="entry">
+<h3>Triton GPU 算子编程</h3>
+<ul>
+<li>实践过编写分块 MatMul、Fused Softmax、LayerNorm 前向与两阶段反向、FlashAttention 式的 FP16 Attention 前向，以及 Grouped／Persistent GEMM；完成 GPU 数值与边界验证。</li>
+<li>实现 MXFP4 量化、打包与反量化、scale 预排布，以及基于 <code>tl.dot_scaled</code> 的矩阵乘 Kernel，在 RTX 5090 上完成正确性验证与性能对照。</li>
+<li>结合编译产物与资源用量分析流水、共享内存和寄存器的取舍；通过受控实验比较 grouped ordering、流水级数、持久化调度，以及原生块缩放与软件解码路径，解释结果的硬件和工作负载边界。</li>
+</ul>
+</div>
+</section>
+<section class="resume-section" id="section-6" aria-labelledby="section-6-title">
+<h2 id="section-6-title">教育背景</h2>
+<ul>
+<li><strong>复旦大学｜应用统计硕士，大数据学院</strong>｜2021.09 — 2023.06。研究方向为图深度学习与强化学习智能体；GPA 3.5 / 4.0。</li>
+<li><strong>上海大学｜数学与应用数学学士，理学院</strong>｜2017.09 — 2021.06。GPA 3.4 / 4.0；获学业优秀一等奖学金。</li>
+</ul>
+</section>
+</main>
+</div>
+<script>
+(() => {
+  const root = document.documentElement;
+  const themeButton = document.getElementById('theme-toggle');
+  const printButton = document.getElementById('print-resume');
+  const links = Array.from(document.querySelectorAll('.section-nav a'));
+  const sections = Array.from(document.querySelectorAll('.resume-section'));
+  const updateThemeButton = () => {
+    const dark = root.dataset.theme === 'dark';
+    themeButton.setAttribute('aria-pressed', String(dark));
+    themeButton.setAttribute('aria-label', dark ? '切换浅色' : '切换深色');
+    themeButton.title = dark ? '切换浅色' : '切换深色';
+  };
+  themeButton.addEventListener('click', () => {
+    root.dataset.theme = root.dataset.theme === 'dark' ? 'light' : 'dark';
+    try { localStorage.setItem('plana-resume-w2-theme', root.dataset.theme); } catch (_) {}
+    updateThemeButton();
+  });
+  printButton.addEventListener('click', () => window.print());
+  let queued = false;
+  const updateLocation = () => {
+    queued = false;
+    const offset = window.innerWidth <= 1000 ? 118 : 100;
+    let active = sections[0];
+    for (const section of sections) {
+      if (section.getBoundingClientRect().top <= offset) active = section;
+    }
+    if (window.scrollY + window.innerHeight >= document.documentElement.scrollHeight - 8) active = sections[sections.length - 1];
+    links.forEach(link => {
+      if (link.hash === '#' + active.id) link.setAttribute('aria-current', 'location');
+      else link.removeAttribute('aria-current');
+    });
+  };
+  const requestUpdate = () => {
+    if (!queued) { queued = true; requestAnimationFrame(updateLocation); }
+  };
+  window.addEventListener('scroll', requestUpdate, { passive: true });
+  window.addEventListener('resize', requestUpdate, { passive: true });
+  updateThemeButton();
+  updateLocation();
+})();
+</script>
+</body>
+</html>
