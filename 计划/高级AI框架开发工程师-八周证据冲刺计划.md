@@ -1,7 +1,8 @@
 # 高级 AI 框架开发工程师 · 八周证据冲刺计划
 
 > - 创建日期：2026-08-08
-> - 最近调整：2026-09-29（工时改为排期参考、推进只看能力门；按 Claim 复核补入 W3 分页 KV 读取与模型结构差异表、W4 调度补验、多模态链路与量化对照实验、W5 Autograd、W7 Ring／Tree 推导，并在 W4 后插入 W4a：SGLang 与 Speculative Decoding）
+> - 最近调整：2026-11-02（W3 细化为四个单元课，明确单元二的 MLA 专门节点；整周范围、预算和验收门不变）
+> - 前次范围调整：2026-09-29（工时改为排期参考、推进只看能力门；按 Claim 复核补入 W3 分页 KV 读取与模型结构差异表、W4 调度补验、多模态链路与量化对照实验、W5 Autograd、W7 Ring／Tree 推导，并在 W4 后插入 W4a：SGLang 与 Speculative Decoding）
 > - 周进度：[W1](八周冲刺进度/W1.md) · [W2](八周冲刺进度/W2.md) · [W3](八周冲刺进度/W3.md) · [W4](八周冲刺进度/W4.md) · [W5](八周冲刺进度/W5.md) · [W6](八周冲刺进度/W6.md) · [W7](八周冲刺进度/W7.md) · [W8](八周冲刺进度/W8.md)
 > - Program 状态：[见唯一状态区](#program-plana-jd-ai-framework-4w)；精确学习位置只由[唯一学习断点](学习断点.md)裁决
 > - 目标岗位：[本地复合 JD](<../Job Description/AI框架方向/高级AI框架开发工程师.md>) / [市场岗位需求索引](<../Job Description/AI框架方向/市场岗位需求/README.md>)
@@ -19,7 +20,7 @@
 - **Program ID**：`plana-jd-ai-framework-4w`。该 ID 为稳定历史标识，不因计划延长而更改。
 - **状态**：`active`。
 - **当前位置**：当前前台课程与下一步只见[唯一学习断点](学习断点.md)；本文件不记录当前课、题目或下一动作。
-- **课程划分**：W2 按 2026-09-26 确认的四课划分推进；每课开课前取得用户授权。各课阶段、证据与结课结论只见 [`八周冲刺进度/`](八周冲刺进度/) 下的周进度页与验收记录。
+- **课程划分**：W2 按 2026-09-26 确认的四课划分推进；W3 按 [2026-11-02 确认的四课安排](八周冲刺进度/W3-学习计划.md#w3-plan-confirmation-20261102)组织。每课开课前取得用户授权；各课阶段、证据与结课结论只见 [`八周冲刺进度/`](八周冲刺进度/) 下的周进度页与验收记录。
 - **父 Program**：[主计划](主计划.md#program-plana-ai-infra-interview-20w)。
 - **返回位置**：[启动前返回快照](#161-启动前返回快照)。
 - **连续推进**：未授予；每周验收后由用户决定继续、暂停、调整或返回主线。
@@ -35,7 +36,10 @@ Lesson 安排：
 |   2a | `plana-jd-w2-moe-ep-source`             | W2 单元二：真实源码实现与横向对照     | 计划内 |
 |   2b | `plana-jd-w2-cpp-lifetime`              | W2 单元三：C++ 异步缓冲区生命周期     | 计划内 |
 |   2c | `plana-jd-w2-quantitative-evidence`      | W2 单元四：定量模型与项目证据         | 计划内 |
-|    3 | `plana-jd-w3-pd-kv-rdma`                | PD、KV 生命周期与 RDMA                | 计划内 |
+|    3 | `plana-jd-w3-pd-kv-rdma`                | W3 单元一：PD 原理与 KV 生命周期      | 计划内 |
+|   3a | `plana-jd-w3-kv-layout-bytes`           | W3 单元二：KV 布局、分页读取与定量模型 | 计划内 |
+|   3b | `plana-jd-w3-rdma-fallback`             | W3 单元三：RDMA 数据路径与回退方案    | 计划内 |
+|   3c | `plana-jd-w3-failure-system-design`     | W3 单元四：故障处理、验证与系统设计整合 | 计划内 |
 |    4 | `plana-jd-w4-validation-interview`      | 定量性能、案例证据与第一次面试闭环    | 计划内 |
 |   4a | `plana-jd-w4a-sglang-specdec`           | SGLang 与 Speculative Decoding        | 计划内 |
 |    5 | `plana-jd-w5-pytorch-cpp-runtime`       | PyTorch custom op、C++ 与异步 runtime | 计划内 |
@@ -383,6 +387,8 @@ producer-consumer／异步 buffer lifetime 小程序与 sanitizer 或等价工�
 ### 8.1 本周目标
 
 讲清 prefill 生成的 KV 如何被 decode 安全接收、消费和释放，并把 RDMA 放在正确的网络和 runtime 层次。
+
+按[W3 学习计划](八周冲刺进度/W3-学习计划.md)分为四个单元课：PD 原理与 KV 生命周期；KV 布局、分页读取与定量模型（含 [MLA 专门节点](八周冲刺进度/W3-学习计划.md#w3-unit-2-mla)）；RDMA 数据路径与回退方案；故障处理、验证与系统设计整合。该划分调整教学组织，不增加下列整周任务与验收门。
 
 ### 8.2 主任务
 
