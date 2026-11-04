@@ -5,12 +5,12 @@
     "id": "markji",
     "profile": "plana-markji"
   },
-  "artifact_set_sha256": "44eeb0ec645c7e762084db83e1d67f1aa727fd5ed4b25c6a6d01444f6541cc1c",
-  "candidate_sha256": "4a1e671863e437dde3a2d58be32c5dc7e465a528e1e14dcdd12e53b97e236038",
+  "artifact_set_sha256": "7fe0634a7eedf1433efe630de925cd8caf23f2c845742225badeded2d8b0dd19",
+  "candidate_sha256": "76596521bbe518038cd7cd25e4d5bfe93424d4affe95c11df10b46d9ca17cdab",
   "cards": [
     {
       "content_sha256": "3cc7f5ae891f5e570ad8dfa59786e429128eee3fb687f2c1fb2dae79d62e2062",
-      "content_summary": "区分相同SONAME与所需函数符号可用性的保证",
+      "content_summary": "A理由：防止把相同 SONAME 当成接口兼容证明，定位运行时装载旧库或缺少所需符号。",
       "dependency_content_sha256": {},
       "depends_on": [],
       "fact_status": "verified",
@@ -36,8 +36,8 @@
       "template_version": "1.1.0"
     },
     {
-      "content_sha256": "ca82a94a7f60ddc664a0d3bfe29de44b81bc0a901d988ffe79a0e06b57ea7291",
-      "content_summary": "限定延迟绑定场景中进入main对函数符号可用性的证明",
+      "content_sha256": "691211e7ef7cb1e17024ab750eaad34d95fdf24af0e02d31e62eb9d9f7a34c30",
+      "content_summary": "A理由：防止把到达首次目标调用前的 READY 当成接口可用证据，识别延迟绑定的缺符号故障。",
       "dependency_content_sha256": {},
       "depends_on": [],
       "fact_status": "verified",
@@ -64,7 +64,7 @@
     },
     {
       "content_sha256": "9332fbbeb5e332fe759aa18728d77be35a34011d83ee0dbb1e995bf0ead18342",
-      "content_summary": "用新进程映射与原故障函数调用共同验证库路径修复",
+      "content_summary": "A理由：防止只验证启动或当前 ldd 就宣布修复，要求新进程映射与原故障调用共同闭环。",
       "dependency_content_sha256": {},
       "depends_on": [],
       "fact_status": "verified",
@@ -90,8 +90,8 @@
       "template_version": "1.1.0"
     },
     {
-      "content_sha256": "9c47ad400ae4d34100c5d7284e958580216330e38d78856484e65c7d3fd87195",
-      "content_summary": "解释脚本未再次export时子进程仍继承已有环境变量",
+      "content_sha256": "e6d2cfafa7c8a0b2794255278f8c19662e5f2b1c25a11d4e8a2c95300ec32f72",
+      "content_summary": "B理由：解释父环境变量如何继续传给子进程，避免把未再次 export 误当变量不存在。",
       "dependency_content_sha256": {},
       "depends_on": [],
       "fact_status": "verified",
@@ -118,11 +118,11 @@
     }
   ],
   "managed_body_sha256": "4c8fc7fc526b845074cb48151d54afab15953eb54d38083236e17dc11f01769a",
-  "manifest_payload_sha256": "b8c7ad7df94164c11abece90652f73b176a597e3f86eca4c6104326c63ee2e01",
+  "manifest_payload_sha256": "c2c71c702bce2d9c6d7edf1b3da962e1309e0fd819f8e000c64317200d3211b6",
   "schema": "memo-cards.artifact/v2",
   "sidecars": [
     {
-      "byte_size": 5548,
+      "byte_size": 5795,
       "columns": [
         "问题",
         "答案",
@@ -139,9 +139,9 @@
           "row_sha256": "9df883df31c3f37567dead3225c109d6b0488a8b731e3bd17ac1bf191b853606"
         },
         {
-          "content_sha256": "ca82a94a7f60ddc664a0d3bfe29de44b81bc0a901d988ffe79a0e06b57ea7291",
+          "content_sha256": "691211e7ef7cb1e17024ab750eaad34d95fdf24af0e02d31e62eb9d9f7a34c30",
           "logical_id": "mc-a3cbf6efd67d3183ee107cf8",
-          "row_sha256": "6b573d4c76d4695870196abe02c09d87b3a1d1172cdef282ec2e436ae8d27eaa"
+          "row_sha256": "d3390c4383a3278c9fbd69b0ad6abc7ef3e86cc0998dc7f5655169b843b43221"
         },
         {
           "content_sha256": "9332fbbeb5e332fe759aa18728d77be35a34011d83ee0dbb1e995bf0ead18342",
@@ -149,14 +149,14 @@
           "row_sha256": "b6d6a775050a3bbea4febc8ece30358614d1f95e7a4c053737a4be1ae4b5b505"
         },
         {
-          "content_sha256": "9c47ad400ae4d34100c5d7284e958580216330e38d78856484e65c7d3fd87195",
+          "content_sha256": "e6d2cfafa7c8a0b2794255278f8c19662e5f2b1c25a11d4e8a2c95300ec32f72",
           "logical_id": "mc-adda45bf35d8cdba12a6a25e",
-          "row_sha256": "98596686be351dca393d6f2f30faeb3b8a1ff405337f09a1a140884d01a90350"
+          "row_sha256": "9bc5e5579d137ed3499cdcc08fd1c299a6f1962e1100a73d52c51fd265a27983"
         }
       ],
-      "sha256": "2ae32d5dd15f0708e8f444d80753d619a54f3225f1e39a89fc8d7a0bc8108587",
+      "sha256": "5ca04923c5cf477c3a5697f209d6636408d08dd9e3031526319d4b6d77a6b4a4",
       "sheet_name": "cards",
-      "table_sha256": "b197926b3371046b7c189328c7367f030caf011807e00b18988a6d5812692c5d",
+      "table_sha256": "15bb5334c941806c4c0218578b4b48e1a12d5b64c37e67625559382286bab56a",
       "template_id": "technical-qa",
       "template_version": "1.1.0"
     }

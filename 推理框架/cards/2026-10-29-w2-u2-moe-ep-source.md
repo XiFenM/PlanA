@@ -5,8 +5,8 @@
     "id": "markji",
     "profile": "plana-markji"
   },
-  "artifact_set_sha256": "263868e8ae2ba22d3de4c3965c6974181b3ff2ccc22ab78a38e06e2dfa4eef4f",
-  "candidate_sha256": "f07131ba2bb43eebb265fea75c47d13d08b2b02347cd4a7c39661ae9ea71a8d0",
+  "artifact_set_sha256": "732bf3734b11d30238da1bee25275eb5062a020c6f492042c440d083b7073f47",
+  "candidate_sha256": "fb5688cbc05d819b9216b625b26fb720c1e5891c05ca65239214b91f09da5f2b",
   "cards": [
     {
       "content_sha256": "11f8fc9a25812c98ec824afc5042184a3bee15ad6f5ba983e80179f49d1bcd0b",
@@ -171,8 +171,8 @@
       "template_version": "1.1.0"
     },
     {
-      "content_sha256": "88f57b18878b856993785d4922f951ed5f2616de6bac7cb870d33ba5f75405b0",
-      "content_summary": "CPU 精确分配的前置依赖；日志 msg-00f78fbfaac95c3d4afc 至 msg-e11af1bd6506dfdf24de",
+      "content_sha256": "01c3cd0d5d9b9323e2667af0342b5a05c26ac66fb50ddb82d4f7ba89badbc684",
+      "content_summary": "CPU 精确分配的前置依赖；日志 msg-00f78fbfaac95c3d4afc 至 msg-e11af1bd6506dfdf24de；2026-11-03复核：保留“设备计数被主机消费”的原回忆目标；加入日志中已核验的Python切片迁移情境。有效范围作为延伸，不增加评分目标；仍为方法说明，没有设备实测。",
       "dependency_content_sha256": {},
       "depends_on": [],
       "fact_status": "verified",
@@ -479,7 +479,7 @@
     }
   ],
   "managed_body_sha256": "6875e844f7cf8bf43b88dd5773680f0d1ff7ff5eecd2e76f2657d4f8c992e5e4",
-  "manifest_payload_sha256": "dfa25c1b9eb7ae5d56b6de797c453b6c28fa80d4f7717f73f0d3062cbff4a0ba",
+  "manifest_payload_sha256": "6879ce61b1b785a2a1d56f6b5fe453d6312eafe277a28e42c07d6875bfe6d1fe",
   "schema": "memo-cards.artifact/v2",
   "sidecars": [
     {
@@ -518,7 +518,7 @@
       "template_version": "1.1.0"
     },
     {
-      "byte_size": 17305,
+      "byte_size": 17729,
       "columns": [
         "问题",
         "答案",
@@ -545,9 +545,9 @@
           "row_sha256": "b01f5dace38e5fbe41cf479c8883c02d30f6a168ddd8439c9a6ba14083820c88"
         },
         {
-          "content_sha256": "88f57b18878b856993785d4922f951ed5f2616de6bac7cb870d33ba5f75405b0",
+          "content_sha256": "01c3cd0d5d9b9323e2667af0342b5a05c26ac66fb50ddb82d4f7ba89badbc684",
           "logical_id": "mc-227c85ef5fbbfd21a1eb9fbb",
-          "row_sha256": "c8f7d28d039d6260f2cc6420167f4016c3cc04e83cae38341d5f5b04746d3ba2"
+          "row_sha256": "187106f3560f705aaaff015942ecbcbfbc844974e9b3d7fa85623861cd60bdd6"
         },
         {
           "content_sha256": "86ae33cba88cbda3aec8eb76aee788b3aa43cd6b0abf6f586672abf7eb3c0011",
@@ -595,9 +595,9 @@
           "row_sha256": "76e4751224622b7fecfdb5d02c4d34da9ded64430b2d5ac98134d61624e8b146"
         }
       ],
-      "sha256": "5990f8f0f4e2701c038ba6eea4b293649ec3cb7237302d1f35b5b25908f829a6",
+      "sha256": "6212214b71b8cc06a078e120da823fec098ba241e05720890c60bd237cd1503e",
       "sheet_name": "cards",
-      "table_sha256": "5b4a5bdbcb890dd9b39f4a05d1e97374147a784ac125a37654eb94d8750fd4ae",
+      "table_sha256": "0f7c639af0bd9a84762d7fd3d7b556708f8ab290e5ede4888c12bf5145c92d8e",
       "template_id": "technical-qa",
       "template_version": "1.1.0"
     },

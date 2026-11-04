@@ -5,12 +5,12 @@
     "id": "markji",
     "profile": "plana-markji"
   },
-  "artifact_set_sha256": "5f70cf75acf8f8001bc486752416703d2f3a75b928a55871fbdd6dcb0f80a2da",
-  "candidate_sha256": "8d5ce58e7ee48dd792219aa25a686ae539a6628f360ff92e4a77a84e9c0cae94",
+  "artifact_set_sha256": "b5e2d0fee5826b9f94d48e8b70fc85e4d9f6cfdf092065b460e32e18db84f4d2",
+  "candidate_sha256": "7b259e7c5054650f8069f0c82b237fb5d038cf35d5b4e3ab74202cfc4308897f",
   "cards": [
     {
-      "content_sha256": "704ca3e3439e9d644298ccf86c4a711e9973d7d0325884f840b0c8865952f551",
-      "content_summary": "区分 v1 executor 的执行拓扑职责与 model_executor 的模型计算职责",
+      "content_sha256": "272c69d72e00ab121a6bed609c3b5be66cca31707eaa71cbe48991bfdd07e76e",
+      "content_summary": "B理由：目录职责辨析可帮助缩小源码定位范围，但无需按高优先级背诵目录名称。",
       "dependency_content_sha256": {},
       "depends_on": [],
       "fact_status": "verified",
@@ -29,8 +29,8 @@
       "lifecycle": "active",
       "logical_id": "mc-96e1b69dea2352f136f7bf25",
       "misconception_of": null,
-      "priority": 4,
-      "quality": "A",
+      "priority": 3,
+      "quality": "B",
       "source_ids": [
         "vllm-repository-process-article"
       ],
@@ -39,8 +39,8 @@
       "template_version": "1.1.0"
     },
     {
-      "content_sha256": "bba7ec6b06a8e0a0951ca91dae4bee7b4343bb5e757a72f9d919acf829f9536d",
-      "content_summary": "拆开同名 core 文件与目录所代表的总协调组件和调度资源模块",
+      "content_sha256": "f1e46fd6f432a2342fb2ed88411494079203928fd6fbb41905bb5aa897637011",
+      "content_summary": "B理由：区分同名目录与组件，减少源码定位绕路，属于辅助性知识。",
       "dependency_content_sha256": {},
       "depends_on": [],
       "fact_status": "verified",
@@ -59,8 +59,8 @@
       "lifecycle": "active",
       "logical_id": "mc-80af1f420bd379f601b14f22",
       "misconception_of": null,
-      "priority": 5,
-      "quality": "A",
+      "priority": 3,
+      "quality": "B",
       "source_ids": [
         "vllm-repository-process-article"
       ],
@@ -69,8 +69,8 @@
       "template_version": "1.1.0"
     },
     {
-      "content_sha256": "518d0e08ebb4d66a99144e6c9e37a6f587b49339a6b25d1276a3e7de4b234142",
-      "content_summary": "把仓库分区映射为问题的第一定位区域，并区分目录地图与真实调用链",
+      "content_sha256": "d9f48e0699c3d309ef86affb6f3b7f3794e07252e910a914db56c07dc5c5b7fa",
+      "content_summary": "B理由：保留可迁移的职责定位方法，不要求逐个背诵完整目录表。",
       "dependency_content_sha256": {},
       "depends_on": [],
       "fact_status": "verified",
@@ -89,8 +89,8 @@
       "lifecycle": "active",
       "logical_id": "mc-83e65d952696673938e97510",
       "misconception_of": null,
-      "priority": 5,
-      "quality": "A",
+      "priority": 3,
+      "quality": "B",
       "source_ids": [
         "vllm-repository-process-article"
       ],
@@ -99,8 +99,8 @@
       "template_version": "1.1.0"
     },
     {
-      "content_sha256": "13e861c35d2ec9bf7bc951806e4b6aaa0d51257e4621d3e80b242468c875e422",
-      "content_summary": "把进程放置、调用边界与张量并行的模型语义分成正交维度",
+      "content_sha256": "4fac2a1620599ea2f262f032940156749eb9642bd40cbecb31eb6496642813f3",
+      "content_summary": "A理由：防止把新增Worker进程误认为模型已做TP分片，影响拓扑与资源判断。",
       "dependency_content_sha256": {},
       "depends_on": [],
       "fact_status": "verified",
@@ -129,8 +129,8 @@
       "template_version": "1.1.0"
     },
     {
-      "content_sha256": "d093ced77aaa45596930365cf9ce5440a8ed49fc8514f27a62fb64c7a1bd5248",
-      "content_summary": "说明在线前端与 EngineCore 的进程隔离价值，并限定 uni 的含义",
+      "content_sha256": "55938ae05c5075e28c9dee66bfb43ac6bc728b6bb5d0f6e7232b81bc5aa93258",
+      "content_summary": "A理由：回答服务为何隔离前端与核心循环的架构取舍题，并防止误解uni的进程范围。",
       "dependency_content_sha256": {},
       "depends_on": [],
       "fact_status": "verified",
@@ -149,7 +149,7 @@
       "lifecycle": "active",
       "logical_id": "mc-3c230b513e2bfac0bc2a6179",
       "misconception_of": null,
-      "priority": 4,
+      "priority": 5,
       "quality": "A",
       "source_ids": [
         "vllm-repository-process-article"
@@ -159,8 +159,8 @@
       "template_version": "1.1.0"
     },
     {
-      "content_sha256": "ee98df83e32a6c7618051ef995de3ae69d7871806172f181b5987d2dfdeae013",
-      "content_summary": "建立 internal DP 的多 EngineCore、独立状态和前端选路模型",
+      "content_sha256": "741dba1dc0eca30dbfcd0d384868b5bde2c9bb757989d310557c1112b32914e1",
+      "content_summary": "A理由：回答内部DP如何分流和隔离请求状态的系统设计题。",
       "dependency_content_sha256": {},
       "depends_on": [],
       "fact_status": "verified",
@@ -189,8 +189,8 @@
       "template_version": "1.1.0"
     },
     {
-      "content_sha256": "63670e3c8ccf74354cb7ef4f32c932b4a79945e494497ee085bc23e8c8f5eafa",
-      "content_summary": "解释 DPLB 的加权队列打分、乐观 waiting 更新、同分轮转及其观测盲区",
+      "content_sha256": "bcd6245b097e740311f56ff3aca72f60dd81271dd608b9bd34cfe939e395f9a9",
+      "content_summary": "B理由：理解固定实现的选路启发式与局限，具体权重属于低频版本细节。",
       "dependency_content_sha256": {},
       "depends_on": [],
       "fact_status": "verified",
@@ -209,8 +209,8 @@
       "lifecycle": "active",
       "logical_id": "mc-e7291be4ff573e99f0b21531",
       "misconception_of": null,
-      "priority": 5,
-      "quality": "A",
+      "priority": 3,
+      "quality": "B",
       "source_ids": [
         "vllm-repository-process-article"
       ],
@@ -219,13 +219,13 @@
       "template_version": "1.1.0"
     },
     {
-      "content_sha256": "ed0ab969b8ea94280b463614e301fe91f7805addb856b94b54d236a3faf74f21",
-      "content_summary": "从分散在前端、调度器和设备执行层的状态解释 live migration 边界",
+      "content_sha256": "3c44b120bf5c23d009013e423943524ea0fbd401a093b07955b005a732998d19",
+      "content_summary": "A理由：防止只迁移ID或重做prefill便声称实现等价请求迁移，遗漏采样与输出状态。",
       "dependency_content_sha256": {
-        "mc-0231ee421ef176e4361b8092": "ee98df83e32a6c7618051ef995de3ae69d7871806172f181b5987d2dfdeae013",
-        "mc-6ecc1a209cfc46dfdedd5775": "b14d9f89b6751d144a44ff1b5f8d06cf9bf018883090705dd8ed4d9d3af8d7f9",
-        "mc-e7291be4ff573e99f0b21531": "63670e3c8ccf74354cb7ef4f32c932b4a79945e494497ee085bc23e8c8f5eafa",
-        "mc-ff2bbe335a098a1d6b3715af": "c4348fb44a8f28ea9a64d897a35d84fdfbd2d57d4e30ff5b2aa92af7b7f74946"
+        "mc-0231ee421ef176e4361b8092": "741dba1dc0eca30dbfcd0d384868b5bde2c9bb757989d310557c1112b32914e1",
+        "mc-6ecc1a209cfc46dfdedd5775": "1ab47cf369be27adf32c4947379f647abd1345b07e5c9aa7a3b31c14144cf08e",
+        "mc-e7291be4ff573e99f0b21531": "bcd6245b097e740311f56ff3aca72f60dd81271dd608b9bd34cfe939e395f9a9",
+        "mc-ff2bbe335a098a1d6b3715af": "0f30ba6847d526cf21bda4e5a3ee42f0fb105892682ba20fc9f1b6e98b5b56b8"
       },
       "depends_on": [
         "mc-0231ee421ef176e4361b8092",
@@ -252,7 +252,7 @@
       "priority": 5,
       "quality": "A",
       "review_resolution": {
-        "summary": "2026-09-09 按固定 v0.26.0 源码与已修订子卡复核：DP 调度状态独立不等于 MoE 权重完整复制；续跑需要调度、KV、采样与前端路由共同衔接，单独重做 prefill 不足。"
+        "summary": "2026-11-03已对照修订后的前端、Core与Worker/Runner子卡复核：请求迁移仍须衔接调度进度、物理KV与采样状态、输出和取消路由；版本前置与职责说明未改变该判断，未新增迁移实测结论。"
       },
       "source_ids": [
         "vllm-repository-process-article"
@@ -262,8 +262,8 @@
       "template_version": "1.1.0"
     },
     {
-      "content_sha256": "d1d6f62e9a6b19910c3cb863d1bebbf54568a800926401c21117a04de84d46c1",
-      "content_summary": "明确 DPCoordinator 的独立进程位置、对等汇总职责与非所有权边界",
+      "content_sha256": "dd93fea58617bb1cb24e478adf3ec09900b1728fb8ead61dd1b6b97fe331b4a8",
+      "content_summary": "B理由：校准协调进程与请求选路的职责，不把拓扑位置记忆作为核心能力。",
       "dependency_content_sha256": {},
       "depends_on": [],
       "fact_status": "verified",
@@ -282,8 +282,8 @@
       "lifecycle": "active",
       "logical_id": "mc-04939c201c37cffd8e5c77fc",
       "misconception_of": null,
-      "priority": 4,
-      "quality": "A",
+      "priority": 3,
+      "quality": "B",
       "source_ids": [
         "vllm-repository-process-article"
       ],
@@ -292,8 +292,8 @@
       "template_version": "1.1.0"
     },
     {
-      "content_sha256": "c4348fb44a8f28ea9a64d897a35d84fdfbd2d57d4e30ff5b2aa92af7b7f74946",
-      "content_summary": "明确 Worker 外层设备生命周期与 ModelRunner 设备内热路径的所有权",
+      "content_sha256": "0f30ba6847d526cf21bda4e5a3ee42f0fb105892682ba20fc9f1b6e98b5b56b8",
+      "content_summary": "A理由：回答Worker与Runner的职责设计题，防止设备初始化与每步执行逻辑混放。",
       "dependency_content_sha256": {},
       "depends_on": [],
       "fact_status": "verified",
@@ -322,8 +322,8 @@
       "template_version": "1.1.0"
     },
     {
-      "content_sha256": "b14d9f89b6751d144a44ff1b5f8d06cf9bf018883090705dd8ed4d9d3af8d7f9",
-      "content_summary": "区分 Scheduler、Worker 和 ModelRunner 对 KV 的逻辑、资源与物理所有权",
+      "content_sha256": "1ab47cf369be27adf32c4947379f647abd1345b07e5c9aa7a3b31c14144cf08e",
+      "content_summary": "A理由：防止把逻辑KV账本与物理显存所有权混为一体，导致适配修改层级错误。",
       "dependency_content_sha256": {},
       "depends_on": [],
       "fact_status": "verified",
@@ -352,8 +352,8 @@
       "template_version": "1.1.0"
     },
     {
-      "content_sha256": "3992f7218c3fbef5e7120e6420884e6de8c63c6f0976917f032ed9fdf13b8dfd",
-      "content_summary": "用主线核对、上游意图和最小复现约束从源码观察到 bug 结论的升级",
+      "content_sha256": "29358b095e117649f3097766717c38800c5c5f2613b1159b1e55e12c7f3a07b5",
+      "content_summary": "A理由：防止把未找到源码路径直接宣称为已确认bug，影响技术结论可信度。",
       "dependency_content_sha256": {},
       "depends_on": [],
       "fact_status": "verified",
@@ -372,7 +372,7 @@
       "lifecycle": "active",
       "logical_id": "mc-91cab0d3196c0a4921fc8603",
       "misconception_of": null,
-      "priority": 4,
+      "priority": 5,
       "quality": "A",
       "source_ids": [
         "vllm-repository-process-article"
@@ -382,12 +382,12 @@
       "template_version": "1.1.0"
     },
     {
-      "content_sha256": "e87e95b413ad45e221cd1ce50d17756f8ca624b9f37e09440d7811904c60ab68",
-      "content_summary": "根据前端、协调子进程、EngineCore 与 Worker 的放置推导 DP 等于 2 的进程数",
+      "content_sha256": "71e3597fae13245bbf1a950918e84e0881ada36d76f890e15f388a3dd4e3d9a6",
+      "content_summary": "B理由：通过放置关系推导进程组成，练习拓扑理解而非死记4和6。",
       "dependency_content_sha256": {
-        "mc-0231ee421ef176e4361b8092": "ee98df83e32a6c7618051ef995de3ae69d7871806172f181b5987d2dfdeae013",
-        "mc-04939c201c37cffd8e5c77fc": "d1d6f62e9a6b19910c3cb863d1bebbf54568a800926401c21117a04de84d46c1",
-        "mc-f302cc845ea60e085cced69b": "13e861c35d2ec9bf7bc951806e4b6aaa0d51257e4621d3e80b242468c875e422"
+        "mc-0231ee421ef176e4361b8092": "741dba1dc0eca30dbfcd0d384868b5bde2c9bb757989d310557c1112b32914e1",
+        "mc-04939c201c37cffd8e5c77fc": "dd93fea58617bb1cb24e478adf3ec09900b1728fb8ead61dd1b6b97fe331b4a8",
+        "mc-f302cc845ea60e085cced69b": "4fac2a1620599ea2f262f032940156749eb9642bd40cbecb31eb6496642813f3"
       },
       "depends_on": [
         "mc-0231ee421ef176e4361b8092",
@@ -410,10 +410,10 @@
       "lifecycle": "active",
       "logical_id": "mc-d5efa0a4591b7b115ec6d666",
       "misconception_of": null,
-      "priority": 5,
-      "quality": "A",
+      "priority": 3,
+      "quality": "B",
       "review_resolution": {
-        "summary": "2026-09-09 按固定 v0.26.0 启动与 executor 源码复核：单机在线内部 DP、单 API、DP backend mp、DP=2 且 TP=PP=PCP=1，uni 为4、mp为6个主要进程。"
+        "summary": "2026-11-03已按同请求的uni/mp、内部DP及DPCoordinator子卡复核：在题设单机、单API、DP backend mp、DP=2且TP=PP=PCP=1下，由组件放置推导uni为4、mp为6个主要进程；不把增加进程当作模型分片。"
       },
       "source_ids": [
         "vllm-repository-process-article"
@@ -423,8 +423,8 @@
       "template_version": "1.1.0"
     },
     {
-      "content_sha256": "6009c25141a8348cb9e6285be85a952639e3ee333b5524906f4fe4857cf01388",
-      "content_summary": "拆开 Scheduler 的逻辑计划与 Executor、Worker、ModelRunner 的执行落地",
+      "content_sha256": "1e9b7257284f5f0e300ee4dae1360bbab13f23a910de580c2bb0159c38ed4538",
+      "content_summary": "A理由：防止误以为执行层再次调度请求，明确一次决策与执行落实的边界。",
       "dependency_content_sha256": {},
       "depends_on": [],
       "fact_status": "verified",
@@ -453,14 +453,14 @@
       "template_version": "1.1.0"
     },
     {
-      "content_sha256": "f42da0d597a1a3f5b4c9d2c598e145996fa5538c5128cdfe687478e884573f95",
-      "content_summary": "以完整口述串联 V1 四个运行时所有者及其责任边界",
+      "content_sha256": "41616150145ea413332c491cae9d1860b1a3d256cad8429819ef29f2a76133e1",
+      "content_summary": "B理由：组合既有子卡形成可自评的架构口述，不引入新的实现结论。",
       "dependency_content_sha256": {
-        "mc-33d40a2ab95e6129b9c5f4c5": "6009c25141a8348cb9e6285be85a952639e3ee333b5524906f4fe4857cf01388",
-        "mc-3c230b513e2bfac0bc2a6179": "d093ced77aaa45596930365cf9ce5440a8ed49fc8514f27a62fb64c7a1bd5248",
-        "mc-80af1f420bd379f601b14f22": "bba7ec6b06a8e0a0951ca91dae4bee7b4343bb5e757a72f9d919acf829f9536d",
-        "mc-96e1b69dea2352f136f7bf25": "704ca3e3439e9d644298ccf86c4a711e9973d7d0325884f840b0c8865952f551",
-        "mc-ff2bbe335a098a1d6b3715af": "c4348fb44a8f28ea9a64d897a35d84fdfbd2d57d4e30ff5b2aa92af7b7f74946"
+        "mc-33d40a2ab95e6129b9c5f4c5": "1e9b7257284f5f0e300ee4dae1360bbab13f23a910de580c2bb0159c38ed4538",
+        "mc-3c230b513e2bfac0bc2a6179": "55938ae05c5075e28c9dee66bfb43ac6bc728b6bb5d0f6e7232b81bc5aa93258",
+        "mc-80af1f420bd379f601b14f22": "f1e46fd6f432a2342fb2ed88411494079203928fd6fbb41905bb5aa897637011",
+        "mc-96e1b69dea2352f136f7bf25": "272c69d72e00ab121a6bed609c3b5be66cca31707eaa71cbe48991bfdd07e76e",
+        "mc-ff2bbe335a098a1d6b3715af": "0f30ba6847d526cf21bda4e5a3ee42f0fb105892682ba20fc9f1b6e98b5b56b8"
       },
       "depends_on": [
         "mc-33d40a2ab95e6129b9c5f4c5",
@@ -485,10 +485,10 @@
       "lifecycle": "active",
       "logical_id": "mc-da4be48b928b158d4537e1bc",
       "misconception_of": null,
-      "priority": 5,
-      "quality": "A",
+      "priority": 3,
+      "quality": "B",
       "review_resolution": {
-        "summary": "已逐一核对五张前置卡：调度与执行、前端进程、EngineCore/core、executor/model_executor、Worker/Runner；口述顺序和四项评分锚点均受这些子卡支持。"
+        "summary": "2026-11-03已逐项对照五张修订子卡，核对前端隔离、EngineCore/Scheduler决策、Executor下发和Worker/Runner执行；参考回答及四项评分锚点都有同请求active子卡支持，版本一致，未增加未核验事实。"
       },
       "source_ids": [
         "vllm-repository-process-article"
@@ -499,11 +499,11 @@
     }
   ],
   "managed_body_sha256": "1de59d3fa3611caa064adc7e8ce0e59dec35550930a0324f099bc0b16fb68b82",
-  "manifest_payload_sha256": "eb2c6bb33aba46613284f9cf2ea4ca505ab4bf539daa5376c96833b12e22904d",
+  "manifest_payload_sha256": "7351c7d0cbdc05b8e2e6cae34ae431d41530174233590e9de4407bcd56a0e908",
   "schema": "memo-cards.artifact/v2",
   "sidecars": [
     {
-      "byte_size": 14195,
+      "byte_size": 16302,
       "columns": [
         "问题",
         "答案",
@@ -515,84 +515,84 @@
       "row_count": 14,
       "rows": [
         {
-          "content_sha256": "704ca3e3439e9d644298ccf86c4a711e9973d7d0325884f840b0c8865952f551",
+          "content_sha256": "272c69d72e00ab121a6bed609c3b5be66cca31707eaa71cbe48991bfdd07e76e",
           "logical_id": "mc-96e1b69dea2352f136f7bf25",
-          "row_sha256": "a59952b739d3b7075224a059a7f9b5ef9e3f32900c91025961382c146a0d1d27"
+          "row_sha256": "5696dcb355fae7a22d6c2bd7f1bd91932534ce1e3a654d42771e488ecb54e5d4"
         },
         {
-          "content_sha256": "bba7ec6b06a8e0a0951ca91dae4bee7b4343bb5e757a72f9d919acf829f9536d",
+          "content_sha256": "f1e46fd6f432a2342fb2ed88411494079203928fd6fbb41905bb5aa897637011",
           "logical_id": "mc-80af1f420bd379f601b14f22",
-          "row_sha256": "a2c84f47c36c8db890f540a91c10212e49ead840439aafeb1d5315b25bd1d604"
+          "row_sha256": "bdbe4c5f3780ec1462bb33f2346daac5be82ae308a996c9fa6178f7949483ac0"
         },
         {
-          "content_sha256": "518d0e08ebb4d66a99144e6c9e37a6f587b49339a6b25d1276a3e7de4b234142",
+          "content_sha256": "d9f48e0699c3d309ef86affb6f3b7f3794e07252e910a914db56c07dc5c5b7fa",
           "logical_id": "mc-83e65d952696673938e97510",
-          "row_sha256": "132c4aae7ed80ec0499aaa9e772bccf72b08e43243cbf132a59d234167e8ec40"
+          "row_sha256": "efac7ee0dcfb4e7c74fe4fbc093bcc7bcb533baf67661d512ecfff2f8d37fb3a"
         },
         {
-          "content_sha256": "13e861c35d2ec9bf7bc951806e4b6aaa0d51257e4621d3e80b242468c875e422",
+          "content_sha256": "4fac2a1620599ea2f262f032940156749eb9642bd40cbecb31eb6496642813f3",
           "logical_id": "mc-f302cc845ea60e085cced69b",
-          "row_sha256": "f1caeb43d2dad134617215c74d16d9a8cb330366e8dc75b9f9c671ec2fb22234"
+          "row_sha256": "feff8cee26752d43447a07aee80ddd62a488ecdd6cd8f66f074dd1e3036625cc"
         },
         {
-          "content_sha256": "d093ced77aaa45596930365cf9ce5440a8ed49fc8514f27a62fb64c7a1bd5248",
+          "content_sha256": "55938ae05c5075e28c9dee66bfb43ac6bc728b6bb5d0f6e7232b81bc5aa93258",
           "logical_id": "mc-3c230b513e2bfac0bc2a6179",
-          "row_sha256": "3dfb4d3b3d5783388ce69339dd6a1b202b9bb2b5985f9b7df5ac18cd1186570f"
+          "row_sha256": "774be7c2d10892384f09d6a82d782a6e7993973d1c8577dd4c57c767bc9c66c1"
         },
         {
-          "content_sha256": "ee98df83e32a6c7618051ef995de3ae69d7871806172f181b5987d2dfdeae013",
+          "content_sha256": "741dba1dc0eca30dbfcd0d384868b5bde2c9bb757989d310557c1112b32914e1",
           "logical_id": "mc-0231ee421ef176e4361b8092",
-          "row_sha256": "f27f6a8eb2c31cafb5c9de41b332fa0c7ce03ca094c1734155b460fe98a1fbb7"
+          "row_sha256": "7d0491b2cfa3a937c75e55c98d7e69a8b6ef9a80c7612e26589fd905180265ea"
         },
         {
-          "content_sha256": "63670e3c8ccf74354cb7ef4f32c932b4a79945e494497ee085bc23e8c8f5eafa",
+          "content_sha256": "bcd6245b097e740311f56ff3aca72f60dd81271dd608b9bd34cfe939e395f9a9",
           "logical_id": "mc-e7291be4ff573e99f0b21531",
-          "row_sha256": "750597d54df9fc5d90fe8e6e14815182a88d84484407ef0282d3c6742b50475a"
+          "row_sha256": "eae869b25d1d2a3e455a600f62df8b9a02e8f04beb348292586c2d94c40a4c49"
         },
         {
-          "content_sha256": "ed0ab969b8ea94280b463614e301fe91f7805addb856b94b54d236a3faf74f21",
+          "content_sha256": "3c44b120bf5c23d009013e423943524ea0fbd401a093b07955b005a732998d19",
           "logical_id": "mc-3c06179493ab5a7e28f8814c",
-          "row_sha256": "85e04eedc9af7490d7d771f032348783f890b31ea08d1076f4d3484fabc79c5d"
+          "row_sha256": "1137eb73bc22d2b39e1a0b106ed9920b49c821103cd05f9492171e3d5d4cafe0"
         },
         {
-          "content_sha256": "d1d6f62e9a6b19910c3cb863d1bebbf54568a800926401c21117a04de84d46c1",
+          "content_sha256": "dd93fea58617bb1cb24e478adf3ec09900b1728fb8ead61dd1b6b97fe331b4a8",
           "logical_id": "mc-04939c201c37cffd8e5c77fc",
-          "row_sha256": "910581a5ceff5a2f5bafbd9746c4a5d56ea53203a34ef58f0181caf13d55172a"
+          "row_sha256": "a4b65db2e239872b5896f8eea3e505aa98b27723d07afc4d7b2cd872868aeb82"
         },
         {
-          "content_sha256": "c4348fb44a8f28ea9a64d897a35d84fdfbd2d57d4e30ff5b2aa92af7b7f74946",
+          "content_sha256": "0f30ba6847d526cf21bda4e5a3ee42f0fb105892682ba20fc9f1b6e98b5b56b8",
           "logical_id": "mc-ff2bbe335a098a1d6b3715af",
-          "row_sha256": "892d13c0cd67ef3bc0872c96297ed53a3ce2f198ebb72587460933f8cacecd07"
+          "row_sha256": "82fa4d57b2b50af0f6d05d438fe0db5ecb94dd958c5696e9dbfd4296c0f78a34"
         },
         {
-          "content_sha256": "b14d9f89b6751d144a44ff1b5f8d06cf9bf018883090705dd8ed4d9d3af8d7f9",
+          "content_sha256": "1ab47cf369be27adf32c4947379f647abd1345b07e5c9aa7a3b31c14144cf08e",
           "logical_id": "mc-6ecc1a209cfc46dfdedd5775",
-          "row_sha256": "a41a49dc1bae426100ca8eca714eafb8f734b6989b68e6a70c2917b87dea0222"
+          "row_sha256": "f9b78e5db332cccff35ccfe4baf2fb039c8bb9a95a831f9e7d6e50284d706862"
         },
         {
-          "content_sha256": "3992f7218c3fbef5e7120e6420884e6de8c63c6f0976917f032ed9fdf13b8dfd",
+          "content_sha256": "29358b095e117649f3097766717c38800c5c5f2613b1159b1e55e12c7f3a07b5",
           "logical_id": "mc-91cab0d3196c0a4921fc8603",
-          "row_sha256": "5a18a5ba3a24605c0d583bb52abb9f923d8ef44b7ddbb870e9b7d89411f7935d"
+          "row_sha256": "70acddbf523482328d277be9119d670d80b8f539962fb5db4f248fa0eb64b5e4"
         },
         {
-          "content_sha256": "e87e95b413ad45e221cd1ce50d17756f8ca624b9f37e09440d7811904c60ab68",
+          "content_sha256": "71e3597fae13245bbf1a950918e84e0881ada36d76f890e15f388a3dd4e3d9a6",
           "logical_id": "mc-d5efa0a4591b7b115ec6d666",
-          "row_sha256": "1096e7843d0e2364f392fd77e5604df04412009a83532d3b24304485ee499209"
+          "row_sha256": "2313f10c7d66d5f0b611da5188610986542bf29c43b04d0683b03c23dd185909"
         },
         {
-          "content_sha256": "6009c25141a8348cb9e6285be85a952639e3ee333b5524906f4fe4857cf01388",
+          "content_sha256": "1e9b7257284f5f0e300ee4dae1360bbab13f23a910de580c2bb0159c38ed4538",
           "logical_id": "mc-33d40a2ab95e6129b9c5f4c5",
-          "row_sha256": "e4c6dabc2fc685cc5261a9862e8580b2c2cbaafb0dc769920ba7822e2576f097"
+          "row_sha256": "4f10f83a2e65ff4c28b2ef9ef10ed3496fbcd14b72330ebad1c62aa3c1dc6632"
         }
       ],
-      "sha256": "e24399daa624287f740b5d2bd1513cc084480e1b628bf5dbedbc393bf5f6eded",
+      "sha256": "219c9e4b54194cd0504ccb78c2d2cecd44d1bcb5b140fe04d65a3fc428d412a5",
       "sheet_name": "cards",
-      "table_sha256": "aa37182f70940b2da02fe11b128c651d844ca534c76889c9eeeee1093dc7fc97",
+      "table_sha256": "10c6927a4621d3593fe6634e4979e7f67305a73feaedee44bd0391edadf46967",
       "template_id": "technical-qa",
       "template_version": "1.1.0"
     },
     {
-      "byte_size": 3591,
+      "byte_size": 3832,
       "columns": [
         "问题",
         "参考回答",
@@ -604,14 +604,14 @@
       "row_count": 1,
       "rows": [
         {
-          "content_sha256": "f42da0d597a1a3f5b4c9d2c598e145996fa5538c5128cdfe687478e884573f95",
+          "content_sha256": "41616150145ea413332c491cae9d1860b1a3d256cad8429819ef29f2a76133e1",
           "logical_id": "mc-da4be48b928b158d4537e1bc",
-          "row_sha256": "e4bf54d2e8d85b3a07fb77d2ba6e7d032d1ce0b8b24bec71211c61230da55d18"
+          "row_sha256": "d60e30ba9ef6ef2a8f1560d2b7cf4f6c1bcf1bcccdb7aa74644b744955c7ebd8"
         }
       ],
-      "sha256": "8048fd26a8d64f4d567cc86e3abcde0510a1056dcc2f8b3ab55eb7b5b57682c7",
+      "sha256": "9e403508010f01ff4bbcf85e0429b8092d14a713e96b3cd0bcb4327f783a4b29",
       "sheet_name": "cards",
-      "table_sha256": "26236fd7dfabfaf79a0a14b972eab4fdc3b76d3572a2a5a3e9283e27024f30ac",
+      "table_sha256": "4a3533e09f924061c1c5f6df00368a6c5e3fd8e89088006fd41453c6dd45c7bf",
       "template_id": "oral",
       "template_version": "1.1.0"
     }

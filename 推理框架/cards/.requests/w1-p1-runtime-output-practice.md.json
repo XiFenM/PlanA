@@ -1,0 +1,510 @@
+{
+  "schema": "memo-cards.request/v1",
+  "output_collection": "inference-cards",
+  "target": "推理框架/cards/w1-p1-runtime-output-practice.md",
+  "selection": "complete",
+  "sources": [
+    {
+      "id": "p1-structured-log",
+      "collection": "inference-study-logs",
+      "path": "推理框架/log/2026-09-18-w1-p1-runtime-output-practice.md",
+      "sha256": "e8050f7bf17e5198c7539b3da18786b5e5262fcdc36366e10d952fa86fb832fa",
+      "summary": "W1-P1 已核验学习过程；仅采用稳定要点与真实纠错，不读取 raw 为卡片来源。"
+    }
+  ],
+  "cards": [
+    {
+      "key": "backend-candidate-filter",
+      "domain": "vllm-attention-selection",
+      "recall_target": "区分自动后端的候选优先顺序与最终有效选择",
+      "assessment": "mechanism",
+      "layer": "mechanism",
+      "fact_scope": {
+        "kind": "snapshot",
+        "product": "vllm",
+        "version": "v0.26.0",
+        "commit": "568afb3a13806beb53bb2e6bd518269357b237c0"
+      },
+      "quality": "A",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 5,
+      "template_id": "technical-qa",
+      "fields": {
+        "问题": "在 vLLM v0.26.0 的 CUDA 平台、普通非 MLA attention 路径中，自动模式怎样从候选 Attention backends 决定实际采用者？哪些约束可能使优先候选落选？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "先验证候选能否导入及支持当前配置，再从有效候选中选优先级最高者；排在最前并不保证被选中。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "label": "条件",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "设备能力、dtype、head size 等约束会影响候选是否有效。"
+                }
+              ]
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "此处描述选择阶段，不是 kernel 执行失败后的自动切换。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "候选排序 → 校验 → 有效集合择优",
+        "来源": "P1 实践记录 P1-04；vLLM v0.26.0"
+      },
+      "content_summary": "A理由：防止把候选排序首位当成最终可用实现，正确诊断后端能力与配置筛选。",
+      "depends_on": [],
+      "rank": 1,
+      "source_ids": [
+        "p1-structured-log"
+      ]
+    },
+    {
+      "key": "explicit-backend-invalid",
+      "domain": "vllm-attention-selection",
+      "recall_target": "区分自动后端筛选与显式指定无效后端时的处理",
+      "assessment": "discrimination",
+      "layer": "atomic",
+      "fact_scope": {
+        "kind": "snapshot",
+        "product": "vllm",
+        "version": "v0.26.0",
+        "commit": "568afb3a13806beb53bb2e6bd518269357b237c0"
+      },
+      "quality": "A",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 5,
+      "template_id": "technical-qa",
+      "fields": {
+        "问题": "在 vLLM v0.26.0 的 CUDA 平台中，显式指定的 Attention backend 不支持当前配置时，选择阶段会怎样处理？这与自动模式对无效候选的处理有什么区别？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "显式指定的后端校验失败时，该分支抛出 ValueError；自动模式则排除无效候选后继续择优。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "label": "对照",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "自动模式才会排除无效候选，并从剩余有效候选中择优。"
+                }
+              ]
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "按固定提交的实际控制流判断，不能仅凭相邻注释推断 fallback。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "显式指定失败 → 报错",
+        "来源": "P1 实践记录 P1-04；vLLM v0.26.0"
+      },
+      "content_summary": "A理由：防止对显式指定的无效后端误期待静默 fallback，定位选择阶段的实际报错路径。",
+      "depends_on": [],
+      "rank": 2,
+      "source_ids": [
+        "p1-structured-log"
+      ]
+    },
+    {
+      "key": "selection-versus-execution",
+      "domain": "runtime-evidence",
+      "recall_target": "区分实现选择函数成功与所选实现实际执行的证据",
+      "assessment": "discrimination",
+      "layer": "atomic",
+      "fact_scope": {
+        "kind": "evergreen"
+      },
+      "quality": "A",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 5,
+      "template_id": "technical-qa",
+      "fields": {
+        "问题": "配置解析或后端选择器成功，能否证明所选 Runner／kernel 已执行？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "不能；只能证明相应配置或选择步骤在给定条件下成功。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "label": "分层",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "读源码、构造配置、调用选择器、实例化执行对象、执行目标计算，是不同的证据层次。"
+                }
+              ]
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "报告结论时写明真正执行到哪一层；后续层次需要各自的运行证据。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "选择成功 ≠ 目标计算已执行",
+        "来源": "P1 实践记录 P1-03、P1-12"
+      },
+      "content_summary": "A理由：防止以配置或选择函数成功宣称 Runner／kernel 已运行，限定设备能力与验收证据。",
+      "depends_on": [],
+      "rank": 3,
+      "source_ids": [
+        "p1-structured-log"
+      ]
+    },
+    {
+      "key": "class-object-versus-subclass",
+      "domain": "python-type-introspection",
+      "recall_target": "区分类对象检查与继承关系检查",
+      "assessment": "discrimination",
+      "layer": "atomic",
+      "fact_scope": {
+        "kind": "evergreen"
+      },
+      "quality": "B",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 3,
+      "template_id": "technical-qa",
+      "fields": {
+        "问题": "isinstance(x, type) 与 issubclass(x, Base) 分别检查什么？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "前者检查 x 是否是类对象；后者检查类 x 与 Base 的继承关系。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "label": "例子",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "str 是类对象，但不因此成为任意 Base 的子类。"
+                }
+              ]
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "先确认 x 是类对象再做该继承检查；选定类本身不等于实例化。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "类对象身份／继承关系",
+        "来源": "P1 实践记录 P1-11"
+      },
+      "content_summary": "B理由：区分插件工厂的类对象入口与继承约束，属于可迁移的 Python 接口基础。",
+      "depends_on": [],
+      "rank": 4,
+      "source_ids": [
+        "p1-structured-log"
+      ]
+    },
+    {
+      "key": "request-output-count",
+      "domain": "vllm-output-processing",
+      "recall_target": "按每次调用的交付列表统计FINAL_ONLY输出数量",
+      "assessment": "discrimination",
+      "layer": "atomic",
+      "fact_scope": {
+        "kind": "snapshot",
+        "product": "vllm",
+        "version": "v0.26.0",
+        "commit": "568afb3a13806beb53bb2e6bd518269357b237c0"
+      },
+      "quality": "B",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 3,
+      "template_id": "correction",
+      "fields": {
+        "意图": "连续三次 process_outputs，如何统计每次可交付结果数？",
+        "场景": "vLLM v0.26.0；单请求 FINAL_ONLY，无 queue：未结束 → 前端命中 stop → 迟到输出。",
+        "正确": "本题每次可交付结果数是 0、1、0；统计的是 len(request_outputs)。",
+        "错误": "1 → 2 → 2",
+        "说明": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "错误只在表格中的每次交付数量：request_outputs 是每次调用重新建立的列表。原答关于首次暂不对外输出、迟到输出不再交付的文字判断仍然正确。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "label": "过滤",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "FINAL_ONLY 未结束时不生成 RequestOutput；处理输入不等于新增可交付结果。"
+                }
+              ]
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "无结果为 []；外层结果对象、输入数量和列表长度不是同一概念。"
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "content_summary": "B理由：区分每次交付列表与输入批次／调用次数；保留真实概念纠错，但不把一次 0、1、0 计数列为最高优先级。",
+      "depends_on": [],
+      "rank": 5,
+      "source_ids": [
+        "p1-structured-log"
+      ]
+    },
+    {
+      "key": "exclude-stop-text",
+      "domain": "vllm-output-processing",
+      "recall_target": "确定排除stop字符串时的最终文本截断位置",
+      "assessment": "discrimination",
+      "layer": "atomic",
+      "fact_scope": {
+        "kind": "snapshot",
+        "product": "vllm",
+        "version": "v0.26.0",
+        "commit": "568afb3a13806beb53bb2e6bd518269357b237c0"
+      },
+      "quality": "B",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 3,
+      "template_id": "correction",
+      "fields": {
+        "意图": "include_stop_str_in_output=False 时，文本截到 stop 的哪里？",
+        "场景": "vLLM v0.26.0；文本 The river is quiet today.，stop 为 is quiet。",
+        "正确": "截到 stop 起点；本例为 \"The river \"，末尾保留一个空格。",
+        "错误": "The river is quiet",
+        "说明": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "错误在于最终文本仍保留了配置为排除的 stop；应从 stop 起点截断，去掉它及其后的文本。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "label": "对照",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "保留 stop 时截到它的末尾，而不是保留后续整批文本。"
+                }
+              ]
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "结论针对文本 stop string，不把它混同于所有 token 终止情形。"
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "content_summary": "B理由：校准文本 stop 的截断边界；保留真实预测差值，不以记忆具体示例字符串作为高优先级目标。",
+      "depends_on": [],
+      "rank": 6,
+      "source_ids": [
+        "p1-structured-log"
+      ]
+    },
+    {
+      "key": "frontend-cleanup-before-abort",
+      "domain": "vllm-output-processing",
+      "recall_target": "解释前端判停清理不等待Core取消及迟到输出被忽略的原因",
+      "assessment": "mechanism",
+      "layer": "mechanism",
+      "fact_scope": {
+        "kind": "snapshot",
+        "product": "vllm",
+        "version": "v0.26.0",
+        "commit": "568afb3a13806beb53bb2e6bd518269357b237c0"
+      },
+      "quality": "A",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 5,
+      "template_id": "correction",
+      "fields": {
+        "意图": "前端命中 stop 后，要等 Core 完成 abort 才删除 RequestState 吗？",
+        "场景": "vLLM v0.26.0；普通请求，前端判停而本次 Core 输出尚未结束。",
+        "正确": "不等待；生成最终输出后清理前端状态，再把内部 ID 放入取消列表。",
+        "错误": "内部RequestState应该需要等到abort完成才删除吧。",
+        "说明": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "错在将前端 RequestState 的清理依赖于 Core 的取消完成；两者属于不同的生命周期动作。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "label": "顺序",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "生成最终输出 → 清理前端状态 → 返回需要取消的内部 ID。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "label": "迟到输出",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "之后查不到前端请求状态便跳过，不再交付，也不重复生成取消项。"
+                }
+              ]
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "取消列表不是完成确认；这些前端观察不证明 Core 已取消或 GPU KV 已回收。"
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "content_summary": "A理由：防止把前端状态清理错误依赖于 Core 取消完成，避免迟到输出再次交付或重复取消。",
+      "depends_on": [],
+      "rank": 7,
+      "source_ids": [
+        "p1-structured-log"
+      ]
+    },
+    {
+      "key": "parameterized-case",
+      "domain": "test-design",
+      "recall_target": "在驱动已传递用例字段时通过修改输入切换测试条件",
+      "assessment": "discrimination",
+      "layer": "atomic",
+      "fact_scope": {
+        "kind": "evergreen"
+      },
+      "quality": "B",
+      "fact_status": "verified",
+      "lifecycle": "archived",
+      "priority": 3,
+      "template_id": "correction",
+      "fields": {
+        "意图": "驱动函数已读取 case 字段，切换该测试条件必须改函数吗？",
+        "场景": "run_case 已把 case.include_stop_str_in_output 传给 SamplingParams。",
+        "正确": "修改输入 case 即可，同一驱动函数可以复用。",
+        "错误": "`run_case` 需要修改，在构造SamplingParams中强制指定`include_stop_str_in_output` 参数变成True。",
+        "说明": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "错误在于改写已参数化的驱动函数，而不是用例行为预测；本例只需修改输入 case，复用现有参数传递链。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "label": "本例",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "测试入口创建 True 的 case，函数读取该字段后传给被测对象。"
+                }
+              ]
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "前提是驱动确实使用该字段；硬编码 True 会破坏需要 False 的用例。"
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "content_summary": "2026-11-03本地归档：题面已明确参数从case贯通，判断几乎直接可得，重复复习价值不足；保留既有身份与真实错误用于追溯，不再导出。",
+      "depends_on": [],
+      "rank": 8,
+      "source_ids": [
+        "p1-structured-log"
+      ]
+    }
+  ]
+}

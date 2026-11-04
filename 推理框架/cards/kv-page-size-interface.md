@@ -5,12 +5,12 @@
     "id": "markji",
     "profile": "plana-markji"
   },
-  "artifact_set_sha256": "c0bdbd838c3b8d7b88e5dced086ba50088a741bb4cbbc32355525ce17f5fbf0f",
-  "candidate_sha256": "4bb84d37ddf4cc790c283e09dfb1139964e43b3e1144bb81b90ab9bff52040eb",
+  "artifact_set_sha256": "b435abf29229d4a4d38ae22897c64fa15b488b3037e3308640ca4eb008da017c",
+  "candidate_sha256": "77e8df5a36ac65ba3717804a18283873fa70c41cb434094b03c2c22644604f95",
   "cards": [
     {
-      "content_sha256": "7a06dbcc8872a84c03ba8337113813ce64443cf88fa6efd2a0f173cc96159ec9",
-      "content_summary": "page_size_padded 是总页字节配置，page_size_bytes 是只读派生属性；冻结规格通过构造或 replace 设置。",
+      "content_sha256": "acf4fdc169bc2465fb30e7f38b32e617172c834b6f804c06011e78a178cf61a8",
+      "content_summary": "B理由：辨析配置字段与派生只读属性，避免在固定接口上使用错误的修改入口。",
       "dependency_content_sha256": {},
       "depends_on": [],
       "fact_status": "verified",
@@ -29,8 +29,8 @@
       "lifecycle": "active",
       "logical_id": "mc-e2bb3d174402490d55dad13a",
       "misconception_of": null,
-      "priority": 5,
-      "quality": "A",
+      "priority": 3,
+      "quality": "B",
       "source_ids": [
         "kv-spec-learning-evidence"
       ],
@@ -39,8 +39,8 @@
       "template_version": "1.1.0"
     },
     {
-      "content_sha256": "91119d59311f07a6bbbd35bd8af48cbf6869deed668c2f77bd4a63167fc57d0a",
-      "content_summary": "page_size_padded 同时控制普通 view 的 padding 分支；只改 getter 不能兑现 view 与 kernel 的寻址契约。",
+      "content_sha256": "d39542c2d31577fb9190b8e5048ce839f7e81886436fe5d11ed01d91c7a336ad",
+      "content_summary": "A理由：防止只扩容页字节数却让view或kernel仍按旧跨度寻址，造成KV读写错误。",
       "dependency_content_sha256": {},
       "depends_on": [],
       "fact_status": "verified",
@@ -69,8 +69,8 @@
       "template_version": "1.1.0"
     },
     {
-      "content_sha256": "b92de65d7f19a403c4ae5aaf49305ce279a6c9c32bd30ba954e24f7f0f880989",
-      "content_summary": "块数从原始 int8 存储字节数计算，不能混用 BF16 逻辑 view 的 numel；256 KiB 对应 4 个 64 KiB 页或 2 个 128 KiB 页。",
+      "content_sha256": "91464cbaf1c0fcc0966ac8752000eaf78ce10064ef68c9e03ece0e29c8d892a5",
+      "content_summary": "A理由：防止用逻辑元素数冒充含padding的字节容量，算错可分配块数。",
       "dependency_content_sha256": {},
       "depends_on": [],
       "fact_status": "verified",
@@ -99,8 +99,8 @@
       "template_version": "1.1.0"
     },
     {
-      "content_sha256": "cd82b3de9de483f2513324b7a6b281aedc46deb7445da2985538ff2c63153bae",
-      "content_summary": "BF16 块 stride 由页字节跨度除以 2 得到；页尾 padding 不把 head_size 从 96 改成更大的逻辑维度。",
+      "content_sha256": "44a1a9a61d60893c6871be549a93b70d68b843b947698d6f0446328893783196",
+      "content_summary": "B理由：保持字节跨度与元素stride的单位一致，巩固页尾padding不改变逻辑head维度的关系。",
       "dependency_content_sha256": {},
       "depends_on": [],
       "fact_status": "verified",
@@ -119,8 +119,8 @@
       "lifecycle": "active",
       "logical_id": "mc-093515310c87439e9bb4a53e",
       "misconception_of": null,
-      "priority": 5,
-      "quality": "A",
+      "priority": 3,
+      "quality": "B",
       "source_ids": [
         "kv-spec-learning-evidence"
       ],
@@ -129,13 +129,13 @@
       "template_version": "1.1.0"
     },
     {
-      "content_sha256": "6c5a6f1d15563a3326d1f06b8ae9e85436848c91747985796fa66cc0763fdad9",
-      "content_summary": "串联固定主线快照的普通单层单组页大小消费链；不推广为插件字段重构禁令。",
+      "content_sha256": "d90de1a9007ca0e2058cb539b51759b8eee49f589fa937b82cf11bba28ac8c5c",
+      "content_summary": "A理由：回答KV页规格适配如何贯穿预算与kernel的设计题，防止各层对同一存储布局解释不一致。",
       "dependency_content_sha256": {
-        "mc-093515310c87439e9bb4a53e": "cd82b3de9de483f2513324b7a6b281aedc46deb7445da2985538ff2c63153bae",
-        "mc-93f0de5e8b00c29d92e3be7f": "91119d59311f07a6bbbd35bd8af48cbf6869deed668c2f77bd4a63167fc57d0a",
-        "mc-acc5bf9ee669dda4d35f5fbf": "b92de65d7f19a403c4ae5aaf49305ce279a6c9c32bd30ba954e24f7f0f880989",
-        "mc-e2bb3d174402490d55dad13a": "7a06dbcc8872a84c03ba8337113813ce64443cf88fa6efd2a0f173cc96159ec9"
+        "mc-093515310c87439e9bb4a53e": "44a1a9a61d60893c6871be549a93b70d68b843b947698d6f0446328893783196",
+        "mc-93f0de5e8b00c29d92e3be7f": "d39542c2d31577fb9190b8e5048ce839f7e81886436fe5d11ed01d91c7a336ad",
+        "mc-acc5bf9ee669dda4d35f5fbf": "91464cbaf1c0fcc0966ac8752000eaf78ce10064ef68c9e03ece0e29c8d892a5",
+        "mc-e2bb3d174402490d55dad13a": "acf4fdc169bc2465fb30e7f38b32e617172c834b6f804c06011e78a178cf61a8"
       },
       "depends_on": [
         "mc-093515310c87439e9bb4a53e",
@@ -161,6 +161,9 @@
       "misconception_of": null,
       "priority": 5,
       "quality": "A",
+      "review_resolution": {
+        "summary": "2026-11-03已对照四张页规格子卡和迁移后仍保持同一固定源码锚点的W1复习片段，复核页大小配置、原始字节容量、BF16元素stride与kernel访问链；题面已前置普通未量化、单层单组、无packed/CP/override等条件，结论未外推到任意backend。"
+      },
       "source_ids": [
         "kv-spec-learning-evidence"
       ],
@@ -170,11 +173,11 @@
     }
   ],
   "managed_body_sha256": "fb895b165fa5ae327799e97bf5748f0097ab96f4b506c6b6589f6ede72c463c4",
-  "manifest_payload_sha256": "edf7e3e42a87756ae61f709c7656d23f14e7106f3eaf83541b17ff3ec70fab66",
+  "manifest_payload_sha256": "5b1a85cd94b419fa4ee1eeb1f6e77025fc0b2463ddb493ed3b00f3f8ebd9bfc5",
   "schema": "memo-cards.artifact/v2",
   "sidecars": [
     {
-      "byte_size": 7846,
+      "byte_size": 8855,
       "columns": [
         "问题",
         "答案",
@@ -186,46 +189,46 @@
       "row_count": 5,
       "rows": [
         {
-          "content_sha256": "7a06dbcc8872a84c03ba8337113813ce64443cf88fa6efd2a0f173cc96159ec9",
+          "content_sha256": "acf4fdc169bc2465fb30e7f38b32e617172c834b6f804c06011e78a178cf61a8",
           "logical_id": "mc-e2bb3d174402490d55dad13a",
-          "row_sha256": "235a2c65270374f57e40b1cf3ce53c7258db0a673dea92daa7448dfcaed2cbb6"
+          "row_sha256": "9b797c1eca515a1bc9151c713ba9fe64e02df21d99c97931040cef3f94ad43bf"
         },
         {
-          "content_sha256": "91119d59311f07a6bbbd35bd8af48cbf6869deed668c2f77bd4a63167fc57d0a",
+          "content_sha256": "d39542c2d31577fb9190b8e5048ce839f7e81886436fe5d11ed01d91c7a336ad",
           "logical_id": "mc-93f0de5e8b00c29d92e3be7f",
-          "row_sha256": "0a580ae67f04990be6b2f5e0f5cfa94f8dfa9df273ae0c38028663a9c35760d4"
+          "row_sha256": "df219249ab1d2d66742e887babc8b75d86092df086e40621d65b42f1a29f2af8"
         },
         {
-          "content_sha256": "b92de65d7f19a403c4ae5aaf49305ce279a6c9c32bd30ba954e24f7f0f880989",
+          "content_sha256": "91464cbaf1c0fcc0966ac8752000eaf78ce10064ef68c9e03ece0e29c8d892a5",
           "logical_id": "mc-acc5bf9ee669dda4d35f5fbf",
-          "row_sha256": "f27c2a2dda2f12ce2e63f30aea2330b7de9e5de2fd94464dfc9bc31c3742e863"
+          "row_sha256": "2b0f18683de2dcace9b53fe18cebfa25f905d098041ffdb63c2a3247dc3705e4"
         },
         {
-          "content_sha256": "cd82b3de9de483f2513324b7a6b281aedc46deb7445da2985538ff2c63153bae",
+          "content_sha256": "44a1a9a61d60893c6871be549a93b70d68b843b947698d6f0446328893783196",
           "logical_id": "mc-093515310c87439e9bb4a53e",
-          "row_sha256": "e4928ce55262705553703997e93cca506b60b2af0bdc6a8abcb252b47b2c628b"
+          "row_sha256": "efce4c3fe46a65c8782884e83ccecbf8dae5e1b12678866966dfa5b493a4790a"
         },
         {
-          "content_sha256": "6c5a6f1d15563a3326d1f06b8ae9e85436848c91747985796fa66cc0763fdad9",
+          "content_sha256": "d90de1a9007ca0e2058cb539b51759b8eee49f589fa937b82cf11bba28ac8c5c",
           "logical_id": "mc-3dc0573e6efa8009574ea78d",
-          "row_sha256": "b36376c5f5cc49d3205a01b47f4f4c3dddfc52674b0c6fc7b20a20373ae4a8c4"
+          "row_sha256": "795b3e422f2aa37566df4e8984c749bc23fec03ee38f232d5e7e8c3759c1c6bb"
         }
       ],
-      "sha256": "4312b80663160f72d57851c4491ca7e17189d4c7c875917f2b42929e01d34740",
+      "sha256": "6450a977a696af57ea1bb558cc16542555103cade1912e119e1b6eadc7a2c729",
       "sheet_name": "cards",
-      "table_sha256": "83d9fa11e4bb0bb2507abfe66322571ec2f3948423b3330bc92004698768a512",
+      "table_sha256": "987e520242026dfb6e72934e445cb37e5b115279ec40a25ef98312ce95e69b2f",
       "template_id": "technical-qa",
       "template_version": "1.1.0"
     }
   ],
-  "source_fingerprint": "8d5a9aa525fe280c916edeaaa04d68d1e3a44aec56981767241c02b078cfc424",
+  "source_fingerprint": "93c32ad7b8a26c25f8489bf0c8a7e3bf5720820ed459c346786b4de86908c3b2",
   "sources": [
     {
       "collection": "inference-adaptation-evidence",
       "id": "kv-spec-learning-evidence",
-      "path": "推理框架/EP-PD自研芯片适配设计与验证包.md",
-      "sha256": "3d0c46acd756e1c2283c079e2b4912d0b27e0b5dc13dac85e0e51e66b7fb60d2",
-      "summary": "仅采用 2026-09-09 kv-page-spec-review 复习片段和固定 vLLM v0.26.0 源码锚点；实现由对应 commit 的 AttentionSpec、MRV1、attn_utils 与 kv_cache_utils 裁决，不采用私有插件历史限制或课程待办。"
+      "path": "计划/八周冲刺进度/历史记录/W1-学习验收记录.md",
+      "sha256": "a4afc026cce9e690cd79de0f6782cd908ab8e9534b9a89c37ff32c366978e96d",
+      "summary": "已逐项核对从旧验证包迁移的2026-09-09页大小复习片段；仅消费该片段及其vLLM v0.26.0固定源码锚点，不使用待办或其他课程结论。"
     }
   ],
   "target_collection": "inference-cards",

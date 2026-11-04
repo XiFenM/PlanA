@@ -2,7 +2,7 @@
   "schema": "memo-cards.request/v1",
   "output_collection": "inference-cards",
   "target": "推理框架/cards/w1-p2-shared-library-practice.md",
-  "selection": "selected",
+  "selection": "complete",
   "sources": [
     {
       "id": "p2-structured-log",
@@ -64,7 +64,7 @@
         "锚点": "同名库仍须核对符号",
         "来源": "P2 实践记录 P2-02、P2-04"
       },
-      "content_summary": "区分相同SONAME与所需函数符号可用性的保证",
+      "content_summary": "A理由：防止把相同 SONAME 当成接口兼容证明，定位运行时装载旧库或缺少所需符号。",
       "depends_on": [],
       "rank": 1,
       "source_ids": [
@@ -86,7 +86,7 @@
       "priority": 5,
       "template_id": "technical-qa",
       "fields": {
-        "问题": "采用函数延迟绑定时，打印 READY 能证明外部目标函数可调用吗？",
+        "问题": "Linux／ELF 程序采用函数延迟绑定，在首次调用外部目标函数之前打印 READY。此时哪些步骤已经发生，哪些接口可用性仍不能据此确认？",
         "答案": {
           "blocks": [
             {
@@ -94,7 +94,7 @@
               "parts": [
                 {
                   "type": "text",
-                  "text": "不能；目标函数符号可能到第一次调用时才解析。"
+                  "text": "程序已装载所需库并执行到首次目标调用前的停留点，但目标函数符号仍可能尚未解析，不能据此确认它可调用。"
                 }
               ]
             },
@@ -122,7 +122,7 @@
         "锚点": "到达调用前 ≠ 目标调用成功",
         "来源": "P2 实践记录 P2-03"
       },
-      "content_summary": "限定延迟绑定场景中进入main对函数符号可用性的证明",
+      "content_summary": "A理由：防止把到达首次目标调用前的 READY 当成接口可用证据，识别延迟绑定的缺符号故障。",
       "depends_on": [],
       "rank": 2,
       "source_ids": [
@@ -190,7 +190,7 @@
         "锚点": "新进程映射＋原故障调用",
         "来源": "P2 实践记录 P2-05、P2-06"
       },
-      "content_summary": "用新进程映射与原故障函数调用共同验证库路径修复",
+      "content_summary": "A理由：防止只验证启动或当前 ldd 就宣布修复，要求新进程映射与原故障调用共同闭环。",
       "depends_on": [],
       "rank": 3,
       "source_ids": [
@@ -230,7 +230,7 @@
               "parts": [
                 {
                   "type": "text",
-                  "text": "父路径已经是 A，修复分支不执行，app 仍继承 A 并正常调用。"
+                  "text": "父环境提供的库搜索路径已经是期望值，修复分支不再执行 export；只要脚本保留该环境变量，app 仍继承相同路径。"
                 }
               ]
             },
@@ -248,7 +248,7 @@
         "锚点": "继承的环境变量无需重复 export",
         "来源": "P2 实践记录 P2-07"
       },
-      "content_summary": "解释脚本未再次export时子进程仍继承已有环境变量",
+      "content_summary": "B理由：解释父环境变量如何继续传给子进程，避免把未再次 export 误当变量不存在。",
       "depends_on": [],
       "rank": 4,
       "source_ids": [

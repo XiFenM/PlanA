@@ -1,0 +1,410 @@
+{
+  "schema": "memo-cards.request/v1",
+  "output_collection": "inference-cards",
+  "target": "推理框架/cards/kv-page-size-interface.md",
+  "selection": "complete",
+  "sources": [
+    {
+      "collection": "inference-adaptation-evidence",
+      "id": "kv-spec-learning-evidence",
+      "path": "计划/八周冲刺进度/历史记录/W1-学习验收记录.md",
+      "sha256": "a4afc026cce9e690cd79de0f6782cd908ab8e9534b9a89c37ff32c366978e96d",
+      "summary": "已逐项核对从旧验证包迁移的2026-09-09页大小复习片段；仅消费该片段及其vLLM v0.26.0固定源码锚点，不使用待办或其他课程结论。"
+    }
+  ],
+  "cards": [
+    {
+      "key": "mc-e2bb3d174402490d55dad13a",
+      "rank": 1,
+      "assessment": "discrimination",
+      "domain": "vllm-kv-cache",
+      "fact_scope": {
+        "commit": "568afb3a13806beb53bb2e6bd518269357b237c0",
+        "kind": "snapshot",
+        "product": "vllm",
+        "version": "v0.26.0"
+      },
+      "recall_target": "区分 attention 页大小的配置字段与只读派生属性",
+      "layer": "atomic",
+      "quality": "B",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 3,
+      "template_id": "technical-qa",
+      "source_ids": [
+        "kv-spec-learning-evidence"
+      ],
+      "content_summary": "B理由：辨析配置字段与派生只读属性，避免在固定接口上使用错误的修改入口。",
+      "depends_on": [],
+      "fields": {
+        "问题": "在 vLLM v0.26.0（568afb3）中，需要为普通 AttentionSpec 配置页尾 padding，使物理整页大小大于有效数据大小。应怎样创建规格、提供哪个配置量，并读取最终页大小？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "label": "结论",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "通过构造参数或 dataclasses.replace 设置 page_size_padded；page_size_bytes 是没有 setter 的只读属性。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "label": "入口",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "例如 replace(spec, page_size_padded=64 * 1024)。该类是 frozen dataclass，不直接给实例字段或 page_size_bytes 赋值。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "label": "数值",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "page_size_padded 填补齐后的整页总量。有效页为 48 KiB、目标页为 64 KiB 时填 64 KiB，额外 padding 才是 16 KiB。"
+                }
+              ]
+            },
+            {
+              "type": "boundary",
+              "label": "边界",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "page_size_padded 必须不小于 unpadded_page_size_bytes；为 None 时，page_size_bytes 返回未补齐页大小。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "配置总页大小 → 读取派生属性",
+        "来源": "W1 2026-09-09 页规格复习；vLLM v0.26.0（568afb3）"
+      }
+    },
+    {
+      "key": "mc-93f0de5e8b00c29d92e3be7f",
+      "rank": 2,
+      "assessment": "discrimination",
+      "domain": "vllm-kv-cache",
+      "fact_scope": {
+        "commit": "568afb3a13806beb53bb2e6bd518269357b237c0",
+        "kind": "snapshot",
+        "product": "vllm",
+        "version": "v0.26.0"
+      },
+      "recall_target": "解释只改页大小返回值不能保证页尾 padding 访问正确的原因",
+      "layer": "atomic",
+      "quality": "A",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 5,
+      "template_id": "technical-qa",
+      "source_ids": [
+        "kv-spec-learning-evidence"
+      ],
+      "content_summary": "A理由：防止只扩容页字节数却让view或kernel仍按旧跨度寻址，造成KV读写错误。",
+      "depends_on": [],
+      "fields": {
+        "问题": "在 vLLM v0.26.0（568afb3）的普通未打包 attention 路径中，backend 的未置换 shape 以 num_blocks 为第0维。适配时只增大 page_size_bytes 的返回值，为什么仍不足以保证页尾 padding 被正确跳过？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "label": "结论",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "字节数变大，还必须让 Tensor view 和 kernel 按同一物理页跨度访问。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "label": "分支",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "普通 attn_utils 路径按 page_size_padded 是否为 None 选择分支：有值才建立跳过页尾 padding 的 as_strided view；否则仍走连续 view。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "label": "访问契约",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "该页尾 padding 分支要求未置换 shape 的第 0 维为 num_blocks；实际 kernel 还须正确使用对应 stride。"
+                }
+              ]
+            },
+            {
+              "type": "boundary",
+              "label": "边界",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "限定未打包的普通 attention 路径；配置字段不会自动修改 kernel，也不表示任意 backend 都支持该布局。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "页字节数、view 分支、kernel 步距须一致",
+        "来源": "W1 2026-09-09 页规格复习；vLLM v0.26.0（568afb3）"
+      }
+    },
+    {
+      "key": "mc-acc5bf9ee669dda4d35f5fbf",
+      "rank": 3,
+      "assessment": "discrimination",
+      "domain": "vllm-kv-cache",
+      "fact_scope": {
+        "commit": "568afb3a13806beb53bb2e6bd518269357b237c0",
+        "kind": "snapshot",
+        "product": "vllm",
+        "version": "v0.26.0"
+      },
+      "recall_target": "使用原始字节存储而非带 padding 的逻辑 view 元素数计算页块数",
+      "layer": "atomic",
+      "quality": "A",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 5,
+      "template_id": "technical-qa",
+      "source_ids": [
+        "kv-spec-learning-evidence"
+      ],
+      "content_summary": "A理由：防止用逻辑元素数冒充含padding的字节容量，算错可分配块数。",
+      "depends_on": [],
+      "fields": {
+        "问题": "在 vLLM v0.26.0（568afb3）的普通未量化、单层单组 KV 路径中，只有页尾 padding，无 packed/CP，manager 与 kernel 的 block_size 相同。怎样从存储量推导块数？为什么不能直接使用 BF16 逻辑 view 的 numel？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "label": "结论",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "从原始 int8 buffer 的字节存储量计算，不能换成只包含有效数据的 BF16 逻辑 view。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "label": "单位",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "原始 int8 buffer 每元素 1 字节；256 KiB 原始空间除以 64 KiB 物理页跨度，得到 4 个物理块。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "label": "辨别对象",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "BF16 逻辑 view 的 numel() 只计有效元素；它既不是字节数，也不计页尾 padding，不能代入这个分子。"
+                }
+              ]
+            },
+            {
+              "type": "boundary",
+              "label": "边界",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "限定单层单组、普通未量化、无 packed/CP，manager 与 kernel 的 block_size 相同；页跨度改为 128 KiB 时，同一 buffer 只有 2 块。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "原始字节数 ÷ 整页字节数",
+        "来源": "W1 2026-09-09 页规格复习；vLLM v0.26.0（568afb3）"
+      }
+    },
+    {
+      "key": "mc-093515310c87439e9bb4a53e",
+      "rank": 4,
+      "assessment": "recall",
+      "domain": "vllm-kv-cache",
+      "fact_scope": {
+        "commit": "568afb3a13806beb53bb2e6bd518269357b237c0",
+        "kind": "snapshot",
+        "product": "vllm",
+        "version": "v0.26.0"
+      },
+      "recall_target": "把页字节跨度换算为 tensor 块维度的元素 stride",
+      "layer": "atomic",
+      "quality": "B",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 3,
+      "template_id": "technical-qa",
+      "source_ids": [
+        "kv-spec-learning-evidence"
+      ],
+      "content_summary": "B理由：保持字节跨度与元素stride的单位一致，巩固页尾padding不改变逻辑head维度的关系。",
+      "depends_on": [],
+      "fields": {
+        "问题": "在 vLLM v0.26.0（568afb3）的普通未量化 KV 中，页内紧密、仅页尾 padding，backend 支持 num-blocks-first 布局，manager 与 kernel 块大小相同且无 packed/CP。BF16 块维度的 stride 应怎样从整页字节跨度换算？逻辑 head_size 如何处理？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "label": "结论",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "Tensor stride 以元素为单位：块 stride = 整页字节跨度 ÷ BF16 每元素的 2 字节。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "label": "换算",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "64 KiB 页跨度对应 32768 个 BF16 元素；128 KiB 对应 65536 个元素。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "label": "逻辑维度",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "若原逻辑 head_size 为 96，页尾 padding 后仍为 96；增加的是相邻块起始位置的距离。"
+                }
+              ]
+            },
+            {
+              "type": "boundary",
+              "label": "边界",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "限定页内紧密、仅页尾 padding 的普通未量化 num-blocks-first 路径；manager 与 kernel 块大小相同，无 packed/CP。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "字节跨度 ÷ 元素字节数；head_size 保持语义值",
+        "来源": "W1 2026-09-09 页规格复习；vLLM v0.26.0（568afb3）"
+      }
+    },
+    {
+      "key": "mc-3dc0573e6efa8009574ea78d",
+      "rank": 5,
+      "assessment": "mechanism",
+      "domain": "vllm-kv-cache",
+      "fact_scope": {
+        "commit": "568afb3a13806beb53bb2e6bd518269357b237c0",
+        "kind": "snapshot",
+        "product": "vllm",
+        "version": "v0.26.0"
+      },
+      "recall_target": "解释普通单层单组页大小在预算分配视图与 kernel 访问中的一致性链条",
+      "layer": "mechanism",
+      "quality": "A",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 5,
+      "template_id": "technical-qa",
+      "source_ids": [
+        "kv-spec-learning-evidence"
+      ],
+      "content_summary": "A理由：回答KV页规格适配如何贯穿预算与kernel的设计题，防止各层对同一存储布局解释不一致。",
+      "depends_on": [
+        "mc-093515310c87439e9bb4a53e",
+        "mc-93f0de5e8b00c29d92e3be7f",
+        "mc-acc5bf9ee669dda4d35f5fbf",
+        "mc-e2bb3d174402490d55dad13a"
+      ],
+      "fields": {
+        "问题": "在 vLLM v0.26.0（568afb3）的普通未量化、单层单组 KV 路径中，无 packed/CP 或块数 override，manager 与 kernel 块大小相同，backend/kernel 支持页尾 padding。请沿预算、分配、视图、访问解释同一页大小规格必须怎样保持一致。",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "label": "结论",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "同一物理页规格要贯穿块数预算、原始存储分配、Tensor view 和 kernel 寻址。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "label": "预算",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "普通单层单组且没有块数 override 时，可用 KV 字节数除以 page_size_bytes 并向下取整，得到规划的物理块总数。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "label": "分配",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "按块数 × page_size_bytes 生成分配大小，再创建对应字节数的 int8 原始 buffer。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "label": "视图",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "从原始 buffer 还原块数；backend 提供逻辑 shape，padding 分支把页字节跨度换成块维度的元素 stride。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "label": "访问",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "kernel 按实际布局和 stride 读写 KV，才能与前面的物理存储约定一致。"
+                }
+              ]
+            },
+            {
+              "type": "boundary",
+              "label": "边界",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "限定普通未量化、单层单组、无 packed/CP、manager 与 kernel 块大小相同且没有块数 override；所选 backend 与 kernel 必须支持该页尾布局。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "预算 → 字节分配 → shape/stride → 寻址",
+        "来源": "W1 2026-09-09 页规格复习；vLLM v0.26.0（568afb3）"
+      },
+      "review_resolution": {
+        "summary": "2026-11-03已对照四张页规格子卡和迁移后仍保持同一固定源码锚点的W1复习片段，复核页大小配置、原始字节容量、BF16元素stride与kernel访问链；题面已前置普通未量化、单层单组、无packed/CP/override等条件，结论未外推到任意backend。"
+      }
+    }
+  ]
+}

@@ -1,0 +1,3899 @@
+{
+  "schema": "memo-cards.request/v1",
+  "output_collection": "inference-cards",
+  "target": "推理框架/cards/vllm-full-session-review.md",
+  "selection": "complete",
+  "sources": [
+    {
+      "collection": "inference-study-logs",
+      "id": "full-session-structured",
+      "path": "推理框架/log/2026-09-08-vllm-full-session-review.md",
+      "sha256": "af2c4e701fe66c829232e5bf3f5d6e6e0da7be9d70cf53e91d326d1b71f021a0",
+      "summary": "全根会话324条可见消息的结构化复盘；含真实用户纠错、导师纠偏归因、固定版本知识与未验证边界。"
+    }
+  ],
+  "cards": [
+    {
+      "key": "mc-405fa0e547ffb00ee0743601",
+      "rank": 1,
+      "assessment": "discrimination",
+      "domain": "pytorch-autograd",
+      "fact_scope": {
+        "commit": "70d99e998b4955e0049d13a98d77ae1b14db1f45",
+        "kind": "snapshot",
+        "product": "pytorch",
+        "version": "v2.11.0"
+      },
+      "recall_target": "区分autograd实现层与python梯度观测接口",
+      "layer": "atomic",
+      "quality": "A",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 5,
+      "template_id": "correction",
+      "source_ids": [
+        "full-session-structured"
+      ],
+      "content_summary": "A 级理由：回答训练精度调试中如何从 Python 观察 Tensor 梯度的问题，避免因 C++ 调度而误判没有可用观测接口。",
+      "fields": {
+        "意图": "反向由 C++ 调度时，Python 侧能怎样观察梯度？",
+        "场景": "PyTorch v2.11.0；训练精度调试，需要定位指定 Tensor 的反向梯度。",
+        "正确": "例如使用 Tensor.register_hook，在 Python 侧观察该 Tensor 的梯度。",
+        "错误": "调试精度往往只能通过搜集算子调用日志",
+        "说明": {
+          "blocks": [
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "反向调度的实现语言，不决定用户可用的观测接口。"
+                }
+              ],
+              "label": "原因"
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "hook 的可观测范围须按具体接口确认；此卡固定 PyTorch v2.11.0。"
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "depends_on": []
+    },
+    {
+      "key": "mc-e1d5350c48cf8fd0d15afdce",
+      "rank": 2,
+      "assessment": "discrimination",
+      "domain": "autoregressive-decoding",
+      "fact_scope": {
+        "kind": "evergreen"
+      },
+      "recall_target": "区分本步输入token与刚采样输出token",
+      "layer": "atomic",
+      "quality": "A",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 5,
+      "template_id": "correction",
+      "source_ids": [
+        "full-session-structured"
+      ],
+      "content_summary": "A 级理由：防止把刚采样的 token 计入本步输入，进而算错调度预算与 KV 进度。",
+      "fields": {
+        "意图": "第三步应调度多少个输入 token？随后采样出的 token 在哪一步计算自身 KV？",
+        "场景": "普通无投机自回归生成；prompt 共 10 个 token，本步预算 4，前两步已处理 8 个；无前缀缓存命中。",
+        "正确": "第三步调度剩余 2 个 prompt token；随后采样出的 token 通常到下一步才作为输入计算自身 KV。",
+        "错误": "step 3：num_scheduled_tokens=3",
+        "说明": {
+          "blocks": [
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "10-token prompt、预算为 4，前两步已处理 8 个；第三步只计算剩余 2 个输入，随后才采样。"
+                }
+              ],
+              "label": "原因"
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "采样得到 token ID，不等于该 token 的 KV 已经产生。"
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "depends_on": []
+    },
+    {
+      "key": "mc-7f6b889ffccb7afddf9fea5f",
+      "rank": 3,
+      "assessment": "discrimination",
+      "domain": "vllm-output-processing",
+      "fact_scope": {
+        "commit": "568afb3a13806beb53bb2e6bd518269357b237c0",
+        "kind": "snapshot",
+        "product": "vllm",
+        "version": "v0.26.0"
+      },
+      "recall_target": "保留前端stop取消分支的外层条件",
+      "layer": "atomic",
+      "quality": "A",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 5,
+      "template_id": "correction",
+      "source_ids": [
+        "full-session-structured"
+      ],
+      "content_summary": "A 级理由：防止遗漏前端已判停的外层条件，错误取消仍应继续生成的请求。",
+      "fields": {
+        "意图": "前端在什么条件下把请求加入 reqs_to_abort？",
+        "场景": "vLLM v0.26.0；OutputProcessor 正在处理 Core 的一次输出并决定是否取消请求。",
+        "正确": "前端已确定请求结束，而 Core 尚未结束时。",
+        "错误": "如果请求没有结束，会将id放到reqs_to_abort里",
+        "说明": {
+          "blocks": [
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "外层的前端结束条件与内层的 Core 状态条件必须一起读取。"
+                }
+              ],
+              "label": "原因"
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "普通仍在生成的请求不能因此被取消；加入待取消列表与发送 ABORT 是两步。"
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "depends_on": []
+    },
+    {
+      "key": "mc-f27bf5c68905845573007bb3",
+      "rank": 4,
+      "assessment": "discrimination",
+      "domain": "vllm-attention-mapping",
+      "fact_scope": {
+        "commit": "568afb3a13806beb53bb2e6bd518269357b237c0",
+        "kind": "snapshot",
+        "product": "vllm",
+        "version": "v0.26.0"
+      },
+      "recall_target": "区分slot写入定位与块表历史读取",
+      "layer": "atomic",
+      "quality": "A",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 5,
+      "template_id": "correction",
+      "source_ids": [
+        "full-session-structured"
+      ],
+      "content_summary": "A 级理由：防止将新 KV 写错槽位的问题误诊为历史读取映射，错修状态重排。",
+      "fields": {
+        "意图": "batch 重排后若 slot_mapping 没有同步更新，它首先会破坏哪个 KV 访问步骤，为什么？",
+        "场景": "vLLM v0.26.0 的 MRV1；一次 batch 重排后，检查每个请求的新 KV 与历史 KV 的映射。",
+        "正确": "定位本步新 KV 的写入槽位；历史 KV 读取还依赖 block table。",
+        "错误": "否则会取到错误的历史kv cache",
+        "说明": {
+          "blocks": [
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "原答正确要求同步重排，但混合了写入定位与读取上下文的直接职责。"
+                }
+              ],
+              "label": "原因"
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "写错 KV 会间接污染后续计算，不能据此把两类映射当成同一件事。"
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "depends_on": []
+    },
+    {
+      "key": "mc-f726fd672421c50799332024",
+      "rank": 5,
+      "assessment": "discrimination",
+      "domain": "vllm-device-lifecycle",
+      "fact_scope": {
+        "commit": "568afb3a13806beb53bb2e6bd518269357b237c0",
+        "kind": "snapshot",
+        "product": "vllm",
+        "version": "v0.26.0"
+      },
+      "recall_target": "区分worker启动初始化与每步执行入口",
+      "layer": "atomic",
+      "quality": "B",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 3,
+      "template_id": "correction",
+      "source_ids": [
+        "full-session-structured"
+      ],
+      "content_summary": "B 级选材依据：保留启动生命周期与单步执行的职责边界，用于解释热路径而不反复背接口。",
+      "fields": {
+        "意图": "在服务已经启动后的单步执行中，Worker 应承担什么职责，设备初始化属于哪段生命周期？",
+        "场景": "vLLM v0.26.0；服务已完成启动，正在解释一次 SchedulerOutput 的执行。",
+        "正确": "设备初始化属于启动阶段；本步执行由 Worker 入口委托 Runner。",
+        "错误": "worker处理设备环境初始化",
+        "说明": {
+          "blocks": [
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "原话出现在一次 SchedulerOutput 的执行路径中，把启动动作放进了热路径。"
+                }
+              ],
+              "label": "原因"
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "描述每个 step 时，要与服务启动和运维操作分开。"
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "depends_on": []
+    },
+    {
+      "key": "mc-fccc453bd4ab4941409e7bf9",
+      "rank": 6,
+      "assessment": "discrimination",
+      "domain": "vllm-out-of-tree",
+      "fact_scope": {
+        "commit": "568afb3a13806beb53bb2e6bd518269357b237c0",
+        "kind": "snapshot",
+        "product": "vllm",
+        "version": "v0.26.0"
+      },
+      "recall_target": "区分接入动作与替换正确性契约",
+      "layer": "atomic",
+      "quality": "A",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 5,
+      "template_id": "technical-qa",
+      "source_ids": [
+        "full-session-structured"
+      ],
+      "content_summary": "A 级理由：防止把注册成功当作替换算子正确，漏检数学语义、输入修改和执行依赖。",
+      "fields": {
+        "问题": "vLLM v0.26.0 中，一个自定义算子已通过 register_oot 接入。评审接入方案时，应怎样区分“已注册”与“替换实现保持了正确性契约”？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "注册只建立调用入口；正确性还要验证替换后的数学语义、Tensor 行为和执行依赖。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "围绕该算子支持的 shape、dtype、device、是否修改输入及返回约定核对行为，不能把注册成功当作这些检查的结果。"
+                }
+              ],
+              "label": "契约"
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "检查范围应覆盖接口声明支持的 shape、dtype、device 与执行条件；注册过程不能代替这些验证。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "接入动作与正确性契约分别核对",
+        "来源": "全会话复盘 P02；vLLM v0.26.0"
+      },
+      "depends_on": []
+    },
+    {
+      "key": "mc-c0e72e196678952189509127",
+      "rank": 7,
+      "assessment": "discrimination",
+      "domain": "vllm-output-processing",
+      "fact_scope": {
+        "commit": "568afb3a13806beb53bb2e6bd518269357b237c0",
+        "kind": "snapshot",
+        "product": "vllm",
+        "version": "v0.26.0"
+      },
+      "recall_target": "定位final-only抑制中间输出的层次",
+      "layer": "atomic",
+      "quality": "A",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 5,
+      "template_id": "correction",
+      "source_ids": [
+        "full-session-structured"
+      ],
+      "content_summary": "A 级理由：防止将非流式输出误实现为阻断 Core 的中间结果回传，混淆内部与对外输出。",
+      "fields": {
+        "意图": "FINAL_ONLY 在哪一层抑制中间 RequestOutput？",
+        "场景": "vLLM v0.26.0；请求使用 FINAL_ONLY 输出模式，前端与 Core 通过内部消息协作。",
+        "正确": "在前端抑制对调用方的中间输出；Core 仍逐步回传内部结果。",
+        "错误": "应该会等到整个请求完成，才把结果给前端。",
+        "说明": {
+          "blocks": [
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "区分内部结果回传与面向调用方的 RequestOutput 交付。"
+                }
+              ],
+              "label": "原因"
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "本卡讨论 FINAL_ONLY 对调用方输出的过滤，不改变前端判停或取消请求所需的控制条件。"
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "depends_on": []
+    },
+    {
+      "key": "mc-83bf809ee49d5864f0049a85",
+      "rank": 8,
+      "assessment": "discrimination",
+      "domain": "vllm-output-processing",
+      "fact_scope": {
+        "commit": "568afb3a13806beb53bb2e6bd518269357b237c0",
+        "kind": "snapshot",
+        "product": "vllm",
+        "version": "v0.26.0"
+      },
+      "recall_target": "区分requeststate注销与collector消费生命周期",
+      "layer": "atomic",
+      "quality": "A",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 5,
+      "template_id": "correction",
+      "source_ids": [
+        "full-session-structured"
+      ],
+      "content_summary": "A 级理由：防止请求表注销时提前销毁仍需交付最终结果的 Collector。",
+      "fields": {
+        "意图": "最终结果交付期间，RequestState 与 Collector 各自需要存活到何时，由谁继续持有 Collector？",
+        "场景": "vLLM v0.26.0；最终 RequestOutput 已写入 Collector，AsyncLLM.generate 尚未消费它。",
+        "正确": "最终结果入 Collector 后即可注销；generate 仍持有 Collector 并可继续消费。",
+        "错误": "再将RequestState和Collector销毁删除",
+        "说明": {
+          "blocks": [
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "请求表条目的生命周期与被其他对象持有的 Collector 生命周期不同。"
+                }
+              ],
+              "label": "原因"
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "移除 RequestState 不等于立即销毁所有关联对象，也不要求等待最终输出被消费。"
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "depends_on": []
+    },
+    {
+      "key": "mc-b94314f0d50a23dcab697cc7",
+      "rank": 9,
+      "assessment": "discrimination",
+      "domain": "vllm-kv-lifecycle",
+      "fact_scope": {
+        "commit": "568afb3a13806beb53bb2e6bd518269357b237c0",
+        "kind": "snapshot",
+        "product": "vllm",
+        "version": "v0.26.0"
+      },
+      "recall_target": "识别终止请求的kv引用回收所有者",
+      "layer": "atomic",
+      "quality": "A",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 5,
+      "template_id": "correction",
+      "source_ids": [
+        "full-session-structured"
+      ],
+      "content_summary": "A 级理由：防止 Runner 重复扣减调度侧已经管理的 KV 引用，破坏其他请求仍使用的共享块。",
+      "fields": {
+        "意图": "请求结束时，谁负责解除 KV 引用，ModelRunner 收到结束通知后负责什么？",
+        "场景": "vLLM v0.26.0；请求 R 结束、请求 S 仍引用同一 KV 块，需要处理结束通知与共享块账本。",
+        "正确": "不应再次扣减；调度侧已解除引用，Runner 只清自己的请求和 batch 状态。",
+        "错误": "然后减少引用计数",
+        "说明": {
+          "blocks": [
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "原题主语是 ModelRunner；重复扣减可能让其他请求仍使用的共享块错误归零。"
+                }
+              ],
+              "label": "原因"
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "Runner 请求状态清理与调度侧 KV 引用管理是不同职责。"
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "depends_on": []
+    },
+    {
+      "key": "mc-58f9377a4e5513c61f851abc",
+      "rank": 10,
+      "assessment": "discrimination",
+      "domain": "vllm-request-lifecycle",
+      "fact_scope": {
+        "commit": "568afb3a13806beb53bb2e6bd518269357b237c0",
+        "kind": "snapshot",
+        "product": "vllm",
+        "version": "v0.26.0"
+      },
+      "recall_target": "区分用户stop原因与发送core的取消操作",
+      "layer": "atomic",
+      "quality": "B",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 3,
+      "template_id": "technical-qa",
+      "source_ids": [
+        "full-session-structured"
+      ],
+      "content_summary": "B 级选材依据：保留用户结束原因与内部控制操作的接口辨析，不将当场术语澄清当成反复个人错误。",
+      "fields": {
+        "问题": "vLLM v0.26.0 中，前端因 stop string 确定请求结束，而 Core 尚未结束。对调用方的结束原因与发给 Core 的控制操作应怎样分别表达，为什么？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "对调用方可以报告 stop；前端向尚未结束的 Core 发送 ABORT，以停止其后续执行。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "结束原因解释用户为什么不再接收输出；控制操作要求内部执行侧停止处理并走相应收尾，两者属于不同接口语义。"
+                }
+              ],
+              "label": "职责"
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "若 Core 已结束，不重复发送取消操作。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "对外说明原因；对内发出控制操作",
+        "来源": "全会话复盘 R05；vLLM v0.26.0"
+      },
+      "depends_on": []
+    },
+    {
+      "key": "mc-a4cd934451dbc2f674b835a9",
+      "rank": 11,
+      "assessment": "recall",
+      "domain": "memory-accounting",
+      "fact_scope": {
+        "kind": "evergreen"
+      },
+      "recall_target": "区分设备总容量与配置内存预算",
+      "layer": "atomic",
+      "quality": "A",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 5,
+      "template_id": "technical-qa",
+      "source_ids": [
+        "full-session-structured"
+      ],
+      "content_summary": "A 级理由：防止按物理容量而非配置预算接纳分配，遗漏可导致 OOM 的预算超额。",
+      "fields": {
+        "问题": "两张设备各有 64 GB 显存，各自配置预算比例 0.9。有人以总容量为依据，认为合计 70 GB 权重加 50 GB KV 后仍有 8 GB 余量；这些数值均按同一 GB 口径。怎样用预算账本检查这项判断，现有信息还不能说明什么？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "两卡预算合计为 115.2 GB，所述权重与 KV 合计 120 GB，已超过预算；用 128 GB 总容量计算余量遗漏了预算上限。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "2×64×0.9=115.2 GB，而 70+50=120 GB，比预算多 4.8 GB。"
+                }
+              ],
+              "label": "复算"
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "这是给定数字之间的一致性检查，不证明项目真实分配量；单卡分布、额外占用与实际 GB/GiB 口径仍需单独核对。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "容量不等于预算",
+        "来源": "全会话复盘 E04；通用原理"
+      },
+      "depends_on": []
+    },
+    {
+      "key": "mc-d90a8a49188317c4475bb1fa",
+      "rank": 12,
+      "assessment": "recall",
+      "domain": "tensor-layout",
+      "fact_scope": {
+        "kind": "evergreen"
+      },
+      "recall_target": "限定局部padding倍率的适用范围",
+      "layer": "atomic",
+      "quality": "B",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 3,
+      "template_id": "technical-qa",
+      "source_ids": [
+        "full-session-structured"
+      ],
+      "content_summary": "B 级选材依据：把局部物化存储放大与整体显存账本分开，支持跨布局估算。",
+      "fields": {
+        "问题": "局部 padding 倍率为何不能代表整体显存倍率？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "局部倍率只描述特定物化布局的数据，不代表模型的总占用。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "还需分别计算权重、KV、其他激活与临时空间。"
+                }
+              ],
+              "label": "整体账本"
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "局部 padding 后的存储放大，也不能单独证明布局变换的数学等价。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "局部物化量",
+        "来源": "全会话复盘 E05；通用原理"
+      },
+      "depends_on": []
+    },
+    {
+      "key": "mc-b5ab4a7997b4428cc78802e8",
+      "rank": 13,
+      "assessment": "recall",
+      "domain": "roofline",
+      "fact_scope": {
+        "kind": "evergreen"
+      },
+      "recall_target": "计算普通矩阵乘的浮点运算量",
+      "layer": "atomic",
+      "quality": "B",
+      "fact_status": "verified",
+      "lifecycle": "archived",
+      "priority": 3,
+      "template_id": "technical-qa",
+      "source_ids": [
+        "full-session-structured"
+      ],
+      "content_summary": "2026-11-03本地归档：FLOPs推导由W2-U4的gemm-ledger规范卡统一承担，避免重复复习相同计算账本；保留原身份与内容追溯。",
+      "fields": {
+        "问题": "稠密矩阵乘 A[b,K]×B[K,N]→C[b,N]，按一次乘加计 2 FLOP。怎样由输出元素数与每元素乘加次数得到计算量？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "C 有 bN 个输出元素，每个元素沿 K 维完成 K 次乘加，因此计算量为 2bKN FLOP。"
+                }
+              ]
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "这里只计算该矩阵乘的数学乘加工作量，不计地址计算和其他算子。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "乘加计作 2 次",
+        "来源": "全会话复盘 E06；通用原理"
+      },
+      "depends_on": []
+    },
+    {
+      "key": "mc-abe7eb24831612c9c3d4eef7",
+      "rank": 14,
+      "assessment": "recall",
+      "domain": "roofline",
+      "fact_scope": {
+        "kind": "evergreen"
+      },
+      "recall_target": "计算给定最小读写假设下的bf16矩阵乘流量",
+      "layer": "atomic",
+      "quality": "B",
+      "fact_status": "verified",
+      "lifecycle": "archived",
+      "priority": 3,
+      "template_id": "technical-qa",
+      "source_ids": [
+        "full-session-structured"
+      ],
+      "content_summary": "2026-11-03本地归档：BF16输入与输出的最低字节账本由W2-U4的gemm-ledger规范卡统一承担；已补齐历史题面的输出存储精度，保留原身份追溯。",
+      "fields": {
+        "问题": "稠密 A[b,K]×B[K,N]→C[b,N] 中，A、B、C 都以 BF16 存储，每元素 2 字节；A/B 各从 HBM 读一次，C 写一次、不读旧 C。怎样逐项计算最低 HBM 流量？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "分别计入读取 A 的 bK 个元素、读取 B 的 KN 个元素和写出 C 的 bN 个元素，总计 2(bK+KN+bN) 字节。"
+                }
+              ]
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "所有三份矩阵都按 BF16 存储；这是声明读写与复用条件下的最低流量，不是实测值。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "输出仍是 b×N",
+        "来源": "全会话复盘 E06；通用原理"
+      },
+      "depends_on": []
+    },
+    {
+      "key": "mc-84676054f06c3224f8b9d42a",
+      "rank": 15,
+      "assessment": "discrimination",
+      "domain": "performance-diagnosis",
+      "fact_scope": {
+        "kind": "evergreen"
+      },
+      "recall_target": "区分访存变慢现象与bank冲突根因",
+      "layer": "atomic",
+      "quality": "A",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 5,
+      "template_id": "technical-qa",
+      "source_ids": [
+        "full-session-structured"
+      ],
+      "content_summary": "A 级理由：防止仅凭访存变快就写成 bank conflict 已消除，造成错误根因归属。",
+      "fields": {
+        "问题": "某个矩阵乘换布局后访存阶段变快。若要将收益归因于 bank conflict 缓解，至少应把哪些机制证据接到这项观察上？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "需先确认存储层级、地址映射和相应观测证据。"
+                }
+              ]
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "访存变慢或布局相似只是线索，不能直接确定为 bank conflict。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "区分现象与根因",
+        "来源": "全会话 E07；原理辨析"
+      },
+      "depends_on": []
+    },
+    {
+      "key": "mc-386eff0e70f84976785adb7b",
+      "rank": 16,
+      "assessment": "recall",
+      "domain": "numerical-debugging",
+      "fact_scope": {
+        "kind": "evergreen"
+      },
+      "recall_target": "限定贪婪采样对确定性的保证",
+      "layer": "atomic",
+      "quality": "B",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 3,
+      "template_id": "technical-qa",
+      "source_ids": [
+        "full-session-structured"
+      ],
+      "content_summary": "B 级选材依据：用于区分采样随机性和执行不确定性，避免 temperature=0 的保证被扩大。",
+      "fields": {
+        "问题": "一次自回归推理使用 temperature=0。若多次运行结果仍有差异，应怎样区分已经排除的随机性与仍需检查的执行不确定性？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "它去掉采样选择中的随机性。"
+                }
+              ]
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "并发、Kernel 或 Runtime 仍可能产生不确定性，不能据此保证整段推理完全确定。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "采样随机性与执行确定性",
+        "来源": "全会话复盘 E08；通用原理"
+      },
+      "depends_on": []
+    },
+    {
+      "key": "mc-c44b4d7a9ac36edd8c5dca77",
+      "rank": 17,
+      "assessment": "recall",
+      "domain": "async-debugging",
+      "fact_scope": {
+        "kind": "evergreen"
+      },
+      "recall_target": "解释插入dump使异常消失的证据边界",
+      "layer": "atomic",
+      "quality": "A",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 5,
+      "template_id": "technical-qa",
+      "source_ids": [
+        "full-session-structured"
+      ],
+      "content_summary": "A 级理由：防止把加入 dump 后不复现当成正确性修复，忽略观测对异步时序的影响。",
+      "fields": {
+        "问题": "加入 tensor dump 后异常消失，应怎样解读？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "dump 可能改变时序或引入同步，使异常暂时不再复现。"
+                }
+              ]
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "这是定位异步或竞态问题的线索，不是数值正确或具体根因的独立证明。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "观察者效应",
+        "来源": "全会话复盘 E08；通用原理"
+      },
+      "depends_on": []
+    },
+    {
+      "key": "mc-1ba245772d63b1465ff84b74",
+      "rank": 18,
+      "assessment": "recall",
+      "domain": "numerical-debugging",
+      "fact_scope": {
+        "kind": "evergreen"
+      },
+      "recall_target": "解释优先定位首个生成分叉点的原因",
+      "layer": "atomic",
+      "quality": "B",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 3,
+      "template_id": "technical-qa",
+      "source_ids": [
+        "full-session-structured"
+      ],
+      "content_summary": "B 级选材依据：保留从首个分叉定位原因的可迁移调试方法。",
+      "fields": {
+        "问题": "排查生成差异，为何先找首个分叉 token？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "后续轨迹依赖前面的 token 和 KV 历史，后面的差异可能只是传播结果。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "先区分原因与传播",
+        "来源": "全会话复盘 E09；通用原理"
+      },
+      "depends_on": []
+    },
+    {
+      "key": "mc-ce38809b2547d6c1f70c85f7",
+      "rank": 19,
+      "assessment": "recall",
+      "domain": "async-lifetime",
+      "fact_scope": {
+        "kind": "evergreen"
+      },
+      "recall_target": "识别设备流等待未覆盖的host准备阶段",
+      "layer": "atomic",
+      "quality": "A",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 5,
+      "template_id": "technical-qa",
+      "source_ids": [
+        "full-session-structured"
+      ],
+      "content_summary": "A 级理由：防止仅等设备流便消费尚未完成 CPU 准备或提交的 H2D 数据。",
+      "fields": {
+        "问题": "Host padding 未完成时，流等待为何不能保证 H2D 完成？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "等待设备流时，前置 CPU 准备或 H2D 提交可能尚未完成。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "Host 数据就绪 → copy 提交 → copy 完成 → 消费数据。"
+                }
+              ],
+              "label": "依赖链"
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "只等待流中已有任务，不能覆盖尚未完成的 Host 准备和未来提交。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "未提交任务不在流中",
+        "来源": "全会话复盘 E10；通用原理"
+      },
+      "depends_on": []
+    },
+    {
+      "key": "mc-bdb5ae3a65636b17a13e73b1",
+      "rank": 20,
+      "assessment": "discrimination",
+      "domain": "runtime-concurrency",
+      "fact_scope": {
+        "kind": "evergreen"
+      },
+      "recall_target": "区分设备stream与cpu线程上下文切换",
+      "layer": "atomic",
+      "quality": "B",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 3,
+      "template_id": "technical-qa",
+      "source_ids": [
+        "full-session-structured"
+      ],
+      "content_summary": "B 级选材依据：保留设备 stream 与 CPU 线程的分层判断，避免错误解释提交开销。",
+      "fields": {
+        "问题": "设备 stream 数为何不能代表 CPU 线程切换次数？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "设备 stream 与 CPU 线程不是一一对应关系。"
+                }
+              ]
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "跨流 Event/Wait、提交开销与 CPU 线程切换应分别取证。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "stream 与线程分层",
+        "来源": "全会话 E12；原理辨析"
+      },
+      "depends_on": []
+    },
+    {
+      "key": "mc-9d7b2af6315be86cc53562e2",
+      "rank": 21,
+      "assessment": "recall",
+      "domain": "runtime-concurrency",
+      "fact_scope": {
+        "kind": "evergreen"
+      },
+      "recall_target": "限定单流优化相对多流的适用条件",
+      "layer": "atomic",
+      "quality": "B",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 3,
+      "template_id": "technical-qa",
+      "source_ids": [
+        "full-session-structured"
+      ],
+      "content_summary": "B 级选材依据：用于比较依赖开销与重叠收益，限定单流优化的迁移条件。",
+      "fields": {
+        "问题": "某平台在给定 workload 上将多 stream 改为单 stream 后变快。迁移到另一个平台前，应比较哪两类相反的收益与代价？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "比较减少 Event/Wait、依赖协调及提交开销的收益，与放弃潜在计算或通信重叠的代价。"
+                }
+              ]
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "比较必须限定硬件能力、Runtime 和 workload；某次单流更快不能证明多流普遍无用。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "提交开销与重叠收益",
+        "来源": "全会话复盘 E13；通用原理"
+      },
+      "depends_on": []
+    },
+    {
+      "key": "mc-81771102328bc5e96dde9dc2",
+      "rank": 22,
+      "assessment": "recall",
+      "domain": "benchmark-accounting",
+      "fact_scope": {
+        "kind": "evergreen"
+      },
+      "recall_target": "区分加速倍数与耗时降幅的计算",
+      "layer": "atomic",
+      "quality": "B",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 3,
+      "template_id": "technical-qa",
+      "source_ids": [
+        "full-session-structured"
+      ],
+      "content_summary": "B 级选材依据：使性能报告正确区分加速倍数与耗时降幅，前提是测量边界一致。",
+      "fields": {
+        "问题": "在相同 workload 与计时边界下，旧耗时为 T0，新耗时为 T1，且 T0、T1 都为正。加速倍数与耗时降幅分别怎样计算，为什么数值不能混用？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "倍数是旧耗时除以新耗时；降幅是耗时减少量除以旧耗时。"
+                }
+              ]
+            },
+            {
+              "type": "display",
+              "parts": [
+                {
+                  "type": "formula",
+                  "katex": "\\mathrm{speedup}=\\frac{T_0}{T_1},\\quad \\mathrm{reduction}=1-\\frac{T_1}{T_0}"
+                }
+              ]
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "前后 workload 和计时边界必须可比。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "比值与减少比例",
+        "来源": "全会话复盘 E14；通用原理"
+      },
+      "depends_on": []
+    },
+    {
+      "key": "mc-7552190fc19fef1335707b7d",
+      "rank": 23,
+      "assessment": "recall",
+      "domain": "tensor-parallelism",
+      "fact_scope": {
+        "kind": "evergreen"
+      },
+      "recall_target": "识别tp分片中的复制项",
+      "layer": "atomic",
+      "quality": "B",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 3,
+      "template_id": "technical-qa",
+      "source_ids": [
+        "full-session-structured"
+      ],
+      "content_summary": "B 级选材依据：保留按层检查切分与复制项的方法，避免用总参数量机械均分。",
+      "fields": {
+        "问题": "将模型设为 TP=2 后，怎样判断每个 rank 的模型存储，而不能只把总参数字节数除以二？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "按层的切分规则分片，某些参数或状态仍可能复制。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "分片规则不等于总量均分",
+        "来源": "全会话复盘 E03；通用原理"
+      },
+      "depends_on": []
+    },
+    {
+      "key": "mc-ae376a7b1a41d3c8475527c6",
+      "rank": 24,
+      "assessment": "recall",
+      "domain": "vllm-request-lifecycle",
+      "fact_scope": {
+        "commit": "568afb3a13806beb53bb2e6bd518269357b237c0",
+        "kind": "snapshot",
+        "product": "vllm",
+        "version": "v0.26.0"
+      },
+      "recall_target": "解释前端输出注册必须先于提交core",
+      "layer": "atomic",
+      "quality": "A",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 5,
+      "template_id": "technical-qa",
+      "source_ids": [
+        "full-session-structured"
+      ],
+      "content_summary": "A 级理由：防止 Core 快速返回时前端输出状态尚未注册，造成结果找不到接收位置。",
+      "fields": {
+        "问题": "vLLM v0.26.0 中，提交 Core 请求前，为何先注册前端输出状态？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "避免 Core 快速返回时，前端还没有该请求的输出处理状态和 Collector 关联。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "接收状态先就绪",
+        "来源": "全会话复盘 C02；vLLM v0.26.0"
+      },
+      "depends_on": []
+    },
+    {
+      "key": "mc-2731ed1a964329bd32e1ea08",
+      "rank": 25,
+      "assessment": "recall",
+      "domain": "vllm-request-lifecycle",
+      "fact_scope": {
+        "commit": "568afb3a13806beb53bb2e6bd518269357b237c0",
+        "kind": "snapshot",
+        "product": "vllm",
+        "version": "v0.26.0"
+      },
+      "recall_target": "识别collector创建所需元数据",
+      "layer": "atomic",
+      "quality": "B",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 3,
+      "template_id": "technical-qa",
+      "source_ids": [
+        "full-session-structured"
+      ],
+      "content_summary": "B 级选材依据：解释结果尚未产生时如何预建接收对象，属于可迁移的状态准备模式。",
+      "fields": {
+        "问题": "vLLM v0.26.0 中，模型尚未返回时，Collector 用什么信息创建？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "AsyncLLM 可用请求 ID 和 output_kind 创建空 Collector。"
+                }
+              ]
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "先建立结果接收位置，不依赖模型已经产生输出。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "身份与交付模式",
+        "来源": "全会话复盘 C02；vLLM v0.26.0"
+      },
+      "depends_on": []
+    },
+    {
+      "key": "mc-c34a6067dd76a7d3dbf5a43c",
+      "rank": 26,
+      "assessment": "recall",
+      "domain": "vllm-request-lifecycle",
+      "fact_scope": {
+        "commit": "568afb3a13806beb53bb2e6bd518269357b237c0",
+        "kind": "snapshot",
+        "product": "vllm",
+        "version": "v0.26.0"
+      },
+      "recall_target": "识别新增请求跨ipc的核心载荷",
+      "layer": "atomic",
+      "quality": "B",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 3,
+      "template_id": "technical-qa",
+      "source_ids": [
+        "full-session-structured"
+      ],
+      "content_summary": "B 级选材依据：区分跨 IPC 的输入载荷与 Core 内可变请求状态，支持沿边界追踪请求。",
+      "fields": {
+        "问题": "vLLM v0.26.0 中，新增请求跨 IPC 时使用哪种请求表示？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "是 EngineCoreRequest；Core 再将它构造为内部可变 Request。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "输入表示与核心请求",
+        "来源": "全会话复盘 C01；vLLM v0.26.0"
+      },
+      "depends_on": []
+    },
+    {
+      "key": "mc-34b6be82985ed08c4270ddd5",
+      "rank": 27,
+      "assessment": "recall",
+      "domain": "vllm-scheduling",
+      "fact_scope": {
+        "commit": "568afb3a13806beb53bb2e6bd518269357b237c0",
+        "kind": "snapshot",
+        "product": "vllm",
+        "version": "v0.26.0"
+      },
+      "recall_target": "区分grammar就绪与资源准入",
+      "layer": "atomic",
+      "quality": "A",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 5,
+      "template_id": "technical-qa",
+      "source_ids": [
+        "full-session-structured"
+      ],
+      "content_summary": "A 级理由：防止把 grammar 就绪当成资源准入成功，跳过 token 预算与 KV 容量约束。",
+      "fields": {
+        "问题": "vLLM v0.26.0 中，grammar 就绪后，还需通过哪些调度检查？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "仍需通过 token budget 和 KV 资源检查。"
+                }
+              ]
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "grammar 就绪只解除一个等待条件，不等于请求已取得全部执行资源。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "就绪条件不等于全部准入",
+        "来源": "全会话复盘 C03；vLLM v0.26.0"
+      },
+      "depends_on": []
+    },
+    {
+      "key": "mc-50591c6d88488ddba1e419c9",
+      "rank": 28,
+      "assessment": "recall",
+      "domain": "vllm-structured-output",
+      "fact_scope": {
+        "commit": "568afb3a13806beb53bb2e6bd518269357b237c0",
+        "kind": "snapshot",
+        "product": "vllm",
+        "version": "v0.26.0"
+      },
+      "recall_target": "区分grammar编译与逐token状态推进",
+      "layer": "atomic",
+      "quality": "B",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 3,
+      "template_id": "technical-qa",
+      "source_ids": [
+        "full-session-structured"
+      ],
+      "content_summary": "B 级选材依据：区分可复用编译产物与请求匹配状态，避免误解逐 token 的准备成本。",
+      "fields": {
+        "问题": "vLLM v0.26.0 中，schema 编译与逐步准备 grammar mask 有何区别？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "编译产物可以初始化或复用；请求的匹配状态与本步 mask 则随生成推进。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "初始化/编译 schema，或取得可缓存的编译产物。"
+                }
+              ],
+              "label": "请求开始"
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "推进该请求的匹配状态，并准备本步合法 token mask。"
+                }
+              ],
+              "label": "逐步生成"
+            }
+          ]
+        },
+        "锚点": "编译产物与匹配状态",
+        "来源": "全会话复盘 C04；vLLM v0.26.0"
+      },
+      "depends_on": []
+    },
+    {
+      "key": "mc-79362f0684e9a30fd97821f9",
+      "rank": 29,
+      "assessment": "recall",
+      "domain": "structured-output",
+      "fact_scope": {
+        "kind": "evergreen"
+      },
+      "recall_target": "限定grammar对输出正确性的保证",
+      "layer": "atomic",
+      "quality": "B",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 3,
+      "template_id": "technical-qa",
+      "source_ids": [
+        "full-session-structured"
+      ],
+      "content_summary": "B 级选材依据：保留结构约束与事实/业务正确性的边界，避免过度解释 schema 验证。",
+      "fields": {
+        "问题": "对结构化生成，请求通过了规定 schema 的语法检查。应怎样解释这项通过所覆盖的正确性，以及仍需另行验证的内容？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "它支持输出满足已检查的结构约束；事实内容和业务语义是否正确仍需另外验证。"
+                }
+              ]
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "同一份合法结构可以承载错误事实，不能把 schema 合法当作内容可靠性的证明。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "结构正确不等于内容正确",
+        "来源": "全会话复盘 C04；通用原理"
+      },
+      "depends_on": []
+    },
+    {
+      "key": "mc-485fa8cafc3816acbd51e03b",
+      "rank": 30,
+      "assessment": "recall",
+      "domain": "vllm-scheduling",
+      "fact_scope": {
+        "commit": "568afb3a13806beb53bb2e6bd518269357b237c0",
+        "kind": "snapshot",
+        "product": "vllm",
+        "version": "v0.26.0"
+      },
+      "recall_target": "区分调度计数与设备执行完成",
+      "layer": "atomic",
+      "quality": "A",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 5,
+      "template_id": "technical-qa",
+      "source_ids": [
+        "full-session-structured"
+      ],
+      "content_summary": "A 级理由：防止把执行前推进的调度计数当成设备已完成的凭据。",
+      "fields": {
+        "问题": "vLLM v0.26.0 中，num_computed_tokens 增加为何不代表 KV 已算完？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "不能；所学路径在执行前按调度计划推进计数。"
+                }
+              ]
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "还需结合实际执行与结果回写判断完成。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "计划计数不是完成凭据",
+        "来源": "全会话复盘 C06；vLLM v0.26.0"
+      },
+      "depends_on": []
+    },
+    {
+      "key": "mc-7ab1103a71067961285a47b8",
+      "rank": 31,
+      "assessment": "recall",
+      "domain": "autoregressive-decoding",
+      "fact_scope": {
+        "kind": "evergreen"
+      },
+      "recall_target": "定位普通生成的首个有效输出token时机",
+      "layer": "atomic",
+      "quality": "B",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 3,
+      "template_id": "technical-qa",
+      "source_ids": [
+        "full-session-structured"
+      ],
+      "content_summary": "B 级选材依据：连接最后一次 prefill、首个输出和下一轮 decode，支持理解 token 流程。",
+      "fields": {
+        "问题": "普通无投机自回归生成中，一个 prompt 可以分若干次 prefill。首个有效输出 token 与这些 prefill 片段、下一轮 decode 分别是什么关系？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "完成 prompt 的最后一次 prefill 可以采样出首个有效输出 token；下一轮 decode 再把这个已知 token 作为输入。"
+                }
+              ]
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "未完成 prompt 的中间 prefill 不交付有效生成输出；这里排除投机生成等其他执行方案。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "最后 prefill 预测首 token",
+        "来源": "全会话复盘 D11、K14；通用原理"
+      },
+      "depends_on": []
+    },
+    {
+      "key": "mc-99d1339089861715964f1d78",
+      "rank": 32,
+      "assessment": "recall",
+      "domain": "vllm-scheduling",
+      "fact_scope": {
+        "commit": "568afb3a13806beb53bb2e6bd518269357b237c0",
+        "kind": "snapshot",
+        "product": "vllm",
+        "version": "v0.26.0"
+      },
+      "recall_target": "区分启用分块预填充与实际发生多块",
+      "layer": "atomic",
+      "quality": "B",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 3,
+      "template_id": "technical-qa",
+      "source_ids": [
+        "full-session-structured"
+      ],
+      "content_summary": "B 级选材依据：区分能力开关与预算驱动的实际分块，避免笼统描述每个请求。",
+      "fields": {
+        "问题": "vLLM v0.26.0 中，启用 chunked prefill 后，实际是否拆成多个 chunk 取决于什么？请用一个短 prompt 说明能力开关与执行行为的区别。",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "开关允许按可用 token 预算拆分；若整个 prompt 能放进本步预算，它仍可一次处理完。"
+                }
+              ]
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "启用某项能力，不等于每个请求都必然经过多次分块。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "允许拆分而非强制多块",
+        "来源": "全会话复盘 R04；vLLM v0.26.0"
+      },
+      "depends_on": []
+    },
+    {
+      "key": "mc-af6f8b4a3928337d2ca0f814",
+      "rank": 33,
+      "assessment": "recall",
+      "domain": "vllm-request-lifecycle",
+      "fact_scope": {
+        "commit": "568afb3a13806beb53bb2e6bd518269357b237c0",
+        "kind": "snapshot",
+        "product": "vllm",
+        "version": "v0.26.0"
+      },
+      "recall_target": "区分抢占与请求终止",
+      "layer": "atomic",
+      "quality": "A",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 5,
+      "template_id": "technical-qa",
+      "source_ids": [
+        "full-session-structured"
+      ],
+      "content_summary": "A 级理由：防止把暂时抢占当成请求终止，错误交付结束输出或丢失生成历史。",
+      "fields": {
+        "问题": "vLLM v0.26.0 中，抢占与请求结束有什么区别？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "抢占保留请求和生成历史，等待恢复；不会仅因抢占就交付终止输出。"
+                }
+              ]
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "重算型抢占会重置相应计算进度；状态枚举与所在队列需分别观察。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "暂停执行资格，不终止请求",
+        "来源": "全会话复盘 C07；vLLM v0.26.0"
+      },
+      "depends_on": []
+    },
+    {
+      "key": "mc-48619be5e7dad94f709e6ca0",
+      "rank": 34,
+      "assessment": "recall",
+      "domain": "vllm-scheduling",
+      "fact_scope": {
+        "commit": "568afb3a13806beb53bb2e6bd518269357b237c0",
+        "kind": "snapshot",
+        "product": "vllm",
+        "version": "v0.26.0"
+      },
+      "recall_target": "区分waiting队列与preempted状态",
+      "layer": "atomic",
+      "quality": "B",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 3,
+      "template_id": "technical-qa",
+      "source_ids": [
+        "full-session-structured"
+      ],
+      "content_summary": "B 级选材依据：区分队列位置与状态枚举，支持阅读抢占和恢复路径。",
+      "fields": {
+        "问题": "vLLM v0.26.0 中，一次重算型抢占后，请求位于 waiting 队列但 status 为 PREEMPTED。怎样解释队列位置与状态枚举分别表达的含义？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "waiting 描述请求当前在哪个队列等待执行机会，PREEMPTED 描述它是经过抢占进入这一状态的；两者不是同一个字段。"
+                }
+              ]
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "观察恢复行为时应分别追踪队列、状态与重算进度，不能由队列名替代 status。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "队列位置与状态枚举",
+        "来源": "全会话复盘 C07；vLLM v0.26.0"
+      },
+      "depends_on": []
+    },
+    {
+      "key": "mc-842ef50d7d3ce590a2b562fd",
+      "rank": 35,
+      "assessment": "recall",
+      "domain": "vllm-device-state",
+      "fact_scope": {
+        "commit": "568afb3a13806beb53bb2e6bd518269357b237c0",
+        "kind": "snapshot",
+        "product": "vllm",
+        "version": "v0.26.0"
+      },
+      "recall_target": "区分runner请求缓存与当前执行batch",
+      "layer": "atomic",
+      "quality": "A",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 5,
+      "template_id": "technical-qa",
+      "source_ids": [
+        "full-session-structured"
+      ],
+      "content_summary": "A 级理由：防止因请求退出 InputBatch 就删除仍需恢复的缓存状态，或把残留块号误当所有权。",
+      "fields": {
+        "问题": "vLLM v0.26.0 中，MRV1：退出本步 InputBatch 后还可保留什么状态？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "未结束请求可退出本步 batch，同时保留 CachedRequestState。"
+                }
+              ]
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "这是 MRV1 的状态分层；缓存中的旧 block ID 不代表仍拥有抢占前的 KV 块。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "缓存集合大于本步 batch",
+        "来源": "全会话复盘 D01；vLLM v0.26.0"
+      },
+      "depends_on": []
+    },
+    {
+      "key": "mc-15d38c7ca8e263ccc79e1ad2",
+      "rank": 36,
+      "assessment": "recall",
+      "domain": "vllm-device-state",
+      "fact_scope": {
+        "commit": "568afb3a13806beb53bb2e6bd518269357b237c0",
+        "kind": "snapshot",
+        "product": "vllm",
+        "version": "v0.26.0"
+      },
+      "recall_target": "识别恢复载荷对块表的替换语义",
+      "layer": "atomic",
+      "quality": "A",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 5,
+      "template_id": "technical-qa",
+      "source_ids": [
+        "full-session-structured"
+      ],
+      "content_summary": "A 级理由：防止恢复完整块表被错误追加到旧映射，造成 KV 寻址错误。",
+      "fields": {
+        "问题": "vLLM v0.26.0 的 MRV1 路径中，恢复请求时，新 block 列表为何替换旧列表？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "恢复载荷给出恢复后的完整映射，所以应替换旧列表。"
+                }
+              ]
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "普通继续执行的载荷通常只包含新分配的增量块，采用追加语义。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "恢复完整表，继续增量表",
+        "来源": "全会话复盘 D02；vLLM v0.26.0"
+      },
+      "depends_on": []
+    },
+    {
+      "key": "mc-c1802344a7ebe74999d6ee69",
+      "rank": 37,
+      "assessment": "recall",
+      "domain": "paged-kv-addressing",
+      "fact_scope": {
+        "kind": "evergreen"
+      },
+      "recall_target": "由请求位置和块表计算token槽位",
+      "layer": "atomic",
+      "quality": "A",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 5,
+      "template_id": "technical-qa",
+      "source_ids": [
+        "full-session-structured"
+      ],
+      "content_summary": "A 级理由：回答分页 KV 怎样由逻辑位置定位物理槽位的问题，防止混用 token 槽位和字节地址。",
+      "fields": {
+        "问题": "普通单 KV 组中，分配块与 Attention kernel 使用相同的块大小 B，单位为 token/块。请求块表 T[j] 保存逻辑块 j 对应的物理块 ID，位置 p 从 0 开始，且该位置已经分配。怎样计算 p 的物理 token 槽位索引？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "先用 floor(p/B) 找逻辑块对应的物理块 ID，再加上块内偏移 p mod B。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "槽位索引为 T[floor(p/B)]×B+(p mod B)。"
+                }
+              ],
+              "label": "公式"
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "结果是 token 槽位索引，不是字节地址；不同 KV 组或分配块与 kernel 块大小不同的实现需要按其映射契约另行处理。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "块号乘 B 加偏移",
+        "来源": "全会话复盘 D03；通用原理"
+      },
+      "depends_on": []
+    },
+    {
+      "key": "mc-360a92513663a1e184c73081",
+      "rank": 38,
+      "assessment": "recall",
+      "domain": "vllm-attention-mapping",
+      "fact_scope": {
+        "commit": "568afb3a13806beb53bb2e6bd518269357b237c0",
+        "kind": "snapshot",
+        "product": "vllm",
+        "version": "v0.26.0"
+      },
+      "recall_target": "区分块表行内顺序与batch行顺序",
+      "layer": "atomic",
+      "quality": "A",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 5,
+      "template_id": "technical-qa",
+      "source_ids": [
+        "full-session-structured"
+      ],
+      "content_summary": "A 级理由：防止 batch 重排时只保留行内映射却未重排行，导致请求读到别人的 KV。",
+      "fields": {
+        "问题": "vLLM v0.26.0 的 MRV1 路径中，batch 重排时，block table 的哪一维随之重排？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "按请求排列的行要重排；每个请求行内的逻辑块映射可以不变。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "行跟请求，列跟逻辑块",
+        "来源": "全会话复盘 D05；vLLM v0.26.0"
+      },
+      "depends_on": []
+    },
+    {
+      "key": "mc-e48c0b5d4e3fdfff3a079a2b",
+      "rank": 39,
+      "assessment": "recall",
+      "domain": "vllm-attention-metadata",
+      "fact_scope": {
+        "commit": "568afb3a13806beb53bb2e6bd518269357b237c0",
+        "kind": "snapshot",
+        "product": "vllm",
+        "version": "v0.26.0"
+      },
+      "recall_target": "区分本步query边界与总序列长度",
+      "layer": "atomic",
+      "quality": "A",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 5,
+      "template_id": "technical-qa",
+      "source_ids": [
+        "full-session-structured"
+      ],
+      "content_summary": "A 级理由：防止把历史长度计入本步 Query 片段边界，破坏 Attention 元数据。",
+      "fields": {
+        "问题": "vLLM v0.26.0 的 MRV1 路径中，本步将两个请求的 Query 展平处理；历史 KV 长度分别为 2、6，本步新增输入片段长度为 3、1。query_start_loc 与 seq_lens 应怎样表达本步片段和完整上下文，为什么不同？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "一个描述本步 Query 片段，另一个描述序列总长度。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "本步展平 Query 中，各请求片段的起止边界。"
+                }
+              ],
+              "label": "query_start_loc"
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "对应请求的序列长度；不要把历史 KV 长度加进本步 Query 片段。"
+                }
+              ],
+              "label": "seq_lens"
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "历史长度为 2、6，本步处理 3、1：Query 边界是 [0,3,4]，序列长度是 [5,7]。"
+                }
+              ],
+              "label": "例子"
+            }
+          ]
+        },
+        "锚点": "本步片段与完整上下文",
+        "来源": "全会话复盘 D06；vLLM v0.26.0"
+      },
+      "depends_on": []
+    },
+    {
+      "key": "mc-a6c09dfcf93944cd2951b72d",
+      "rank": 40,
+      "assessment": "recall",
+      "domain": "causal-attention",
+      "fact_scope": {
+        "kind": "evergreen"
+      },
+      "recall_target": "限定同一prefill片段内的因果可见范围",
+      "layer": "atomic",
+      "quality": "B",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 3,
+      "template_id": "technical-qa",
+      "source_ids": [
+        "full-session-structured"
+      ],
+      "content_summary": "B 级选材依据：用同批计算场景强化因果范围与请求隔离，避免退化成显然的是非题。",
+      "fields": {
+        "问题": "普通因果 Attention 在同一轮处理某请求的位置 2～4，另一个请求也在同一 batch。怎样确定位置 2 的 Query 可读取的 KV 范围，为什么同批计算不能改变这个范围？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "位置 2 的 Query 只能读取自身请求中允许的过去位置及当前位置，不能读取位置 3、4，也不能读取其他请求的 KV。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "batch 只组织并行计算；因果约束与请求归属仍分别限制每个 Query 的可见上下文。"
+                }
+              ],
+              "label": "原因"
+            }
+          ]
+        },
+        "锚点": "同批不等于互相可见",
+        "来源": "全会话复盘 D06；通用原理"
+      },
+      "depends_on": []
+    },
+    {
+      "key": "mc-4dc2c29e8fcf8c04979b2598",
+      "rank": 41,
+      "assessment": "recall",
+      "domain": "vllm-attention-metadata",
+      "fact_scope": {
+        "commit": "568afb3a13806beb53bb2e6bd518269357b237c0",
+        "kind": "snapshot",
+        "product": "vllm",
+        "version": "v0.26.0"
+      },
+      "recall_target": "判断相同shape是否足以复用元数据内容",
+      "layer": "atomic",
+      "quality": "A",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 5,
+      "template_id": "technical-qa",
+      "source_ids": [
+        "full-session-structured"
+      ],
+      "content_summary": "A 级理由：防止仅凭 shape 相同复用旧 metadata 内容，沿用错误请求或 KV 映射。",
+      "fields": {
+        "问题": "vLLM v0.26.0 的 MRV1 路径中，连续两步 Attention 的 tensor shape 相同，但请求顺序或序列进度发生变化。应怎样判断旧 metadata 的缓冲和内容能否分别复用？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "不能仅凭 shape 判断；内容必须对应本步请求、长度和 KV 映射。"
+                }
+              ]
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "缓冲可复用，不等于旧内容可直接复用。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "形状相同不代表映射相同",
+        "来源": "全会话复盘 D07；vLLM v0.26.0"
+      },
+      "depends_on": []
+    },
+    {
+      "key": "mc-869c7b15dde8da8ad2b2baa1",
+      "rank": 42,
+      "assessment": "recall",
+      "domain": "vllm-backend-dispatch",
+      "fact_scope": {
+        "commit": "568afb3a13806beb53bb2e6bd518269357b237c0",
+        "kind": "snapshot",
+        "product": "vllm",
+        "version": "v0.26.0"
+      },
+      "recall_target": "区分统一attention入口与实际kernel",
+      "layer": "atomic",
+      "quality": "B",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 3,
+      "template_id": "technical-qa",
+      "source_ids": [
+        "full-session-structured"
+      ],
+      "content_summary": "B 级选材依据：保留从入口追到选中实现的源码定位方法，并限定性能最优性结论。",
+      "fields": {
+        "问题": "vLLM v0.26.0 的 MRV1 路径中，从一个统一 Attention custom op 入口阅读源码时，怎样继续确定这次配置真正使用的 kernel，并限定能得出的性能结论？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "从统一入口继续核对所选 backend、运行条件、布局和底层绑定。"
+                }
+              ]
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "选中某个实现不代表已证明它在该 workload 上性能最优。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "入口、backend、kernel 分层",
+        "来源": "全会话复盘 D08；vLLM v0.26.0"
+      },
+      "depends_on": []
+    },
+    {
+      "key": "mc-05890bf565adf8310a19569d",
+      "rank": 43,
+      "assessment": "recall",
+      "domain": "vllm-compilation",
+      "fact_scope": {
+        "commit": "568afb3a13806beb53bb2e6bd518269357b237c0",
+        "kind": "snapshot",
+        "product": "vllm",
+        "version": "v0.26.0"
+      },
+      "recall_target": "解释非数值依赖参数的正确性用途",
+      "layer": "atomic",
+      "quality": "A",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 5,
+      "template_id": "technical-qa",
+      "source_ids": [
+        "full-session-structured"
+      ],
+      "content_summary": "A 级理由：防止删除不参与数值计算但负责图中 KV 保序的依赖参数。",
+      "fields": {
+        "问题": "vLLM v0.26.0 的 MRV1 路径中，源码中 kv_cache_dummy_dep 不参与数值计算。评审是否删除该参数时，应先核对它在图中的什么作用，和设备 event/stream 同步有什么区别？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "不能仅据此删除；它可表达 KV 更新先于 Attention 读取的编译依赖。"
+                }
+              ]
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "所学具体路径；不是通用设备 event 或 stream 同步接口。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "非数值参数也可保序",
+        "来源": "全会话复盘 D09；vLLM v0.26.0"
+      },
+      "depends_on": []
+    },
+    {
+      "key": "mc-fec55735844313fb603e37f7",
+      "rank": 44,
+      "assessment": "recall",
+      "domain": "vllm-execution-contract",
+      "fact_scope": {
+        "commit": "568afb3a13806beb53bb2e6bd518269357b237c0",
+        "kind": "snapshot",
+        "product": "vllm",
+        "version": "v0.26.0"
+      },
+      "recall_target": "解释执行采样分离路径返回none的含义",
+      "layer": "atomic",
+      "quality": "A",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 5,
+      "template_id": "technical-qa",
+      "source_ids": [
+        "full-session-structured"
+      ],
+      "content_summary": "A 级理由：防止把阶段返回 None 当成失败，或把后续采样误当成领取已完成 token。",
+      "fields": {
+        "问题": "vLLM v0.26.0 中，MRV1 的模型执行与采样分离路径中，execute_model 返回 None 后，如何判断这一返回值的阶段含义，以及后续 sample_tokens 还须完成什么工作？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "该分支已计算并暂存 logits，但尚未产生完整执行输出；随后 sample_tokens 应用采样约束并真正采样。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "execute_model 准备模型结果，sample_tokens 继续完成生成输出，两者分开安排可与 grammar mask 准备协调。"
+                }
+              ],
+              "label": "阶段边界"
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "限定 MRV1 的这条分离路径；这里的 None 不是失败，也不是等待领取已采样 token 的轮询信号。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "阶段结果尚未完成",
+        "来源": "全会话复盘 D10；vLLM v0.26.0"
+      },
+      "depends_on": []
+    },
+    {
+      "key": "mc-2077ed6103d92ccddd84f0e1",
+      "rank": 45,
+      "assessment": "recall",
+      "domain": "vllm-execution-contract",
+      "fact_scope": {
+        "commit": "568afb3a13806beb53bb2e6bd518269357b237c0",
+        "kind": "snapshot",
+        "product": "vllm",
+        "version": "v0.26.0"
+      },
+      "recall_target": "区分sample_tokens的计算职责与取回结果",
+      "layer": "atomic",
+      "quality": "B",
+      "fact_status": "verified",
+      "lifecycle": "archived",
+      "priority": 3,
+      "template_id": "technical-qa",
+      "source_ids": [
+        "full-session-structured"
+      ],
+      "content_summary": "2026-11-03本地归档：sample_tokens职责已并入同批execute_model与采样阶段机制卡mc-fec55735844313fb603e37f7；保留原身份，避免同结论重复导出。",
+      "fields": {
+        "问题": "vLLM v0.26.0 中，MRV1 的执行与采样分离路径中，sample_tokens 如何把已暂存 logits 变为采样输出？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "所学分离路径中，它应用采样约束并真正进行采样。"
+                }
+              ]
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "execute_model 此前计算并暂存 logits。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "logits 与采样分开安排",
+        "来源": "全会话复盘 D10；vLLM v0.26.0"
+      },
+      "depends_on": []
+    },
+    {
+      "key": "mc-6e80586c21468b342811ed55",
+      "rank": 46,
+      "assessment": "recall",
+      "domain": "vllm-model-execution",
+      "fact_scope": {
+        "commit": "568afb3a13806beb53bb2e6bd518269357b237c0",
+        "kind": "snapshot",
+        "product": "vllm",
+        "version": "v0.26.0"
+      },
+      "recall_target": "定位普通请求生成logits所用的片段末行",
+      "layer": "atomic",
+      "quality": "B",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 3,
+      "template_id": "technical-qa",
+      "source_ids": [
+        "full-session-structured"
+      ],
+      "content_summary": "B 级选材依据：区分输入行、logits 候选与有效输出，支持多请求混合执行的解释。",
+      "fields": {
+        "问题": "vLLM v0.26.0 的 MRV1 路径中，普通无投机生成的一步同时含多个请求，每个请求可能贡献多个输入 token。如何从 hidden states 选择生成 logits 所用的行，并判断哪些候选可交付？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "每个请求通常选本步片段末行的 hidden state 计算生成 logits。"
+                }
+              ]
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "未完成 prefill 的候选不计作有效生成输出。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "每请求片段末行",
+        "来源": "全会话复盘 D11；vLLM v0.26.0"
+      },
+      "depends_on": []
+    },
+    {
+      "key": "mc-c4305907da34210e2ff9a593",
+      "rank": 47,
+      "assessment": "recall",
+      "domain": "vllm-execution-contract",
+      "fact_scope": {
+        "commit": "568afb3a13806beb53bb2e6bd518269357b237c0",
+        "kind": "snapshot",
+        "product": "vllm",
+        "version": "v0.26.0"
+      },
+      "recall_target": "识别core请求历史和停止状态的回写者",
+      "layer": "atomic",
+      "quality": "B",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 3,
+      "template_id": "technical-qa",
+      "source_ids": [
+        "full-session-structured"
+      ],
+      "content_summary": "B 级选材依据：把执行结果接回 Scheduler 账本，避免将设备侧缓存当成核心请求状态。",
+      "fields": {
+        "问题": "vLLM v0.26.0 中，执行结果由谁写回 Core 的请求账本？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "EngineCore 将执行结果交给 Scheduler 的结果更新逻辑回写和判停。"
+                }
+              ]
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "Runner 本地状态不替代 Scheduler 的请求账本。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "执行结果回到调度账本",
+        "来源": "全会话复盘 R01、C01；vLLM v0.26.0"
+      },
+      "depends_on": []
+    },
+    {
+      "key": "mc-704e23f2ac33a51b9d1cafc8",
+      "rank": 48,
+      "assessment": "recall",
+      "domain": "vllm-out-of-tree",
+      "fact_scope": {
+        "commit": "568afb3a13806beb53bb2e6bd518269357b237c0",
+        "kind": "snapshot",
+        "product": "vllm",
+        "version": "v0.26.0"
+      },
+      "recall_target": "定位platform自定义worker的接入点",
+      "layer": "atomic",
+      "quality": "B",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 3,
+      "template_id": "technical-qa",
+      "source_ids": [
+        "full-session-structured"
+      ],
+      "content_summary": "B 级选材依据：定位自定义 Worker 的配置入口并连接 Runner 构造，属于源码接入导航。",
+      "fields": {
+        "问题": "vLLM v0.26.0 中，为自定义设备接入 Worker 时，Platform 的配置与 Worker 构造 Runner 之间是什么关系？请指出 Worker 选择所用的配置入口。",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "在 check_and_update_config 中设置 parallel_config.worker_cls。"
+                }
+              ]
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "Runner 再由 Worker 构造；这是 v0.26.0 的接入方式。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "平台配置 Worker",
+        "来源": "全会话复盘 P01；vLLM v0.26.0"
+      },
+      "depends_on": []
+    },
+    {
+      "key": "mc-a89805ae36fffe4b3d357833",
+      "rank": 49,
+      "assessment": "recall",
+      "domain": "vllm-out-of-tree",
+      "fact_scope": {
+        "commit": "568afb3a13806beb53bb2e6bd518269357b237c0",
+        "kind": "snapshot",
+        "product": "vllm",
+        "version": "v0.26.0"
+      },
+      "recall_target": "区分attention后端选择与worker选择",
+      "layer": "atomic",
+      "quality": "B",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 3,
+      "template_id": "technical-qa",
+      "source_ids": [
+        "full-session-structured"
+      ],
+      "content_summary": "B 级选材依据：区分两项独立设备扩展入口，避免假定一项替换自动完成另一项。",
+      "fields": {
+        "问题": "vLLM v0.26.0 中，适配自定义设备时，只替换 Attention backend 会改变 Worker 类吗？请按配置入口说明这两项选择的关系。",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "Attention backend 选择和 Worker 类配置使用不同入口；替换其中一项不会自动完成另一项替换。"
+                }
+              ]
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "是否需要同时替换由目标设备的接口需求决定，不能仅按名称把两项配置视为一个开关。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "两个独立接入点",
+        "来源": "全会话复盘 P01；vLLM v0.26.0"
+      },
+      "depends_on": []
+    },
+    {
+      "key": "mc-a30eed37a09de948f40c5e38",
+      "rank": 50,
+      "assessment": "recall",
+      "domain": "vllm-custom-op",
+      "fact_scope": {
+        "commit": "568afb3a13806beb53bb2e6bd518269357b237c0",
+        "kind": "snapshot",
+        "product": "vllm",
+        "version": "v0.26.0"
+      },
+      "recall_target": "区分底层算子注册与vllm模型路径接入",
+      "layer": "atomic",
+      "quality": "B",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 3,
+      "template_id": "technical-qa",
+      "source_ids": [
+        "full-session-structured"
+      ],
+      "content_summary": "B 级选材依据：把底层算子注册与模型实际调用连接起来，支持排查实现未被采用的问题。",
+      "fields": {
+        "问题": "vLLM v0.26.0 中，自定义算子已经注册到 torch.ops。为了让 vLLM 模型实际调用它，还要追踪并接通哪个环节？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "还要接通 vLLM 模型算子的实际调用路径，使它选择并调用该底层实现。"
+                }
+              ]
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "所学路径可通过 CustomOp 的 register_oot 与 forward_oot 接入；仅能从 torch.ops 找到符号不代表模型已经采用它。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "注册不等于调用",
+        "来源": "全会话复盘 P03；vLLM v0.26.0"
+      },
+      "depends_on": []
+    },
+    {
+      "key": "mc-209c99a69970415ab4a8fe1d",
+      "rank": 51,
+      "assessment": "recall",
+      "domain": "vllm-custom-op",
+      "fact_scope": {
+        "commit": "568afb3a13806beb53bb2e6bd518269357b237c0",
+        "kind": "snapshot",
+        "product": "vllm",
+        "version": "v0.26.0"
+      },
+      "recall_target": "解释forward_native的设备含义",
+      "layer": "atomic",
+      "quality": "B",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 3,
+      "template_id": "technical-qa",
+      "source_ids": [
+        "full-session-structured"
+      ],
+      "content_summary": "B 级选材依据：区分原生 PyTorch 组合与执行设备，避免把 native 当成 CPU 同义词。",
+      "fields": {
+        "问题": "vLLM v0.26.0 中，在自定义算子路径中，forward_native 表示什么实现方式？判断它运行在哪个设备时，应依据什么？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "它表示原生 PyTorch 算子组合。"
+                }
+              ]
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "计算设备取决于 Tensor 与实际实现，不能把 native 理解成一定在 CPU 执行。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "原生组合不等于 CPU",
+        "来源": "全会话复盘 P03；vLLM v0.26.0"
+      },
+      "depends_on": []
+    },
+    {
+      "key": "mc-45d3779fb6c0899ed56d4194",
+      "rank": 52,
+      "assessment": "recall",
+      "domain": "collective-correctness",
+      "fact_scope": {
+        "kind": "evergreen"
+      },
+      "recall_target": "识别只测试world通信组的盲区",
+      "layer": "atomic",
+      "quality": "A",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 5,
+      "template_id": "technical-qa",
+      "source_ids": [
+        "full-session-structured"
+      ],
+      "content_summary": "A 级理由：防止只测 world 组掩盖跨组归约错误，为 collective 正确性设计反例。",
+      "fields": {
+        "问题": "collective 为何需要多个独立子组测试？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "多个独立子组能暴露错误地跨组归约的实现。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "两组输入分别为 1、2 与 10、20；正确组内和应为 3、3、30、30。"
+                }
+              ],
+              "label": "反例"
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "只测试一个等于 world 的组可能漏错；TP=1 还可能绕过通信。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "分组契约要有多组反例",
+        "来源": "全会话复盘 P04；通用原理"
+      },
+      "depends_on": []
+    },
+    {
+      "key": "mc-8cf820cd4a8ab0b43fbc3bd6",
+      "rank": 53,
+      "assessment": "recall",
+      "domain": "vllm-out-of-tree",
+      "fact_scope": {
+        "commit": "568afb3a13806beb53bb2e6bd518269357b237c0",
+        "kind": "snapshot",
+        "product": "vllm",
+        "version": "v0.26.0"
+      },
+      "recall_target": "判断padding差异何时不需要core修改",
+      "layer": "atomic",
+      "quality": "A",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 5,
+      "template_id": "technical-qa",
+      "source_ids": [
+        "full-session-structured"
+      ],
+      "content_summary": "A 级理由：防止因 padding 差异直接修改 Scheduler，遗漏已有页字节接口实现错误。",
+      "fields": {
+        "问题": "vLLM v0.26.0 中，KV 页 padding 增大时，应先检查哪层接口？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "先检查已有 KV 规格与页字节接口能否准确表达物理占用。"
+                }
+              ]
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "能够表达时先修对应实现，使预算、布局和访问保持一致；padding 增大本身不足以要求修改 Scheduler。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "先核对现有扩展接口",
+        "来源": "全会话复盘 P05；vLLM v0.26.0"
+      },
+      "depends_on": []
+    },
+    {
+      "key": "mc-5e59c8a2b0cca6fa8beb9e2a",
+      "rank": 54,
+      "assessment": "recall",
+      "domain": "framework-extensibility",
+      "fact_scope": {
+        "kind": "evergreen"
+      },
+      "recall_target": "说明核心接口修改所需的证据",
+      "layer": "atomic",
+      "quality": "B",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 3,
+      "template_id": "technical-qa",
+      "source_ids": [
+        "full-session-structured"
+      ],
+      "content_summary": "B 级选材依据：要求用无法表达的语义缺口论证 Core 修改，保留可迁移的扩展边界判断。",
+      "fields": {
+        "问题": "适配自定义设备出现接口差异时，提出 Core 补丁需要证明怎样的缺口，才能区别于已有扩展接口尚未正确实现？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "证明需要的语义或保证无法通过现有字段、hook 和机制表达。"
+                }
+              ]
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "换芯片、出现 OOM 或自定义 Runner 本身都不是充分证据。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "证明现有接口表达不了",
+        "来源": "全会话复盘 P05；通用原理"
+      },
+      "depends_on": []
+    },
+    {
+      "key": "mc-1e35d3d80a0dc7e8e4785c53",
+      "rank": 55,
+      "assessment": "recall",
+      "domain": "kv-memory-accounting",
+      "fact_scope": {
+        "kind": "evergreen"
+      },
+      "recall_target": "计算普通全注意力每token的kv字节",
+      "layer": "atomic",
+      "quality": "B",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 3,
+      "template_id": "technical-qa",
+      "source_ids": [
+        "full-session-structured"
+      ],
+      "content_summary": "B 级选材依据：建立单层有效 KV 的计算口径，避免混用 Query heads 与 KV heads。",
+      "fields": {
+        "问题": "普通全注意力中，K、V 的 head 数均为 Hkv，head 维度均为 D，每个元素存储 s 字节；无压缩、padding 和额外元数据。单层每个 token 的有效 KV 数据量怎样计算？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "两份 K/V 乘 KV head 数 Hkv、head 维度 D 和每元素字节数 s。"
+                }
+              ]
+            },
+            {
+              "type": "display",
+              "parts": [
+                {
+                  "type": "formula",
+                  "katex": "\\mathrm{bytes/token/layer}=2H_{kv}Ds"
+                }
+              ]
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "未计 padding 和额外元数据；K/V 维度相同，不直接套用于 MLA 等不同存储结构。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "使用 KV heads 而非 Query heads",
+        "来源": "全会话复盘 K01；通用原理"
+      },
+      "depends_on": []
+    },
+    {
+      "key": "mc-602b377049f84ba5753f398a",
+      "rank": 56,
+      "assessment": "recall",
+      "domain": "kv-memory-accounting",
+      "fact_scope": {
+        "kind": "evergreen"
+      },
+      "recall_target": "区分末块空槽与物理页padding",
+      "layer": "atomic",
+      "quality": "A",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 5,
+      "template_id": "technical-qa",
+      "source_ids": [
+        "full-session-structured"
+      ],
+      "content_summary": "A 级理由：防止将末块空槽与物理 padding 重复加总，算错 KV 容量。",
+      "fields": {
+        "问题": "末块空槽与物理 padding 怎样区分？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "末块空槽属于逻辑块未填满；物理 padding 属于布局或页跨度的额外占用。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "35 tokens、B=16、3 KiB/token、64 KiB/单层页：有效数据 105 KiB，空槽 39 KiB，padding 48 KiB。"
+                }
+              ],
+              "label": "例子"
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "三项合计 192 KiB；分别计账，避免重复加总。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "逻辑空槽与物理补齐",
+        "来源": "全会话复盘 K02；通用原理"
+      },
+      "depends_on": []
+    },
+    {
+      "key": "mc-caa30e7923ecbc5638183da4",
+      "rank": 57,
+      "assessment": "recall",
+      "domain": "memory-alignment",
+      "fact_scope": {
+        "kind": "evergreen"
+      },
+      "recall_target": "区分页跨度与分配器最小粒度",
+      "layer": "atomic",
+      "quality": "B",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 3,
+      "template_id": "technical-qa",
+      "source_ids": [
+        "full-session-structured"
+      ],
+      "content_summary": "B 级选材依据：分开核对页跨度、基址对齐与分配粒度，避免从一个布局数字推断硬件约束。",
+      "fields": {
+        "问题": "某 KV 布局将相邻页起点的间隔设为 64 KiB。仅凭这个值，怎样区分页跨度、基址对齐要求和分配器取整规则？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "64 KiB 在题设中只给出相邻页起点的跨度；基址需要怎样对齐、一次分配怎样取整，仍须分别核对各自接口。"
+                }
+              ]
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "64 KiB 是给定布局条件，不自动成为 OS 页大小或设备最小分配粒度。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "跨度不等于分配粒度",
+        "来源": "全会话复盘 K03；通用原理"
+      },
+      "depends_on": []
+    },
+    {
+      "key": "mc-284dc7300b3aedb48fb0e420",
+      "rank": 58,
+      "assessment": "recall",
+      "domain": "kv-memory-accounting",
+      "fact_scope": {
+        "kind": "evergreen"
+      },
+      "recall_target": "计算无共享多请求的kv块数",
+      "layer": "atomic",
+      "quality": "A",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 5,
+      "template_id": "technical-qa",
+      "source_ids": [
+        "full-session-structured"
+      ],
+      "content_summary": "A 级理由：防止多请求先合并 token 再取整，低估独立末块造成的容量需求。",
+      "fields": {
+        "问题": "多个请求不共享 KV 块，第 i 个请求需要保存 L_i 个 token，每块容纳 B 个 token。总块数应怎样取整，为什么不能先合并全部 token 数再取整？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "每个请求的末块独立保留，所以应先算各自 ceil(L_i/B)，再求和得到总块数。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "例如 B=16，两条各 17-token 的请求需要 2+2=4 块；先合并为 34 tokens 再取整只得 3 块，错误地让两条请求共用末块。"
+                }
+              ],
+              "label": "对照"
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "题设排除请求间块共享；L_i 与 B 都以 token 为单位，B 为正整数。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "每请求单独取整",
+        "来源": "全会话复盘 K07；通用原理"
+      },
+      "depends_on": []
+    },
+    {
+      "key": "mc-6e05afd30a1c350d2df82072",
+      "rank": 59,
+      "assessment": "recall",
+      "domain": "kv-memory-accounting",
+      "fact_scope": {
+        "kind": "evergreen"
+      },
+      "recall_target": "区分pool块id数量与跨层物理页数",
+      "layer": "atomic",
+      "quality": "B",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 3,
+      "template_id": "technical-qa",
+      "source_ids": [
+        "full-session-structured"
+      ],
+      "content_summary": "B 级选材依据：区分逻辑 pool ID 与跨层物理页数，保留单位映射而不是练习乘法。",
+      "fields": {
+        "问题": "在同规格单 KV 组中，一个 pool ID 对应每层同一逻辑块位置；32 层各有独立 KV 存储，层间不共享物理页。若请求占用 5 个 pool ID，应怎样同时描述池内 ID 数和跨层单层页数，为什么它们不同？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "池内仍是 5 个 ID；每个 ID 在 32 层各有一页，因此合计 160 个单层物理页。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "ID 计数描述请求占用了几个逻辑块位置，跨层页数描述这些位置在各层的实际存储份数。"
+                }
+              ],
+              "label": "含义"
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "这个对应关系依赖单组、每层独立存储且无跨层共享；不能把 160 页再当作 160 个池内 ID。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "ID 数与层页数",
+        "来源": "全会话复盘 K07；通用原理"
+      },
+      "depends_on": []
+    },
+    {
+      "key": "mc-7e660bc46d36e9c0cfc24dbe",
+      "rank": 60,
+      "assessment": "recall",
+      "domain": "kv-block-lifetime",
+      "fact_scope": {
+        "kind": "evergreen"
+      },
+      "recall_target": "判断共享块何时可以重新分配",
+      "layer": "atomic",
+      "quality": "A",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 5,
+      "template_id": "technical-qa",
+      "source_ids": [
+        "full-session-structured"
+      ],
+      "content_summary": "A 级理由：防止一个请求结束就覆盖仍被其他请求引用的 KV。",
+      "fields": {
+        "问题": "两个请求共享一个 KV 块。请求 R 结束，请求 S 仍会读取它；此时应怎样更新引用与判断是否可以覆写成其他内容？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "不能；只解除 R 的引用，S 的存活引用仍保护该块。"
+                }
+              ]
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "还需满足在途访问的安全回收条件。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "引用未归零不能复用给其他内容",
+        "来源": "全会话复盘 K08；通用原理"
+      },
+      "depends_on": []
+    },
+    {
+      "key": "mc-a72685e9c1eb7ad97aed8c54",
+      "rank": 61,
+      "assessment": "recall",
+      "domain": "vllm-prefix-cache",
+      "fact_scope": {
+        "commit": "568afb3a13806beb53bb2e6bd518269357b237c0",
+        "kind": "snapshot",
+        "product": "vllm",
+        "version": "v0.26.0"
+      },
+      "recall_target": "解释零引用缓存块与空闲队列的重叠",
+      "layer": "atomic",
+      "quality": "A",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 5,
+      "template_id": "technical-qa",
+      "source_ids": [
+        "full-session-structured"
+      ],
+      "content_summary": "A 级理由：防止把 free queue 理解成全无缓存数据，破坏重命中与淘汰复用。",
+      "fields": {
+        "问题": "vLLM v0.26.0 中，零引用的前缀缓存块为何还能留在 free queue？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "零引用表示当前可再分配，不表示其中没有有效缓存数据。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "可被前缀命中后重新引用；也可先淘汰旧缓存标识，再供其他内容使用。"
+                }
+              ],
+              "label": "两条去向"
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "限定普通块，排除特殊保留块与尚有在途访问的情形。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "有数据也可以可分配",
+        "来源": "全会话复盘 K12；vLLM v0.26.0"
+      },
+      "depends_on": []
+    },
+    {
+      "key": "mc-0ab4415e85e63ef091d12815",
+      "rank": 62,
+      "assessment": "recall",
+      "domain": "vllm-prefix-cache",
+      "fact_scope": {
+        "commit": "568afb3a13806beb53bb2e6bd518269357b237c0",
+        "kind": "snapshot",
+        "product": "vllm",
+        "version": "v0.26.0"
+      },
+      "recall_target": "区分缓存查询命中与正式取得引用",
+      "layer": "atomic",
+      "quality": "A",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 5,
+      "template_id": "technical-qa",
+      "source_ids": [
+        "full-session-structured"
+      ],
+      "content_summary": "A 级理由：防止把查到前缀候选当成已经持有引用，漏掉容量检查与正式保护阶段。",
+      "fields": {
+        "问题": "vLLM v0.26.0 中，查询前缀命中与正式建立引用有什么区别？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "查询只取得候选；通过容量检查后，正式复用才建立引用。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "先保护命中块，再分配新块。"
+                }
+              ],
+              "label": "成功路径"
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "容量检查失败时可能尚未增加引用，不能把“查询命中”与“已占用”混称。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "先查候选，再准入引用",
+        "来源": "全会话复盘 K13；vLLM v0.26.0"
+      },
+      "depends_on": []
+    },
+    {
+      "key": "mc-0178da19052b31ed9413b152",
+      "rank": 63,
+      "assessment": "recall",
+      "domain": "kv-memory-accounting",
+      "fact_scope": {
+        "kind": "evergreen"
+      },
+      "recall_target": "判断空闲块耗尽后尾槽可用性",
+      "layer": "atomic",
+      "quality": "B",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 3,
+      "template_id": "technical-qa",
+      "source_ids": [
+        "full-session-structured"
+      ],
+      "content_summary": "B 级选材依据：按新增块需求判断请求可否继续，避免仅由空闲块数作过粗决策。",
+      "fields": {
+        "问题": "free queue 为空时，哪些 decode 步骤仍可能继续？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "末块仍有可用槽位、因而本步不需要新块的请求，仍可能继续。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "B=16：已有 47 个 KV tokens、占 3 块，再处理 1 token 无需新块；32 tokens、占 2 块则需新块。"
+                }
+              ],
+              "label": "例子"
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "这只判断 KV 容量，其他调度条件仍须满足。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "看新增块需求",
+        "来源": "全会话复盘 K15；通用原理"
+      },
+      "depends_on": []
+    },
+    {
+      "key": "mc-3afc59e30aebf237c71c5ed1",
+      "rank": 64,
+      "assessment": "recall",
+      "domain": "vllm-prefix-cache",
+      "fact_scope": {
+        "commit": "568afb3a13806beb53bb2e6bd518269357b237c0",
+        "kind": "snapshot",
+        "product": "vllm",
+        "version": "v0.26.0"
+      },
+      "recall_target": "解释前缀hash包含父块身份的原因",
+      "layer": "atomic",
+      "quality": "A",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 5,
+      "template_id": "technical-qa",
+      "source_ids": [
+        "full-session-structured"
+      ],
+      "content_summary": "A 级理由：防止仅按当前块 token 复用不同父上下文下的 KV。",
+      "fields": {
+        "问题": "vLLM v0.26.0 中，前缀缓存中，两条请求当前块的 token 完全相同、但前面的上下文不同。决定能否复用时，块身份还要检查什么，为什么？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "不能只凭当前块 token 判断；链式 hash 还包含父块身份及额外键。"
+                }
+              ]
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "上下文差异可影响整套模型 KV；不声称每层 K/V 都必然依赖前文。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "当前块还依赖前缀身份",
+        "来源": "全会话复盘 K09；vLLM v0.26.0"
+      },
+      "depends_on": []
+    },
+    {
+      "key": "mc-8f0f7a7e25dc774f917af791",
+      "rank": 65,
+      "assessment": "recall",
+      "domain": "vllm-prefix-cache",
+      "fact_scope": {
+        "commit": "568afb3a13806beb53bb2e6bd518269357b237c0",
+        "kind": "snapshot",
+        "product": "vllm",
+        "version": "v0.26.0"
+      },
+      "recall_target": "区分缓存salt隔离与kv数值差异",
+      "layer": "atomic",
+      "quality": "B",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 3,
+      "template_id": "technical-qa",
+      "source_ids": [
+        "full-session-structured"
+      ],
+      "content_summary": "B 级选材依据：区分缓存共享策略与 KV 数值关系，支持多租户复用边界说明。",
+      "fields": {
+        "问题": "vLLM v0.26.0 中，两个请求的 KV 数值可能相同，但 cache_salt 不同。应怎样解释 salt 对复用决策与数值计算各自的作用？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "限定允许共享的范围，不是判断 KV 数值是否相同。"
+                }
+              ]
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "salt 不同即不跨域复用，即使 KV 数值可能相同。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "策略边界不是数值判据",
+        "来源": "全会话复盘 K09、K10；vLLM v0.26.0"
+      },
+      "depends_on": []
+    },
+    {
+      "key": "mc-2d44e22b6d9485325f8972b5",
+      "rank": 66,
+      "assessment": "recall",
+      "domain": "prefix-cache-security",
+      "fact_scope": {
+        "kind": "evergreen"
+      },
+      "recall_target": "解释前缀缓存命中的时间侧信道风险",
+      "layer": "atomic",
+      "quality": "B",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 3,
+      "template_id": "technical-qa",
+      "source_ids": [
+        "full-session-structured"
+      ],
+      "content_summary": "B 级选材依据：理解缓存延迟侧信道的观测对象，并避免把共享隔离当作完整安全机制。",
+      "fields": {
+        "问题": "前缀缓存命中如何暴露跨租户信息？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "命中带来的延迟差异可能暴露某段前缀是否已在缓存的统计线索。"
+                }
+              ]
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "隔离缓存共享不等于 KV 加密、身份认证或完整显存隔离。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "缓存命中也可被观察",
+        "来源": "全会话复盘 K10；通用原理"
+      },
+      "depends_on": []
+    },
+    {
+      "key": "mc-80ae6e0f740e097b9da41829",
+      "rank": 67,
+      "assessment": "recall",
+      "domain": "prefix-cache-security",
+      "fact_scope": {
+        "kind": "evergreen"
+      },
+      "recall_target": "解释可信范围内salt保持稳定的作用",
+      "layer": "atomic",
+      "quality": "B",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 3,
+      "template_id": "technical-qa",
+      "source_ids": [
+        "full-session-structured"
+      ],
+      "content_summary": "B 级选材依据：解释共享范围内 salt 稳定与跨请求命中率的关系。",
+      "fields": {
+        "问题": "每请求随机更换 salt 对前缀复用有什么影响？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "会减少或消除这些请求之间的前缀缓存复用机会。"
+                }
+              ]
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "通常在允许共享的信任范围内保持稳定；不同范围隔离。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "稳定域内复用",
+        "来源": "全会话复盘 K11；通用原理"
+      },
+      "depends_on": []
+    },
+    {
+      "key": "mc-41e581d77f242691d8a14b70",
+      "rank": 68,
+      "assessment": "recall",
+      "domain": "paged-kv-cache",
+      "fact_scope": {
+        "kind": "evergreen"
+      },
+      "recall_target": "区分分页访问与跨请求前缀复用",
+      "layer": "atomic",
+      "quality": "B",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 3,
+      "template_id": "technical-qa",
+      "source_ids": [
+        "full-session-structured"
+      ],
+      "content_summary": "B 级选材依据：区分分页访问和前缀复用两项功能，避免将存储方式当成自动跳过计算。",
+      "fields": {
+        "问题": "Prefix Cache 与分页 KV 访问是什么关系？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "分页 KV 访问负责存储与寻址；Prefix Cache 负责复用已计算的前缀。"
+                }
+              ]
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "关闭前缀复用不会关闭分页访问；只启用分页也不会自动跳过重复 prefill。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "存储访问与计算复用",
+        "来源": "全会话复盘 K16；通用原理"
+      },
+      "depends_on": []
+    },
+    {
+      "key": "mc-d72838bb6579b9ace4af9cd9",
+      "rank": 69,
+      "assessment": "recall",
+      "domain": "kv-memory-accounting",
+      "fact_scope": {
+        "kind": "evergreen"
+      },
+      "recall_target": "区分活跃块占用与预分配池大小",
+      "layer": "atomic",
+      "quality": "B",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 3,
+      "template_id": "technical-qa",
+      "source_ids": [
+        "full-session-structured"
+      ],
+      "content_summary": "B 级选材依据：区分活跃占用与预分配池大小，支持解释共享后的显存统计。",
+      "fields": {
+        "问题": "两个请求开始共享已经计算的前缀，池内活跃块占用下降。应怎样解释这一变化与预分配物理 KV tensor 大小之间的关系？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "省下的池内容量可以留给后续请求，预分配 tensor 仍保持。"
+                }
+              ]
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "pool 按确定预算建立，不保证容纳所有未来请求。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "节省池内占用",
+        "来源": "全会话复盘 K17；通用原理"
+      },
+      "depends_on": []
+    },
+    {
+      "key": "mc-462e2917ea13b46bfbaa040e",
+      "rank": 70,
+      "assessment": "recall",
+      "domain": "hardware-layout",
+      "fact_scope": {
+        "kind": "evergreen"
+      },
+      "recall_target": "区分搬运字节粒度与逻辑token块大小",
+      "layer": "atomic",
+      "quality": "B",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 3,
+      "template_id": "technical-qa",
+      "source_ids": [
+        "full-session-structured"
+      ],
+      "content_summary": "B 级选材依据：以单位和布局契约判断搬运粒度与 token 分块，避免把 512 B 直接换成 256 token。",
+      "fields": {
+        "问题": "某实现的搬运粒度是 512 B，逻辑 KV block size 以 token 为单位。要判断能否采用某个 token 块大小，还需要哪些布局与计算信息，为什么不能直接换算成 256 token？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "不能；字节粒度与 token 分块单位不同，还要结合 dtype、head 维度、布局和 kernel 设计。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "Bytes 与 Token 不直接等价",
+        "来源": "全会话复盘 K03、K04、K06；通用原理"
+      },
+      "depends_on": []
+    },
+    {
+      "key": "mc-73a6eeefde047dc3f11e9f7d",
+      "rank": 71,
+      "assessment": "recall",
+      "domain": "vllm-output-processing",
+      "fact_scope": {
+        "commit": "568afb3a13806beb53bb2e6bd518269357b237c0",
+        "kind": "snapshot",
+        "product": "vllm",
+        "version": "v0.26.0"
+      },
+      "recall_target": "区分增量输出与累计输出的交付范围",
+      "layer": "atomic",
+      "quality": "B",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 3,
+      "template_id": "technical-qa",
+      "source_ids": [
+        "full-session-structured"
+      ],
+      "content_summary": "B 级选材依据：比较增量与累计交付范围，避免假定一次 token 必有一次 SSE。",
+      "fields": {
+        "问题": "vLLM v0.26.0 中，DELTA 与 CUMULATIVE 的交付内容有何区别？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "DELTA 只包含新增生成内容；CUMULATIVE 包含截至当前的累计生成内容。"
+                }
+              ]
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "结果可能聚合，不保证每 token 一次交付或 SSE。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "新增片段与累计快照",
+        "来源": "全会话复盘 R03；vLLM v0.26.0"
+      },
+      "depends_on": []
+    },
+    {
+      "key": "mc-b13b06cdaf66c20fbc1b730e",
+      "rank": 72,
+      "assessment": "recall",
+      "domain": "vllm-output-processing",
+      "fact_scope": {
+        "commit": "568afb3a13806beb53bb2e6bd518269357b237c0",
+        "kind": "snapshot",
+        "product": "vllm",
+        "version": "v0.26.0"
+      },
+      "recall_target": "解释asyncllm生成器的输出消费职责",
+      "layer": "atomic",
+      "quality": "B",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 3,
+      "template_id": "technical-qa",
+      "source_ids": [
+        "full-session-structured"
+      ],
+      "content_summary": "B 级选材依据：把异步输出生成器与模型执行、采样职责分开，支持完整请求讲述。",
+      "fields": {
+        "问题": "vLLM v0.26.0 中，AsyncLLM.generate 作为异步生成器，对一次模型请求产出的结果具体做什么，和模型 forward／Sampler 的工作如何区分？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "它从 Collector 消费 RequestOutput，再向调用方 yield。"
+                }
+              ]
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "这是输出消费的异步生成器，不是模型 forward 或 Sampler。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "消费输出的生成器",
+        "来源": "全会话复盘 R06；vLLM v0.26.0"
+      },
+      "depends_on": []
+    },
+    {
+      "key": "mc-ac522a78ed1ae6861706a904",
+      "rank": 73,
+      "assessment": "recall",
+      "domain": "vllm-device-state",
+      "fact_scope": {
+        "commit": "568afb3a13806beb53bb2e6bd518269357b237c0",
+        "kind": "snapshot",
+        "product": "vllm",
+        "version": "v0.26.0"
+      },
+      "recall_target": "识别runner收到结束id后清理的对象",
+      "layer": "atomic",
+      "quality": "A",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 5,
+      "template_id": "technical-qa",
+      "source_ids": [
+        "full-session-structured"
+      ],
+      "content_summary": "A 级理由：防止请求结束时误清服务级权重、设备或物理 KV pool，破坏其他请求。",
+      "fields": {
+        "问题": "vLLM v0.26.0 的 MRV1 路径中，finished_req_ids 触发 Runner 清理哪类状态？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "移除结束请求的本地缓存状态与 InputBatch 成员，维护后续请求映射。"
+                }
+              ]
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "保留其他请求、模型权重、设备环境与物理 KV pool。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "请求级状态而非服务级资源",
+        "来源": "全会话复盘 R07；vLLM v0.26.0"
+      },
+      "depends_on": []
+    },
+    {
+      "key": "mc-c9e64adaf431ebe5c519d83f",
+      "rank": 74,
+      "assessment": "recall",
+      "domain": "vllm-request-lifecycle",
+      "fact_scope": {
+        "commit": "568afb3a13806beb53bb2e6bd518269357b237c0",
+        "kind": "snapshot",
+        "product": "vllm",
+        "version": "v0.26.0"
+      },
+      "recall_target": "区分最终输出交付与runner清理的依赖",
+      "layer": "atomic",
+      "quality": "B",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 3,
+      "template_id": "technical-qa",
+      "source_ids": [
+        "full-session-structured"
+      ],
+      "content_summary": "B 级选材依据：解释最终输出与 Runner 清理的依赖边界，仍保留在途访问约束。",
+      "fields": {
+        "问题": "vLLM v0.26.0 的 MRV1 路径中，请求已结束，需要向调用方交付最终结果，同时 Runner 还会处理结束通知。怎样判断这两条收尾路径的先后依赖，并保留 KV 安全回收条件？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "两条后续路径没有这个互等要求。"
+                }
+              ]
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "不是允许永不清理；KV 回收仍须遵守在途访问的安全条件。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "无互等不等于无清理",
+        "来源": "全会话复盘 R08；vLLM v0.26.0"
+      },
+      "depends_on": []
+    },
+    {
+      "key": "mc-3330df6c801eb8afb0c4a4d1",
+      "rank": 75,
+      "assessment": "recall",
+      "domain": "vllm-device-state",
+      "fact_scope": {
+        "commit": "568afb3a13806beb53bb2e6bd518269357b237c0",
+        "kind": "snapshot",
+        "product": "vllm",
+        "version": "v0.26.0"
+      },
+      "recall_target": "识别零计算调度仍可驱动状态清理",
+      "layer": "atomic",
+      "quality": "B",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 3,
+      "template_id": "technical-qa",
+      "source_ids": [
+        "full-session-structured"
+      ],
+      "content_summary": "B 级选材依据：解释无计算步骤仍能处理结束通知，避免误判清理必须伴随 forward。",
+      "fields": {
+        "问题": "vLLM v0.26.0 中，MRV1 收到只含结束通知、没有待计算 token 的调度结果时，怎样完成请求状态清理并决定是否执行 forward？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "先更新请求状态和处理结束通知，再判断是否跳过 forward。"
+                }
+              ]
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "所学 MRV1 路径允许在没有待计算 token 时完成请求级清理。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "先更新状态，再跳过计算",
+        "来源": "全会话复盘 R09；vLLM v0.26.0"
+      },
+      "depends_on": []
+    }
+  ]
+}

@@ -1,0 +1,747 @@
+{
+  "schema": "memo-cards.request/v1",
+  "output_collection": "inference-cards",
+  "target": "推理框架/cards/w1-cpp-linux-baseline.md",
+  "selection": "complete",
+  "sources": [
+    {
+      "collection": "inference-study-logs",
+      "id": "cpp-log",
+      "path": "推理框架/log/2026-09-14-cpp-linux-baseline.md",
+      "sha256": "3ab696abc80543d3f35196dfd0c1c54722b6c4626200ccf66e9a3ebb29630afe",
+      "summary": "C++／Linux 概念、真实纠错与证据边界；未实践内容不制卡。"
+    }
+  ],
+  "cards": [
+    {
+      "key": "borrow-after-owner-move",
+      "rank": 1,
+      "assessment": "discrimination",
+      "domain": "cpp-object-lifetime",
+      "fact_scope": {
+        "kind": "snapshot",
+        "product": "c++",
+        "version": "c++17"
+      },
+      "recall_target": "判断所有权转移前后裸借用指针的有效性",
+      "layer": "atomic",
+      "quality": "A",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 5,
+      "template_id": "technical-qa",
+      "source_ids": [
+        "cpp-log"
+      ],
+      "content_summary": "A理由：防止把管理权转移误当对象销毁，从而误判借用指针或遗漏真正的悬空访问。",
+      "fields": {
+        "问题": "unique_ptr 的所有权转移后，原来的裸借用指针必然失效吗？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "不必然。借用是否有效取决于所指对象是否仍然存活。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "原 owner 移动给新 owner，只转移管理权，不销毁被转移的对象。"
+                }
+              ],
+              "label": "转移"
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "get() 不延长对象生命；新 owner 释放对象后，旧借用才悬空。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "跟踪资源，而非原 owner",
+        "来源": "C++／Linux 基线结构化记录"
+      },
+      "depends_on": []
+    },
+    {
+      "key": "reset-managed-object",
+      "rank": 2,
+      "assessment": "recall",
+      "domain": "cpp-object-lifetime",
+      "fact_scope": {
+        "kind": "snapshot",
+        "product": "c++",
+        "version": "c++17"
+      },
+      "recall_target": "区分reset释放受管对象与智能指针自身生命周期",
+      "layer": "atomic",
+      "quality": "A",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 5,
+      "template_id": "technical-qa",
+      "source_ids": [
+        "cpp-log"
+      ],
+      "content_summary": "A理由：防止混淆受管对象销毁与智能指针变量存续，正确判断 reset 后的资源访问。",
+      "fields": {
+        "问题": "调用 unique_ptr::reset() 后，谁的生命周期结束？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "默认删除器场景下，若持有对象，结束的是受管对象的生命周期；unique_ptr 变量自身仍然存在。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "无参数 reset() 后不再管理原对象，后续仍可赋予新资源。"
+                }
+              ],
+              "label": "状态"
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "原先已经为空时，没有对象需要销毁。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "受管对象 ≠ 管理变量",
+        "来源": "C++／Linux 基线结构化记录"
+      },
+      "depends_on": []
+    },
+    {
+      "key": "nonvirtual-base-delete",
+      "rank": 3,
+      "assessment": "discrimination",
+      "domain": "cpp-polymorphism",
+      "fact_scope": {
+        "kind": "snapshot",
+        "product": "c++",
+        "version": "c++17"
+      },
+      "recall_target": "识别通过非虚析构基类指针删除派生对象的未定义行为",
+      "layer": "atomic",
+      "quality": "A",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 5,
+      "template_id": "technical-qa",
+      "source_ids": [
+        "cpp-log"
+      ],
+      "content_summary": "A理由：防止将无虚析构的多态删除当作可预测路径，避免依赖未定义行为设计资源清理。",
+      "fields": {
+        "问题": "C++17 中，通过无虚析构的 Base* 删除 Derived 对象，能预测析构顺序吗？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "不能；在普通单对象 delete 和默认删除器的场景下，这是未定义行为。"
+                }
+              ]
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "不能承诺只析构基类、必然泄漏，或因为派生类没有资源成员就安全。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "先判 UB，不编造执行轨迹",
+        "来源": "C++／Linux 基线结构化记录"
+      },
+      "depends_on": []
+    },
+    {
+      "key": "member-call-resolution",
+      "rank": 4,
+      "assessment": "mechanism",
+      "domain": "cpp-polymorphism",
+      "fact_scope": {
+        "kind": "snapshot",
+        "product": "c++",
+        "version": "c++17"
+      },
+      "recall_target": "按名字查找重载选择虚派发解释成员调用",
+      "layer": "mechanism",
+      "quality": "A",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 5,
+      "template_id": "technical-qa",
+      "source_ids": [
+        "cpp-log"
+      ],
+      "content_summary": "A理由：回答成员调用中静态选择与动态派发如何组合的面试题，避免把虚派发误当重新选择重载。",
+      "fields": {
+        "问题": "成员调用怎样经过名字查找、重载选择和虚派发？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "先确定可见候选，再选重载，最后按条件进行虚派发。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "名字查找和重载选择依赖静态类型及当前可见声明。"
+                }
+              ],
+              "label": "查找"
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "选中虚函数且未显式限定调用时，再按对象动态类型选择覆盖实现。"
+                }
+              ],
+              "label": "派发"
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "虚派发不会重新选择重载，也不会自动找回被隐藏的基类重载。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "查找 → 重载 → 虚派发",
+        "来源": "C++／Linux 基线结构化记录"
+      },
+      "depends_on": []
+    },
+    {
+      "key": "local-static-storage",
+      "rank": 5,
+      "assessment": "discrimination",
+      "domain": "cpp-object-lifetime",
+      "fact_scope": {
+        "kind": "snapshot",
+        "product": "c++",
+        "version": "c++17"
+      },
+      "recall_target": "区分局部作用域与静态存储期",
+      "layer": "atomic",
+      "quality": "B",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 3,
+      "template_id": "technical-qa",
+      "source_ids": [
+        "cpp-log"
+      ],
+      "content_summary": "B理由：校准局部名字与静态存储期的区别；基础辨析有迁移价值，但不以记忆 Section 名称作为核心能力。",
+      "fields": {
+        "问题": "函数内 static int local=5 的作用域和存储期分别是什么？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "具有块作用域和静态存储期。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "决定名字在哪里可见。"
+                }
+              ],
+              "label": "作用域"
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "决定对应存储何时存在，不随每次函数返回结束。"
+                }
+              ],
+              "label": "存储期"
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "典型 ELF 中非零初始化对象常放在 .data，但 C++ 语言不规定具体 Section。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "名字可见性 ≠ 存储存续时间",
+        "来源": "C++／Linux 基线结构化记录"
+      },
+      "depends_on": []
+    },
+    {
+      "key": "link-exact-overload",
+      "rank": 6,
+      "assessment": "mechanism",
+      "domain": "cpp-linkage",
+      "fact_scope": {
+        "kind": "snapshot",
+        "product": "c++",
+        "version": "c++17"
+      },
+      "recall_target": "解释链接时不会重新选择函数重载",
+      "layer": "mechanism",
+      "quality": "A",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 5,
+      "template_id": "technical-qa",
+      "source_ids": [
+        "cpp-log"
+      ],
+      "content_summary": "A理由：诊断函数签名不匹配造成的链接错误，避免误以为链接器会重新重载或转换参数。",
+      "fields": {
+        "问题": "main.o 需要 add(int,int)，库只定义 add(double,double)，链接器会转换参数吗？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "不会；编译阶段已选定重载，链接阶段需要解析那个精确符号。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "另一个重载是另一个函数；重复声明也不能提供所需定义。"
+                }
+              ],
+              "label": "边界"
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "把定义放进同一个源文件可省去单独的目标文件，但生成程序仍需链接。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "编译选函数，链接找定义",
+        "来源": "C++／Linux 基线结构化记录"
+      },
+      "depends_on": []
+    },
+    {
+      "key": "elf-section-segment",
+      "rank": 7,
+      "assessment": "discrimination",
+      "domain": "elf-linking-loading",
+      "fact_scope": {
+        "kind": "evergreen"
+      },
+      "recall_target": "区分elf section与segment的主要职责",
+      "layer": "atomic",
+      "quality": "B",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 3,
+      "template_id": "technical-qa",
+      "source_ids": [
+        "cpp-log"
+      ],
+      "content_summary": "B理由：区分 ELF 文件组织与运行时装载视角，为选择 readelf 观察对象提供基础。",
+      "fields": {
+        "问题": "ELF 的 Section 和 Segment 分别服务于什么？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "Section 组织链接与分析内容；Segment 描述运行时装载的内存区域。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "一个可装载 Segment 可以覆盖多个 Section，二者不要求一一对应。"
+                }
+              ],
+              "label": "映射"
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "判断装载范围主要看程序头中的 PT_LOAD，不能用 Section 数量推断映射数量。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "Section 看组织，Segment 看装载",
+        "来源": "C++／Linux 基线结构化记录"
+      },
+      "depends_on": []
+    },
+    {
+      "key": "load-zero-tail",
+      "rank": 8,
+      "assessment": "recall",
+      "domain": "elf-linking-loading",
+      "fact_scope": {
+        "kind": "evergreen"
+      },
+      "recall_target": "由pt_load的文件大小和内存大小确定零初始化尾部",
+      "layer": "atomic",
+      "quality": "B",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 3,
+      "template_id": "technical-qa",
+      "source_ids": [
+        "cpp-log"
+      ],
+      "content_summary": "B理由：理解零初始化存储为何不需要等量文件字节；强化文件与内存口径，而不死记算例数字。",
+      "fields": {
+        "问题": "PT_LOAD 的 p_memsz 大于 p_filesz，多出的内容来自哪里？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "文件提供前 p_filesz 字节的初始内容，内存中其后的部分零初始化直到 p_memsz。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "p_filesz 为 4 KiB、p_memsz 为 12 KiB 时，零初始化尾部为 8 KiB。"
+                }
+              ],
+              "label": "例子"
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "文件无需保存同量零字节；元数据和对齐仍可能影响文件尺寸。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "零尾部 = p_memsz − p_filesz",
+        "来源": "C++／Linux 基线结构化记录"
+      },
+      "depends_on": []
+    },
+    {
+      "key": "build-versus-runtime-library-search",
+      "rank": 9,
+      "assessment": "discrimination",
+      "domain": "linux-dynamic-linking",
+      "fact_scope": {
+        "kind": "evergreen"
+      },
+      "recall_target": "区分构建期库搜索与运行时库搜索",
+      "layer": "atomic",
+      "quality": "A",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 5,
+      "template_id": "technical-qa",
+      "source_ids": [
+        "cpp-log"
+      ],
+      "content_summary": "A理由：防止把构建期找到库误当部署时必能加载，正确定位运行时库搜索故障。",
+      "fields": {
+        "问题": "构建时用 -L 找到共享库，能保证运行时也找到吗？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "不能；-L 影响构建时的链接搜索，运行时加载器使用自己的规则。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "运行时需要检查依赖名称、实际启动环境及对应的库搜索配置。"
+                }
+              ],
+              "label": "定位"
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "构建成功与运行时缺库并不矛盾，也不能认为系统完全没有默认搜索规则。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "构建搜索与装载搜索分开",
+        "来源": "C++／Linux 基线结构化记录"
+      },
+      "depends_on": []
+    },
+    {
+      "key": "process-maps-versus-ldd",
+      "rank": 10,
+      "assessment": "discrimination",
+      "domain": "linux-dynamic-linking",
+      "fact_scope": {
+        "kind": "evergreen"
+      },
+      "recall_target": "使用目标进程映射证据判断已加载共享库",
+      "layer": "atomic",
+      "quality": "A",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 5,
+      "template_id": "technical-qa",
+      "source_ids": [
+        "cpp-log"
+      ],
+      "content_summary": "A理由：防止用当前终端 ldd 覆盖故障进程的实际映射证据，避免诊断错库。",
+      "fields": {
+        "问题": "当前 ldd 指向 B，故障进程的 maps 指向 A，应据哪个判断该进程？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "依据目标进程对应时刻的 maps，判断它已经映射的库。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "当前终端的解析环境可能与进程启动时不同。"
+                }
+              ],
+              "label": "差异"
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "maps 说明映射了什么，不单独证明某个符号最终绑定到哪个对象。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "已运行进程看自身映射",
+        "来源": "C++／Linux 基线结构化记录"
+      },
+      "depends_on": []
+    },
+    {
+      "key": "undefined-symbol-reference",
+      "rank": 11,
+      "assessment": "discrimination",
+      "domain": "elf-symbols",
+      "fact_scope": {
+        "kind": "evergreen"
+      },
+      "recall_target": "区分und符号引用与可用定义",
+      "layer": "atomic",
+      "quality": "B",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 3,
+      "template_id": "technical-qa",
+      "source_ids": [
+        "cpp-log"
+      ],
+      "content_summary": "B理由：解释动态符号表中的待解析引用，作为后续符号诊断的基础，而不把定义复述列为最高优先级。",
+      "fields": {
+        "问题": "符号表中的 UND 是一个可用的函数定义吗？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "不是；UND 表示该对象引用了需要从别处解析的符号。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "继续核对匹配定义、依赖关系和实际符号解析。"
+                }
+              ],
+              "label": "后续"
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "仅出现 UND 不等于程序必然失败；其他对象可能提供定义。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "UND 是待解析引用",
+        "来源": "C++／Linux 基线结构化记录"
+      },
+      "depends_on": []
+    },
+    {
+      "key": "using-versus-qualified-call",
+      "rank": 12,
+      "domain": "cpp-polymorphism",
+      "recall_target": "区分using引入基类重载与显式限定调用对虚派发的影响",
+      "assessment": "mechanism",
+      "layer": "mechanism",
+      "fact_scope": {
+        "kind": "snapshot",
+        "product": "c++",
+        "version": "c++17"
+      },
+      "quality": "B",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 3,
+      "template_id": "technical-qa",
+      "fields": {
+        "问题": "C++17：Base 有可访问的同名函数重载，其中的虚函数在 Derived 中被覆盖。比较在 Derived 内声明 using Base::f 与通过派生对象调用 obj.Base::f(...)：二者分别怎样影响候选函数集合和这一次虚派发？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "using Base::f 将基类同名重载引入当前候选集合，不关闭虚派发；obj.Base::f(...) 显式限定这次调用到基类版本，绕过这次动态派发。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "label": "查找与选择",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "派生类同名声明可能隐藏基类重载；实参无法匹配派生候选时，编译器不会自动返回基类继续查找。using 可以让基类重载参与选择。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "label": "派发",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "重载选择完成后，若选中的函数是虚函数且调用未显式限定，仍按对象动态类型调用覆盖实现。"
+                }
+              ]
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "显式限定只改变这一次调用；它不取消类之间的 override 关系，也不改变其他未限定调用的派发规则。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "候选集合的引入；单次调用的限定",
+        "来源": "C++／Linux 基线结构化记录：名字隐藏与 using／限定调用；C++17"
+      },
+      "source_ids": [
+        "cpp-log"
+      ],
+      "content_summary": "B理由：解释重载隐藏与虚派发交互，补足框架类层次中选择基类实现与保留多态的取舍。",
+      "depends_on": []
+    }
+  ]
+}

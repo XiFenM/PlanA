@@ -15,14 +15,14 @@
       "id": "lesson",
       "collection": "inference-w2-u3-lesson",
       "path": "课程网页/八周计划/plana-jd-w2-cpp-lifetime.html",
-      "sha256": "a39dc47c4b9c78ad727abf2ced0008625e21ca54ac09847ce79bfd9a2d4f278f",
-      "summary": "用户指定的W2-U3课程网页：节点1–7、导师串讲、已关闭检查题与参考要点；以C++20 N4861及约定内观察为依据。"
+      "sha256": "f066d4701a6a0de779ad7789651c15b91d2ca3785853e844a45b997aeee17944",
+      "summary": "已审阅 2026-11-01 补充后的 W2-U3 课程网页：节点1–8、导师串讲与闭题要点；本轮补足线程关联、析构、detach 及固定 PyTorch ThreadPool 的关闭与完成语义。"
     },
     {
       "id": "evidence",
       "collection": "inference-w2-u2-evidence",
       "path": "计划/八周冲刺进度/历史记录/W2-学习验收记录.md",
-      "sha256": "967946435eda6d31b9f8a5b926eb91ad1d07a00d8a279bed37570f524050352a",
+      "sha256": "445d31cece716ed0a594b32fdbea5cb08d9422d2f0b3d02bdcf0426e1b9055a2",
       "summary": "仅使用W2-U3的开课来源、综合检查、P1约定与Review/ASan/变式证据；不把mastery状态或其他单元内容制卡。"
     }
   ],
@@ -1023,6 +1023,306 @@
         "close-wait-and-drain",
         "join-lock-cycle"
       ]
+    },
+    {
+      "key": "threadpool-stop-versus-drain",
+      "rank": 15,
+      "domain": "cpp-concurrency",
+      "recall_target": "依据固定ThreadPool停止分支区分已领取任务收尾与排队任务排空",
+      "assessment": "mechanism",
+      "layer": "mechanism",
+      "fact_scope": {
+        "kind": "snapshot",
+        "product": "pytorch",
+        "commit": "0bd89deb431509d893177a84cfa4768aa0399809"
+      },
+      "quality": "A",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 5,
+      "template_id": "technical-qa",
+      "fields": {
+        "问题": "PyTorch 0bd89deb4315 的 c10::ThreadPool 只有一个 worker：它已取走任务 A，B、C 仍在 tasks_ 队列中，此后没有新提交。若此时析构线程发布停止，且 A 能结束、join 正常返回，这条关闭路径对 A 与 B、C 分别保证什么？为什么不能只凭 join 推出队列已排空？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "已取走的 A 会沿当前调用和清理路径结束；析构不保证执行仍排队的 B、C，成功 join 只说明 worker 已结束。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "析构在锁内将 running_ 设为 false 并通知，再释放 mutex_ 后 join。"
+                }
+              ],
+              "label": "停止"
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "worker 在取任务前检查停止；已取走的任务在锁外调用与清理后重新检查循环条件，停止不会把它强行打断。"
+                }
+              ],
+              "label": "领取边界"
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "这条路径没有先清空 tasks_ 的要求。若业务要求所有已接受任务都处理，须另外协调停止新提交、等待已有任务完成，再销毁池。"
+                }
+              ],
+              "label": "排空条件"
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "结论来自固定源码的正常 join 路径，未构建或运行线程池；任务内部发起的外部异步操作仍须其自身完成依据。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "worker 退出不等于队列排空",
+        "来源": "W2-U3 课程网页·PyTorch 0bd89deb4315 ThreadPool 关闭路径"
+      },
+      "source_ids": [
+        "lesson"
+      ],
+      "content_summary": "A 级理由：防止把正常 join 或析构当作已接受任务全部执行的保证，丢失仍在队列中的工作。",
+      "depends_on": []
+    },
+    {
+      "key": "threadpool-complete-versus-success",
+      "rank": 16,
+      "domain": "cpp-concurrency",
+      "recall_target": "区分ThreadPool完成条件与任务业务成功及外部异步完成",
+      "assessment": "discrimination",
+      "layer": "atomic",
+      "fact_scope": {
+        "kind": "snapshot",
+        "product": "pytorch",
+        "commit": "0bd89deb431509d893177a84cfa4768aa0399809"
+      },
+      "quality": "A",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 5,
+      "template_id": "technical-qa",
+      "fields": {
+        "问题": "PyTorch 0bd89deb4315 的 c10::ThreadPool 中，调用方已保证不再出现新提交，并调用 waitWorkComplete() 等到返回。complete_ 对队列与 worker 状态证明了什么？任务抛出被捕获的异常，或任务只向设备提交工作后返回时，应怎样解释这项完成？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "它表明池内队列为空、全部 worker 空闲；不证明每个任务业务成功，也不替任务内部提交的外部异步工作确认完成。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "worker 收尾后检查 tasks_.empty() && available_==total_，满足时设置 complete_；waitWorkComplete 等待这项状态。"
+                }
+              ],
+              "label": "池内条件"
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "任务异常可被记录后继续收尾，因而函数调用已经结束与正确产出业务结果是两件事。"
+                }
+              ],
+              "label": "业务结果"
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "若函数只是入队设备任务后返回，线程池仍只观察到函数返回；外部读取或计算的完成要使用相应 API。"
+                }
+              ],
+              "label": "外部执行"
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "题设先停止新提交，避免把一次空闲观察误当永久关闭；源码分析没有替代运行验证。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "队列空且 worker 闲；成功与外部完成另有依据",
+        "来源": "W2-U3 课程网页·PyTorch 0bd89deb4315 waitWorkComplete 与任务收尾"
+      },
+      "source_ids": [
+        "lesson"
+      ],
+      "content_summary": "A 级理由：防止将线程池空闲当作业务成功或设备任务完成，过早报告成功或释放外部仍在使用的资源。",
+      "depends_on": []
+    },
+    {
+      "key": "thread-joinable-destruction",
+      "rank": 17,
+      "domain": "cpp-concurrency",
+      "recall_target": "区分stdthread的关联状态与线程函数结束并据此安排析构",
+      "assessment": "mechanism",
+      "layer": "mechanism",
+      "fact_scope": {
+        "kind": "snapshot",
+        "product": "c++ standard library",
+        "version": "C++20 / N4861"
+      },
+      "quality": "A",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 5,
+      "template_id": "technical-qa",
+      "fields": {
+        "问题": "C++20（N4861）中，一个 std::thread 所启动的函数已经返回，但 thread 对象还没有调用 join 或 detach。此时 joinable() 表达什么，直接销毁该 thread 对象会怎样，为什么仅知道函数返回仍不足够？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "joinable() 判断 thread 对象是否仍关联线程；函数返回不自动解除关联。该对象仍 joinable 时析构会调用 std::terminate()。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "线程函数是否执行完，与 thread 对象的关联是否已处理，是两个不同状态。"
+                }
+              ],
+              "label": "两个状态"
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "成功 join 等待线程完成并解除关联；detach 也解除关联，但不提供等待完成的保证。"
+                }
+              ],
+              "label": "收尾"
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "这里只说明 std::thread；不能把其他线程封装可能提供的自动等待行为移用到它。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "函数结束与 thread 关联分别处理",
+        "来源": "W2-U3 课程网页·节点7，N4861 thread 析构与 joinable"
+      },
+      "source_ids": [
+        "lesson"
+      ],
+      "content_summary": "A 级理由：防止线程函数已经返回后仍遗漏 join/detach，在 std::thread 析构时意外终止程序。",
+      "depends_on": []
+    },
+    {
+      "key": "detach-resource-lifetime",
+      "rank": 18,
+      "domain": "cpp-concurrency",
+      "recall_target": "解释detach解除线程关联但不覆盖共享资源最后访问",
+      "assessment": "mechanism",
+      "layer": "mechanism",
+      "fact_scope": {
+        "kind": "snapshot",
+        "product": "c++ standard library",
+        "version": "C++20 / N4861"
+      },
+      "quality": "A",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 5,
+      "template_id": "technical-qa",
+      "fields": {
+        "问题": "C++20（N4861）主线程拥有缓冲区 B 和同步对象，后台线程借用它们；后台读取尚未完成。若主线程对 std::thread 调用 detach 后准备离开这些对象的作用域，必须另外建立什么保证，才能安全结束资源生命周期？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "必须保证这些资源继续存活，直到后台线程的最后一次实际访问结束；detach 本身既不等待，也不转交 B 或同步对象的所有权。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "detach 只解除 std::thread 对象与执行线程的关联，后台执行仍可继续。"
+                }
+              ],
+              "label": "关联"
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "要么由足够长寿命的持有人继续管理共享对象，并取得完成依据；要么将真实所有权交给能够覆盖后台访问的对象。"
+                }
+              ],
+              "label": "资源安排"
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "保存裸指针或引用不构成所有权转交；处理 thread 句柄不等于处理被借用数据的生命周期。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "线程关联已解除；共享对象仍要覆盖实际访问",
+        "来源": "W2-U3 课程网页·节点7，detach 与共享资源析构"
+      },
+      "source_ids": [
+        "lesson"
+      ],
+      "content_summary": "A 级理由：防止用 detach 消除 thread 关联后立即销毁仍被后台借用的资源，造成释放后访问。",
+      "depends_on": []
     }
   ]
 }

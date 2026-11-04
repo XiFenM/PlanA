@@ -5,8 +5,8 @@
     "id": "markji",
     "profile": "plana-markji"
   },
-  "artifact_set_sha256": "3c407e8be79f2ce9d0ef09a1f5485525f24397daf1bbc86471d4abb7a3d57df7",
-  "candidate_sha256": "cac7268111ba02cdba30480306bc03ca22edffd2504695a68d2f050ba900531a",
+  "artifact_set_sha256": "185fc51845691838bea25a0fe8f431d782b2ca0dc0cfc867a83d7ef675bbd678",
+  "candidate_sha256": "46067d8be09cb4f84f04d1f324fb7729f8112e1a2ad90e43329dde8519b094fe",
   "cards": [
     {
       "content_sha256": "87c311f0365befcc4cdcef77a10188ebe9e26823c38a59755387bea941eaf187",
@@ -579,8 +579,8 @@
       "template_version": "1.1.0"
     },
     {
-      "content_sha256": "88e7b984787488bbb56ca2ed0208f1a0595a5128899a2ba80510545ef33cf0b7",
-      "content_summary": "B理由：准确区分分段kernel和网卡推进。材料：讲义LL步骤；ChangeCard§3、§5。源码 d4f41e4：csrc/legacy/buffer.hpp:1507-1513、1577-1592；csrc/kernels/legacy/internode_ll.cu:263-271、323-338、379-407。",
+      "content_sha256": "509ba81be753ca5d8f2c40995145055c55c6816bafe4090424c10cd2c38114e3",
+      "content_summary": "B理由：准确区分分段kernel和网卡推进。材料：讲义LL步骤；ChangeCard§3、§5。源码 d4f41e4：csrc/legacy/buffer.hpp:1507-1513、1577-1592；csrc/kernels/legacy/internode_ll.cu:263-271、323-338、379-407。；2026-11-03复核：主目标保留为分段提交与完成协议下的重叠窗口；零行信号编码标为延伸，不要求与窗口边界同时独立回忆。",
       "dependency_content_sha256": {},
       "depends_on": [],
       "fact_status": "verified",
@@ -639,8 +639,8 @@
       "template_version": "1.1.0"
     },
     {
-      "content_sha256": "e4303b2dc4cc060f579b9ec9a45fbcb362e5d8ba96475b614636275073e4d31a",
-      "content_summary": "A理由：防止固定容量输出的无效尾部污染真实路由和结果。材料：讲义V2步骤及计数表；验收记录节点7。源码 d4f41e4：deep_ep/buffers/elastic.py:758-764；csrc/elastic/buffer.hpp:977-1050；deep_ep/include/deep_ep/impls/dispatch_copy_epilogue.cuh:57-80、102-116。",
+      "content_sha256": "ba08ab8caa263057a4a8afba0243c539225820c8c59f352d04e07a0e1efee1f2",
+      "content_summary": "A理由：防止固定容量输出的无效尾部污染真实路由和结果。材料：讲义V2步骤及计数表；验收记录节点7。源码 d4f41e4：deep_ep/buffers/elastic.py:758-764；csrc/elastic/buffer.hpp:977-1050；deep_ep/include/deep_ep/impls/dispatch_copy_epilogue.cuh:57-80、102-116。；2026-11-03复核：沿原输出容量目标补明最坏路由与平均实收不同，避免把满批输入等同于上界全部有效；来自既有节点检查与已固定分配分支，不加入性能推断。",
       "dependency_content_sha256": {},
       "depends_on": [],
       "fact_status": "verified",
@@ -759,8 +759,8 @@
       "template_version": "1.1.0"
     },
     {
-      "content_sha256": "3d3d5afb6b346e7d02e608ab87610c2aed236b0112556c65b7c0f314e34e4268",
-      "content_summary": "A理由：防止把未完成载荷或错误计数交给Experts，污染真实结果。材料：讲义MORI步骤、两类路由补充及验收4；ChangeCard§2。源码 2d4c3e2：src/ops/dispatch_combine/intranode.hpp:200-203、259-299；python/mori/ops/dispatch_combine.py:1347-1400；src/ops/dispatch_combine/ep_local_expert_count.hpp:29-40。",
+      "content_sha256": "35fd59e0b901602511e677453d924f60e2d3b57d5a10e0b1a83b478db1f52b7c",
+      "content_summary": "A理由：防止把未完成载荷或错误计数交给Experts，污染真实结果。材料：讲义MORI步骤、两类路由补充及验收4；ChangeCard§2。源码 2d4c3e2：src/ops/dispatch_combine/intranode.hpp:200-203、259-299；python/mori/ops/dispatch_combine.py:1347-1400；src/ops/dispatch_combine/ep_local_expert_count.hpp:29-40。；2026-11-03复核：把题面收束为“从领槽到可交付的有效行数”这一条闭合数据流；独立的专家路由载体细节标为延伸。完成证据与total_recv计数对象仍保留原回忆目标。",
       "dependency_content_sha256": {},
       "depends_on": [],
       "fact_status": "verified",
@@ -1133,12 +1133,12 @@
       "template_version": "1.1.0"
     },
     {
-      "content_sha256": "cfdea60a3599de17817daa9f1e0e6f936b3e3b8a378a58fab29bb7e5e16b0c3b",
+      "content_sha256": "82fa273dce8b3cdcfd50ede5936534340ff5351644a7a6f481845a7201f34265",
       "content_summary": "覆盖o2/o4，组合5张同请求已核验实现卡；不承诺跨平台性能排名。A理由：回答面试中的四路径取舍问题，防止把容量、计数与有效布局混为同一种机制。",
       "dependency_content_sha256": {
         "mc-50a37c7580427893d3cfc1cd": "23876f01e99d4cc4de67169e6fab32ea7fb92430fbe619b3b420c331abbd98ee",
-        "mc-b7df7e939424aa7a39a58e6b": "3d3d5afb6b346e7d02e608ab87610c2aed236b0112556c65b7c0f314e34e4268",
-        "mc-dd81e7bc1ccbdb327767771c": "e4303b2dc4cc060f579b9ec9a45fbcb362e5d8ba96475b614636275073e4d31a",
+        "mc-b7df7e939424aa7a39a58e6b": "35fd59e0b901602511e677453d924f60e2d3b57d5a10e0b1a83b478db1f52b7c",
+        "mc-dd81e7bc1ccbdb327767771c": "ba08ab8caa263057a4a8afba0243c539225820c8c59f352d04e07a0e1efee1f2",
         "mc-f1e42d2cf27978369eac0de5": "061616d52974efba347b142e0b94956dc899b0e9f0907344500de63bf41c3ec1",
         "mc-f7bfdcbb6d618ea751a629d9": "d1ffabd84e434341c8b19e99b80ed64a609001fab5a692a642de6f463961fb38"
       },
@@ -1166,6 +1166,9 @@
       "misconception_of": null,
       "priority": 5,
       "quality": "A",
+      "review_resolution": {
+        "summary": "2026-11-03已对照修订后的V2同步与展开卡、MORI完成与有效行数卡复核四路径口述；参考回答只比较计数时点、空间分配和有效行含义。V2新增上界理由支持既有容量判断，MORI专家路由延伸不进入评分。四个评分锚点均由同请求五张已核验active子卡支撑，未增加性能或实测结论。"
+      },
       "source_ids": [
         "w2-card",
         "w2-ledger",
@@ -1217,14 +1220,71 @@
       "successor_to": null,
       "template_id": "oral",
       "template_version": "1.1.0"
+    },
+    {
+      "content_sha256": "a392b0e302a2586d8310dfbd7045c08d3a62b08ea581be811cc903dad2fb3844",
+      "content_summary": "A理由：防止把双缓冲索引轮换当成自动忙闲检测，提前复用慢rank仍在读取的槽位或清掉未消费信号。已对照课程页add-10-2、ChangeCard02§5及DeepEP d4f41e4固定源码：internode_ll.cu:286–295、329–338、379–407、776–785、915–976；buffer.hpp:1504–1505、1577–1592、1644–1645、1696–1711。固定源码因果解释，不是实测轨迹。",
+      "dependency_content_sha256": {},
+      "depends_on": [],
+      "fact_status": "verified",
+      "identity": {
+        "assessment": "mechanism",
+        "domain": "deepep-ll-reuse-protocol",
+        "fact_scope": {
+          "commit": "d4f41e4e93602a15e95f55f6ee8df8f1aaa0e4bb",
+          "kind": "snapshot",
+          "product": "deepep"
+        },
+        "recall_target": "解释deepep ll中间轮信号如何证明慢rank旧槽可复用"
+      },
+      "layer": "mechanism",
+      "lifecycle": "active",
+      "logical_id": "mc-467846640b25015ee66a6a1f",
+      "misconception_of": null,
+      "priority": 5,
+      "quality": "A",
+      "source_ids": [
+        "w2-card",
+        "w2-lesson"
+      ],
+      "successor_to": null,
+      "template_id": "technical-qa",
+      "template_version": "1.1.0"
+    },
+    {
+      "content_sha256": "b9a2a2661eff5d3c5822427925d445f573f7c2016f4276b4617f53192fddd341",
+      "content_summary": "A理由：回答适配正确性如何验证与定位的面试题，防止通信单测通过就宣称整层正确，或等权重用例掩盖加权错误。素材为ChangeCard02§7已明确的B级测试设计；只转成常青方法，不生成运行结果。",
+      "dependency_content_sha256": {},
+      "depends_on": [],
+      "fact_status": "verified",
+      "identity": {
+        "assessment": "mechanism",
+        "domain": "moe-adapter-validation",
+        "fact_scope": {
+          "kind": "evergreen"
+        },
+        "recall_target": "用通信契约与完整单层两层参考定位moe适配错误"
+      },
+      "layer": "mechanism",
+      "lifecycle": "active",
+      "logical_id": "mc-8a1f8d9122f897096bc8dfd3",
+      "misconception_of": null,
+      "priority": 5,
+      "quality": "A",
+      "source_ids": [
+        "w2-card"
+      ],
+      "successor_to": null,
+      "template_id": "technical-qa",
+      "template_version": "1.1.0"
     }
   ],
-  "managed_body_sha256": "33d24b5e469cfb8af83d21c94e8cf032ea26b003da812fdf2e241188b5f23df3",
-  "manifest_payload_sha256": "6a38a0818ba421e0b15daf57a9b651e1da3f2952b06d95bd19a05d27c353520e",
+  "managed_body_sha256": "d5dab95939f7564308d06d138b63be03ef100e5217afc6a2248262330e794382",
+  "manifest_payload_sha256": "59d00f9832851fb31b6e3fd0f8eb4652acd87756bdd286a13020eca89f059ed5",
   "schema": "memo-cards.artifact/v2",
   "sidecars": [
     {
-      "byte_size": 58286,
+      "byte_size": 62438,
       "columns": [
         "问题",
         "答案",
@@ -1233,7 +1293,7 @@
       ],
       "kind": "markji-import-xlsx",
       "path": "推理框架/cards/2026-10-29-w2-u2-implementations-technical-qa.xlsx",
-      "row_count": 36,
+      "row_count": 38,
       "rows": [
         {
           "content_sha256": "87c311f0365befcc4cdcef77a10188ebe9e26823c38a59755387bea941eaf187",
@@ -1331,9 +1391,9 @@
           "row_sha256": "88be032922a714112e29f4cd0b67743eb7c734a4e12307ce40dee6edba9de078"
         },
         {
-          "content_sha256": "88e7b984787488bbb56ca2ed0208f1a0595a5128899a2ba80510545ef33cf0b7",
+          "content_sha256": "509ba81be753ca5d8f2c40995145055c55c6816bafe4090424c10cd2c38114e3",
           "logical_id": "mc-d1cc666d10bc507528e4e265",
-          "row_sha256": "0fdded56c52fe57688aa04421afbdd9e91a546cf453fc39bde1ff2304ecf9425"
+          "row_sha256": "4688809c80517afea743fdbb527712f63ffef058269a0b9fbb71afdd5843ff02"
         },
         {
           "content_sha256": "97a14542a4a971eba76ec65a7e3601cd9ced60a40ca6b81b334e87ea23a17cd9",
@@ -1341,9 +1401,9 @@
           "row_sha256": "9cbc2726b0bd1942756eea856020b25bd50fa277a649b6e7f7a7416b1d339953"
         },
         {
-          "content_sha256": "e4303b2dc4cc060f579b9ec9a45fbcb362e5d8ba96475b614636275073e4d31a",
+          "content_sha256": "ba08ab8caa263057a4a8afba0243c539225820c8c59f352d04e07a0e1efee1f2",
           "logical_id": "mc-dd81e7bc1ccbdb327767771c",
-          "row_sha256": "adc189048c72ce6ef515a4fea53152c9d817a8ede71f639504555145af3c1c38"
+          "row_sha256": "412cdb49772cc26ae87ea0e1abbafa28f838cfcf8e1fc61ed83c1065f87955e2"
         },
         {
           "content_sha256": "5da9dda329e2e056d10c9cc3f0935c653d6865817c7bf8c265718b85817bcad4",
@@ -1361,9 +1421,9 @@
           "row_sha256": "9ab10793f0ec893ae5c1b1f99b49e5bfc693d8feddd2c3683fb56d4557f90504"
         },
         {
-          "content_sha256": "3d3d5afb6b346e7d02e608ab87610c2aed236b0112556c65b7c0f314e34e4268",
+          "content_sha256": "35fd59e0b901602511e677453d924f60e2d3b57d5a10e0b1a83b478db1f52b7c",
           "logical_id": "mc-b7df7e939424aa7a39a58e6b",
-          "row_sha256": "a94745c1ab3e59cef04f8d4180211364961a74814bbee6f7eca85d7f6ce04e1f"
+          "row_sha256": "33e789e89666ae30d3a220364c7af13d71df4bb7cfb3c359d7e530a27d7d79c3"
         },
         {
           "content_sha256": "13a31e4624f182bb957a8f011d02eb6f024744f92f5c997a513a0c194fdf03bf",
@@ -1414,11 +1474,21 @@
           "content_sha256": "7e1f013a460e124a4bddcb4d39cd20abc2cb9fbba9ce34a3d95803f8a97e1ffe",
           "logical_id": "mc-a66576e8728d34795904a60a",
           "row_sha256": "83ea8bb8a1ff1ef49333db93aa53bb68c205e860b3f88c11e31b4003c53ed90a"
+        },
+        {
+          "content_sha256": "a392b0e302a2586d8310dfbd7045c08d3a62b08ea581be811cc903dad2fb3844",
+          "logical_id": "mc-467846640b25015ee66a6a1f",
+          "row_sha256": "895bae192352c3f36586997a77cebe4445fffd76363c31b6af8ebe4cb292e014"
+        },
+        {
+          "content_sha256": "b9a2a2661eff5d3c5822427925d445f573f7c2016f4276b4617f53192fddd341",
+          "logical_id": "mc-8a1f8d9122f897096bc8dfd3",
+          "row_sha256": "b44968b9c8f48b3fcd365af791b16d5317012283037ccc44c03c1d66f09ad08a"
         }
       ],
-      "sha256": "55e269135f2f9d9c950faad34d9ab7e561934db25145f161570170f54b47aa48",
+      "sha256": "4b5c0650ad5965d82500de0752100735eabb160afec674245eaab1bc9c985766",
       "sheet_name": "cards",
-      "table_sha256": "013cbfaeaeb7665d51ef2c7cc0bcd192e81fd0be1de43aa1a1b2021dc6467fbb",
+      "table_sha256": "d27d4466bd6c33d07f2c8f3672d331a140a39b8be2d3156aeb6b7af65061c4e0",
       "template_id": "technical-qa",
       "template_version": "1.1.0"
     },
@@ -1440,7 +1510,7 @@
           "row_sha256": "9d30c398ce7479fd4499ae154ce7404c1404f80ff9c26600690d1b35d2eb05ec"
         },
         {
-          "content_sha256": "cfdea60a3599de17817daa9f1e0e6f936b3e3b8a378a58fab29bb7e5e16b0c3b",
+          "content_sha256": "82fa273dce8b3cdcfd50ede5936534340ff5351644a7a6f481845a7201f34265",
           "logical_id": "mc-2f3f4b0d53d2559dfc94b6e1",
           "row_sha256": "9fa449a49911d470340311d4fd2ac8730d2a39dd3313866ccc451e06959d5de9"
         },
@@ -1457,7 +1527,7 @@
       "template_version": "1.1.0"
     }
   ],
-  "source_fingerprint": "c600d848c312838fc80e8eeb16c64219cc70df37f4d4cc5fb071620f9b1c74a0",
+  "source_fingerprint": "41ab62583c180d1c63d437c101a0cd6fc1e7aa796042a0201e64591f23a1768d",
   "sources": [
     {
       "collection": "inference-w2-u2-evidence",
@@ -1470,14 +1540,14 @@
       "collection": "inference-w2-u2-evidence",
       "id": "w2-ledger",
       "path": "计划/八周冲刺进度/历史记录/W2-学习验收记录.md",
-      "sha256": "b16f02d4dcbe65acc25723d0a4b580eb0513e99d151808f2db8d00bd7f1aafa4",
+      "sha256": "445d31cece716ed0a594b32fdbea5cb08d9422d2f0b3d02bdcf0426e1b9055a2",
       "summary": "单元二固定源码基线、节点检查及已确认的Hybrid-EP场景表；用于确定学习范围和来源锚点，不将mastery状态当知识事实。"
     },
     {
       "collection": "inference-w2-u2-evidence",
       "id": "w2-lesson",
       "path": "课程网页/八周计划/plana-jd-w2-moe-ep-source.html",
-      "sha256": "68341403389ef6be12a10c15ebe60d867dd042ebca2a00d8b210893b835a27bf",
+      "sha256": "31251f6b8c2eab14beb335864d666aec718d758a7a9ada084ce6875002158d05",
       "summary": "既有源码串讲与横向对照讲义；本批逐项核对固定提交，过强简写以本批明确范围和代码依据为准。"
     }
   ],
@@ -1502,7 +1572,7 @@
 📍 [T#!939393#{{来源}}]
 ```
 
-导入文件：[2026-10-29-w2-u2-implementations-technical-qa.xlsx](2026-10-29-w2-u2-implementations-technical-qa.xlsx)（36 张卡）
+导入文件：[2026-10-29-w2-u2-implementations-technical-qa.xlsx](2026-10-29-w2-u2-implementations-technical-qa.xlsx)（38 张卡）
 
 ## 综合口述卡
 

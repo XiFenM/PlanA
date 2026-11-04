@@ -5,12 +5,12 @@
     "id": "markji",
     "profile": "plana-markji"
   },
-  "artifact_set_sha256": "14b736f1de09d58ca2e95b1288c6e697f4e9fcb2818c4eec04d7043a2217710b",
-  "candidate_sha256": "86a12dd94d165825b79fa85194c49ae5697a3c16c3fcfe3166ffdb0bafd0863d",
+  "artifact_set_sha256": "84e3cae6f246f74496e004e4fcdc4240720b3a28e0eec8b8aa97d522bac2a0e4",
+  "candidate_sha256": "13caee445e0fa60908a7b294665da8a135b325ccdb995e12ad4ac38a52186ed1",
   "cards": [
     {
       "content_sha256": "6cdac87324ffdf61e6d68f073849c4febba8b070d94fcdbcf08cdf6a48874124",
-      "content_summary": "区分逻辑shape与物理布局和分配容量",
+      "content_summary": "A理由：防止以逻辑元素数估算真实显存，遗漏布局、padding 或同时存活缓冲导致 OOM。",
       "dependency_content_sha256": {},
       "depends_on": [],
       "fact_status": "verified",
@@ -36,8 +36,8 @@
       "template_version": "1.1.0"
     },
     {
-      "content_sha256": "8e99bc3ec70789a229ced2c15cd827892a9a590fba7c3d6669d131a440de6806",
-      "content_summary": "解释合法view共享存储以及stride兼容要求",
+      "content_sha256": "b9ba6633f31c8f203bde910d7329957317f7f4d5bde1250b03520b9666f7abbb",
+      "content_summary": "B理由：区分合法 view 与需要物化的重排，为显存分析提供前置概念，不将基础 API 定义一律列为 A。",
       "dependency_content_sha256": {},
       "depends_on": [],
       "fact_status": "verified",
@@ -55,8 +55,8 @@
       "lifecycle": "active",
       "logical_id": "mc-e1599ccdbe7715208e0cace9",
       "misconception_of": null,
-      "priority": 5,
-      "quality": "A",
+      "priority": 3,
+      "quality": "B",
       "source_ids": [
         "case-log"
       ],
@@ -66,7 +66,7 @@
     },
     {
       "content_sha256": "578c7edd3971a806b66ceb17634483d578c60c1fb520d2a75d899014e5dd1b6d",
-      "content_summary": "计算逐内层数据段对齐的物理容量",
+      "content_summary": "A理由：支持逐段对齐容量估算，避免将整张量对齐错误套用于每个内层段的真实分配。",
       "dependency_content_sha256": {},
       "depends_on": [],
       "fact_status": "verified",
@@ -93,7 +93,7 @@
     },
     {
       "content_sha256": "8844e0bc83f804976d8cbc5dd3ca478e45aa94e08aa20ebb6c68c164ac0c7335",
-      "content_summary": "解释短内层维逐段对齐导致的存储膨胀",
+      "content_summary": "A理由：解释短内层维如何累计 padding 并触发显存膨胀，支持布局优化的因果分析。",
       "dependency_content_sha256": {},
       "depends_on": [],
       "fact_status": "verified",
@@ -119,8 +119,8 @@
       "template_version": "1.1.0"
     },
     {
-      "content_sha256": "e9a79df7051d719857fac89e297b1d5cebb588611afa5b0b6d65b204db381a39",
-      "content_summary": "保持输入与权重共同展平时的元素配对",
+      "content_sha256": "37134d63d086415911b2d98fe7a973ab84fd1fe47ae4a0eafea42ae60bd7b393",
+      "content_summary": "A理由：防止输入与权重展平映射不一致造成静默数值错误，并能解释有效元素配对依据。",
       "dependency_content_sha256": {},
       "depends_on": [],
       "fact_status": "verified",
@@ -147,7 +147,7 @@
     },
     {
       "content_sha256": "20cfaecb337b29df2a8e01557be3c457b7658817bebf68c755cfa49a1ff02c6c",
-      "content_summary": "以同一参考验证多个实现并限定等价结论",
+      "content_summary": "A理由：防止把各自接近参考误推为新旧实现彼此满足同一容差，避免错误验收数值结果。",
       "dependency_content_sha256": {},
       "depends_on": [],
       "fact_status": "verified",
@@ -174,7 +174,7 @@
     },
     {
       "content_sha256": "34af2b2d2f09c82b08012273b8138de2063cf06b854af8b8e1b1c962e5a37be5",
-      "content_summary": "解释相对与绝对容差组合的逐元素判据",
+      "content_summary": "B理由：掌握容差组合与参考幅值的关系，辅助正确性核对；不把公式定义本身列为最高优先级。",
       "dependency_content_sha256": {},
       "depends_on": [],
       "fact_status": "verified",
@@ -190,8 +190,8 @@
       "lifecycle": "active",
       "logical_id": "mc-2250a5c1dd8bc69f5a45085d",
       "misconception_of": null,
-      "priority": 5,
-      "quality": "A",
+      "priority": 3,
+      "quality": "B",
       "source_ids": [
         "case-log"
       ],
@@ -201,7 +201,7 @@
     },
     {
       "content_sha256": "2be66d7480f02634efba8fbe929ffb87770e4eb5c8d23487623229e34d3e7564",
-      "content_summary": "区分跨样本均值与单次观测的证据范围",
+      "content_summary": "A理由：防止把跨样本均值误报成重复稳定性或每请求上界，维护性能结论的有效范围。",
       "dependency_content_sha256": {},
       "depends_on": [],
       "fact_status": "verified",
@@ -228,7 +228,7 @@
     },
     {
       "content_sha256": "2e48e8027b26820a2ad063ab8ac8bdb5e8bedc9a25da8a25ca62cda599c14708",
-      "content_summary": "界定OOM且无首token时不存在有限TTFT基线",
+      "content_summary": "A理由：防止对没有首 Token 的 OOM 用例伪造 TTFT 加速比或借用其他工作负载的基线。",
       "dependency_content_sha256": {},
       "depends_on": [],
       "fact_status": "verified",
@@ -255,7 +255,7 @@
     },
     {
       "content_sha256": "43543364342e7af191db07a2e615a2f92722951981492e6ad7310f3e5c1b781c",
-      "content_summary": "区分负载分流与端到端反压",
+      "content_summary": "A理由：回答负载分流为何不能解决全局过载，避免把无界 waiting 队列误称端到端反压。",
       "dependency_content_sha256": {},
       "depends_on": [],
       "fact_status": "verified",
@@ -282,7 +282,7 @@
     },
     {
       "content_sha256": "cf25650a1ab455db967e24e45c79352b10628ed058a4ba0397e1a2b2a4956652",
-      "content_summary": "区分背压反馈与入口过载拒绝",
+      "content_summary": "B理由：区分入口拒绝与上游减速的配合条件，作为完整反压设计的补充辨析。",
       "dependency_content_sha256": {},
       "depends_on": [],
       "fact_status": "verified",
@@ -298,8 +298,8 @@
       "lifecycle": "active",
       "logical_id": "mc-5dd39e4c218941d48acac5cc",
       "misconception_of": null,
-      "priority": 5,
-      "quality": "A",
+      "priority": 3,
+      "quality": "B",
       "source_ids": [
         "case-log"
       ],
@@ -309,7 +309,7 @@
     },
     {
       "content_sha256": "878c5999f11aa081e37d70bda32da51688afbd1fc0556fd5c5575edbdccde82a",
-      "content_summary": "解释立即重试造成的前端压力及客户端反馈责任",
+      "content_summary": "A理由：防止队列限额下的立即重试风暴，明确客户端必须消费反馈并降低提交速率。",
       "dependency_content_sha256": {},
       "depends_on": [],
       "fact_status": "verified",
@@ -333,14 +333,41 @@
       "successor_to": null,
       "template_id": "technical-qa",
       "template_version": "1.1.0"
+    },
+    {
+      "content_sha256": "98e68837bda44c9799ba6b2ee753d2997840ef73d1b16341d46fdfd4bd27986a",
+      "content_summary": "A理由：防止把 padding 猜想直接当成 OOM 根因，支撑用可区分证据选择实际需要优化的分配阶段。",
+      "dependency_content_sha256": {},
+      "depends_on": [],
+      "fact_status": "verified",
+      "identity": {
+        "assessment": "mechanism",
+        "domain": "gpu-memory-diagnosis",
+        "fact_scope": {
+          "kind": "evergreen"
+        },
+        "recall_target": "用分阶段显存观测与对象生命周期区分输入重排输出和workspace分配"
+      },
+      "layer": "mechanism",
+      "lifecycle": "active",
+      "logical_id": "mc-7d10e772fcdcb48a17378d5f",
+      "misconception_of": null,
+      "priority": 5,
+      "quality": "A",
+      "source_ids": [
+        "case-log"
+      ],
+      "successor_to": null,
+      "template_id": "technical-qa",
+      "template_version": "1.1.0"
     }
   ],
-  "managed_body_sha256": "d1629befa62b3da107af834dbd6949735cec866409702c0b0f89cab4ff634da1",
-  "manifest_payload_sha256": "bf2a4110c734ff99edf3099bf9783b45851464c97d99f83d573a326325ca242a",
+  "managed_body_sha256": "53ba9d2053a1f6a1d39035c631d2e6385b0e9cb93f88b717264c4df1c12ef975",
+  "manifest_payload_sha256": "c44b1b2484f8c47e537dec466ad99dbc998d92faf4d1048c99878dd33c795b7b",
   "schema": "memo-cards.artifact/v2",
   "sidecars": [
     {
-      "byte_size": 11148,
+      "byte_size": 13215,
       "columns": [
         "问题",
         "答案",
@@ -349,7 +376,7 @@
       ],
       "kind": "markji-import-xlsx",
       "path": "推理框架/cards/conv3d-evidence-backpressure-technical-qa.xlsx",
-      "row_count": 12,
+      "row_count": 13,
       "rows": [
         {
           "content_sha256": "6cdac87324ffdf61e6d68f073849c4febba8b070d94fcdbcf08cdf6a48874124",
@@ -357,9 +384,9 @@
           "row_sha256": "e05b25391655bb0a3bb77178d2df7f2ba73172f77fc463217f8df31f2f638fce"
         },
         {
-          "content_sha256": "8e99bc3ec70789a229ced2c15cd827892a9a590fba7c3d6669d131a440de6806",
+          "content_sha256": "b9ba6633f31c8f203bde910d7329957317f7f4d5bde1250b03520b9666f7abbb",
           "logical_id": "mc-e1599ccdbe7715208e0cace9",
-          "row_sha256": "c82ed8c43056b7ec514706fa4dd7621ca26e92dd8af0224c09fb37a1a47bfecb"
+          "row_sha256": "52f00d478c8e10e5909f751f503e5922b918576835109601d6fa419b94e22b87"
         },
         {
           "content_sha256": "578c7edd3971a806b66ceb17634483d578c60c1fb520d2a75d899014e5dd1b6d",
@@ -372,9 +399,9 @@
           "row_sha256": "a7543d858f1285b496a0169b6f6eceaac6f4d79b08e7d02f92196ccf96487dfa"
         },
         {
-          "content_sha256": "e9a79df7051d719857fac89e297b1d5cebb588611afa5b0b6d65b204db381a39",
+          "content_sha256": "37134d63d086415911b2d98fe7a973ab84fd1fe47ae4a0eafea42ae60bd7b393",
           "logical_id": "mc-5cdc4ea3b6cbae16877d2911",
-          "row_sha256": "fc7007ae79765c707e22e05bec7717a17feea933d5adf5951affc8433e84c5bd"
+          "row_sha256": "afa73a46e5ce195a51c5b9a72624a2805b44d8955849ebc71a706efead33a181"
         },
         {
           "content_sha256": "20cfaecb337b29df2a8e01557be3c457b7658817bebf68c755cfa49a1ff02c6c",
@@ -410,11 +437,16 @@
           "content_sha256": "878c5999f11aa081e37d70bda32da51688afbd1fc0556fd5c5575edbdccde82a",
           "logical_id": "mc-799f6796742c3dd3e2eabc24",
           "row_sha256": "23cc5128e37f004c08dbbeb9459b5fae2c270acec7dcd12e83cf0e07cac5bf7d"
+        },
+        {
+          "content_sha256": "98e68837bda44c9799ba6b2ee753d2997840ef73d1b16341d46fdfd4bd27986a",
+          "logical_id": "mc-7d10e772fcdcb48a17378d5f",
+          "row_sha256": "598015dc22ae0761bc9001ed6bd2452e52326345e3321a3b9b5678ad21ef2843"
         }
       ],
-      "sha256": "fb3f70d040c69c3c60bb593a878107a60528a317cdbfb003ffd988aa916708c4",
+      "sha256": "4162ef17376d0bd64dd451802c5e441defd266b04edb8d37eb37f32655de24eb",
       "sheet_name": "cards",
-      "table_sha256": "77ba3477d093dfe1ea734af8cf5d6416424f6a47fa61e0401e221438d42ac70f",
+      "table_sha256": "713997ce47d567cec393928f47c3455f70b8806fc0418e7a090f18c646382ddf",
       "template_id": "technical-qa",
       "template_version": "1.1.0"
     }
@@ -450,4 +482,4 @@
 📍 [T#!939393#{{来源}}]
 ```
 
-导入文件：[conv3d-evidence-backpressure-technical-qa.xlsx](conv3d-evidence-backpressure-technical-qa.xlsx)（12 张卡）
+导入文件：[conv3d-evidence-backpressure-technical-qa.xlsx](conv3d-evidence-backpressure-technical-qa.xlsx)（13 张卡）

@@ -1023,6 +1023,142 @@
       ],
       "content_summary": "B：补足本课blocked Col-major主例的核心寻址机制，防止逻辑shape不变时继续使用旧地址公式；具体映射来自课程页，而非未经核实的项目硬件格式。",
       "depends_on": []
+    },
+    {
+      "key": "numerical-comparison-contract",
+      "rank": 15,
+      "domain": "numerical-validation",
+      "recall_target": "按比较对象与判据限定矩阵乘和模型输出一致性的结论",
+      "assessment": "discrimination",
+      "layer": "atomic",
+      "fact_scope": {
+        "kind": "evergreen"
+      },
+      "quality": "A",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 5,
+      "template_id": "technical-qa",
+      "fields": {
+        "问题": "评审一次权重布局优化时，已有两类对照：自研设备的新旧布局 MatMul 输出逐元素数值相等；该设备与 CPU 参考结果按预设容差比较。请按比较对象、判据和覆盖范围，说明怎样记录这两项“输出一致”，避免扩大验证结论。",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "分别写清比较的两个对象、比较层级与判据；同设备新旧布局的数值相等，不能自动替代设备与 CPU 的容差结论，也不能扩大为逐位相等或所有输入都正确。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "为每项对照注明使用哪个实现作参考、比较哪些输出、采用逐元素相等还是具体容差。"
+                }
+              ],
+              "label": "对象与判据"
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "MatMul 数值对照与模型 logits/token 回归回答不同层级的问题，应分别记录已覆盖的输入与结果。"
+                }
+              ],
+              "label": "验证层级"
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "题面提供的是两类验证记录，不新增项目运行事实；未恢复的样本、配置或原始结果继续保留待核。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "比较对象 × 输出层级 × 判据 × 覆盖范围",
+        "来源": "W2-U4 结构化日志·输出完全一致的比较对象与判据"
+      },
+      "source_ids": [
+        "log"
+      ],
+      "content_summary": "A 级理由：防止把不同参考对象的相等与容差结论混成一个“完全一致”，误报优化正确性。",
+      "depends_on": []
+    },
+    {
+      "key": "tile-size-versus-reduction-order",
+      "rank": 16,
+      "domain": "numerical-validation",
+      "recall_target": "限定Tile大小不变对累加路径和数值一致性的保证",
+      "assessment": "discrimination",
+      "layer": "atomic",
+      "fact_scope": {
+        "kind": "evergreen"
+      },
+      "quality": "B",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 3,
+      "template_id": "technical-qa",
+      "fields": {
+        "问题": "比较同一矩阵乘的新旧权重布局实现：两者 Tile 大小相同，已执行的输出对照也相等。说明正确性依据时，这两项信息分别能支持什么，依据的适用范围应怎样界定？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "Tile 大小相同只描述分块尺寸；它本身不保证所有累加路径或归约顺序相同。数值相等结论应以已执行的对照及其覆盖范围为依据。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "判断浮点结果是否保持一致，需要核对实际运算与累加安排，不能用一个 Tile 尺寸代替全部执行语义。"
+                }
+              ],
+              "label": "实现条件"
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "可以同时保留“Tile 未变”与“所测输出相等”，但后者不由前者单独推出，也不自动覆盖未测 shape 或输入。"
+                }
+              ],
+              "label": "证据范围"
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "结论限于已经对照的实现、配置与输入；未测输入或不同累加／归约路径需要另行验证。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "Tile 尺寸是条件；数值结论依赖实际路径与对照",
+        "来源": "W2-U4 结构化日志·Tile 大小与实际数值相等的证据层次"
+      },
+      "source_ids": [
+        "log"
+      ],
+      "content_summary": "B 级选材依据：保留布局优化中从结构条件到数值结论的推理边界，避免把单一尺寸条件当作通用证明。",
+      "depends_on": []
     }
   ]
 }

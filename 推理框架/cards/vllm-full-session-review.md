@@ -5,12 +5,12 @@
     "id": "markji",
     "profile": "plana-markji"
   },
-  "artifact_set_sha256": "2a5fc608779da0e1c70b323a7443111a5abb682bb641d68408c6e8bec7aa37d8",
-  "candidate_sha256": "54f7197685dcec7c0022fbbbd68c43b57c152dc156560c8ca947fcde4de5cb17",
+  "artifact_set_sha256": "a287649c81cb21de2432afb3909aab23eadc2fbe94e990b280164f03657c4af5",
+  "candidate_sha256": "184a1f57ffc666b72eb3e01b0fdd5a10f16ea91bcdb6551d5cff32a4c74dc8bf",
   "cards": [
     {
-      "content_sha256": "ef8cdf0ec4ed40333ac47dc8cc8660084383df2ea14c4c7f95b4beb113c89b79",
-      "content_summary": "不是；例如Tensor.register_hook可在Python侧观察该Tensor的梯度。",
+      "content_sha256": "89cf25064cc19532374f7f9ace7b4be21e0cd6ec465f814adfee5246450d4efe",
+      "content_summary": "A 级理由：回答训练精度调试中如何从 Python 观察 Tensor 梯度的问题，避免因 C++ 调度而误判没有可用观测接口。",
       "dependency_content_sha256": {},
       "depends_on": [],
       "fact_status": "verified",
@@ -39,8 +39,8 @@
       "template_version": "1.1.0"
     },
     {
-      "content_sha256": "fc2e2356098fb81ea26a1ae4eca069d61818fa19508cd87c6599ea5ab66c796a",
-      "content_summary": "不能；它本轮才被采样，通常下一轮才作为输入计算自身KV。",
+      "content_sha256": "1d3f592004af8b15d4cbcf4f2b22456d20425b66602cd3b1cd36cbebd1ce37b4",
+      "content_summary": "A 级理由：防止把刚采样的 token 计入本步输入，进而算错调度预算与 KV 进度。",
       "dependency_content_sha256": {},
       "depends_on": [],
       "fact_status": "verified",
@@ -66,8 +66,8 @@
       "template_version": "1.1.0"
     },
     {
-      "content_sha256": "ecf9f7b621703fda136e24af7b330c18996556b174fdb31a24de371e14dcc8f2",
-      "content_summary": "不是；还需要前端已经确定该请求结束。",
+      "content_sha256": "5c0dfd12bce7663f6258aa581ee000ecad9a86c5e5d4d2231f3d7943801b35d3",
+      "content_summary": "A 级理由：防止遗漏前端已判停的外层条件，错误取消仍应继续生成的请求。",
       "dependency_content_sha256": {},
       "depends_on": [],
       "fact_status": "verified",
@@ -96,8 +96,8 @@
       "template_version": "1.1.0"
     },
     {
-      "content_sha256": "89053c3446fef9f964631d8a03b7bce731d03d470cd0c57551e3a5ff914ab812",
-      "content_summary": "直接决定新KV写到哪个槽位；历史上下文读取还依赖block table。",
+      "content_sha256": "a7549577b79cfc61a24595e593b382296515171c2d7fb4cdb03a6af484656232",
+      "content_summary": "A 级理由：防止将新 KV 写错槽位的问题误诊为历史读取映射，错修状态重排。",
       "dependency_content_sha256": {},
       "depends_on": [],
       "fact_status": "verified",
@@ -126,8 +126,8 @@
       "template_version": "1.1.0"
     },
     {
-      "content_sha256": "d3e2bf04bd7746346f324b5f15570a8718c95594dba85d47235c9bfd0293a7e4",
-      "content_summary": "不需要；设备初始化属于启动阶段，本步经执行入口委托Runner。",
+      "content_sha256": "e1114abe6ade21674ed1d109b7b3636d78b44d0dd2a821f946000bf3409b234e",
+      "content_summary": "B 级选材依据：保留启动生命周期与单步执行的职责边界，用于解释热路径而不反复背接口。",
       "dependency_content_sha256": {},
       "depends_on": [],
       "fact_status": "verified",
@@ -146,8 +146,8 @@
       "lifecycle": "active",
       "logical_id": "mc-f726fd672421c50799332024",
       "misconception_of": null,
-      "priority": 5,
-      "quality": "A",
+      "priority": 3,
+      "quality": "B",
       "source_ids": [
         "full-session-structured"
       ],
@@ -156,8 +156,8 @@
       "template_version": "1.1.0"
     },
     {
-      "content_sha256": "ba04e8e5ba6973b8c02595149dcaadf60193ad0e0a58f2399e0091783e1750c1",
-      "content_summary": "不够；还需保持数学语义、tensor行为和执行依赖。",
+      "content_sha256": "0de4eded45405aa5a7a2dd059fb97734299219cf9f755d79cbf2cadbb1e6fb78",
+      "content_summary": "A 级理由：防止把注册成功当作替换算子正确，漏检数学语义、输入修改和执行依赖。",
       "dependency_content_sha256": {},
       "depends_on": [],
       "fact_status": "verified",
@@ -182,12 +182,12 @@
         "full-session-structured"
       ],
       "successor_to": null,
-      "template_id": "correction",
+      "template_id": "technical-qa",
       "template_version": "1.1.0"
     },
     {
-      "content_sha256": "9b768b4af87487df2a90b76c82e70040d6b2da744ed9194c100c7bf453e58607",
-      "content_summary": "在前端；Core仍逐步回传内部结果，前端暂不交付中间RequestOutput。",
+      "content_sha256": "6b2276306b8fa4bc35bd7a588f1b18c58710f96c4e84de1daffb32cbf03abcb4",
+      "content_summary": "A 级理由：防止将非流式输出误实现为阻断 Core 的中间结果回传，混淆内部与对外输出。",
       "dependency_content_sha256": {},
       "depends_on": [],
       "fact_status": "verified",
@@ -216,8 +216,8 @@
       "template_version": "1.1.0"
     },
     {
-      "content_sha256": "0527b41937fb4e88726079058c2f2fd90d7ba8dc6592ec040c63b6cc46711693",
-      "content_summary": "可以；最终结果先放入Collector，generate仍持有它并能继续消费。",
+      "content_sha256": "1c4730f398f50e073a2b87a270c72d4d2dffbc1cb79bfecaea9fadb543bfb299",
+      "content_summary": "A 级理由：防止请求表注销时提前销毁仍需交付最终结果的 Collector。",
       "dependency_content_sha256": {},
       "depends_on": [],
       "fact_status": "verified",
@@ -246,8 +246,8 @@
       "template_version": "1.1.0"
     },
     {
-      "content_sha256": "70799c1e8d691027ba2e5b527038e36304c34b15d23b357deb76bfc5bd88540c",
-      "content_summary": "不能；调度侧已解除引用，Runner只清自己的请求和batch状态。",
+      "content_sha256": "4b774d75f22ea389737c23e68efc9a127fc4344dbf4194a4cbf2dd9f63b27aa1",
+      "content_summary": "A 级理由：防止 Runner 重复扣减调度侧已经管理的 KV 引用，破坏其他请求仍使用的共享块。",
       "dependency_content_sha256": {},
       "depends_on": [],
       "fact_status": "verified",
@@ -276,8 +276,8 @@
       "template_version": "1.1.0"
     },
     {
-      "content_sha256": "d1f7e585e4983a7e8fe8120797f15fec035a6d6b770506a497177734463c8c06",
-      "content_summary": "向尚未结束的Core发送ABORT；对用户仍可报告stop。",
+      "content_sha256": "361cb0b1a5075ec7847599e8d1f0726c992a3566cceec6d2f7066fe990634fbf",
+      "content_summary": "B 级选材依据：保留用户结束原因与内部控制操作的接口辨析，不将当场术语澄清当成反复个人错误。",
       "dependency_content_sha256": {},
       "depends_on": [],
       "fact_status": "verified",
@@ -296,18 +296,18 @@
       "lifecycle": "active",
       "logical_id": "mc-58f9377a4e5513c61f851abc",
       "misconception_of": null,
-      "priority": 5,
-      "quality": "A",
+      "priority": 3,
+      "quality": "B",
       "source_ids": [
         "full-session-structured"
       ],
       "successor_to": null,
-      "template_id": "correction",
+      "template_id": "technical-qa",
       "template_version": "1.1.0"
     },
     {
-      "content_sha256": "b400d201ad7ee47cbe312c3497f8b2ea52e947a9bd401c7dfab3ee15f49f1645",
-      "content_summary": "不能；本题预算是115.2 GB，不能直接用设备总容量代替。",
+      "content_sha256": "cd08b1e5ac83ed905099049d974a0afc3c17b2048e8a80ca56a15c2a38c88461",
+      "content_summary": "A 级理由：防止按物理容量而非配置预算接纳分配，遗漏可导致 OOM 的预算超额。",
       "dependency_content_sha256": {},
       "depends_on": [],
       "fact_status": "verified",
@@ -334,7 +334,7 @@
     },
     {
       "content_sha256": "3e72a60bb48950b3440ded7e0c1f84de38a8e02d92f2124c583ce1fc07e82c95",
-      "content_summary": "不能据此推断；倍率只对应发生该物化布局的局部数据。",
+      "content_summary": "B 级选材依据：把局部物化存储放大与整体显存账本分开，支持跨布局估算。",
       "dependency_content_sha256": {},
       "depends_on": [],
       "fact_status": "verified",
@@ -360,8 +360,8 @@
       "template_version": "1.1.0"
     },
     {
-      "content_sha256": "002080a3044fd1e85e0c8ffd4d997eb6e187042a6e64fc36e9da4f65dd414cca",
-      "content_summary": "按一次乘法加一次加法计2次浮点运算。",
+      "content_sha256": "4a26fd471b563c6524d9a38685160092eb204c4e95638f2b7b25102770aece3f",
+      "content_summary": "2026-11-03本地归档：FLOPs推导由W2-U4的gemm-ledger规范卡统一承担，避免重复复习相同计算账本；保留原身份与内容追溯。",
       "dependency_content_sha256": {},
       "depends_on": [],
       "fact_status": "verified",
@@ -374,10 +374,10 @@
         "recall_target": "计算普通矩阵乘的浮点运算量"
       },
       "layer": "atomic",
-      "lifecycle": "active",
+      "lifecycle": "archived",
       "logical_id": "mc-b5ab4a7997b4428cc78802e8",
       "misconception_of": null,
-      "priority": 4,
+      "priority": 3,
       "quality": "B",
       "source_ids": [
         "full-session-structured"
@@ -387,8 +387,8 @@
       "template_version": "1.1.0"
     },
     {
-      "content_sha256": "c20ea0db6f0334e16d582bf6e8e6cfff48e4936ef1f17b16bd9910c751680d60",
-      "content_summary": "把A、B的读取与C的写入都计入，每元素2字节。",
+      "content_sha256": "d71f30475e1e5955e3a0e2e5f0956f078d3e32f6e0ca5efe543760478b30afbb",
+      "content_summary": "2026-11-03本地归档：BF16输入与输出的最低字节账本由W2-U4的gemm-ledger规范卡统一承担；已补齐历史题面的输出存储精度，保留原身份追溯。",
       "dependency_content_sha256": {},
       "depends_on": [],
       "fact_status": "verified",
@@ -401,11 +401,11 @@
         "recall_target": "计算给定最小读写假设下的bf16矩阵乘流量"
       },
       "layer": "atomic",
-      "lifecycle": "active",
+      "lifecycle": "archived",
       "logical_id": "mc-abe7eb24831612c9c3d4eef7",
       "misconception_of": null,
-      "priority": 5,
-      "quality": "A",
+      "priority": 3,
+      "quality": "B",
       "source_ids": [
         "full-session-structured"
       ],
@@ -414,8 +414,8 @@
       "template_version": "1.1.0"
     },
     {
-      "content_sha256": "94b870feda8d20f2f95d91d29d81dd499695c459b8ec47b52e63b55b13f0ade8",
-      "content_summary": "不够；需确认存储层级、地址映射和相应观测证据。",
+      "content_sha256": "4d6516c2bc3566ad253d9e33d20e49043e972291d58c1c1b0439d6e69b1b2f78",
+      "content_summary": "A 级理由：防止仅凭访存变快就写成 bank conflict 已消除，造成错误根因归属。",
       "dependency_content_sha256": {},
       "depends_on": [],
       "fact_status": "verified",
@@ -441,8 +441,8 @@
       "template_version": "1.1.0"
     },
     {
-      "content_sha256": "4b6b942aada9b4c6b4879aa5f5ea5f09868dee89bdaad92441f88b3d054c8617",
-      "content_summary": "不能；它去掉采样选择中的随机性，不消除所有并发或Kernel不确定性。",
+      "content_sha256": "938c11064b4c179120fad7d6cb34b62b61b73d3bd9cd5d6f2d6d3f9d89b857d0",
+      "content_summary": "B 级选材依据：用于区分采样随机性和执行不确定性，避免 temperature=0 的保证被扩大。",
       "dependency_content_sha256": {},
       "depends_on": [],
       "fact_status": "verified",
@@ -458,8 +458,8 @@
       "lifecycle": "active",
       "logical_id": "mc-386eff0e70f84976785adb7b",
       "misconception_of": null,
-      "priority": 5,
-      "quality": "A",
+      "priority": 3,
+      "quality": "B",
       "source_ids": [
         "full-session-structured"
       ],
@@ -469,7 +469,7 @@
     },
     {
       "content_sha256": "677516b14684374d68c6d5887b1faa7ead8de6b26d7c67d1a229fb88222a2cef",
-      "content_summary": "不能；dump可能改变时序或引入同步，使竞态不再复现。",
+      "content_summary": "A 级理由：防止把加入 dump 后不复现当成正确性修复，忽略观测对异步时序的影响。",
       "dependency_content_sha256": {},
       "depends_on": [],
       "fact_status": "verified",
@@ -496,7 +496,7 @@
     },
     {
       "content_sha256": "e4e1cc43710bbbbfc7a28f62a224257318377a40ff0a3ecf982b29f841e4a9bd",
-      "content_summary": "后续轨迹依赖前面的token和KV历史，后面的差异可能只是传播结果。",
+      "content_summary": "B 级选材依据：保留从首个分叉定位原因的可迁移调试方法。",
       "dependency_content_sha256": {},
       "depends_on": [],
       "fact_status": "verified",
@@ -512,8 +512,8 @@
       "lifecycle": "active",
       "logical_id": "mc-1ba245772d63b1465ff84b74",
       "misconception_of": null,
-      "priority": 5,
-      "quality": "A",
+      "priority": 3,
+      "quality": "B",
       "source_ids": [
         "full-session-structured"
       ],
@@ -523,7 +523,7 @@
     },
     {
       "content_sha256": "9b11e86b2e15dd04c7f542a33f20c5517b5d4529ca5aec4ef56e778c499e974f",
-      "content_summary": "不能；copy可能尚未提交到设备流，流等待未覆盖前置Host准备。",
+      "content_summary": "A 级理由：防止仅等设备流便消费尚未完成 CPU 准备或提交的 H2D 数据。",
       "dependency_content_sha256": {},
       "depends_on": [],
       "fact_status": "verified",
@@ -550,7 +550,7 @@
     },
     {
       "content_sha256": "0af128bbe20b17f24275713d10836d32c72f4f6533a24a5a128f111d180e028a",
-      "content_summary": "不能这样推断；stream与CPU线程不是一一对应关系。",
+      "content_summary": "B 级选材依据：保留设备 stream 与 CPU 线程的分层判断，避免错误解释提交开销。",
       "dependency_content_sha256": {},
       "depends_on": [],
       "fact_status": "verified",
@@ -566,8 +566,8 @@
       "lifecycle": "active",
       "logical_id": "mc-bdb5ae3a65636b17a13e73b1",
       "misconception_of": null,
-      "priority": 5,
-      "quality": "A",
+      "priority": 3,
+      "quality": "B",
       "source_ids": [
         "full-session-structured"
       ],
@@ -576,8 +576,8 @@
       "template_version": "1.1.0"
     },
     {
-      "content_sha256": "a6930ffc7c8c115c965de888e40a3f80020f6be0bad3f451b7a0d1ebddd318a8",
-      "content_summary": "不能；减少依赖和提交开销的收益，要与放弃潜在overlap的代价比较。",
+      "content_sha256": "9038ef593e8277713b55d3d8895be18bfe7788c32b0c43dd48916546bb27d5f8",
+      "content_summary": "B 级选材依据：用于比较依赖开销与重叠收益，限定单流优化的迁移条件。",
       "dependency_content_sha256": {},
       "depends_on": [],
       "fact_status": "verified",
@@ -593,8 +593,8 @@
       "lifecycle": "active",
       "logical_id": "mc-9d7b2af6315be86cc53562e2",
       "misconception_of": null,
-      "priority": 5,
-      "quality": "A",
+      "priority": 3,
+      "quality": "B",
       "source_ids": [
         "full-session-structured"
       ],
@@ -603,8 +603,8 @@
       "template_version": "1.1.0"
     },
     {
-      "content_sha256": "5e82427e61011cce80361f075bb3090b14bb71d5765d4b1f3e06cdb705fba89e",
-      "content_summary": "倍数是旧耗时除以新耗时；降幅是耗时减少量除以旧耗时。",
+      "content_sha256": "8fb8ee39d9673bc2a53df7d46c1a8df25a1dc3b99cf9cbe0968f4023ce9ff3ae",
+      "content_summary": "B 级选材依据：使性能报告正确区分加速倍数与耗时降幅，前提是测量边界一致。",
       "dependency_content_sha256": {},
       "depends_on": [],
       "fact_status": "verified",
@@ -620,7 +620,7 @@
       "lifecycle": "active",
       "logical_id": "mc-81771102328bc5e96dde9dc2",
       "misconception_of": null,
-      "priority": 4,
+      "priority": 3,
       "quality": "B",
       "source_ids": [
         "full-session-structured"
@@ -630,8 +630,8 @@
       "template_version": "1.1.0"
     },
     {
-      "content_sha256": "b83f7b5d28ab049156735c9e0f63a30ded8ac62a62c74d9ec8ac0a02223b544e",
-      "content_summary": "不保证；按层的切分规则分片，某些参数或状态仍可能复制。",
+      "content_sha256": "562d25793153c2cc3bb41349f17dab4e189a3d2d1b9460d6588209361771084d",
+      "content_summary": "B 级选材依据：保留按层检查切分与复制项的方法，避免用总参数量机械均分。",
       "dependency_content_sha256": {},
       "depends_on": [],
       "fact_status": "verified",
@@ -647,7 +647,7 @@
       "lifecycle": "active",
       "logical_id": "mc-7552190fc19fef1335707b7d",
       "misconception_of": null,
-      "priority": 4,
+      "priority": 3,
       "quality": "B",
       "source_ids": [
         "full-session-structured"
@@ -657,8 +657,8 @@
       "template_version": "1.1.0"
     },
     {
-      "content_sha256": "87392c7f478c1c50d698b5a97f827e52f665076d6025a53e8fa752629cb1c48e",
-      "content_summary": "避免Core快速返回时，前端还没有该请求的输出处理状态和Collector关联。",
+      "content_sha256": "0ea79878fab636f22bf0a3311aff8fc384e6c291b6681758c4b6b3497221cdf6",
+      "content_summary": "A 级理由：防止 Core 快速返回时前端输出状态尚未注册，造成结果找不到接收位置。",
       "dependency_content_sha256": {},
       "depends_on": [],
       "fact_status": "verified",
@@ -687,8 +687,8 @@
       "template_version": "1.1.0"
     },
     {
-      "content_sha256": "fd0e9679b6cb23dae373673c9fb3f80546d866fed4d4f9c042a9598882805453",
-      "content_summary": "AsyncLLM可以用请求ID和output_kind创建空Collector。",
+      "content_sha256": "1f56c7636515b8f5dae88713c7f6cd143fd3ef98367d1fcca400633b66213518",
+      "content_summary": "B 级选材依据：解释结果尚未产生时如何预建接收对象，属于可迁移的状态准备模式。",
       "dependency_content_sha256": {},
       "depends_on": [],
       "fact_status": "verified",
@@ -707,7 +707,7 @@
       "lifecycle": "active",
       "logical_id": "mc-2731ed1a964329bd32e1ea08",
       "misconception_of": null,
-      "priority": 4,
+      "priority": 3,
       "quality": "B",
       "source_ids": [
         "full-session-structured"
@@ -717,8 +717,8 @@
       "template_version": "1.1.0"
     },
     {
-      "content_sha256": "3d238ef2427e630e77635dd8db1745ab6bcf540e00bda333b79ae68c01ce5714",
-      "content_summary": "是EngineCoreRequest；Core再将它构造为内部可变Request。",
+      "content_sha256": "88a327bc80bc7be54dee44639f5ced2efe1007d59e669d41b2ca3d47250a9f5e",
+      "content_summary": "B 级选材依据：区分跨 IPC 的输入载荷与 Core 内可变请求状态，支持沿边界追踪请求。",
       "dependency_content_sha256": {},
       "depends_on": [],
       "fact_status": "verified",
@@ -737,8 +737,8 @@
       "lifecycle": "active",
       "logical_id": "mc-c34a6067dd76a7d3dbf5a43c",
       "misconception_of": null,
-      "priority": 5,
-      "quality": "A",
+      "priority": 3,
+      "quality": "B",
       "source_ids": [
         "full-session-structured"
       ],
@@ -747,8 +747,8 @@
       "template_version": "1.1.0"
     },
     {
-      "content_sha256": "2b2f5269de898e285b739fa824bef54da971dc58ad1ae468dad542597ccfd035",
-      "content_summary": "不能；它只解除一个等待条件，仍要通过token budget和KV资源检查。",
+      "content_sha256": "fc1ae4c6c8784bab0c7a30621837c962a76439491a56deadeff03ed4dff238c4",
+      "content_summary": "A 级理由：防止把 grammar 就绪当成资源准入成功，跳过 token 预算与 KV 容量约束。",
       "dependency_content_sha256": {},
       "depends_on": [],
       "fact_status": "verified",
@@ -777,8 +777,8 @@
       "template_version": "1.1.0"
     },
     {
-      "content_sha256": "d8df754851187fb46d3cbe83216366085b5ff2eba90109f0afbc271ab5cb4367",
-      "content_summary": "不会；初始化或取得编译产物后，按请求推进匹配状态并准备本步mask。",
+      "content_sha256": "e263051f2500b1cb0ebf16ee0010ae2c2552a629a8d44baac2cb01ccce811a93",
+      "content_summary": "B 级选材依据：区分可复用编译产物与请求匹配状态，避免误解逐 token 的准备成本。",
       "dependency_content_sha256": {},
       "depends_on": [],
       "fact_status": "verified",
@@ -797,7 +797,7 @@
       "lifecycle": "active",
       "logical_id": "mc-50591c6d88488ddba1e419c9",
       "misconception_of": null,
-      "priority": 4,
+      "priority": 3,
       "quality": "B",
       "source_ids": [
         "full-session-structured"
@@ -807,8 +807,8 @@
       "template_version": "1.1.0"
     },
     {
-      "content_sha256": "82afdf3b80699dd2f055ef18e4589f1aa8b79f2a0b81211940790edaf1021071",
-      "content_summary": "不能；结构约束不等于事实和业务语义正确。",
+      "content_sha256": "4e6fb09b5e100f0b54ffbdbd4eb6c99788d19e711ce15c88fbc4f7114c861b55",
+      "content_summary": "B 级选材依据：保留结构约束与事实/业务正确性的边界，避免过度解释 schema 验证。",
       "dependency_content_sha256": {},
       "depends_on": [],
       "fact_status": "verified",
@@ -824,8 +824,8 @@
       "lifecycle": "active",
       "logical_id": "mc-79362f0684e9a30fd97821f9",
       "misconception_of": null,
-      "priority": 5,
-      "quality": "A",
+      "priority": 3,
+      "quality": "B",
       "source_ids": [
         "full-session-structured"
       ],
@@ -834,8 +834,8 @@
       "template_version": "1.1.0"
     },
     {
-      "content_sha256": "b4b1f2a91911743a4c34917469bdebd8328f38513e42a36a0a9a6785d98f2ed4",
-      "content_summary": "不能；所学路径在执行前按调度计划推进计数。",
+      "content_sha256": "c1b6c7614badc802f0914d068303567cf94612b1e9e9cdf21bd567b9cb4b4eaa",
+      "content_summary": "A 级理由：防止把执行前推进的调度计数当成设备已完成的凭据。",
       "dependency_content_sha256": {},
       "depends_on": [],
       "fact_status": "verified",
@@ -864,8 +864,8 @@
       "template_version": "1.1.0"
     },
     {
-      "content_sha256": "c9f7d0628969e98c3b46746f721f4a9416f1739dfec19e259aafa3d97aff81ca",
-      "content_summary": "完成prompt的最后一次prefill即可产生首个有效输出token。",
+      "content_sha256": "805b73e8338425e557d0bfffec4401082b84d0f4c20c8745ff3ea313a185fd7c",
+      "content_summary": "B 级选材依据：连接最后一次 prefill、首个输出和下一轮 decode，支持理解 token 流程。",
       "dependency_content_sha256": {},
       "depends_on": [],
       "fact_status": "verified",
@@ -881,8 +881,8 @@
       "lifecycle": "active",
       "logical_id": "mc-7ab1103a71067961285a47b8",
       "misconception_of": null,
-      "priority": 5,
-      "quality": "A",
+      "priority": 3,
+      "quality": "B",
       "source_ids": [
         "full-session-structured"
       ],
@@ -891,8 +891,8 @@
       "template_version": "1.1.0"
     },
     {
-      "content_sha256": "8e1b2d28ff9f4c143ee137570af54a29a2ae5a155f0081022fabe2b7b9dd9c7c",
-      "content_summary": "不必；它允许按预算拆分，短prompt也可能一次完成。",
+      "content_sha256": "2b95507f5c120cac937545d00e625e25caefe5be457ce4323c5fe223c2a5540e",
+      "content_summary": "B 级选材依据：区分能力开关与预算驱动的实际分块，避免笼统描述每个请求。",
       "dependency_content_sha256": {},
       "depends_on": [],
       "fact_status": "verified",
@@ -911,8 +911,8 @@
       "lifecycle": "active",
       "logical_id": "mc-99d1339089861715964f1d78",
       "misconception_of": null,
-      "priority": 5,
-      "quality": "A",
+      "priority": 3,
+      "quality": "B",
       "source_ids": [
         "full-session-structured"
       ],
@@ -921,8 +921,8 @@
       "template_version": "1.1.0"
     },
     {
-      "content_sha256": "863b2a3f2e59c35961eade991a5cfbd7335a50233e40cbc5cb6a92a5cc95a8b4",
-      "content_summary": "不会仅因抢占而终止；请求及生成历史保留，等待资源恢复。",
+      "content_sha256": "66fca11959495daac9d93cc65503cba6a87f8859d9fb8e85811023fa6fe3118c",
+      "content_summary": "A 级理由：防止把暂时抢占当成请求终止，错误交付结束输出或丢失生成历史。",
       "dependency_content_sha256": {},
       "depends_on": [],
       "fact_status": "verified",
@@ -951,8 +951,8 @@
       "template_version": "1.1.0"
     },
     {
-      "content_sha256": "ef9d820735db5116867fc1279aa4221563a36690bc24d93cf731713d6e5c088f",
-      "content_summary": "不一定；被抢占的请求可以位于waiting队列，status仍为PREEMPTED。",
+      "content_sha256": "9c8dc01b94c00c85a20624d2e3c8424a52de5aba76f4412d741d964de9a27554",
+      "content_summary": "B 级选材依据：区分队列位置与状态枚举，支持阅读抢占和恢复路径。",
       "dependency_content_sha256": {},
       "depends_on": [],
       "fact_status": "verified",
@@ -971,7 +971,7 @@
       "lifecycle": "active",
       "logical_id": "mc-48619be5e7dad94f709e6ca0",
       "misconception_of": null,
-      "priority": 4,
+      "priority": 3,
       "quality": "B",
       "source_ids": [
         "full-session-structured"
@@ -981,8 +981,8 @@
       "template_version": "1.1.0"
     },
     {
-      "content_sha256": "e020ff916ab76b86cacf325a428ced1de404ae2b020609d59aa1b3887eaf0434",
-      "content_summary": "不必；未结束的请求可以退出本步batch，同时保留本地缓存供后续恢复。",
+      "content_sha256": "ccfe68bda0e1166f7061a9942e60196d4a2b11dac06ad5b334a7b28ac9f05780",
+      "content_summary": "A 级理由：防止因请求退出 InputBatch 就删除仍需恢复的缓存状态，或把残留块号误当所有权。",
       "dependency_content_sha256": {},
       "depends_on": [],
       "fact_status": "verified",
@@ -1011,8 +1011,8 @@
       "template_version": "1.1.0"
     },
     {
-      "content_sha256": "0449e99a96014407b84f83922b82ef5238ae1a38c91882ddc0fd78ad026da078",
-      "content_summary": "替换旧列表；恢复载荷表达恢复后的完整映射。",
+      "content_sha256": "4cba0c80f25efd68fe40581963c9fbf8de90dcbbaab1aa900876b5fae74834f1",
+      "content_summary": "A 级理由：防止恢复完整块表被错误追加到旧映射，造成 KV 寻址错误。",
       "dependency_content_sha256": {},
       "depends_on": [],
       "fact_status": "verified",
@@ -1041,8 +1041,8 @@
       "template_version": "1.1.0"
     },
     {
-      "content_sha256": "627a9ebd605b3b440e65f0efac2a35ac44425e9ead26d3f016e97b5471ec8bc7",
-      "content_summary": "先定位逻辑块，再叠加块内偏移。",
+      "content_sha256": "264986c5970ad74e933aa632a4da452f1366bdc5ca35079245393b81b6987e30",
+      "content_summary": "A 级理由：回答分页 KV 怎样由逻辑位置定位物理槽位的问题，防止混用 token 槽位和字节地址。",
       "dependency_content_sha256": {},
       "depends_on": [],
       "fact_status": "verified",
@@ -1068,8 +1068,8 @@
       "template_version": "1.1.0"
     },
     {
-      "content_sha256": "15ea26ab7fa58c85364b27278e608e10de9a7d8f1ebbbf0b290e82738b77645b",
-      "content_summary": "按请求排列的行要重排；每个请求行内的逻辑块映射可以不变。",
+      "content_sha256": "13bd7083eac11c72a17847ca771a39e344884b9546e07f8a69b8039eb2bbb3f8",
+      "content_summary": "A 级理由：防止 batch 重排时只保留行内映射却未重排行，导致请求读到别人的 KV。",
       "dependency_content_sha256": {},
       "depends_on": [],
       "fact_status": "verified",
@@ -1098,8 +1098,8 @@
       "template_version": "1.1.0"
     },
     {
-      "content_sha256": "8477066bb92175e64192f4cde88ccb5dd9ada6409b2473de6b09b0e3fb7f2a14",
-      "content_summary": "前者是本步展平query的请求片段边界，后者是对应请求的序列长度。",
+      "content_sha256": "672ea59bab92df253a93e90c5b0cefb5b634a9c0fef9066759a68be4dbff5e70",
+      "content_summary": "A 级理由：防止把历史长度计入本步 Query 片段边界，破坏 Attention 元数据。",
       "dependency_content_sha256": {},
       "depends_on": [],
       "fact_status": "verified",
@@ -1128,8 +1128,8 @@
       "template_version": "1.1.0"
     },
     {
-      "content_sha256": "a31af8d0aad8a1a4628ca39394a44057d6d614d7578414132a1718983cefaaed",
-      "content_summary": "不能；同一批次计算不取消因果约束。",
+      "content_sha256": "25eb4be3c985febd1fe8ae6451a0f9b5e56900cefef82b5a9956956c9a686d6c",
+      "content_summary": "B 级选材依据：用同批计算场景强化因果范围与请求隔离，避免退化成显然的是非题。",
       "dependency_content_sha256": {},
       "depends_on": [],
       "fact_status": "verified",
@@ -1145,8 +1145,8 @@
       "lifecycle": "active",
       "logical_id": "mc-a6c09dfcf93944cd2951b72d",
       "misconception_of": null,
-      "priority": 5,
-      "quality": "A",
+      "priority": 3,
+      "quality": "B",
       "source_ids": [
         "full-session-structured"
       ],
@@ -1155,8 +1155,8 @@
       "template_version": "1.1.0"
     },
     {
-      "content_sha256": "941361d29b39d43d310389d97ec8093da7fbb0b771577febb439de6c5cc4dadc",
-      "content_summary": "不能仅凭shape判断；内容必须对应本步请求、长度和KV映射。",
+      "content_sha256": "6ed5cae8151df2ea5a0ce0491a48372940923a81a188e688ad142db65bc6258a",
+      "content_summary": "A 级理由：防止仅凭 shape 相同复用旧 metadata 内容，沿用错误请求或 KV 映射。",
       "dependency_content_sha256": {},
       "depends_on": [],
       "fact_status": "verified",
@@ -1185,8 +1185,8 @@
       "template_version": "1.1.0"
     },
     {
-      "content_sha256": "b4019c2243b5c66eb9b849c01100fd5f12d8426b8e412452fc07c14096de3537",
-      "content_summary": "没有；还要追选定backend、运行条件、布局和底层绑定。",
+      "content_sha256": "d10e9c509312437516ea76bb222d8cb69b6f3ca0ca1a29bc403fba4cc8a1280e",
+      "content_summary": "B 级选材依据：保留从入口追到选中实现的源码定位方法，并限定性能最优性结论。",
       "dependency_content_sha256": {},
       "depends_on": [],
       "fact_status": "verified",
@@ -1205,8 +1205,8 @@
       "lifecycle": "active",
       "logical_id": "mc-869c7b15dde8da8ad2b2baa1",
       "misconception_of": null,
-      "priority": 5,
-      "quality": "A",
+      "priority": 3,
+      "quality": "B",
       "source_ids": [
         "full-session-structured"
       ],
@@ -1215,8 +1215,8 @@
       "template_version": "1.1.0"
     },
     {
-      "content_sha256": "72606bd781d181d43caa09d854c6fd8fa6645329d976d43135570d04e658b43c",
-      "content_summary": "不能仅据此删除；它可表达KV更新先于Attention读取的编译依赖。",
+      "content_sha256": "ba3da0c00c8d8c5e752a6cf2fb097677edaf8307ec3aed04297eaa9b75960984",
+      "content_summary": "A 级理由：防止删除不参与数值计算但负责图中 KV 保序的依赖参数。",
       "dependency_content_sha256": {},
       "depends_on": [],
       "fact_status": "verified",
@@ -1245,8 +1245,8 @@
       "template_version": "1.1.0"
     },
     {
-      "content_sha256": "2c1aecfa26c925d5ad3162e40e98e4f58596f5dcc54f439a1167900bca2278b2",
-      "content_summary": "不是；在所学分离路径中，后续调用sample_tokens取得完整执行输出。",
+      "content_sha256": "0ab10ab8c66ad06d741e9f92dcc5af78dd2ab90372f04d300d712b709d1dd7d3",
+      "content_summary": "A 级理由：防止把阶段返回 None 当成失败，或把后续采样误当成领取已完成 token。",
       "dependency_content_sha256": {},
       "depends_on": [],
       "fact_status": "verified",
@@ -1275,8 +1275,8 @@
       "template_version": "1.1.0"
     },
     {
-      "content_sha256": "bf701482df29b08d17565591ebecd39217658eff79e3f430e627208b9a2f969e",
-      "content_summary": "不是；所学分离路径中，它应用采样约束并真正进行采样。",
+      "content_sha256": "0660081abc03822ecac2c2d93d46aaf4bbbaa6391bdb1d7d1ff9314e31cda91f",
+      "content_summary": "2026-11-03本地归档：sample_tokens职责已并入同批execute_model与采样阶段机制卡mc-fec55735844313fb603e37f7；保留原身份，避免同结论重复导出。",
       "dependency_content_sha256": {},
       "depends_on": [],
       "fact_status": "verified",
@@ -1292,11 +1292,11 @@
         "recall_target": "区分sample_tokens的计算职责与取回结果"
       },
       "layer": "atomic",
-      "lifecycle": "active",
+      "lifecycle": "archived",
       "logical_id": "mc-2077ed6103d92ccddd84f0e1",
       "misconception_of": null,
-      "priority": 5,
-      "quality": "A",
+      "priority": 3,
+      "quality": "B",
       "source_ids": [
         "full-session-structured"
       ],
@@ -1305,8 +1305,8 @@
       "template_version": "1.1.0"
     },
     {
-      "content_sha256": "e7168c7b8b98432469297b0897a52d29fe807e68ee6576b17deb27778183b15e",
-      "content_summary": "每个请求通常选本步片段末行的hidden state计算生成logits。",
+      "content_sha256": "8db395b16d6599081cead401a8fa85a5dbe9a3bdf8dffd331b1ddc206309f6f5",
+      "content_summary": "B 级选材依据：区分输入行、logits 候选与有效输出，支持多请求混合执行的解释。",
       "dependency_content_sha256": {},
       "depends_on": [],
       "fact_status": "verified",
@@ -1325,8 +1325,8 @@
       "lifecycle": "active",
       "logical_id": "mc-6e80586c21468b342811ed55",
       "misconception_of": null,
-      "priority": 5,
-      "quality": "A",
+      "priority": 3,
+      "quality": "B",
       "source_ids": [
         "full-session-structured"
       ],
@@ -1335,8 +1335,8 @@
       "template_version": "1.1.0"
     },
     {
-      "content_sha256": "52f44ba1471885118e95ca0dc2ac3bd61a67fe4b2db6e43c1d9ec7a5292b8b77",
-      "content_summary": "EngineCore将执行结果交给Scheduler的结果更新逻辑回写和判停。",
+      "content_sha256": "2bc5f358dde816126a0295ec8f81105a1bdcc2e1b9af6829a3fa1733a0308c2b",
+      "content_summary": "B 级选材依据：把执行结果接回 Scheduler 账本，避免将设备侧缓存当成核心请求状态。",
       "dependency_content_sha256": {},
       "depends_on": [],
       "fact_status": "verified",
@@ -1355,8 +1355,8 @@
       "lifecycle": "active",
       "logical_id": "mc-c4305907da34210e2ff9a593",
       "misconception_of": null,
-      "priority": 5,
-      "quality": "A",
+      "priority": 3,
+      "quality": "B",
       "source_ids": [
         "full-session-structured"
       ],
@@ -1365,8 +1365,8 @@
       "template_version": "1.1.0"
     },
     {
-      "content_sha256": "ee384cc6dd78d0860f449fab160db73c6c9839ff8c36ffb3b0e073ea55ed15c8",
-      "content_summary": "在check_and_update_config中设置parallel_config.worker_cls。",
+      "content_sha256": "a138d7161540120b5f7b2e96df3fe3f6e7855911b34b9e8484fb7c755b710299",
+      "content_summary": "B 级选材依据：定位自定义 Worker 的配置入口并连接 Runner 构造，属于源码接入导航。",
       "dependency_content_sha256": {},
       "depends_on": [],
       "fact_status": "verified",
@@ -1385,7 +1385,7 @@
       "lifecycle": "active",
       "logical_id": "mc-704e23f2ac33a51b9d1cafc8",
       "misconception_of": null,
-      "priority": 4,
+      "priority": 3,
       "quality": "B",
       "source_ids": [
         "full-session-structured"
@@ -1395,8 +1395,8 @@
       "template_version": "1.1.0"
     },
     {
-      "content_sha256": "e301b9767b2bd2ef49f6d817220f64ec0c67e929de660cc990e4a771fac4263b",
-      "content_summary": "不会；Attention backend选择与Worker类配置是不同入口。",
+      "content_sha256": "da993fc839375da8b522306403d97f0133c4ce8e27709affe92a3c661d2310ac",
+      "content_summary": "B 级选材依据：区分两项独立设备扩展入口，避免假定一项替换自动完成另一项。",
       "dependency_content_sha256": {},
       "depends_on": [],
       "fact_status": "verified",
@@ -1415,8 +1415,8 @@
       "lifecycle": "active",
       "logical_id": "mc-a89805ae36fffe4b3d357833",
       "misconception_of": null,
-      "priority": 5,
-      "quality": "A",
+      "priority": 3,
+      "quality": "B",
       "source_ids": [
         "full-session-structured"
       ],
@@ -1425,8 +1425,8 @@
       "template_version": "1.1.0"
     },
     {
-      "content_sha256": "c8a7057ba45a9bc6c6e79fd4fffb5340f313b6f98b589a0693f7b6027221fcfb",
-      "content_summary": "不会；还要将对应vLLM模型算子调用路径接入该实现。",
+      "content_sha256": "74973041122f6067ba38384bab349b5262a671a39d1e7f3b14c1b12c4c3fb296",
+      "content_summary": "B 级选材依据：把底层算子注册与模型实际调用连接起来，支持排查实现未被采用的问题。",
       "dependency_content_sha256": {},
       "depends_on": [],
       "fact_status": "verified",
@@ -1445,8 +1445,8 @@
       "lifecycle": "active",
       "logical_id": "mc-a30eed37a09de948f40c5e38",
       "misconception_of": null,
-      "priority": 5,
-      "quality": "A",
+      "priority": 3,
+      "quality": "B",
       "source_ids": [
         "full-session-structured"
       ],
@@ -1455,8 +1455,8 @@
       "template_version": "1.1.0"
     },
     {
-      "content_sha256": "4e0e4426675673c11e65182029eb8e00c37521a8ed0f5566f2457f3643fbdaf8",
-      "content_summary": "不是；它表示原生PyTorch组合，执行设备取决于tensor与具体实现。",
+      "content_sha256": "e27ac8a55f819519f20efa9e3aa41419fbe388155b6cc8aff06f6330ffd02640",
+      "content_summary": "B 级选材依据：区分原生 PyTorch 组合与执行设备，避免把 native 当成 CPU 同义词。",
       "dependency_content_sha256": {},
       "depends_on": [],
       "fact_status": "verified",
@@ -1475,8 +1475,8 @@
       "lifecycle": "active",
       "logical_id": "mc-209c99a69970415ab4a8fe1d",
       "misconception_of": null,
-      "priority": 5,
-      "quality": "A",
+      "priority": 3,
+      "quality": "B",
       "source_ids": [
         "full-session-structured"
       ],
@@ -1486,7 +1486,7 @@
     },
     {
       "content_sha256": "b332ec1b35cbc1cf5541d9a1f78169d642243590a8075839ed3fddf44bbd6ba6",
-      "content_summary": "错误地忽略子组的实现也可能通过；需要多个独立子组暴露跨组归约。",
+      "content_summary": "A 级理由：防止只测 world 组掩盖跨组归约错误，为 collective 正确性设计反例。",
       "dependency_content_sha256": {},
       "depends_on": [],
       "fact_status": "verified",
@@ -1512,8 +1512,8 @@
       "template_version": "1.1.0"
     },
     {
-      "content_sha256": "bc29f86ac633021bb4f413e9d8b86ed84ae83250ce90dfa3a4fd79df025823de",
-      "content_summary": "不必；已有规格与页字节接口能准确表达时，应先在对应实现中兑现契约。",
+      "content_sha256": "bd8c2d48a533b601e682e137f43d82c1b686c572325f96798dff8a8b1ceffdab",
+      "content_summary": "A 级理由：防止因 padding 差异直接修改 Scheduler，遗漏已有页字节接口实现错误。",
       "dependency_content_sha256": {},
       "depends_on": [],
       "fact_status": "verified",
@@ -1542,8 +1542,8 @@
       "template_version": "1.1.0"
     },
     {
-      "content_sha256": "f09e1b2d6b3935a6d1a155c9c745a325f62e97c8b92c31d42a481d1168f81c41",
-      "content_summary": "证明需要的语义或保证无法通过现有字段、hook和机制表达。",
+      "content_sha256": "ce52d1bc84ce26b2668ba61c088c9253f79b2b4843e077c0faaa663c5f2beeef",
+      "content_summary": "B 级选材依据：要求用无法表达的语义缺口论证 Core 修改，保留可迁移的扩展边界判断。",
       "dependency_content_sha256": {},
       "depends_on": [],
       "fact_status": "verified",
@@ -1559,8 +1559,8 @@
       "lifecycle": "active",
       "logical_id": "mc-5e59c8a2b0cca6fa8beb9e2a",
       "misconception_of": null,
-      "priority": 5,
-      "quality": "A",
+      "priority": 3,
+      "quality": "B",
       "source_ids": [
         "full-session-structured"
       ],
@@ -1569,8 +1569,8 @@
       "template_version": "1.1.0"
     },
     {
-      "content_sha256": "dabaad0040d1a60cca1809ed3970e8b63b5886c61274fd03f45da1578c0fc663",
-      "content_summary": "计算未padding、无额外元数据的单层有效KV字节数，并明确每元素字节数s。",
+      "content_sha256": "9578b6220ad3a257dca8401fa6c00af79c4eebd65bf8a1434072f580ad495e6f",
+      "content_summary": "B 级选材依据：建立单层有效 KV 的计算口径，避免混用 Query heads 与 KV heads。",
       "dependency_content_sha256": {},
       "depends_on": [],
       "fact_status": "verified",
@@ -1586,8 +1586,8 @@
       "lifecycle": "active",
       "logical_id": "mc-1e35d3d80a0dc7e8e4785c53",
       "misconception_of": null,
-      "priority": 5,
-      "quality": "A",
+      "priority": 3,
+      "quality": "B",
       "source_ids": [
         "full-session-structured"
       ],
@@ -1597,7 +1597,7 @@
     },
     {
       "content_sha256": "6146cfe9f62fd90e50390a8171280500e3481fc25ea75abebda6ef2fa3b871f8",
-      "content_summary": "不是；前者来自请求未填满逻辑块，后者来自物理布局/跨度的额外占用。",
+      "content_summary": "A 级理由：防止将末块空槽与物理 padding 重复加总，算错 KV 容量。",
       "dependency_content_sha256": {},
       "depends_on": [],
       "fact_status": "verified",
@@ -1623,8 +1623,8 @@
       "template_version": "1.1.0"
     },
     {
-      "content_sha256": "91f34ae64d330316965cf5ab9fa6674de74c52f1505bdb8556c117e9b3255976",
-      "content_summary": "不能这样推断；页跨度、基址对齐和分配器取整是不同约束。",
+      "content_sha256": "aa23c09b4bdd1a39af4d6105f23d58fc6fac2dbee347adc6d329339d8289569d",
+      "content_summary": "B 级选材依据：分开核对页跨度、基址对齐与分配粒度，避免从一个布局数字推断硬件约束。",
       "dependency_content_sha256": {},
       "depends_on": [],
       "fact_status": "verified",
@@ -1640,8 +1640,8 @@
       "lifecycle": "active",
       "logical_id": "mc-caa30e7923ecbc5638183da4",
       "misconception_of": null,
-      "priority": 5,
-      "quality": "A",
+      "priority": 3,
+      "quality": "B",
       "source_ids": [
         "full-session-structured"
       ],
@@ -1650,8 +1650,8 @@
       "template_version": "1.1.0"
     },
     {
-      "content_sha256": "45826f560ea20fe6d1d21fc1302145d907a711ba9d87f3a4be94d1b855851ed6",
-      "content_summary": "不可以；每个请求独立占用自己的末块，应分别向上取整再求和。",
+      "content_sha256": "eb575cd2e18c137dc142b6fa5fdda0514f414f8757f6533aa861a52d15b1576c",
+      "content_summary": "A 级理由：防止多请求先合并 token 再取整，低估独立末块造成的容量需求。",
       "dependency_content_sha256": {},
       "depends_on": [],
       "fact_status": "verified",
@@ -1677,8 +1677,8 @@
       "template_version": "1.1.0"
     },
     {
-      "content_sha256": "b60cc92d12b889b079fe740f098477e2a6d2311de6b791a2fd62f152fdbec64e",
-      "content_summary": "不是；是5个pool ID对应160个单层物理页。",
+      "content_sha256": "aaf63090f7b652d33949c1bb9608946fccd9204f6d9c3a41515c8788f6f325a2",
+      "content_summary": "B 级选材依据：区分逻辑 pool ID 与跨层物理页数，保留单位映射而不是练习乘法。",
       "dependency_content_sha256": {},
       "depends_on": [],
       "fact_status": "verified",
@@ -1694,8 +1694,8 @@
       "lifecycle": "active",
       "logical_id": "mc-6e05afd30a1c350d2df82072",
       "misconception_of": null,
-      "priority": 5,
-      "quality": "A",
+      "priority": 3,
+      "quality": "B",
       "source_ids": [
         "full-session-structured"
       ],
@@ -1704,8 +1704,8 @@
       "template_version": "1.1.0"
     },
     {
-      "content_sha256": "eefec9d550379b920d2b098a669c06da4f0bf415ef8bf6301c93e734c6f6cf4b",
-      "content_summary": "不能；只解除R的引用，S的存活引用仍保护该块。",
+      "content_sha256": "6c09ce3835848337cc5b6bdfe186e1ee0ab279228bb2d5e545c2fe0de816e14d",
+      "content_summary": "A 级理由：防止一个请求结束就覆盖仍被其他请求引用的 KV。",
       "dependency_content_sha256": {},
       "depends_on": [],
       "fact_status": "verified",
@@ -1731,8 +1731,8 @@
       "template_version": "1.1.0"
     },
     {
-      "content_sha256": "dbd9f8c23d14d5fc4f3b07b908e882e15359c4044a9c24bf1d3f7415ebc5b764",
-      "content_summary": "可以；可再命中复用，也可在淘汰旧缓存标识后用于其他内容。",
+      "content_sha256": "b73c0a937770c403b520c4058bcaa5aa90dde8b230a12216745e1e6295d12589",
+      "content_summary": "A 级理由：防止把 free queue 理解成全无缓存数据，破坏重命中与淘汰复用。",
       "dependency_content_sha256": {},
       "depends_on": [],
       "fact_status": "verified",
@@ -1761,8 +1761,8 @@
       "template_version": "1.1.0"
     },
     {
-      "content_sha256": "6a6096d15b55eea0171c7e58ab677d3c3abd20575f67fdc2c37b3616ae0488b1",
-      "content_summary": "不一定；后续容量检查失败时尚未正式引用，成功路径才touch。",
+      "content_sha256": "a4f80f5bc51702dcfffaa54953c8a6a03e11b4492b03fd85a89f0b21afe97a63",
+      "content_summary": "A 级理由：防止把查到前缀候选当成已经持有引用，漏掉容量检查与正式保护阶段。",
       "dependency_content_sha256": {},
       "depends_on": [],
       "fact_status": "verified",
@@ -1792,7 +1792,7 @@
     },
     {
       "content_sha256": "31889e7d8c7f02ffdafe136b6abd187017e69c343e209fd74a9a40e693d57bba",
-      "content_summary": "不一定；末块仍有空槽位时，本步可以无需新增块。",
+      "content_summary": "B 级选材依据：按新增块需求判断请求可否继续，避免仅由空闲块数作过粗决策。",
       "dependency_content_sha256": {},
       "depends_on": [],
       "fact_status": "verified",
@@ -1808,8 +1808,8 @@
       "lifecycle": "active",
       "logical_id": "mc-0178da19052b31ed9413b152",
       "misconception_of": null,
-      "priority": 5,
-      "quality": "A",
+      "priority": 3,
+      "quality": "B",
       "source_ids": [
         "full-session-structured"
       ],
@@ -1818,8 +1818,8 @@
       "template_version": "1.1.0"
     },
     {
-      "content_sha256": "73cd4f6f33d84eeb885920669c8e2e99840a1781d0f413f88651c68be8660044",
-      "content_summary": "不能只凭当前块token判断；链式hash还包含父块身份及额外键。",
+      "content_sha256": "694828c8c2c11bddc7651e526d048d6537dfcab620bdbffc8b59a00fb9ebeaaf",
+      "content_summary": "A 级理由：防止仅按当前块 token 复用不同父上下文下的 KV。",
       "dependency_content_sha256": {},
       "depends_on": [],
       "fact_status": "verified",
@@ -1848,8 +1848,8 @@
       "template_version": "1.1.0"
     },
     {
-      "content_sha256": "a98951e7e9fc73ae6013b510cfef1d77afffe047c937ee210896c5b472f246da",
-      "content_summary": "不证明；它限制允许共享的范围，即使数值可能相同也不跨域复用。",
+      "content_sha256": "4bc2a76d786802251e5d8c4351e6b0b30cc24d954ebdb7326ff5a00eeed3f03e",
+      "content_summary": "B 级选材依据：区分缓存共享策略与 KV 数值关系，支持多租户复用边界说明。",
       "dependency_content_sha256": {},
       "depends_on": [],
       "fact_status": "verified",
@@ -1868,8 +1868,8 @@
       "lifecycle": "active",
       "logical_id": "mc-8f0f7a7e25dc774f917af791",
       "misconception_of": null,
-      "priority": 5,
-      "quality": "A",
+      "priority": 3,
+      "quality": "B",
       "source_ids": [
         "full-session-structured"
       ],
@@ -1879,7 +1879,7 @@
     },
     {
       "content_sha256": "9186444c07f60128c77bd5c3c0ef2e9ea8a9cbedb2062e0834b4af7ccfb93cb3",
-      "content_summary": "命中带来的延迟差异可能暴露某段前缀是否已在缓存的统计线索。",
+      "content_summary": "B 级选材依据：理解缓存延迟侧信道的观测对象，并避免把共享隔离当作完整安全机制。",
       "dependency_content_sha256": {},
       "depends_on": [],
       "fact_status": "verified",
@@ -1895,8 +1895,8 @@
       "lifecycle": "active",
       "logical_id": "mc-2d44e22b6d9485325f8972b5",
       "misconception_of": null,
-      "priority": 5,
-      "quality": "A",
+      "priority": 3,
+      "quality": "B",
       "source_ids": [
         "full-session-structured"
       ],
@@ -1906,7 +1906,7 @@
     },
     {
       "content_sha256": "f07899c1ff097b1c51e2d3b6406ba0855cb1474ba7966e395b7d47c497540b00",
-      "content_summary": "会减少或消除这些请求之间的前缀缓存复用机会。",
+      "content_summary": "B 级选材依据：解释共享范围内 salt 稳定与跨请求命中率的关系。",
       "dependency_content_sha256": {},
       "depends_on": [],
       "fact_status": "verified",
@@ -1922,7 +1922,7 @@
       "lifecycle": "active",
       "logical_id": "mc-80ae6e0f740e097b9da41829",
       "misconception_of": null,
-      "priority": 4,
+      "priority": 3,
       "quality": "B",
       "source_ids": [
         "full-session-structured"
@@ -1933,7 +1933,7 @@
     },
     {
       "content_sha256": "58eb3329590bc941c564db982ba45b87e5ca78ec9b7368218ac512594f315807",
-      "content_summary": "不会；分页访问与跨请求复用已计算前缀是不同功能。",
+      "content_summary": "B 级选材依据：区分分页访问和前缀复用两项功能，避免将存储方式当成自动跳过计算。",
       "dependency_content_sha256": {},
       "depends_on": [],
       "fact_status": "verified",
@@ -1949,8 +1949,8 @@
       "lifecycle": "active",
       "logical_id": "mc-41e581d77f242691d8a14b70",
       "misconception_of": null,
-      "priority": 5,
-      "quality": "A",
+      "priority": 3,
+      "quality": "B",
       "source_ids": [
         "full-session-structured"
       ],
@@ -1959,8 +1959,8 @@
       "template_version": "1.1.0"
     },
     {
-      "content_sha256": "fe223dcfd770fc9f29e34c02a8afc58add655f1cb3a0da18bfef850bc2f29da2",
-      "content_summary": "不必；省下的池内容量可以留给后续请求，预分配tensor仍保持。",
+      "content_sha256": "068b1edd9ca0ad6da94061f8cb8c7c6a696d1425be011032920350fa8f6fb1d4",
+      "content_summary": "B 级选材依据：区分活跃占用与预分配池大小，支持解释共享后的显存统计。",
       "dependency_content_sha256": {},
       "depends_on": [],
       "fact_status": "verified",
@@ -1976,8 +1976,8 @@
       "lifecycle": "active",
       "logical_id": "mc-d72838bb6579b9ace4af9cd9",
       "misconception_of": null,
-      "priority": 5,
-      "quality": "A",
+      "priority": 3,
+      "quality": "B",
       "source_ids": [
         "full-session-structured"
       ],
@@ -1986,8 +1986,8 @@
       "template_version": "1.1.0"
     },
     {
-      "content_sha256": "1e7af79a53c77d6a1dcddb0dbd124757b066c532017ea00e327477089c5b570c",
-      "content_summary": "不能；字节粒度与token分块单位不同，还要结合dtype、head维度、布局和kernel设计。",
+      "content_sha256": "4dff49cb068e8d226a31505a4e476eac3d8863055dce08a47b119179829e5436",
+      "content_summary": "B 级选材依据：以单位和布局契约判断搬运粒度与 token 分块，避免把 512 B 直接换成 256 token。",
       "dependency_content_sha256": {},
       "depends_on": [],
       "fact_status": "verified",
@@ -2003,8 +2003,8 @@
       "lifecycle": "active",
       "logical_id": "mc-462e2917ea13b46bfbaa040e",
       "misconception_of": null,
-      "priority": 5,
-      "quality": "A",
+      "priority": 3,
+      "quality": "B",
       "source_ids": [
         "full-session-structured"
       ],
@@ -2013,8 +2013,8 @@
       "template_version": "1.1.0"
     },
     {
-      "content_sha256": "10443f7d7b5894bff22b4fadb5078e75dc7a507e43081823f7a53a2df64c56b0",
-      "content_summary": "DELTA只包含新增生成内容；CUMULATIVE包含截至当前的累计生成内容。",
+      "content_sha256": "ab362f7bc93af35996d5894dbdf64c997878347586a23f76dde512268d1bfa34",
+      "content_summary": "B 级选材依据：比较增量与累计交付范围，避免假定一次 token 必有一次 SSE。",
       "dependency_content_sha256": {},
       "depends_on": [],
       "fact_status": "verified",
@@ -2033,8 +2033,8 @@
       "lifecycle": "active",
       "logical_id": "mc-73a6eeefde047dc3f11e9f7d",
       "misconception_of": null,
-      "priority": 5,
-      "quality": "A",
+      "priority": 3,
+      "quality": "B",
       "source_ids": [
         "full-session-structured"
       ],
@@ -2043,8 +2043,8 @@
       "template_version": "1.1.0"
     },
     {
-      "content_sha256": "3f4cc4ceb9dfc5c758f8b851ed77b6dec052e2764fc39a2c143fa6a76dfe814e",
-      "content_summary": "不是；这里的异步生成器从Collector消费RequestOutput，再向上yield。",
+      "content_sha256": "7438cd027d770b673d2261327ef94e515e7a30ff5dd45044dc9ae2f54262edff",
+      "content_summary": "B 级选材依据：把异步输出生成器与模型执行、采样职责分开，支持完整请求讲述。",
       "dependency_content_sha256": {},
       "depends_on": [],
       "fact_status": "verified",
@@ -2063,8 +2063,8 @@
       "lifecycle": "active",
       "logical_id": "mc-b13b06cdaf66c20fbc1b730e",
       "misconception_of": null,
-      "priority": 5,
-      "quality": "A",
+      "priority": 3,
+      "quality": "B",
       "source_ids": [
         "full-session-structured"
       ],
@@ -2073,8 +2073,8 @@
       "template_version": "1.1.0"
     },
     {
-      "content_sha256": "7f54805a7f19f74e7ecc9b60ea225d0fd07521dad21a48e2682bf885740d076f",
-      "content_summary": "移除结束请求的本地缓存状态与InputBatch成员，维护后续请求映射。",
+      "content_sha256": "0d4433ba5d844a5ccccc46cfab0479b108c1152e350b4323b69e4413cfd42413",
+      "content_summary": "A 级理由：防止请求结束时误清服务级权重、设备或物理 KV pool，破坏其他请求。",
       "dependency_content_sha256": {},
       "depends_on": [],
       "fact_status": "verified",
@@ -2103,8 +2103,8 @@
       "template_version": "1.1.0"
     },
     {
-      "content_sha256": "9ae8ddbc4786ff0c580b47a3237637c60c5ed7ab509a2cb4c81efd63c5e7ac35",
-      "content_summary": "不必；两条后续路径没有这个互等要求。",
+      "content_sha256": "8244328adfa7b8595e26e5ee6e33eb4372869d6d1a97c9efe7e12dc5baa5ffd3",
+      "content_summary": "B 级选材依据：解释最终输出与 Runner 清理的依赖边界，仍保留在途访问约束。",
       "dependency_content_sha256": {},
       "depends_on": [],
       "fact_status": "verified",
@@ -2123,8 +2123,8 @@
       "lifecycle": "active",
       "logical_id": "mc-c9e64adaf431ebe5c519d83f",
       "misconception_of": null,
-      "priority": 5,
-      "quality": "A",
+      "priority": 3,
+      "quality": "B",
       "source_ids": [
         "full-session-structured"
       ],
@@ -2133,8 +2133,8 @@
       "template_version": "1.1.0"
     },
     {
-      "content_sha256": "92f9197e1f5fdae782c1b482f5fe39eab480c2d8ac8d10b0c4da26dcb31c4730",
-      "content_summary": "仍可清理；所学路径先更新状态，再判断是否跳过forward。",
+      "content_sha256": "1f0abfa45bb856fcc021e15b79a6ad1ed3897a2fba4aee233bc74daba418cbdb",
+      "content_summary": "B 级选材依据：解释无计算步骤仍能处理结束通知，避免误判清理必须伴随 forward。",
       "dependency_content_sha256": {},
       "depends_on": [],
       "fact_status": "verified",
@@ -2153,7 +2153,7 @@
       "lifecycle": "active",
       "logical_id": "mc-3330df6c801eb8afb0c4a4d1",
       "misconception_of": null,
-      "priority": 4,
+      "priority": 3,
       "quality": "B",
       "source_ids": [
         "full-session-structured"
@@ -2163,12 +2163,12 @@
       "template_version": "1.1.0"
     }
   ],
-  "managed_body_sha256": "10ba28c455d9f86650ae34e89b68b5702ca4839c705d240648e8ef9695daadc6",
-  "manifest_payload_sha256": "138e7ce657ca898b3b0523e34762ffa88a0211330400649b92245d63a888703e",
+  "managed_body_sha256": "a82f4a3b53e509767a726484a96dfca5d6a256a38dc9822e2f255965bdeec3f0",
+  "manifest_payload_sha256": "c16ec48d53cf9a5c99341c563d35a3bd99e0e9432852e3ca90de7ec157053bbd",
   "schema": "memo-cards.artifact/v2",
   "sidecars": [
     {
-      "byte_size": 10535,
+      "byte_size": 9595,
       "columns": [
         "意图",
         "场景",
@@ -2178,67 +2178,57 @@
       ],
       "kind": "markji-import-xlsx",
       "path": "推理框架/cards/vllm-full-session-review-correction.xlsx",
-      "row_count": 10,
+      "row_count": 8,
       "rows": [
         {
-          "content_sha256": "ef8cdf0ec4ed40333ac47dc8cc8660084383df2ea14c4c7f95b4beb113c89b79",
+          "content_sha256": "89cf25064cc19532374f7f9ace7b4be21e0cd6ec465f814adfee5246450d4efe",
           "logical_id": "mc-405fa0e547ffb00ee0743601",
-          "row_sha256": "d4b177a1101511d48449b3fc535619d73132a36dbfecc175f7a8d72f81284d94"
+          "row_sha256": "34c8695ec362950e882620d811c40a9158f3a63f7aecb8421d68f52796bdfb59"
         },
         {
-          "content_sha256": "fc2e2356098fb81ea26a1ae4eca069d61818fa19508cd87c6599ea5ab66c796a",
+          "content_sha256": "1d3f592004af8b15d4cbcf4f2b22456d20425b66602cd3b1cd36cbebd1ce37b4",
           "logical_id": "mc-e1d5350c48cf8fd0d15afdce",
-          "row_sha256": "ae6219f4f24ce1df69befa126e1a7f33badb3152e49432d946bced8ce976ec5d"
+          "row_sha256": "ea320aafebf388ab7532ca6efda2a52a2ba204fcf32bcb2554647c395a570438"
         },
         {
-          "content_sha256": "ecf9f7b621703fda136e24af7b330c18996556b174fdb31a24de371e14dcc8f2",
+          "content_sha256": "5c0dfd12bce7663f6258aa581ee000ecad9a86c5e5d4d2231f3d7943801b35d3",
           "logical_id": "mc-7f6b889ffccb7afddf9fea5f",
-          "row_sha256": "24afd8084cee5aaa468dbdb430670cd7a00a2d1e21a49b3d6a45d645d5e97d93"
+          "row_sha256": "5ce2f8fc754c55ef100cd3f5b366f7c883dd9ccbdb71a44c666d0ac36d2de2bb"
         },
         {
-          "content_sha256": "89053c3446fef9f964631d8a03b7bce731d03d470cd0c57551e3a5ff914ab812",
+          "content_sha256": "a7549577b79cfc61a24595e593b382296515171c2d7fb4cdb03a6af484656232",
           "logical_id": "mc-f27bf5c68905845573007bb3",
-          "row_sha256": "365a9a13a657e4c560b92eb7181923b67ef5d438b2e35e79c5d2109472f84ce8"
+          "row_sha256": "905bad268d298bf90fe4cebd62169eba9dd5080a9a4053af1bc72634f5c111e3"
         },
         {
-          "content_sha256": "d3e2bf04bd7746346f324b5f15570a8718c95594dba85d47235c9bfd0293a7e4",
+          "content_sha256": "e1114abe6ade21674ed1d109b7b3636d78b44d0dd2a821f946000bf3409b234e",
           "logical_id": "mc-f726fd672421c50799332024",
-          "row_sha256": "d2893e754d0b7dc5236b281ecf3b139e8a92666be54b7b9cef65db2c5136571a"
+          "row_sha256": "fc566ebcd12742a014f460245b7cc99801be1458ac0da31d70c3132f49d2c8a4"
         },
         {
-          "content_sha256": "ba04e8e5ba6973b8c02595149dcaadf60193ad0e0a58f2399e0091783e1750c1",
-          "logical_id": "mc-fccc453bd4ab4941409e7bf9",
-          "row_sha256": "0f6e629573e6aca9a8af11c7d7b0d1a757d2771651f4c21b1a4bd2657ee4dd3e"
-        },
-        {
-          "content_sha256": "9b768b4af87487df2a90b76c82e70040d6b2da744ed9194c100c7bf453e58607",
+          "content_sha256": "6b2276306b8fa4bc35bd7a588f1b18c58710f96c4e84de1daffb32cbf03abcb4",
           "logical_id": "mc-c0e72e196678952189509127",
-          "row_sha256": "6485aed6b0204447d7536857d8ce3956af1649cdb120207f7cc699411aceff73"
+          "row_sha256": "dc43e2e393d44603716eea0b4513383062e2d1dda2577445d40593e99ce4566a"
         },
         {
-          "content_sha256": "0527b41937fb4e88726079058c2f2fd90d7ba8dc6592ec040c63b6cc46711693",
+          "content_sha256": "1c4730f398f50e073a2b87a270c72d4d2dffbc1cb79bfecaea9fadb543bfb299",
           "logical_id": "mc-83bf809ee49d5864f0049a85",
-          "row_sha256": "aa9ed77cd186ad7116321209a503095fd59a4b02d1324023621e4dc961307584"
+          "row_sha256": "57879ac4a52b35fd83eae3ba0689b2ad7492e8a17a47f5b3a9f817a25462b00d"
         },
         {
-          "content_sha256": "70799c1e8d691027ba2e5b527038e36304c34b15d23b357deb76bfc5bd88540c",
+          "content_sha256": "4b774d75f22ea389737c23e68efc9a127fc4344dbf4194a4cbf2dd9f63b27aa1",
           "logical_id": "mc-b94314f0d50a23dcab697cc7",
-          "row_sha256": "3a1ed3ba3f3ab442c8746e272405a545e73249102c9c0de76743fef518e13df5"
-        },
-        {
-          "content_sha256": "d1f7e585e4983a7e8fe8120797f15fec035a6d6b770506a497177734463c8c06",
-          "logical_id": "mc-58f9377a4e5513c61f851abc",
-          "row_sha256": "f3f06891296b51d5b9de19ade2824db14b1513afbc11b19b143cbaa26c890b3e"
+          "row_sha256": "99df8535cc0ab683db919d9354d5ed340ceb630318426d2a372cd0eeb43033c5"
         }
       ],
-      "sha256": "78132223c85d19a940f4ccd77bd1404fded686295285b39794f7b70e760e9d58",
+      "sha256": "e86b4c8acb86d97ad841f1acc86dcc50c9f693285be52dd2305118a305ab239f",
       "sheet_name": "cards",
-      "table_sha256": "8ab607945954b15d73e4a507d9d2ced4f6e2af15dc06fce1e3e7fdea783224df",
+      "table_sha256": "15ca6987248d32023ff0acbc1242c3e7e9e49e6c2844e5c042b8695ea2787cc1",
       "template_id": "correction",
       "template_version": "1.1.0"
     },
     {
-      "byte_size": 41636,
+      "byte_size": 48474,
       "columns": [
         "问题",
         "答案",
@@ -2247,12 +2237,22 @@
       ],
       "kind": "markji-import-xlsx",
       "path": "推理框架/cards/vllm-full-session-review-technical-qa.xlsx",
-      "row_count": 65,
+      "row_count": 64,
       "rows": [
         {
-          "content_sha256": "b400d201ad7ee47cbe312c3497f8b2ea52e947a9bd401c7dfab3ee15f49f1645",
+          "content_sha256": "0de4eded45405aa5a7a2dd059fb97734299219cf9f755d79cbf2cadbb1e6fb78",
+          "logical_id": "mc-fccc453bd4ab4941409e7bf9",
+          "row_sha256": "602927f5359be7bb89e7034380db009085563575413bc2941473cb6a8cef5818"
+        },
+        {
+          "content_sha256": "361cb0b1a5075ec7847599e8d1f0726c992a3566cceec6d2f7066fe990634fbf",
+          "logical_id": "mc-58f9377a4e5513c61f851abc",
+          "row_sha256": "21198ff71554f907fdd9f55765264c9c9f7588db53646e6b56f94f6b92305066"
+        },
+        {
+          "content_sha256": "cd08b1e5ac83ed905099049d974a0afc3c17b2048e8a80ca56a15c2a38c88461",
           "logical_id": "mc-a4cd934451dbc2f674b835a9",
-          "row_sha256": "47ce8b1c65390f9f9682eca259334e86c2bf2ea4dcd92a5ed73b05c85bbbbc1a"
+          "row_sha256": "b91a99ce8583929b3928b6bc925f0b9691bcc9c67bb3e498df1af3e5c08cdd7b"
         },
         {
           "content_sha256": "3e72a60bb48950b3440ded7e0c1f84de38a8e02d92f2124c583ce1fc07e82c95",
@@ -2260,24 +2260,14 @@
           "row_sha256": "f46d0ad3eee447888d44b245d789c9c798f43ae142315e2e12b16f88ef6cb172"
         },
         {
-          "content_sha256": "002080a3044fd1e85e0c8ffd4d997eb6e187042a6e64fc36e9da4f65dd414cca",
-          "logical_id": "mc-b5ab4a7997b4428cc78802e8",
-          "row_sha256": "887a5c6124ff1b7a57e5124e153ccd59067cd84f0acda667c930a056bf2cdd29"
-        },
-        {
-          "content_sha256": "c20ea0db6f0334e16d582bf6e8e6cfff48e4936ef1f17b16bd9910c751680d60",
-          "logical_id": "mc-abe7eb24831612c9c3d4eef7",
-          "row_sha256": "afd4bef36391b8cfb23957d2a4256922e8c98d7f2d421175ae1bb4be770f1405"
-        },
-        {
-          "content_sha256": "94b870feda8d20f2f95d91d29d81dd499695c459b8ec47b52e63b55b13f0ade8",
+          "content_sha256": "4d6516c2bc3566ad253d9e33d20e49043e972291d58c1c1b0439d6e69b1b2f78",
           "logical_id": "mc-84676054f06c3224f8b9d42a",
-          "row_sha256": "0f21f962137d8ac011b70aab3a3895d1d99f6d8232eb0911be62f3b71a4fe709"
+          "row_sha256": "6d95a1e8770d5a0f18c14ab6c2ed950a6c762a405a59b5ca0f37b38e6858985a"
         },
         {
-          "content_sha256": "4b6b942aada9b4c6b4879aa5f5ea5f09868dee89bdaad92441f88b3d054c8617",
+          "content_sha256": "938c11064b4c179120fad7d6cb34b62b61b73d3bd9cd5d6f2d6d3f9d89b857d0",
           "logical_id": "mc-386eff0e70f84976785adb7b",
-          "row_sha256": "e5332d6a1c7e283aaa6f91e81700958000c503ff140a8699ce22d14abaf22aa9"
+          "row_sha256": "1eb05b73bf5d4de319360a7a4df46118900edd057f554450c68721599a731297"
         },
         {
           "content_sha256": "677516b14684374d68c6d5887b1faa7ead8de6b26d7c67d1a229fb88222a2cef",
@@ -2300,159 +2290,154 @@
           "row_sha256": "feeb90014500baedb96869afa00940909a4b6c4d001b8b2d06e60dd9778c1992"
         },
         {
-          "content_sha256": "a6930ffc7c8c115c965de888e40a3f80020f6be0bad3f451b7a0d1ebddd318a8",
+          "content_sha256": "9038ef593e8277713b55d3d8895be18bfe7788c32b0c43dd48916546bb27d5f8",
           "logical_id": "mc-9d7b2af6315be86cc53562e2",
-          "row_sha256": "504ff07f15d77ec1c4b76d7cbb4c2f59e846128ebdf5c8cd96a660b6e124c06c"
+          "row_sha256": "cf9367ba76ec7e8a70883f1f6250391a9b38b7a9520f5969b6f21508db575cf0"
         },
         {
-          "content_sha256": "5e82427e61011cce80361f075bb3090b14bb71d5765d4b1f3e06cdb705fba89e",
+          "content_sha256": "8fb8ee39d9673bc2a53df7d46c1a8df25a1dc3b99cf9cbe0968f4023ce9ff3ae",
           "logical_id": "mc-81771102328bc5e96dde9dc2",
-          "row_sha256": "d9f1390afcb02af43edd370f42f12c5c9a1acd5e4a9fb153338ad5208d409827"
+          "row_sha256": "428d93912bb5ff94593d270a6e53ca907b9a2bdd6f62c5d0da77ba49b6d122cb"
         },
         {
-          "content_sha256": "b83f7b5d28ab049156735c9e0f63a30ded8ac62a62c74d9ec8ac0a02223b544e",
+          "content_sha256": "562d25793153c2cc3bb41349f17dab4e189a3d2d1b9460d6588209361771084d",
           "logical_id": "mc-7552190fc19fef1335707b7d",
-          "row_sha256": "12e6dd1d2eb7e9ce9fa04b7fb8a1882d86e114d0c33c9a8b19a225c588ac5e12"
+          "row_sha256": "eb5efd1f53caba6131a5e37c69633f169067ab037a3d1499b1ec0654d292721f"
         },
         {
-          "content_sha256": "87392c7f478c1c50d698b5a97f827e52f665076d6025a53e8fa752629cb1c48e",
+          "content_sha256": "0ea79878fab636f22bf0a3311aff8fc384e6c291b6681758c4b6b3497221cdf6",
           "logical_id": "mc-ae376a7b1a41d3c8475527c6",
-          "row_sha256": "c8336bec91b964533ef91f60a30e0eacebeae7d623fa576e043e92df0b90a6e5"
+          "row_sha256": "86fb4b54196227f7263520ca09df6dc6504f87a6ea9bb844eed2889d6617eb7c"
         },
         {
-          "content_sha256": "fd0e9679b6cb23dae373673c9fb3f80546d866fed4d4f9c042a9598882805453",
+          "content_sha256": "1f56c7636515b8f5dae88713c7f6cd143fd3ef98367d1fcca400633b66213518",
           "logical_id": "mc-2731ed1a964329bd32e1ea08",
-          "row_sha256": "e77be603abecbcc68d21f032399764acab0e1db5f512a99659a893f6fc9ac6f9"
+          "row_sha256": "035f3ceec51bc47d1285c75587399bcab4d2a7abafa1b66882edbf533b36a73e"
         },
         {
-          "content_sha256": "3d238ef2427e630e77635dd8db1745ab6bcf540e00bda333b79ae68c01ce5714",
+          "content_sha256": "88a327bc80bc7be54dee44639f5ced2efe1007d59e669d41b2ca3d47250a9f5e",
           "logical_id": "mc-c34a6067dd76a7d3dbf5a43c",
-          "row_sha256": "0be52256ac88501f305bed6fd4096dbe83af5673d055c08eb548e76531d466ca"
+          "row_sha256": "7735a12ce18de1e84076c08de1df9e7dbfad5c291e9d00b7d631fd18358757a8"
         },
         {
-          "content_sha256": "2b2f5269de898e285b739fa824bef54da971dc58ad1ae468dad542597ccfd035",
+          "content_sha256": "fc1ae4c6c8784bab0c7a30621837c962a76439491a56deadeff03ed4dff238c4",
           "logical_id": "mc-34b6be82985ed08c4270ddd5",
-          "row_sha256": "8786013fbadb97d03fe6a893dca2c206212f22a34fe9a9f4ea1aee03b0bb4510"
+          "row_sha256": "953ab4c659f7bec2376482cedf57c56851c5239bf8fd6970a4075f8aaac782b9"
         },
         {
-          "content_sha256": "d8df754851187fb46d3cbe83216366085b5ff2eba90109f0afbc271ab5cb4367",
+          "content_sha256": "e263051f2500b1cb0ebf16ee0010ae2c2552a629a8d44baac2cb01ccce811a93",
           "logical_id": "mc-50591c6d88488ddba1e419c9",
-          "row_sha256": "c7c8dddce10e6a8890c538f785a036aad7c89f9cbc4932ebc4d0b523b39c7375"
+          "row_sha256": "3100e9bb539110b463dc0594b9279d348065b36bd6e2a9df38237b96adc984ed"
         },
         {
-          "content_sha256": "82afdf3b80699dd2f055ef18e4589f1aa8b79f2a0b81211940790edaf1021071",
+          "content_sha256": "4e6fb09b5e100f0b54ffbdbd4eb6c99788d19e711ce15c88fbc4f7114c861b55",
           "logical_id": "mc-79362f0684e9a30fd97821f9",
-          "row_sha256": "0624d21821a0941bf730f59d8ca102ae5d493957806466247ccf93c72120b1b5"
+          "row_sha256": "6910a5ee12d1fd730d8a18d0316d26c05633877b1754c60fe7129cb05284b49e"
         },
         {
-          "content_sha256": "b4b1f2a91911743a4c34917469bdebd8328f38513e42a36a0a9a6785d98f2ed4",
+          "content_sha256": "c1b6c7614badc802f0914d068303567cf94612b1e9e9cdf21bd567b9cb4b4eaa",
           "logical_id": "mc-485fa8cafc3816acbd51e03b",
-          "row_sha256": "7a7047502a23ccea2e9cb74b2ec200887e7ae5c0ae7e394e9456c558965af632"
+          "row_sha256": "b933438313524de87eddb5b670d866516e366638f86475f20bc8f1de9480a7f4"
         },
         {
-          "content_sha256": "c9f7d0628969e98c3b46746f721f4a9416f1739dfec19e259aafa3d97aff81ca",
+          "content_sha256": "805b73e8338425e557d0bfffec4401082b84d0f4c20c8745ff3ea313a185fd7c",
           "logical_id": "mc-7ab1103a71067961285a47b8",
-          "row_sha256": "e32745ac2f4475f29ae60dc523f8a513a6164c2d29fadd880bf566cc3fe5f96b"
+          "row_sha256": "aebdf6a8e633f0307ff5429dbfa71ee2f1c0360a3124c7efb3844f7af334b4f1"
         },
         {
-          "content_sha256": "8e1b2d28ff9f4c143ee137570af54a29a2ae5a155f0081022fabe2b7b9dd9c7c",
+          "content_sha256": "2b95507f5c120cac937545d00e625e25caefe5be457ce4323c5fe223c2a5540e",
           "logical_id": "mc-99d1339089861715964f1d78",
-          "row_sha256": "06dba3839b0c025e20a75b26eedae778fd5cf116515e5aee3863c14d3903f4d1"
+          "row_sha256": "8e59643924e303b7d9242dd27d0c73b3bcdd753febb39e2e82723c5635daa416"
         },
         {
-          "content_sha256": "863b2a3f2e59c35961eade991a5cfbd7335a50233e40cbc5cb6a92a5cc95a8b4",
+          "content_sha256": "66fca11959495daac9d93cc65503cba6a87f8859d9fb8e85811023fa6fe3118c",
           "logical_id": "mc-af6f8b4a3928337d2ca0f814",
-          "row_sha256": "cbcf6c39b2238a02f09e1c36e15c083864782ae6f6d3cbc5c058ccd2b5733256"
+          "row_sha256": "735ab9db45b770a332f8a364eaf7249608d8d576d8e4c91e2a481f4f0cbccacf"
         },
         {
-          "content_sha256": "ef9d820735db5116867fc1279aa4221563a36690bc24d93cf731713d6e5c088f",
+          "content_sha256": "9c8dc01b94c00c85a20624d2e3c8424a52de5aba76f4412d741d964de9a27554",
           "logical_id": "mc-48619be5e7dad94f709e6ca0",
-          "row_sha256": "98caf9eaa07ae0a1bf954ad1e37a0a7018ddbcb6b65d2a6d8a1ddde51395aafb"
+          "row_sha256": "93daa72420c0080ca94dc48c38c03ca17bcfe7b0da8c136e64e74a7131a812d8"
         },
         {
-          "content_sha256": "e020ff916ab76b86cacf325a428ced1de404ae2b020609d59aa1b3887eaf0434",
+          "content_sha256": "ccfe68bda0e1166f7061a9942e60196d4a2b11dac06ad5b334a7b28ac9f05780",
           "logical_id": "mc-842ef50d7d3ce590a2b562fd",
-          "row_sha256": "9f3d76e8ac590804bbb3025eb01eaefc24d1913a73dac7ec28654626e76263d5"
+          "row_sha256": "11d4ec5996099b877becaf455386a402080272fd4a5c022e693d9c0e761f8c4d"
         },
         {
-          "content_sha256": "0449e99a96014407b84f83922b82ef5238ae1a38c91882ddc0fd78ad026da078",
+          "content_sha256": "4cba0c80f25efd68fe40581963c9fbf8de90dcbbaab1aa900876b5fae74834f1",
           "logical_id": "mc-15d38c7ca8e263ccc79e1ad2",
-          "row_sha256": "580bbba73b77e15d1d3c343ce5bb0de6fb195692c10bdab25af721e5c24a6f5b"
+          "row_sha256": "bda3f1ef051205e851347e2431b7990ec0f419df45c2d278d2621a6da618d315"
         },
         {
-          "content_sha256": "627a9ebd605b3b440e65f0efac2a35ac44425e9ead26d3f016e97b5471ec8bc7",
+          "content_sha256": "264986c5970ad74e933aa632a4da452f1366bdc5ca35079245393b81b6987e30",
           "logical_id": "mc-c1802344a7ebe74999d6ee69",
-          "row_sha256": "782c8f74b51cf346d66543e2c336972f1ef79024ac1ebcfc5ce1f5b1d76b7434"
+          "row_sha256": "b54e7d173a8a23b0a0025c64f0f21843b1aa76384122125b2aece7b33471648f"
         },
         {
-          "content_sha256": "15ea26ab7fa58c85364b27278e608e10de9a7d8f1ebbbf0b290e82738b77645b",
+          "content_sha256": "13bd7083eac11c72a17847ca771a39e344884b9546e07f8a69b8039eb2bbb3f8",
           "logical_id": "mc-360a92513663a1e184c73081",
-          "row_sha256": "0b4c054ffa6499210aef4521065def9745b20f4bbb1bd5631ffd08b915bf342b"
+          "row_sha256": "cc777b6a225499d03de3c7a33ae0ffa5c0bf0d07942fe8a843e5b8c7eb344ab6"
         },
         {
-          "content_sha256": "8477066bb92175e64192f4cde88ccb5dd9ada6409b2473de6b09b0e3fb7f2a14",
+          "content_sha256": "672ea59bab92df253a93e90c5b0cefb5b634a9c0fef9066759a68be4dbff5e70",
           "logical_id": "mc-e48c0b5d4e3fdfff3a079a2b",
-          "row_sha256": "50164d4b08082ae72bb990654631c1e0c0b0eb32bd4c60b34041bb3e6f206159"
+          "row_sha256": "2440c1f3f7a3a8dfa76c6c325bc3eef868567f9d90f839a640e05653eaa5067d"
         },
         {
-          "content_sha256": "a31af8d0aad8a1a4628ca39394a44057d6d614d7578414132a1718983cefaaed",
+          "content_sha256": "25eb4be3c985febd1fe8ae6451a0f9b5e56900cefef82b5a9956956c9a686d6c",
           "logical_id": "mc-a6c09dfcf93944cd2951b72d",
-          "row_sha256": "4eafdeeb021fe78a5723c48d52e703d50acef19f2a367c735f32daec8abe5ae3"
+          "row_sha256": "eb8864a9d5be40f112f774347527ec84f84d04b13bc726de7c34fb9e7ddb1f92"
         },
         {
-          "content_sha256": "941361d29b39d43d310389d97ec8093da7fbb0b771577febb439de6c5cc4dadc",
+          "content_sha256": "6ed5cae8151df2ea5a0ce0491a48372940923a81a188e688ad142db65bc6258a",
           "logical_id": "mc-4dc2c29e8fcf8c04979b2598",
-          "row_sha256": "93c4b2317277d57f7ade96ee40ebe2d66b3eff34317a4b1f53776c42fc392923"
+          "row_sha256": "62854953cf117cfa6dcc90a4fd91ff883b744369f7a3b9ea29d8c3850cc18251"
         },
         {
-          "content_sha256": "b4019c2243b5c66eb9b849c01100fd5f12d8426b8e412452fc07c14096de3537",
+          "content_sha256": "d10e9c509312437516ea76bb222d8cb69b6f3ca0ca1a29bc403fba4cc8a1280e",
           "logical_id": "mc-869c7b15dde8da8ad2b2baa1",
-          "row_sha256": "d1120c502e5d9446e0704b07d363e971eebdc84670702b78bda60fcefe432090"
+          "row_sha256": "d7aef420797889ab735f66a3f5fa12be557a1df391524401fe5f4e93ac289364"
         },
         {
-          "content_sha256": "72606bd781d181d43caa09d854c6fd8fa6645329d976d43135570d04e658b43c",
+          "content_sha256": "ba3da0c00c8d8c5e752a6cf2fb097677edaf8307ec3aed04297eaa9b75960984",
           "logical_id": "mc-05890bf565adf8310a19569d",
-          "row_sha256": "bd24c7b00472407c7c7c81b681ea6d49352325f53a102e6fabbf74247cb042d5"
+          "row_sha256": "cc636282895d693a0d7b75413d73b34ec6386526861435a9feb2189f6e442476"
         },
         {
-          "content_sha256": "2c1aecfa26c925d5ad3162e40e98e4f58596f5dcc54f439a1167900bca2278b2",
+          "content_sha256": "0ab10ab8c66ad06d741e9f92dcc5af78dd2ab90372f04d300d712b709d1dd7d3",
           "logical_id": "mc-fec55735844313fb603e37f7",
-          "row_sha256": "19de56b1801152d61bf7d501c9cfecdf576fbf19511673f1735a1891e281e7dd"
+          "row_sha256": "c32b63bd3fac7b094aa9193c139c9c8270504011bbd8d4ace4337aa9a62bb90e"
         },
         {
-          "content_sha256": "bf701482df29b08d17565591ebecd39217658eff79e3f430e627208b9a2f969e",
-          "logical_id": "mc-2077ed6103d92ccddd84f0e1",
-          "row_sha256": "063e4c7e44c782dd71bda9ee70f2a30610300aacabf3baf7ffe09d0008adbb44"
-        },
-        {
-          "content_sha256": "e7168c7b8b98432469297b0897a52d29fe807e68ee6576b17deb27778183b15e",
+          "content_sha256": "8db395b16d6599081cead401a8fa85a5dbe9a3bdf8dffd331b1ddc206309f6f5",
           "logical_id": "mc-6e80586c21468b342811ed55",
-          "row_sha256": "00911a6ec7ab0a0b6c74cce452d53f2ed47ddc807c762bc949364a70f50bcba3"
+          "row_sha256": "26e95921ce9c2c637bd7f79c0f817dfabfcd72d308524178956ec81261a29322"
         },
         {
-          "content_sha256": "52f44ba1471885118e95ca0dc2ac3bd61a67fe4b2db6e43c1d9ec7a5292b8b77",
+          "content_sha256": "2bc5f358dde816126a0295ec8f81105a1bdcc2e1b9af6829a3fa1733a0308c2b",
           "logical_id": "mc-c4305907da34210e2ff9a593",
-          "row_sha256": "0763c7395da8c776057b8b0ffb17ff1cb243315b6af8662bb58b741035a940df"
+          "row_sha256": "22b6ead368376fd6006fe36fa6e714e71076e84f3503b6b3b9a96765e77beb89"
         },
         {
-          "content_sha256": "ee384cc6dd78d0860f449fab160db73c6c9839ff8c36ffb3b0e073ea55ed15c8",
+          "content_sha256": "a138d7161540120b5f7b2e96df3fe3f6e7855911b34b9e8484fb7c755b710299",
           "logical_id": "mc-704e23f2ac33a51b9d1cafc8",
-          "row_sha256": "a854ceaa1637b8e616910e351563c17d83d84b99b460a36d199b551aad032b7f"
+          "row_sha256": "c5e6a3d1113b96c52f117c147088b9459c0fbd080e1f64dbbdb8276e3df3ac70"
         },
         {
-          "content_sha256": "e301b9767b2bd2ef49f6d817220f64ec0c67e929de660cc990e4a771fac4263b",
+          "content_sha256": "da993fc839375da8b522306403d97f0133c4ce8e27709affe92a3c661d2310ac",
           "logical_id": "mc-a89805ae36fffe4b3d357833",
-          "row_sha256": "08f09ba9fddd4e4b56baf53240893a8e377bb382482524c27b284d3679b7fd3b"
+          "row_sha256": "c292c8df1d15b1662f7edeefd6a1b2c06da16fd7a2d7a6817e544c2f34bda932"
         },
         {
-          "content_sha256": "c8a7057ba45a9bc6c6e79fd4fffb5340f313b6f98b589a0693f7b6027221fcfb",
+          "content_sha256": "74973041122f6067ba38384bab349b5262a671a39d1e7f3b14c1b12c4c3fb296",
           "logical_id": "mc-a30eed37a09de948f40c5e38",
-          "row_sha256": "f34ade4da26d31fbc4c473a2301b3a92ae6177ccf0f1176bfc5f92b8ee99aa1c"
+          "row_sha256": "72fecad054e21bd596b1c148b6c8bcf200b1b8de0084dbb9b95b07263bc8c33f"
         },
         {
-          "content_sha256": "4e0e4426675673c11e65182029eb8e00c37521a8ed0f5566f2457f3643fbdaf8",
+          "content_sha256": "e27ac8a55f819519f20efa9e3aa41419fbe388155b6cc8aff06f6330ffd02640",
           "logical_id": "mc-209c99a69970415ab4a8fe1d",
-          "row_sha256": "1cfbf4495a5e2eecfca686291150a4fcae47765f7a65dd90c951dbc80d47408e"
+          "row_sha256": "edc091f14d0b862ba048d4db50d6da675ee7cc03ef5e8d9c14306839166a8386"
         },
         {
           "content_sha256": "b332ec1b35cbc1cf5541d9a1f78169d642243590a8075839ed3fddf44bbd6ba6",
@@ -2460,19 +2445,19 @@
           "row_sha256": "19e665f46e52ddb1742dc4542c9d5e1ec7294b89734f013844278d24b5a067ee"
         },
         {
-          "content_sha256": "bc29f86ac633021bb4f413e9d8b86ed84ae83250ce90dfa3a4fd79df025823de",
+          "content_sha256": "bd8c2d48a533b601e682e137f43d82c1b686c572325f96798dff8a8b1ceffdab",
           "logical_id": "mc-8cf820cd4a8ab0b43fbc3bd6",
-          "row_sha256": "8942e3e20752b551811443f6277e4aae9015ba23ce4e2f86316b0400019ca1ac"
+          "row_sha256": "0ec64877e5d93a75bc727c68e9dc6f9480992a94aaf5cabdefc2b929a5f92685"
         },
         {
-          "content_sha256": "f09e1b2d6b3935a6d1a155c9c745a325f62e97c8b92c31d42a481d1168f81c41",
+          "content_sha256": "ce52d1bc84ce26b2668ba61c088c9253f79b2b4843e077c0faaa663c5f2beeef",
           "logical_id": "mc-5e59c8a2b0cca6fa8beb9e2a",
-          "row_sha256": "81c4fc3054c3ecec753f35bfa61b7699d222341f934113cd698bdc5304234446"
+          "row_sha256": "e415ff2bc2ae26f9b74d6e8b0ed71432b11e457ba81dcd569b96993ee155dcc5"
         },
         {
-          "content_sha256": "dabaad0040d1a60cca1809ed3970e8b63b5886c61274fd03f45da1578c0fc663",
+          "content_sha256": "9578b6220ad3a257dca8401fa6c00af79c4eebd65bf8a1434072f580ad495e6f",
           "logical_id": "mc-1e35d3d80a0dc7e8e4785c53",
-          "row_sha256": "55f9c68daf0a2df41bc808f6eafa0557568902842fb984380cb3edc937250980"
+          "row_sha256": "4d40de507897e77e94a43160c952b190a81ec73a6ec755f5058d801fa6896126"
         },
         {
           "content_sha256": "6146cfe9f62fd90e50390a8171280500e3481fc25ea75abebda6ef2fa3b871f8",
@@ -2480,34 +2465,34 @@
           "row_sha256": "c920dcc1aac6d5d3e14721a5ce45898fcb3ab7197552496d6efefaa4b4ff3f93"
         },
         {
-          "content_sha256": "91f34ae64d330316965cf5ab9fa6674de74c52f1505bdb8556c117e9b3255976",
+          "content_sha256": "aa23c09b4bdd1a39af4d6105f23d58fc6fac2dbee347adc6d329339d8289569d",
           "logical_id": "mc-caa30e7923ecbc5638183da4",
-          "row_sha256": "38c5dd52d7c594e5596cd0d3f17475d7b163224af08168784cecb4afe658d768"
+          "row_sha256": "a2b78925c6e2650bd374df1db091039460155fe4e90f0d25bea94a4b8a22eed3"
         },
         {
-          "content_sha256": "45826f560ea20fe6d1d21fc1302145d907a711ba9d87f3a4be94d1b855851ed6",
+          "content_sha256": "eb575cd2e18c137dc142b6fa5fdda0514f414f8757f6533aa861a52d15b1576c",
           "logical_id": "mc-284dc7300b3aedb48fb0e420",
-          "row_sha256": "84f32a1d70ce9cec4cf84eb791b9ab63e709bb8188093a2fbfefb52291cb05e4"
+          "row_sha256": "b6ecf8bf1d6b3d0951c67cfa5d61489a4dc268d8478d56f1e026ef45462ec003"
         },
         {
-          "content_sha256": "b60cc92d12b889b079fe740f098477e2a6d2311de6b791a2fd62f152fdbec64e",
+          "content_sha256": "aaf63090f7b652d33949c1bb9608946fccd9204f6d9c3a41515c8788f6f325a2",
           "logical_id": "mc-6e05afd30a1c350d2df82072",
-          "row_sha256": "7c096771d2b217a0f00a53a7d4da1585917594dffc5e899906a7816583fd58e8"
+          "row_sha256": "4cf8f0c3e728c6507b5fcf91eff6628f23deeb6201cd5d36a5305d13041e85c6"
         },
         {
-          "content_sha256": "eefec9d550379b920d2b098a669c06da4f0bf415ef8bf6301c93e734c6f6cf4b",
+          "content_sha256": "6c09ce3835848337cc5b6bdfe186e1ee0ab279228bb2d5e545c2fe0de816e14d",
           "logical_id": "mc-7e660bc46d36e9c0cfc24dbe",
-          "row_sha256": "bc73a68f485a932abb78f368451127afc96b4946572b18e52a8a99ca22c98b81"
+          "row_sha256": "94ebe0b05f815421d1997b22a6a7050bf716280ea04d239cc12b02e0516af858"
         },
         {
-          "content_sha256": "dbd9f8c23d14d5fc4f3b07b908e882e15359c4044a9c24bf1d3f7415ebc5b764",
+          "content_sha256": "b73c0a937770c403b520c4058bcaa5aa90dde8b230a12216745e1e6295d12589",
           "logical_id": "mc-a72685e9c1eb7ad97aed8c54",
-          "row_sha256": "3426572581ee6ca16508532de74a482227e23d04df2bb45ef3860a125103926a"
+          "row_sha256": "41f9ef37bc3cac00a2aceccf5406092fe60eb3f275e5cad026e870790efb1b06"
         },
         {
-          "content_sha256": "6a6096d15b55eea0171c7e58ab677d3c3abd20575f67fdc2c37b3616ae0488b1",
+          "content_sha256": "a4f80f5bc51702dcfffaa54953c8a6a03e11b4492b03fd85a89f0b21afe97a63",
           "logical_id": "mc-0ab4415e85e63ef091d12815",
-          "row_sha256": "4211bf9b8d3495c16201f3b6230cb024bb3ae268bd94e07cce84a6768bb0f0d6"
+          "row_sha256": "2ea0ae04235f9d7e97339e28076f6136d488c480c19721efc94e4eae3b243c7e"
         },
         {
           "content_sha256": "31889e7d8c7f02ffdafe136b6abd187017e69c343e209fd74a9a40e693d57bba",
@@ -2515,14 +2500,14 @@
           "row_sha256": "3dc115e0692832a5276c167c9ddba145200c2354875b60fbd5c7a5573e0ada62"
         },
         {
-          "content_sha256": "73cd4f6f33d84eeb885920669c8e2e99840a1781d0f413f88651c68be8660044",
+          "content_sha256": "694828c8c2c11bddc7651e526d048d6537dfcab620bdbffc8b59a00fb9ebeaaf",
           "logical_id": "mc-3afc59e30aebf237c71c5ed1",
-          "row_sha256": "c066af4edc9c5200ad375145fd43eb23d3a86050564fb65ef86a27061135cef7"
+          "row_sha256": "9dd16ae4f36b414107b26bdf91898ba475935bc8b21baf56d2cf1d6c58b1ae32"
         },
         {
-          "content_sha256": "a98951e7e9fc73ae6013b510cfef1d77afffe047c937ee210896c5b472f246da",
+          "content_sha256": "4bc2a76d786802251e5d8c4351e6b0b30cc24d954ebdb7326ff5a00eeed3f03e",
           "logical_id": "mc-8f0f7a7e25dc774f917af791",
-          "row_sha256": "f8a442dfa57ab67f41a2925afb04e9339aa5970f920234a6be9b5271bc1184d6"
+          "row_sha256": "2b6d6cc5641176458d7fb7a59caf268919b7074e18f9db5f577ead27b0046d19"
         },
         {
           "content_sha256": "9186444c07f60128c77bd5c3c0ef2e9ea8a9cbedb2062e0834b4af7ccfb93cb3",
@@ -2540,55 +2525,55 @@
           "row_sha256": "9bda2fceed44be5a108da435ea391130a0104e93e884a7568f24fbf7081fab98"
         },
         {
-          "content_sha256": "fe223dcfd770fc9f29e34c02a8afc58add655f1cb3a0da18bfef850bc2f29da2",
+          "content_sha256": "068b1edd9ca0ad6da94061f8cb8c7c6a696d1425be011032920350fa8f6fb1d4",
           "logical_id": "mc-d72838bb6579b9ace4af9cd9",
-          "row_sha256": "11dd5a46c003999bf290addf53888aea233c3aaa1d890f1cbfa741f51ae0ec67"
+          "row_sha256": "dd7f0f802177330e1e702d9149e8b6b39cebaa13b2b6bfa98de17ee3d9e8fd9d"
         },
         {
-          "content_sha256": "1e7af79a53c77d6a1dcddb0dbd124757b066c532017ea00e327477089c5b570c",
+          "content_sha256": "4dff49cb068e8d226a31505a4e476eac3d8863055dce08a47b119179829e5436",
           "logical_id": "mc-462e2917ea13b46bfbaa040e",
-          "row_sha256": "d14075f9569616b446d556057de3c4bbfeb8e940e769aede3bf9428e4ff87b6f"
+          "row_sha256": "bcf479269de57780f36af8d24aba8b748bc292afae36309abc198234ee2d43c5"
         },
         {
-          "content_sha256": "10443f7d7b5894bff22b4fadb5078e75dc7a507e43081823f7a53a2df64c56b0",
+          "content_sha256": "ab362f7bc93af35996d5894dbdf64c997878347586a23f76dde512268d1bfa34",
           "logical_id": "mc-73a6eeefde047dc3f11e9f7d",
-          "row_sha256": "f2cb1eec8a0a10e084ed2e8e07241009791379714e9f2f10ff7bdacbce6e3a98"
+          "row_sha256": "864e89abda26008dbc36d4ec21fb086c9e12ccb38b550b3632f22e9b9833de31"
         },
         {
-          "content_sha256": "3f4cc4ceb9dfc5c758f8b851ed77b6dec052e2764fc39a2c143fa6a76dfe814e",
+          "content_sha256": "7438cd027d770b673d2261327ef94e515e7a30ff5dd45044dc9ae2f54262edff",
           "logical_id": "mc-b13b06cdaf66c20fbc1b730e",
-          "row_sha256": "d8b80b05c2ef30b1c8b6cb797675dddd9b486c928c47b0d008534ae067e7dc18"
+          "row_sha256": "b57c9cf6940a7a8c3a72e7df1a359b41d9325e5debe18ea520e48be70b84b07c"
         },
         {
-          "content_sha256": "7f54805a7f19f74e7ecc9b60ea225d0fd07521dad21a48e2682bf885740d076f",
+          "content_sha256": "0d4433ba5d844a5ccccc46cfab0479b108c1152e350b4323b69e4413cfd42413",
           "logical_id": "mc-ac522a78ed1ae6861706a904",
-          "row_sha256": "77b0657991d914a52c92094af7d3baf2ba1dc27a4f5858e374255ebc4e017277"
+          "row_sha256": "39b08431454bd5e58e9b0b2627f9b17fd5929b660366809abc8fc52998cc92c0"
         },
         {
-          "content_sha256": "9ae8ddbc4786ff0c580b47a3237637c60c5ed7ab509a2cb4c81efd63c5e7ac35",
+          "content_sha256": "8244328adfa7b8595e26e5ee6e33eb4372869d6d1a97c9efe7e12dc5baa5ffd3",
           "logical_id": "mc-c9e64adaf431ebe5c519d83f",
-          "row_sha256": "3fff588f79a36e2a228458abad710faaddf8b80058fa072c55cb21ab419ce080"
+          "row_sha256": "d5a18e68456b868326937249ed261dd4570f8bfb4084d58b44463472cbcb2a8a"
         },
         {
-          "content_sha256": "92f9197e1f5fdae782c1b482f5fe39eab480c2d8ac8d10b0c4da26dcb31c4730",
+          "content_sha256": "1f0abfa45bb856fcc021e15b79a6ad1ed3897a2fba4aee233bc74daba418cbdb",
           "logical_id": "mc-3330df6c801eb8afb0c4a4d1",
-          "row_sha256": "951331eed1a064ed88c1e94d346ac1cfb6183f849b086acd2ba53150226c884a"
+          "row_sha256": "74a13e6f0b477952d60569c9b75efd9a2250d1b97d55205141b032e7b772262d"
         }
       ],
-      "sha256": "b8e64714a1038d26b1bb86fbced6cb4dcc2768eb5b64894d3f9ceaa8d7850ffa",
+      "sha256": "3f174642f5d1dc583bebe64fd9e11de681d8d6bd62d6a5592e35cce4deebc560",
       "sheet_name": "cards",
-      "table_sha256": "a8ecd80b93051d1174a859460d7a389e0488119f0c3ebae3ae09fe2ba3690d15",
+      "table_sha256": "40f230b51083dc784b1110996413106fa66b61576e6d6c64ab1dcbc9de8e8907",
       "template_id": "technical-qa",
       "template_version": "1.1.0"
     }
   ],
-  "source_fingerprint": "b43757c361efaa58c8d088c371a91218f63774be9127aa81332f5b7d95680c00",
+  "source_fingerprint": "0cc74047acfdf588dab106893976d42eb88c5b6922b4fdd19d611b6df1749b34",
   "sources": [
     {
       "collection": "inference-study-logs",
       "id": "full-session-structured",
       "path": "推理框架/log/2026-09-08-vllm-full-session-review.md",
-      "sha256": "457f9c4866494dd20436d57609b7e488b5a8ab2904c332861ee267c17ad43ebe",
+      "sha256": "af2c4e701fe66c829232e5bf3f5d6e6e0da7be9d70cf53e91d326d1b71f021a0",
       "summary": "全根会话324条可见消息的结构化复盘；含真实用户纠错、导师纠偏归因、固定版本知识与未验证边界。"
     }
   ],
@@ -2614,7 +2599,7 @@
 {{说明}}
 ```
 
-导入文件：[vllm-full-session-review-correction.xlsx](vllm-full-session-review-correction.xlsx)（10 张卡）
+导入文件：[vllm-full-session-review-correction.xlsx](vllm-full-session-review-correction.xlsx)（8 张卡）
 
 ## 技术问答卡
 
@@ -2628,4 +2613,4 @@
 📍 [T#!939393#{{来源}}]
 ```
 
-导入文件：[vllm-full-session-review-technical-qa.xlsx](vllm-full-session-review-technical-qa.xlsx)（65 张卡）
+导入文件：[vllm-full-session-review-technical-qa.xlsx](vllm-full-session-review-technical-qa.xlsx)（64 张卡）

@@ -15,14 +15,14 @@
       "id": "w2-ledger",
       "collection": "inference-w2-u2-evidence",
       "path": "计划/八周冲刺进度/历史记录/W2-学习验收记录.md",
-      "sha256": "b16f02d4dcbe65acc25723d0a4b580eb0513e99d151808f2db8d00bd7f1aafa4",
+      "sha256": "445d31cece716ed0a594b32fdbea5cb08d9422d2f0b3d02bdcf0426e1b9055a2",
       "summary": "单元二固定源码基线、节点检查及已确认的Hybrid-EP场景表；用于确定学习范围和来源锚点，不将mastery状态当知识事实。"
     },
     {
       "id": "w2-lesson",
       "collection": "inference-w2-u2-evidence",
       "path": "课程网页/八周计划/plana-jd-w2-moe-ep-source.html",
-      "sha256": "68341403389ef6be12a10c15ebe60d867dd042ebca2a00d8b210893b835a27bf",
+      "sha256": "31251f6b8c2eab14beb335864d666aec718d758a7a9ada084ce6875002158d05",
       "summary": "既有源码串讲与横向对照讲义；本批逐项核对固定提交，过强简写以本批明确范围和代码依据为准。"
     }
   ],
@@ -1564,7 +1564,7 @@
       "priority": 3,
       "template_id": "technical-qa",
       "fields": {
-        "问题": "DeepEP V1 LL（d4f41e4）设置 return_recv_hook=True 后，第一次调用和后续 hook 各做什么？接收端怎样区分“零行已发完”与“尚未到达”，不占 SM 的重叠窗口又适用于哪部分传输？",
+        "问题": "DeepEP V1 LL（d4f41e4）设置return_recv_hook=True时，SEND提交到RECV确认之间怎样形成独立计算窗口？请结合RDMA与节点内P2P两种搬运方式，说明“零SM窗口”的适用边界。",
         "答案": {
           "blocks": [
             {
@@ -1594,7 +1594,7 @@
                   "text": "dispatch 把完成计数编码为 −发送行数−1：0 表示未到达，−1 表示已完成但零行。RECV 等非零计数后读取并整理数据。"
                 }
               ],
-              "label": "到达计数"
+              "label": "延伸：到达计数"
             },
             {
               "type": "point",
@@ -1624,7 +1624,7 @@
         "w2-lesson",
         "w2-card"
       ],
-      "content_summary": "B理由：准确区分分段kernel和网卡推进。材料：讲义LL步骤；ChangeCard§3、§5。源码 d4f41e4：csrc/legacy/buffer.hpp:1507-1513、1577-1592；csrc/kernels/legacy/internode_ll.cu:263-271、323-338、379-407。",
+      "content_summary": "B理由：准确区分分段kernel和网卡推进。材料：讲义LL步骤；ChangeCard§3、§5。源码 d4f41e4：csrc/legacy/buffer.hpp:1507-1513、1577-1592；csrc/kernels/legacy/internode_ll.cu:263-271、323-338、379-407。；2026-11-03复核：主目标保留为分段提交与完成协议下的重叠窗口；零行信号编码标为延伸，不要求与窗口边界同时独立回忆。",
       "depends_on": []
     },
     {
@@ -1769,6 +1769,16 @@
               "label": "有效范围"
             },
             {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "R×M覆盖每个来源最多M行且都需要到达本卡的情形。即使每个来源都是满批，实际路由仍可能只让其中一部分行到达本卡；满批不能证明上界分配没有闲置。"
+                }
+              ],
+              "label": "上界与实收"
+            },
+            {
               "type": "boundary",
               "parts": [
                 {
@@ -1786,7 +1796,7 @@
         "w2-lesson",
         "w2-ledger"
       ],
-      "content_summary": "A理由：防止固定容量输出的无效尾部污染真实路由和结果。材料：讲义V2步骤及计数表；验收记录节点7。源码 d4f41e4：deep_ep/buffers/elastic.py:758-764；csrc/elastic/buffer.hpp:977-1050；deep_ep/include/deep_ep/impls/dispatch_copy_epilogue.cuh:57-80、102-116。",
+      "content_summary": "A理由：防止固定容量输出的无效尾部污染真实路由和结果。材料：讲义V2步骤及计数表；验收记录节点7。源码 d4f41e4：deep_ep/buffers/elastic.py:758-764；csrc/elastic/buffer.hpp:977-1050；deep_ep/include/deep_ep/impls/dispatch_copy_epilogue.cuh:57-80、102-116。；2026-11-03复核：沿原输出容量目标补明最坏路由与平均实收不同，避免把满批输入等同于上界全部有效；来自既有节点检查与已固定分配分支，不加入性能推断。",
       "depends_on": []
     },
     {
@@ -2050,7 +2060,7 @@
       "priority": 5,
       "template_id": "technical-qa",
       "fields": {
-        "问题": "MORI-EP（2d4c3e2）的通用 IntraNode dispatch 用共享池尾指针领槽。为什么接收方不能只看尾指针就宣布完成？普通Python dispatch返回的第五项与每个专家的计数有什么区别？",
+        "问题": "MORI-EP（2d4c3e2）的通用IntraNode dispatch中，共享池尾指针持续增长。要把固定容量输出交给专家计算，应沿空间预留、各来源完成信号和Python返回的total_recv，怎样确定可消费的有效行数？",
         "答案": {
           "blocks": [
             {
@@ -2058,7 +2068,7 @@
               "parts": [
                 {
                   "type": "text",
-                  "text": "尾指针说明空间已被领取，不证明全部发送方已结束或载荷写完；完成需要各来源信号，第五项total_recv则是本卡有效Token行总数。"
+                  "text": "先等待各来源的完成信号，再累计本卡有效Token行总数total_recv；尾指针只证明空间被领取，不能证明这些行已经写完。"
                 }
               ]
             },
@@ -2077,20 +2087,20 @@
               "parts": [
                 {
                   "type": "text",
-                  "text": "total_recv形状为(1,)，不是长度等于本地专家数的数组。可选local_expert_count另扫描有效行的专家编号，统计本卡各专家分配。"
+                  "text": "Python dispatch的第五项total_recv形状为(1,)，表示有效Token行总数。一行可对应多个本地专家分配，因此这个总数不能代替每专家任务计数。"
                 }
               ],
-              "label": "返回计数"
+              "label": "计数对象"
             },
             {
               "type": "point",
               "parts": [
                 {
                   "type": "text",
-                  "text": "out_indices每行仍携带源Token完整的K个全局专家号，K是每Token的专家选择数；框架需过滤非本卡专家，一行可对应多个本地专家分配。"
+                  "text": "可选local_expert_count另扫描有效行的专家编号，统计每专家任务；out_indices保留完整K个全局专家号，框架还要过滤非本卡专家。K是每Token的专家选择数。"
                 }
               ],
-              "label": "行的路由"
+              "label": "延伸：专家路由"
             },
             {
               "type": "boundary",
@@ -2110,7 +2120,7 @@
         "w2-lesson",
         "w2-card"
       ],
-      "content_summary": "A理由：防止把未完成载荷或错误计数交给Experts，污染真实结果。材料：讲义MORI步骤、两类路由补充及验收4；ChangeCard§2。源码 2d4c3e2：src/ops/dispatch_combine/intranode.hpp:200-203、259-299；python/mori/ops/dispatch_combine.py:1347-1400；src/ops/dispatch_combine/ep_local_expert_count.hpp:29-40。",
+      "content_summary": "A理由：防止把未完成载荷或错误计数交给Experts，污染真实结果。材料：讲义MORI步骤、两类路由补充及验收4；ChangeCard§2。源码 2d4c3e2：src/ops/dispatch_combine/intranode.hpp:200-203、259-299；python/mori/ops/dispatch_combine.py:1347-1400；src/ops/dispatch_combine/ep_local_expert_count.hpp:29-40。；2026-11-03复核：把题面收束为“从领槽到可交付的有效行数”这一条闭合数据流；独立的专家路由载体细节标为延伸。完成证据与total_recv计数对象仍保留原回忆目标。",
       "depends_on": []
     },
     {
@@ -3117,7 +3127,10 @@
         "deepep-v2-sync-expand-output",
         "mori-intranode-shared-reservation",
         "mori-completion-and-valid-row-metadata"
-      ]
+      ],
+      "review_resolution": {
+        "summary": "2026-11-03已对照修订后的V2同步与展开卡、MORI完成与有效行数卡复核四路径口述；参考回答只比较计数时点、空间分配和有效行含义。V2新增上界理由支持既有容量判断，MORI专家路由延伸不进入评分。四个评分锚点均由同请求五张已核验active子卡支撑，未增加性能或实测结论。"
+      }
     },
     {
       "key": "oral-hybrid-training-prefill-decode",
@@ -3211,6 +3224,185 @@
         "hybrid-graph-padded-capacity",
         "hybrid-shared-buffer-overlap"
       ]
+    },
+    {
+      "key": "deepep-ll-cross-round-slot-proof",
+      "rank": 40,
+      "domain": "deepep-ll-reuse-protocol",
+      "recall_target": "解释DeepEP LL中间轮信号如何证明慢rank旧槽可复用",
+      "assessment": "mechanism",
+      "layer": "mechanism",
+      "fact_scope": {
+        "kind": "snapshot",
+        "product": "DeepEP",
+        "commit": "d4f41e4e93602a15e95f55f6ee8df8f1aaa0e4bb"
+      },
+      "quality": "A",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 5,
+      "template_id": "technical-qa",
+      "fields": {
+        "问题": "DeepEP V1 LL（d4f41e4）的普通调用交替使用内部槽A、B，dispatch和combine共用轮换索引。两个rank执行相同调用序列，rank1仍读取上一轮A，rank0已经开始下一轮B；无故障且未屏蔽rank。rank0再次写rank1的A之前，须经过怎样的信号与本地执行因果链？请解释它为何不要求两边每轮同时结束。",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "rank0必须完成中间B轮的接收，才能再次发送到A；慢rank的B轮信号与本地执行顺序共同证明旧A已读完且信号已清好。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "调用方通过同一stream顺序或等价event依赖，保证本地本轮RECV真正结束后，下一轮SEND才执行；仅在CPU保存recv hook不满足该条件。"
+                }
+              ],
+              "label": "本地顺序"
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "慢rank1先完成A轮RECV，才进入B轮SEND；B轮信号发布前，协议又要求rank1的下一槽A信号区已经清零。"
+                }
+              ],
+              "label": "慢rank的证明"
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "rank0的B轮RECV须等到包括rank1在内的所需B轮信号，并完成本地读取／归约；之后才能进入下一次A轮SEND，因而不会追上覆盖rank1尚未读完的旧A。"
+                }
+              ],
+              "label": "快rank的等待"
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "快rank可在对端仍读A时先写B；两份内存提供错开空间，中间轮依赖限制能领先多远，无需每一轮全组同时结束。"
+                }
+              ],
+              "label": "两槽的作用"
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "清零针对本地下一槽的信号，不是整块载荷。结论限定上述正常调用及匹配的跨轮依赖；zero-copy视图、graph replay和故障恢复另行核对，本轮未运行设备实验。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "本地RECV结束 → 下一轮清旧槽并发信号 → 中间轮接收结束 → 复用旧槽",
+        "来源": "W2单元二课程页·双缓冲跨轮复用；Change Card 02 §5；DeepEP d4f41e4"
+      },
+      "source_ids": [
+        "w2-lesson",
+        "w2-card"
+      ],
+      "content_summary": "A理由：防止把双缓冲索引轮换当成自动忙闲检测，提前复用慢rank仍在读取的槽位或清掉未消费信号。已对照课程页add-10-2、ChangeCard02§5及DeepEP d4f41e4固定源码：internode_ll.cu:286–295、329–338、379–407、776–785、915–976；buffer.hpp:1504–1505、1577–1592、1644–1645、1696–1711。固定源码因果解释，不是实测轨迹。",
+      "depends_on": []
+    },
+    {
+      "key": "moe-two-level-correctness-oracle",
+      "rank": 41,
+      "domain": "moe-adapter-validation",
+      "recall_target": "用通信契约与完整单层两层参考定位MoE适配错误",
+      "assessment": "mechanism",
+      "layer": "mechanism",
+      "fact_scope": {
+        "kind": "evergreen"
+      },
+      "quality": "A",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 5,
+      "template_id": "technical-qa",
+      "fields": {
+        "问题": "为新的MoE通信库与专家计算后端设计正确性验证时，怎样安排“通信契约”和“完整单层MoE”两层参考，使结果错误能够定位？请说明两层各固定什么、核对什么，以及为什么不能只验证其中一层。",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "先用固定路由和可辨认标记单独验证数据分发、还原与加权，再用相同输入、专家权重和路由对照逐专家参考计算，检查通信与计算交接后的完整输出。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "给Token或专家结果设置可辨认标记，核对专家分组、有效计数、来源映射和原Token顺序；采用非均匀路由权重，避免等权重掩盖错配或重复施权。"
+                }
+              ],
+              "label": "通信契约"
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "固定同一输入、专家权重及路由，用逐专家参考计算与完整单层输出对照，覆盖P/F与Experts的布局、权重和归约配合。"
+                }
+              ],
+              "label": "完整单层"
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "通信测试通过不能证明真实专家计算及接口配合正确；只看最终输出又难区分错误出在路由搬运、加权还原还是计算交接。两层对照帮助缩小故障范围。"
+                }
+              ],
+              "label": "为何两层"
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "计数、映射和顺序精确核对；浮点结果在执行前确定与dtype及归约方式匹配的误差准则，不要求所有路径逐位相等。"
+                }
+              ],
+              "label": "判定方法"
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "这是来源中已形成的测试设计方法，未声称任何后端实际通过；容量、连续调用、异步依赖和图重放等边界仍需按已选实现逐项覆盖。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "标记检查通信 → 逐专家参考检查整层 → 按误差类型定位",
+        "来源": "Change Card 02 §7 · 两层正确性参考"
+      },
+      "source_ids": [
+        "w2-card"
+      ],
+      "content_summary": "A理由：回答适配正确性如何验证与定位的面试题，防止通信单测通过就宣称整层正确，或等权重用例掩盖加权错误。素材为ChangeCard02§7已明确的B级测试设计；只转成常青方法，不生成运行结果。",
+      "depends_on": []
     }
   ]
 }

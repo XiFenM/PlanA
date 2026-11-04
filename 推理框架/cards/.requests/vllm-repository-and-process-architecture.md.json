@@ -1,0 +1,1107 @@
+{
+  "schema": "memo-cards.request/v1",
+  "output_collection": "inference-cards",
+  "target": "推理框架/cards/vllm-repository-and-process-architecture.md",
+  "selection": "complete",
+  "sources": [
+    {
+      "collection": "inference-study-article",
+      "id": "vllm-repository-process-article",
+      "path": "推理框架/深入学习理解vLLM/1-Repository-and-Process-Architecture.md",
+      "sha256": "1fec8d77e12e0f123ee7b65e64fe9013cb7fbd7278906485af984292056310da",
+      "summary": "基于固定 vLLM v0.26.0 源码形成的仓库地图、进程拓扑、调度与组件所有权文章"
+    }
+  ],
+  "cards": [
+    {
+      "key": "mc-96e1b69dea2352f136f7bf25",
+      "rank": 1,
+      "assessment": "discrimination",
+      "domain": "vllm-runtime-architecture",
+      "fact_scope": {
+        "commit": "568afb3a13806beb53bb2e6bd518269357b237c0",
+        "kind": "snapshot",
+        "product": "vllm",
+        "version": "v0.26.0"
+      },
+      "recall_target": "区分执行拓扑层与模型计算实现层的职责",
+      "layer": "atomic",
+      "quality": "B",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 3,
+      "template_id": "technical-qa",
+      "source_ids": [
+        "vllm-repository-process-article"
+      ],
+      "content_summary": "B理由：目录职责辨析可帮助缩小源码定位范围，但无需按高优先级背诵目录名称。",
+      "depends_on": [],
+      "fields": {
+        "问题": "阅读 vLLM v0.26.0（568afb3）源码时，要分别定位任务下发方式和模型计算实现。v1/executor 与 model_executor 各负责哪一部分？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "label": "结论",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "executor 管执行拓扑；model_executor 管模型计算内容。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "label": "executor",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "v1/executor 处理放置、RPC 和任务下发，隔离 uni、mp、Ray 等方式。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "label": "model_executor",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "负责模型、层、权重加载、量化和算子。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "怎样发过去 / 具体算什么",
+        "来源": "vLLM v0.26.0·架构 §1、Q1"
+      }
+    },
+    {
+      "key": "mc-80af1f420bd379f601b14f22",
+      "rank": 2,
+      "assessment": "discrimination",
+      "domain": "vllm-runtime-architecture",
+      "fact_scope": {
+        "commit": "568afb3a13806beb53bb2e6bd518269357b237c0",
+        "kind": "snapshot",
+        "product": "vllm",
+        "version": "v0.26.0"
+      },
+      "recall_target": "区分 enginecore 总协调组件与 v1 core 调度资源模块",
+      "layer": "atomic",
+      "quality": "B",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 3,
+      "template_id": "technical-qa",
+      "source_ids": [
+        "vllm-repository-process-article"
+      ],
+      "content_summary": "B理由：区分同名目录与组件，减少源码定位绕路，属于辅助性知识。",
+      "depends_on": [],
+      "fields": {
+        "问题": "在 vLLM v0.26.0（568afb3）的 V1 代码中，v1/engine/core.py 与 v1/core/ 分别管理什么？为什么不能按名称把它们看成同一层？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "label": "结论",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "前者定义总协调组件，后者存放调度算法与逻辑资源状态。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "label": "EngineCore",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "在 engine/core.py 中组织 schedule、execute、update 循环。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "label": "v1/core",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "保存 Scheduler、KV Cache Manager 等组件及其状态。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "总协调组件 / 调度与资源模块",
+        "来源": "vLLM v0.26.0·架构 §2、Q2"
+      }
+    },
+    {
+      "key": "mc-83e65d952696673938e97510",
+      "rank": 3,
+      "assessment": "mechanism",
+      "domain": "vllm-source-navigation",
+      "fact_scope": {
+        "commit": "568afb3a13806beb53bb2e6bd518269357b237c0",
+        "kind": "snapshot",
+        "product": "vllm",
+        "version": "v0.26.0"
+      },
+      "recall_target": "按源码问题类型选择 vllm 仓库的第一定位区域",
+      "layer": "mechanism",
+      "quality": "B",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 3,
+      "template_id": "technical-qa",
+      "source_ids": [
+        "vllm-repository-process-article"
+      ],
+      "content_summary": "B理由：保留可迁移的职责定位方法，不要求逐个背诵完整目录表。",
+      "depends_on": [],
+      "fields": {
+        "问题": "在 vLLM v0.26.0（568afb3）中排查一次运行行为时，怎样用目录职责缩小检索范围，并继续找到真正被调用的实现？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "label": "结论",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "先按问题职责选择区域，再沿真实调用链核验行为。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "label": "第一步",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "区分协议入口、请求生命周期、调度、执行拓扑、设备运行或模型计算问题。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "label": "第二步",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "据目录职责寻找相关入口，例如 entrypoints、v1/engine、v1/core、v1/executor、v1/worker 或 model_executor。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "label": "第三步",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "从实际 Python 调用点继续追踪 backend、wrapper 和底层 kernel。"
+                }
+              ]
+            },
+            {
+              "type": "boundary",
+              "label": "边界",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "目录地图只帮助定位，不等于运行时调用栈；扩展、通信、内核细节仍回查对应源码。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "按职责定位 → 沿调用链核验",
+        "来源": "vLLM v0.26.0·架构 §1、源码定位题"
+      }
+    },
+    {
+      "key": "mc-f302cc845ea60e085cced69b",
+      "rank": 4,
+      "assessment": "discrimination",
+      "domain": "vllm-process-topology",
+      "fact_scope": {
+        "commit": "568afb3a13806beb53bb2e6bd518269357b237c0",
+        "kind": "snapshot",
+        "product": "vllm",
+        "version": "v0.26.0"
+      },
+      "recall_target": "区分 uni 或 mp 进程放置与张量并行模型分片语义",
+      "layer": "atomic",
+      "quality": "A",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 5,
+      "template_id": "technical-qa",
+      "source_ids": [
+        "vllm-repository-process-article"
+      ],
+      "content_summary": "A理由：防止把新增Worker进程误认为模型已做TP分片，影响拓扑与资源判断。",
+      "depends_on": [],
+      "fields": {
+        "问题": "在 vLLM v0.26.0（568afb3）的在线 V1 服务中，把执行器从 uni 改成 mp，与增大 TP 分别改变什么？如何据此判断模型是否被进一步分片？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "label": "结论",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "uni 改 mp 改变 Worker 的进程放置与调用边界；增大 TP 改变权重和计算的分片，两者是不同配置维度。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "label": "uni / mp",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "决定 Worker 与 EngineCore 同进程直接调用，还是通过跨进程 IPC 调用。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "label": "TP",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "决定模型权重和计算是否按 rank 分片及使用跨 rank collective。"
+                }
+              ]
+            },
+            {
+              "type": "boundary",
+              "label": "边界",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "TP=1 时改用 mp 也会增加 Worker 进程，但不会因此产生 TP 分片；概念正交不保证所有配置组合都有效。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "进程放置与模型分片是两个维度",
+        "来源": "vLLM v0.26.0·架构 §3、Q3"
+      }
+    },
+    {
+      "key": "mc-3c230b513e2bfac0bc2a6179",
+      "rank": 5,
+      "assessment": "mechanism",
+      "domain": "vllm-process-topology",
+      "fact_scope": {
+        "commit": "568afb3a13806beb53bb2e6bd518269357b237c0",
+        "kind": "snapshot",
+        "product": "vllm",
+        "version": "v0.26.0"
+      },
+      "recall_target": "解释在线前端与 enginecore 进程隔离的目的和 uni 边界",
+      "layer": "mechanism",
+      "quality": "A",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 5,
+      "template_id": "technical-qa",
+      "source_ids": [
+        "vllm-repository-process-article"
+      ],
+      "content_summary": "A理由：回答服务为何隔离前端与核心循环的架构取舍题，并防止误解uni的进程范围。",
+      "depends_on": [],
+      "fields": {
+        "问题": "在 vLLM v0.26.0（568afb3）的常规在线 V1 服务中，前端与 EngineCore 分进程的设计解决什么干扰？选择 uni 执行器又如何影响这个边界？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "label": "结论",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "用 IPC 隔离前端抖动，减少其对核心迭代循环的干扰。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "label": "前端",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "API Server / AsyncLLM 处理 HTTP、tokenization、连接和流式输出。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "label": "核心",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "EngineCore 持续执行 schedule、execute、update。"
+                }
+              ]
+            },
+            {
+              "type": "boundary",
+              "label": "边界",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "uni 只表示 Worker 与 EngineCore 同进程，不表示整个在线服务只有一个进程。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "前端抖动 / 核心热循环",
+        "来源": "vLLM v0.26.0·架构 §3、Q5"
+      }
+    },
+    {
+      "key": "mc-0231ee421ef176e4361b8092",
+      "rank": 6,
+      "assessment": "mechanism",
+      "domain": "vllm-data-parallel-runtime",
+      "fact_scope": {
+        "commit": "568afb3a13806beb53bb2e6bd518269357b237c0",
+        "kind": "snapshot",
+        "product": "vllm",
+        "version": "v0.26.0"
+      },
+      "recall_target": "解释 internal dp 由多个独立 enginecore 构成的运行拓扑",
+      "layer": "mechanism",
+      "quality": "A",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 5,
+      "template_id": "technical-qa",
+      "source_ids": [
+        "vllm-repository-process-article"
+      ],
+      "content_summary": "A理由：回答内部DP如何分流和隔离请求状态的系统设计题。",
+      "depends_on": [],
+      "fields": {
+        "问题": "在 vLLM v0.26.0（568afb3）的在线内部 DP 中，一个前端怎样把新请求交给多个 EngineCore？各实例的哪些状态必须独立？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "label": "结论",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "启动多个独立 EngineCore，由前端 client 为新请求选路。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "label": "独立状态",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "每个实例拥有自己的 Scheduler、请求队列、逻辑 KV 状态及对应 Worker 组。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "label": "选路位置",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "API 进程中的 DPLBAsyncMPClient 选择目标实例。"
+                }
+              ]
+            },
+            {
+              "type": "boundary",
+              "label": "边界",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "调度状态彼此独立；模型权重是否为完整副本，另看 dense/MoE 与并行配置。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "前端选路 + 多份独立核心状态",
+        "来源": "vLLM v0.26.0·架构 §4、Q6"
+      }
+    },
+    {
+      "key": "mc-e7291be4ff573e99f0b21531",
+      "rank": 7,
+      "assessment": "mechanism",
+      "domain": "vllm-data-parallel-runtime",
+      "fact_scope": {
+        "commit": "568afb3a13806beb53bb2e6bd518269357b237c0",
+        "kind": "snapshot",
+        "product": "vllm",
+        "version": "v0.26.0"
+      },
+      "recall_target": "解释 dplb 新请求负载打分、乐观计数与同分轮转的边界",
+      "layer": "mechanism",
+      "quality": "B",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 3,
+      "template_id": "technical-qa",
+      "source_ids": [
+        "vllm-repository-process-article"
+      ],
+      "content_summary": "B理由：理解固定实现的选路启发式与局限，具体权重属于低频版本细节。",
+      "depends_on": [],
+      "fields": {
+        "问题": "在 vLLM v0.26.0（568afb3）的在线内部 DP 自动选路中，未指定 data_parallel_rank 且没有特殊固定路由时，DPLB 怎样打分、应对突发请求并处理同分？这个分数遗漏了哪些负载信息？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "label": "结论",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "选择加权队列分数最低的实例。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "label": "计数口径",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "waiting 是等待请求数，running 是执行中请求数；分数是请求计数的加权估计，不是Token数或设备利用率。"
+                }
+              ]
+            },
+            {
+              "type": "display",
+              "parts": [
+                {
+                  "type": "formula",
+                  "katex": "\\mathrm{score}=4\\times\\mathrm{waiting}+\\mathrm{running}"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "label": "突发分流",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "等待新统计快照期间，乐观增加已选实例的本地 waiting 计数。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "label": "同分处理",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "轮转扫描起点，减少固定顺序偏置。"
+                }
+              ]
+            },
+            {
+              "type": "boundary",
+              "label": "边界",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "此处限定未指定 data_parallel_rank、也无特殊固定路由的自动选路；只比较加权请求数，不直接衡量 token 工作量、GPU 利用率、剩余 KV 块或前缀局部性。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "加权计数 → 最低分；乐观更新 + 同分轮转",
+        "来源": "vLLM v0.26.0·架构 §4、Q7"
+      }
+    },
+    {
+      "key": "mc-3c06179493ab5a7e28f8814c",
+      "rank": 8,
+      "assessment": "mechanism",
+      "domain": "vllm-data-parallel-runtime",
+      "fact_scope": {
+        "commit": "568afb3a13806beb53bb2e6bd518269357b237c0",
+        "kind": "snapshot",
+        "product": "vllm",
+        "version": "v0.26.0"
+      },
+      "recall_target": "解释执行中请求不能仅凭 request id 无损迁移的状态所有权原因",
+      "layer": "mechanism",
+      "quality": "A",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 5,
+      "template_id": "technical-qa",
+      "source_ids": [
+        "vllm-repository-process-article"
+      ],
+      "content_summary": "A理由：防止只迁移ID或重做prefill便声称实现等价请求迁移，遗漏采样与输出状态。",
+      "depends_on": [
+        "mc-0231ee421ef176e4361b8092",
+        "mc-6ecc1a209cfc46dfdedd5775",
+        "mc-e7291be4ff573e99f0b21531",
+        "mc-ff2bbe335a098a1d6b3715af"
+      ],
+      "fields": {
+        "问题": "在 vLLM v0.26.0（568afb3）的在线 V1 服务中，一个执行中的请求要在另一 EngineCore 上等价继续下一步。为什么只转发请求 ID 不够？请按调度侧、设备侧、前端说明状态责任。",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "label": "结论",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "等价地继续下一步，需要迁移或重建多层请求状态。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "label": "Core / Scheduler",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "token 进度、调度状态和逻辑 KV 映射。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "label": "Worker / Runner",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "物理 KV、持久 batch、映射与采样状态。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "label": "前端",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "输出 Collector、请求路由和 ABORT 目标。"
+                }
+              ]
+            },
+            {
+              "type": "boundary",
+              "label": "边界",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "只在新 Core 重做 prefill 仅重建 KV；还须正确衔接 token 进度、采样状态和输出路由，才能等价续跑。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "调度状态 + 设备状态 + 输出路由",
+        "来源": "vLLM v0.26.0·架构 §4、Q8"
+      },
+      "review_resolution": {
+        "summary": "2026-11-03已对照修订后的前端、Core与Worker/Runner子卡复核：请求迁移仍须衔接调度进度、物理KV与采样状态、输出和取消路由；版本前置与职责说明未改变该判断，未新增迁移实测结论。"
+      }
+    },
+    {
+      "key": "mc-04939c201c37cffd8e5c77fc",
+      "rank": 9,
+      "assessment": "discrimination",
+      "domain": "vllm-data-parallel-runtime",
+      "fact_scope": {
+        "commit": "568afb3a13806beb53bb2e6bd518269357b237c0",
+        "kind": "snapshot",
+        "product": "vllm",
+        "version": "v0.26.0"
+      },
+      "recall_target": "解释 internal dp 中 dpcoordinator 的独立进程位置与职责边界",
+      "layer": "atomic",
+      "quality": "B",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 3,
+      "template_id": "technical-qa",
+      "source_ids": [
+        "vllm-repository-process-article"
+      ],
+      "content_summary": "B理由：校准协调进程与请求选路的职责，不把拓扑位置记忆作为核心能力。",
+      "depends_on": [],
+      "fields": {
+        "问题": "在 vLLM v0.26.0（568afb3）的在线内部 DP 中，DPCoordinator 运行在哪个进程边界内，负责什么？它与前端请求选路有什么区别？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "label": "结论",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "DP>1 时，它运行在启动侧创建的独立协调子进程中。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "label": "职责",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "汇总各 EngineCore 的 DP 状态和协调信息，反馈给前端。"
+                }
+              ]
+            },
+            {
+              "type": "boundary",
+              "label": "边界",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "由在线启动侧在 DP rank 0 处创建；与 API、EngineCore 分进程，不做具体请求选路，也不持有请求 KV。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "独立协调进程，不是某个 rank 的子组件",
+        "来源": "vLLM v0.26.0·架构 §4–5、Q9"
+      }
+    },
+    {
+      "key": "mc-ff2bbe335a098a1d6b3715af",
+      "rank": 10,
+      "assessment": "discrimination",
+      "domain": "vllm-device-execution",
+      "fact_scope": {
+        "commit": "568afb3a13806beb53bb2e6bd518269357b237c0",
+        "kind": "snapshot",
+        "product": "vllm",
+        "version": "v0.26.0"
+      },
+      "recall_target": "区分 worker 的设备生命周期职责与 modelrunner 的设备内执行职责",
+      "layer": "atomic",
+      "quality": "A",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 5,
+      "template_id": "technical-qa",
+      "source_ids": [
+        "vllm-repository-process-article"
+      ],
+      "content_summary": "A理由：回答Worker与Runner的职责设计题，防止设备初始化与每步执行逻辑混放。",
+      "depends_on": [],
+      "fields": {
+        "问题": "在 vLLM v0.26.0（568afb3）的 V1 执行侧，Worker 与 ModelRunner 如何分工？为什么把 Runner 理解成一次 model.forward 会遗漏关键责任？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "label": "结论",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "Worker 管设备与生命周期，ModelRunner 管设备内执行。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "label": "Worker",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "设备、rank、distributed 环境、显存预算和面向 Executor 的执行入口。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "label": "ModelRunner",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "batch、输入 tensor、物理 KV、Attention metadata、图执行、模型调用和采样状态。"
+                }
+              ]
+            },
+            {
+              "type": "boundary",
+              "label": "边界",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "Runner 不只是一次 forward；本步执行也不代表重新初始化设备。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "设备生命周期 / 设备内热路径",
+        "来源": "vLLM v0.26.0·架构 §6、Q10"
+      }
+    },
+    {
+      "key": "mc-6ecc1a209cfc46dfdedd5775",
+      "rank": 11,
+      "assessment": "recall",
+      "domain": "vllm-device-execution",
+      "fact_scope": {
+        "commit": "568afb3a13806beb53bb2e6bd518269357b237c0",
+        "kind": "snapshot",
+        "product": "vllm",
+        "version": "v0.26.0"
+      },
+      "recall_target": "解释逻辑 kv、显存预算与物理 kv tensor 的分层所有权",
+      "layer": "atomic",
+      "quality": "A",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 5,
+      "template_id": "technical-qa",
+      "source_ids": [
+        "vllm-repository-process-article"
+      ],
+      "content_summary": "A理由：防止把逻辑KV账本与物理显存所有权混为一体，导致适配修改层级错误。",
+      "depends_on": [],
+      "fields": {
+        "问题": "在 vLLM v0.26.0（568afb3）的常规 V1 GPU 路径中，请按调度、资源编排、设备执行三层说明：谁管理逻辑 KV、显存预算及物理 KV tensor 与映射？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "label": "结论",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "Scheduler 管理逻辑 KV 账本，Worker 管理显存预算和资源生命周期，ModelRunner 持有物理 KV tensor 及其映射。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "label": "Scheduler",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "在 EngineCore 内管理请求的逻辑 block 账本与调度状态。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "label": "Worker",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "负责设备显存预算、初始化时机与资源生命周期。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "label": "ModelRunner",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "分配和持有物理 KV tensor，维护 block table / slot mapping 并在 Attention 中使用。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "逻辑账本 / 预算生命周期 / 物理 KV 与映射",
+        "来源": "vLLM v0.26.0·架构 §2、§5–6"
+      }
+    },
+    {
+      "key": "mc-91cab0d3196c0a4921fc8603",
+      "rank": 12,
+      "assessment": "mechanism",
+      "domain": "vllm-source-evidence",
+      "fact_scope": {
+        "commit": "568afb3a13806beb53bb2e6bd518269357b237c0",
+        "kind": "snapshot",
+        "product": "vllm",
+        "version": "v0.26.0"
+      },
+      "recall_target": "判断固定源码观察何时足以升级为已确认缺陷结论",
+      "layer": "mechanism",
+      "quality": "A",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 5,
+      "template_id": "technical-qa",
+      "source_ids": [
+        "vllm-repository-process-article"
+      ],
+      "content_summary": "A理由：防止把未找到源码路径直接宣称为已确认bug，影响技术结论可信度。",
+      "depends_on": [],
+      "fields": {
+        "问题": "审查 vLLM v0.26.0（568afb3）的内部 DP 时，在阅读范围内没有找到预期的状态反馈路径。还需要什么证据，才能把这个源码观察升级为已确认缺陷？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "label": "结论",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "需限定源码观察范围、核对预期行为，并用最小复现或失败测试确认实际异常及其归因，才能形成已确认缺陷结论。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "label": "源码核对",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "确认固定 commit 的观察范围，并对比后续主线、已有 issue / PR 与维护者预期。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "label": "运行验证",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "构造最小复现或失败测试，验证实际行为。"
+                }
+              ]
+            },
+            {
+              "type": "boundary",
+              "label": "边界",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "v0.26.0 的 dense 内部 DP 计数反馈仍是待验证候选，不能把“没找到”改写成已确认缺陷。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "源码观察 → 运行证据 → 缺陷归因",
+        "来源": "vLLM v0.26.0·架构 §4、实践、Q13"
+      }
+    },
+    {
+      "key": "mc-d5efa0a4591b7b115ec6d666",
+      "rank": 13,
+      "assessment": "mechanism",
+      "domain": "vllm-process-topology",
+      "fact_scope": {
+        "commit": "568afb3a13806beb53bb2e6bd518269357b237c0",
+        "kind": "snapshot",
+        "product": "vllm",
+        "version": "v0.26.0"
+      },
+      "recall_target": "推导单 api、dp 等于 2、tp 等于 1 时 uni 与 mp 的主要进程数",
+      "layer": "mechanism",
+      "quality": "B",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 3,
+      "template_id": "technical-qa",
+      "source_ids": [
+        "vllm-repository-process-article"
+      ],
+      "content_summary": "B理由：通过放置关系推导进程组成，练习拓扑理解而非死记4和6。",
+      "depends_on": [
+        "mc-0231ee421ef176e4361b8092",
+        "mc-04939c201c37cffd8e5c77fc",
+        "mc-f302cc845ea60e085cced69b"
+      ],
+      "fields": {
+        "问题": "在 vLLM v0.26.0（568afb3）的单机在线内部 DP 中，单 API、DP 后端 mp、DP=2、TP=PP=PCP=1。不计监控等辅助进程，请从组件放置推导每个 Core 使用 uni 或 mp 执行器时的主要进程组成和总数，并解释差额来自哪里。",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "label": "结论",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "DP 后端为 mp、每个 Core 使用 uni 或 mp 执行器时，主要进程分别为 4 个和 6 个。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "label": "uni",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "1 个 API + 1 个 DPCoordinator + 2 个内嵌 Worker / Runner 的 EngineCore。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "label": "mp",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "在上述 4 个进程之外，再增加 2 个 Worker 子进程。"
+                }
+              ]
+            },
+            {
+              "type": "boundary",
+              "label": "边界",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "不计 supervisor、监控等辅助进程；uni 改 mp 只改变 Worker 放置，不因此引入额外模型分片。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "uni：1+1+2=4；mp：4+2=6",
+        "来源": "vLLM v0.26.0·架构 §5"
+      },
+      "review_resolution": {
+        "summary": "2026-11-03已按同请求的uni/mp、内部DP及DPCoordinator子卡复核：在题设单机、单API、DP backend mp、DP=2且TP=PP=PCP=1下，由组件放置推导uni为4、mp为6个主要进程；不把增加进程当作模型分片。"
+      }
+    },
+    {
+      "key": "mc-33d40a2ab95e6129b9c5f4c5",
+      "rank": 14,
+      "assessment": "discrimination",
+      "domain": "vllm-runtime-architecture",
+      "fact_scope": {
+        "commit": "568afb3a13806beb53bb2e6bd518269357b237c0",
+        "kind": "snapshot",
+        "product": "vllm",
+        "version": "v0.26.0"
+      },
+      "recall_target": "区分 scheduler 的单次逻辑决策与后续设备执行",
+      "layer": "atomic",
+      "quality": "A",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 5,
+      "template_id": "technical-qa",
+      "source_ids": [
+        "vllm-repository-process-article"
+      ],
+      "content_summary": "A理由：防止误以为执行层再次调度请求，明确一次决策与执行落实的边界。",
+      "depends_on": [],
+      "fields": {
+        "问题": "在 vLLM v0.26.0（568afb3）的 V1 主链中，请沿逻辑 KV 分配到模型执行说明 Scheduler、Executor、Worker/Runner 的责任：哪些决定已经在调度时完成，哪些工作留给执行侧？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "label": "结论",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "Scheduler 一次决定本轮请求、Token 预算和逻辑 KV 分配；Executor、Worker 与 Runner 按该计划完成执行。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "label": "调度计划",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "选择请求和本轮 token 数，分配或复用逻辑 KV blocks，产出 SchedulerOutput。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "label": "执行落地",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "Executor 下发计划，Worker / Runner 准备物理映射、batch、tensor 并执行模型。"
+                }
+              ]
+            },
+            {
+              "type": "boundary",
+              "label": "边界",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "执行组件不会重新决定本轮运行哪些请求。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "一次调度决策 → 多层执行落地",
+        "来源": "vLLM v0.26.0·架构 §2"
+      }
+    },
+    {
+      "key": "mc-da4be48b928b158d4537e1bc",
+      "rank": 15,
+      "assessment": "oral",
+      "domain": "vllm-runtime-architecture",
+      "fact_scope": {
+        "commit": "568afb3a13806beb53bb2e6bd518269357b237c0",
+        "kind": "snapshot",
+        "product": "vllm",
+        "version": "v0.26.0"
+      },
+      "recall_target": "口述 engine、core、executor 与 worker 四个运行时所有者的协作边界",
+      "layer": "oral",
+      "quality": "B",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 3,
+      "template_id": "oral",
+      "source_ids": [
+        "vllm-repository-process-article"
+      ],
+      "content_summary": "B理由：组合既有子卡形成可自评的架构口述，不引入新的实现结论。",
+      "depends_on": [
+        "mc-33d40a2ab95e6129b9c5f4c5",
+        "mc-3c230b513e2bfac0bc2a6179",
+        "mc-80af1f420bd379f601b14f22",
+        "mc-96e1b69dea2352f136f7bf25",
+        "mc-ff2bbe335a098a1d6b3715af"
+      ],
+      "fields": {
+        "问题": "向面试官用 60–90 秒解释 vLLM v0.26.0（568afb3）的在线 V1 请求主链：从前端接收请求，到 EngineCore 安排这一轮，再到 Executor、Worker 与 ModelRunner 执行并回传结果，各层为什么这样分工？",
+        "参考回答": "前端 API Server 与 AsyncLLM 处理请求输入和流式输出，通过 IPC 与 EngineCore 协作，避免前端抖动直接占用核心迭代循环。EngineCore 组织 schedule、execute、update；其中 Scheduler 决定本轮运行哪些请求和 Token，并管理逻辑 KV 账本。Executor 按 uni、mp 或 Ray 拓扑下发既定计划。Worker 管理设备、rank 与资源生命周期，ModelRunner 准备 batch、物理 KV 和输入映射，执行模型及采样，再把结果交回核心和前端。这样把请求策略、执行拓扑和设备热路径分开，各层能够按自己的责任变化。",
+        "评分锚点": [
+          "前端输入输出与 IPC",
+          "Core 循环与 Scheduler 逻辑账本",
+          "Executor 下发既定计划",
+          "Worker 生命周期与 Runner 热路径"
+        ],
+        "来源": "vLLM v0.26.0·架构 §2、§6"
+      },
+      "review_resolution": {
+        "summary": "2026-11-03已逐项对照五张修订子卡，核对前端隔离、EngineCore/Scheduler决策、Executor下发和Worker/Runner执行；参考回答及四项评分锚点都有同请求active子卡支持，版本一致，未增加未核验事实。"
+      }
+    }
+  ]
+}

@@ -10,6 +10,13 @@
       "path": "推理框架/log/2026-11-03-W3-U1-PD-KV生命周期.md",
       "sha256": "351fb14f6ab48ff4ffe73d3c74e48e72bf318a251332f300031bb4099c8f7b9a",
       "summary": "用户明确请求从本次W3单元一结构化日志精选制卡；只使用已核验的要点、纠错与成熟追问，不使用raw或遗留项。"
+    },
+    {
+      "id": "w3-u1-page",
+      "collection": "inference-w3-u1-lesson",
+      "path": "课程网页/八周计划/plana-jd-w3-pd-kv-rdma.html",
+      "sha256": "9c965b3e6ffef657e7d6050a2eee70976e3d59b9edf1b43cd37c77aeefde0b53",
+      "summary": "本轮完整性审阅已明确的单元一成熟补充：PD吞吐与容量取舍、Scheduler/Worker metadata与完成结果闭环、传输句柄及两端KV资源生命周期；不采用后续单元预告或未运行结果。"
     }
   ],
   "cards": [
@@ -827,7 +834,7 @@
               "parts": [
                 {
                   "type": "text",
-                  "text": "具体路径取决于API、后端和设备能力；没有通信kernel不等于无需同步，也不构成本机运行证据。"
+                  "text": "具体搬运者取决于API、后端和设备能力；本卡描述支持路径的可能性，不构成本机运行证据。"
                 }
               ]
             }
@@ -956,8 +963,260 @@
         "remote-match-vs-ready",
         "pull-push-contract",
         "push-notification-correction",
-        "producer-consumer-lifetimes"
-      ]
+        "producer-consumer-lifetimes",
+        "report-vs-fence-correction"
+      ],
+      "review_resolution": {
+        "summary": "2026-11-03已逐项复核五张同请求子卡，新增report-vs-fence-correction直接支撑PUSH中完成结果上报与本地访问保护的区别；登记、WRITE、D本地就绪及两端回收四个评分锚点均有子卡依据，不再只从PULL副本卡隐式迁移PUSH条件。"
+      }
+    },
+    {
+      "key": "pd-throughput-capacity",
+      "rank": 14,
+      "domain": "llm-inference-pd",
+      "recall_target": "解释固定总GPU预算下PD阶段隔离与吞吐收益之间的容量和交接约束",
+      "assessment": "mechanism",
+      "layer": "mechanism",
+      "fact_scope": {
+        "kind": "evergreen"
+      },
+      "quality": "A",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 5,
+      "template_id": "technical-qa",
+      "fields": {
+        "问题": "固定模型、请求组成与总 GPU 数，将混部服务拆成独立 P/D 池后，已观察到尾部 ITL 改善。应怎样评估吞吐是否也改善？请沿阶段容量和交接成本解释取舍，并说明还要观测什么。",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "ITL 改善只能说明连续生成的延迟表现变好；吞吐还受两侧容量配比、KV 交接及实际调度效率约束。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "label": "分池",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "P/D 可以分别安排批次和计算，减少 prefill 对 decode 的直接干扰，但固定总资源需要在两池间分配。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "label": "瓶颈",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "若请求组成使一侧先饱和，另一侧的空闲资源不会自动变成瓶颈侧的有效容量；新增交接还可能占用网络与设备资源。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "label": "核验",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "比较同一负载与延迟约束下的实际吞吐，同时看两侧队列、到达与处理速率、计算及 KV 容量占用，再判断是否需要调整配比。"
+                }
+              ]
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "这里是系统取舍与验证方法，未给出必然提速或必然降速结论；相同总GPU数也不等于相同有效服务能力。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "阶段隔离收益；分池容量匹配；端到端观测",
+        "来源": "W3 单元一课程页·节点1、检查2"
+      },
+      "source_ids": [
+        "w3-u1-page"
+      ],
+      "content_summary": "A理由：回答PD为什么改善延迟却不保证吞吐提升的系统设计题，避免用单一指标外推整体收益。",
+      "depends_on": []
+    },
+    {
+      "key": "scheduler-worker-result-loop",
+      "rank": 15,
+      "domain": "llm-inference-pd",
+      "recall_target": "解释NIXL异步接收中调度metadata到Worker执行再到完成结果回报的职责闭环",
+      "assessment": "mechanism",
+      "layer": "mechanism",
+      "fact_scope": {
+        "kind": "snapshot",
+        "product": "vllm",
+        "commit": "d7ada3aace051fecec553c185225db2259c2ac6a"
+      },
+      "quality": "B",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 3,
+      "template_id": "technical-qa",
+      "fields": {
+        "问题": "在 vLLM d7ada3a 的正常 NIXL PULL 异步接收中，D 的 Scheduler 已为请求 A 安排目标 blocks。交接计划怎样送到 Worker，完成事实怎样返回，A 又凭什么恢复计算资格？请按消息方向串联各层责任。",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "Scheduler 发出数据交接计划，Worker 执行并收集结果，Scheduler 消费结果后再更新请求的调度资格。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "label": "计划下发",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "connector 把分配后的接收任务打包成 metadata，放入 SchedulerOutput.kv_connector_metadata；A 留在 WAITING_FOR_REMOTE_KVS。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "label": "执行",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "Worker 绑定 metadata，通过 connector 发起并跟踪 READ；它持有传输对象与设备侧执行环境，不能把收到计划当成加载成功。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "label": "结果回传",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "get_transfer_results 收集发送完成、接收收尾及接收失败集合，形成 KVConnectorOutput，随 ModelRunnerOutput 经过 Engine 返回 Scheduler。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "label": "恢复调度",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "本卡的成功分支中，接收收尾满足适用的本地准备与可见性要求，Scheduler 处理结果解除远端等待；真正获得计算机会还取决于后续调度。"
+                }
+              ]
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "只讨论固定版本的正常异步接收；同步加载、PUSH和异常恢复应回到各自实现，不能从接口名称推定相同控制流。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "SchedulerOutput计划 → Worker执行 → KVConnectorOutput结果 → 后续调度",
+        "来源": "W3 单元一课程页·节点3–4"
+      },
+      "source_ids": [
+        "w3-u1-page"
+      ],
+      "content_summary": "B理由：把已有就绪状态判断连接到真实消息与职责，支持源码定位和控制流程解释。",
+      "depends_on": []
+    },
+    {
+      "key": "transfer-handle-vs-kv-resources",
+      "rank": 16,
+      "domain": "llm-inference-pd",
+      "recall_target": "区分正常NIXL PULL传输句柄的清理与P源块D目的块的释放责任",
+      "assessment": "mechanism",
+      "layer": "mechanism",
+      "fact_scope": {
+        "kind": "snapshot",
+        "product": "vllm",
+        "commit": "d7ada3aace051fecec553c185225db2259c2ac6a"
+      },
+      "quality": "B",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 3,
+      "template_id": "technical-qa",
+      "fields": {
+        "问题": "在 vLLM d7ada3a 的正常成功 NIXL PULL 中，D 为一次 READ 保存的传输 handle 已完成并被清理。如何分别判断这个 handle、P 源 KV blocks 和 D 目的 KV blocks 的生命周期？假定同模型、同布局，不讨论超时或失败。",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "传输 handle 是跟踪一次异步 I/O 的资源；两端 KV blocks 是承载数据的缓存资源，必须分别按最后访问者和框架回收条件判断。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "label": "handle",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "D Worker 用 handle 查询 READ 进度并清理该操作的传输资源；完成和清理句柄并不等于释放请求使用的所有 KV。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "label": "P源块",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "相关读取方不再访问源数据并完成通知后，P 才能解除传输保留；实际复用还取决于 Scheduler 处理结果、本地访问保护和块引用。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "label": "D目的块",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "D 完成本地就绪处理后仍要用自己的 KV 继续生成；其释放跟随本地请求和共享引用，不能在清理 READ 句柄时一并归还。"
+                }
+              ]
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "这三类资源没有一个通用的同刻释放动作；源码控制流程不构成本轮GPU/RDMA实测。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "I/O跟踪资源；源副本最后读取；目的副本持续消费",
+        "来源": "W3 单元一课程页·节点4–6、单元一贯通"
+      },
+      "source_ids": [
+        "w3-u1-page"
+      ],
+      "content_summary": "B理由：防止把传输句柄清理误当成KV数据生命周期结束，补齐资源对象的区别。",
+      "depends_on": []
     }
   ]
 }

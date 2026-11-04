@@ -1,0 +1,810 @@
+{
+  "schema": "memo-cards.request/v1",
+  "output_collection": "inference-cards",
+  "target": "推理框架/cards/conv3d-evidence-backpressure.md",
+  "selection": "complete",
+  "sources": [
+    {
+      "collection": "inference-study-logs",
+      "id": "case-log",
+      "path": "推理框架/log/2026-09-15-conv3d-claim-backpressure.md",
+      "sha256": "aea089067369aa07fd985fd4634fe47b1ae279ebdea00201c6b219e6ca5aa9d6",
+      "summary": "Conv3D 通用布局、正确性与性能证据、反压边界；私有参数与待核内容不制卡。"
+    }
+  ],
+  "cards": [
+    {
+      "key": "logical-shape-physical-storage",
+      "rank": 1,
+      "assessment": "discrimination",
+      "domain": "tensor-layout",
+      "fact_scope": {
+        "kind": "evergreen"
+      },
+      "recall_target": "区分逻辑shape与物理布局和分配容量",
+      "layer": "atomic",
+      "quality": "A",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 5,
+      "template_id": "technical-qa",
+      "source_ids": [
+        "case-log"
+      ],
+      "content_summary": "A理由：防止以逻辑元素数估算真实显存，遗漏布局、padding 或同时存活缓冲导致 OOM。",
+      "fields": {
+        "问题": "逻辑 Shape 相同，物理占用一定相同吗？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "不一定；逻辑 Shape 描述索引维度，实际占用还受布局、Stride、Padding 和分配规则影响。"
+                }
+              ]
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "不能仅用逻辑元素数推定真实分配或模型峰值。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "逻辑索引与物理存储分开",
+        "来源": "Conv3D／证据与反压结构化记录"
+      },
+      "depends_on": []
+    },
+    {
+      "key": "view-shared-storage",
+      "rank": 2,
+      "assessment": "recall",
+      "domain": "pytorch-tensor-views",
+      "fact_scope": {
+        "kind": "snapshot",
+        "product": "pytorch",
+        "version": "2.11"
+      },
+      "recall_target": "解释合法view共享存储以及stride兼容要求",
+      "layer": "atomic",
+      "quality": "B",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 3,
+      "template_id": "technical-qa",
+      "source_ids": [
+        "case-log"
+      ],
+      "content_summary": "B理由：区分合法 view 与需要物化的重排，为显存分析提供前置概念，不将基础 API 定义一律列为 A。",
+      "fields": {
+        "问题": "在 PyTorch 2.11 中，合法的 Tensor.view 改变形状时，存储和数据排列会怎样变化？新形状需要满足什么条件？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "合法的 view 共享原存储，通过元数据表达新形状。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "新形状必须与原 size 和 stride 兼容。"
+                }
+              ],
+              "label": "条件"
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "不兼容时 view 会失败；reshape 可能复制。不能把内部同名算子等同于这个公开接口。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "view 共享存储",
+        "来源": "Conv3D／证据与反压结构化记录"
+      },
+      "depends_on": []
+    },
+    {
+      "key": "per-segment-alignment",
+      "rank": 3,
+      "assessment": "recall",
+      "domain": "tensor-layout",
+      "fact_scope": {
+        "kind": "evergreen"
+      },
+      "recall_target": "计算逐内层数据段对齐的物理容量",
+      "layer": "atomic",
+      "quality": "A",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 5,
+      "template_id": "technical-qa",
+      "source_ids": [
+        "case-log"
+      ],
+      "content_summary": "A理由：支持逐段对齐容量估算，避免将整张量对齐错误套用于每个内层段的真实分配。",
+      "fields": {
+        "问题": "每个最内层数据段分别对齐时，容量怎样计算？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "段数乘以每段向上对齐后的字节数。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "设 M 为段数，x 为每段元素数，s 为元素字节数，A 为对齐字节数。"
+                }
+              ],
+              "label": "定义"
+            },
+            {
+              "type": "display",
+              "parts": [
+                {
+                  "type": "formula",
+                  "katex": "B=M\\left\\lceil\\frac{x s}{A}\\right\\rceil A"
+                }
+              ]
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "必须确认对齐作用于每段；其他缓冲、同时存活对象和分配器额外取整另计。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "先数段，再按字节对齐",
+        "来源": "Conv3D／证据与反压结构化记录"
+      },
+      "depends_on": []
+    },
+    {
+      "key": "short-inner-padding",
+      "rank": 4,
+      "assessment": "mechanism",
+      "domain": "tensor-layout",
+      "fact_scope": {
+        "kind": "evergreen"
+      },
+      "recall_target": "解释短内层维逐段对齐导致的存储膨胀",
+      "layer": "mechanism",
+      "quality": "A",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 5,
+      "template_id": "technical-qa",
+      "source_ids": [
+        "case-log"
+      ],
+      "content_summary": "A理由：解释短内层维如何累计 padding 并触发显存膨胀，支持布局优化的因果分析。",
+      "fields": {
+        "问题": "为什么把很小的维度放在最内层，可能放大显存？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "大量短数据段分别向上对齐，会累计产生大量无效填充。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "每个外层位置对应一段内层数据；段越短，对齐舍入所占比例越可能大。"
+                }
+              ],
+              "label": "因果"
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "只有新存储确实采用这种逐段规则时成立；只改变 view 不自动触发填充或新分配。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "短段 × 大量段数 × 对齐",
+        "来源": "Conv3D／证据与反压结构化记录"
+      },
+      "depends_on": []
+    },
+    {
+      "key": "paired-flattening",
+      "rank": 5,
+      "assessment": "recall",
+      "domain": "tensor-indexing",
+      "fact_scope": {
+        "kind": "evergreen"
+      },
+      "recall_target": "保持输入与权重共同展平时的元素配对",
+      "layer": "atomic",
+      "quality": "A",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 5,
+      "template_id": "technical-qa",
+      "source_ids": [
+        "case-log"
+      ],
+      "content_summary": "A理由：防止输入与权重展平映射不一致造成静默数值错误，并能解释有效元素配对依据。",
+      "fields": {
+        "问题": "Conv3D 的一块输入数据与对应权重都用逻辑轴 (C,T,H,W) 表达，坐标 (c,t,h,w) 从 0 开始；C、T、H、W 分别是通道和三个空间／时间维的长度。将两者展平为一维乘积的求和轴时，怎样选择并核验映射，才能保持有效元素配对？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "输入和权重必须使用同一套坐标到一维索引的映射；每个求和位置 k 都要对应相同的 (c,t,h,w)。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "label": "一种映射",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "令 w 变化最快，其次 h、t、c；对 0≤c<C、0≤t<T、0≤h<H、0≤w<W，展开索引为："
+                }
+              ]
+            },
+            {
+              "type": "display",
+              "parts": [
+                {
+                  "type": "formula",
+                  "katex": "k=cTHW+tHW+hW+w"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "label": "核验",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "对合法 k 用整除和取模恢复 (c,t,h,w)，核对两侧同一 k 是否对应同一逻辑坐标；其他展开顺序也可以，只要两侧一致且一一对应。"
+                }
+              ]
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "这只证明逻辑配对，不代替 kernel 实装、物理 padding 或完整 Conv3D 配置的数值验证。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "同坐标 → 同一 k",
+        "来源": "Conv3D／证据与反压结构化记录"
+      },
+      "depends_on": []
+    },
+    {
+      "key": "common-reference-nontransitive",
+      "rank": 6,
+      "assessment": "discrimination",
+      "domain": "operator-correctness-testing",
+      "fact_scope": {
+        "kind": "evergreen"
+      },
+      "recall_target": "以同一参考验证多个实现并限定等价结论",
+      "layer": "atomic",
+      "quality": "A",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 5,
+      "template_id": "technical-qa",
+      "source_ids": [
+        "case-log"
+      ],
+      "content_summary": "A理由：防止把各自接近参考误推为新旧实现彼此满足同一容差，避免错误验收数值结果。",
+      "fields": {
+        "问题": "新旧实现都通过同一参考，能推出二者彼此满足同一容差吗？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "不能；两者各自接近参考，不保证它们彼此也在相同误差界内。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "仍可复用同份逻辑输入、权重和匹配的算子语义，分别对共同参考验证。"
+                }
+              ],
+              "label": "做法"
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "需要同时说明参考的 dtype、输出形状对齐和比较判据。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "共同参考不等于误差关系可传递",
+        "来源": "Conv3D／证据与反压结构化记录"
+      },
+      "depends_on": []
+    },
+    {
+      "key": "relative-absolute-tolerance",
+      "rank": 7,
+      "assessment": "recall",
+      "domain": "numerical-validation",
+      "fact_scope": {
+        "kind": "evergreen"
+      },
+      "recall_target": "解释相对与绝对容差组合的逐元素判据",
+      "layer": "atomic",
+      "quality": "B",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 3,
+      "template_id": "technical-qa",
+      "source_ids": [
+        "case-log"
+      ],
+      "content_summary": "B理由：掌握容差组合与参考幅值的关系，辅助正确性核对；不把公式定义本身列为最高优先级。",
+      "fields": {
+        "问题": "rtol 和 atol 怎样共同决定误差上限？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "绝对容差与基于参考幅值的相对容差相加。"
+                }
+              ]
+            },
+            {
+              "type": "display",
+              "parts": [
+                {
+                  "type": "formula",
+                  "katex": "|a-r|\\leq\\mathrm{atol}+\\mathrm{rtol}\\,|r|"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "r 接近零时绝对项更重要，幅值较大时相对项可能占主导。"
+                }
+              ],
+              "label": "尺度"
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "这里讨论有限实数及该类标准判据；通过不等于逐位相同，阈值也不是实测误差。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "比较对象是 reference 的幅值",
+        "来源": "Conv3D／证据与反压结构化记录"
+      },
+      "depends_on": []
+    },
+    {
+      "key": "cross-sample-mean",
+      "rank": 8,
+      "assessment": "discrimination",
+      "domain": "benchmark-accounting",
+      "fact_scope": {
+        "kind": "evergreen"
+      },
+      "recall_target": "区分跨样本均值与单次观测的证据范围",
+      "layer": "atomic",
+      "quality": "A",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 5,
+      "template_id": "technical-qa",
+      "source_ids": [
+        "case-log"
+      ],
+      "content_summary": "A理由：防止把跨样本均值误报成重复稳定性或每请求上界，维护性能结论的有效范围。",
+      "fields": {
+        "问题": "十个不同测例各测一次，平均值能说明什么？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "只能说明所选样本及条件下，这十次观测的算术平均。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "它不是同一样本重复十次，也不是每条请求的上界。"
+                }
+              ],
+              "label": "边界区分"
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "单样本单次观测、跨样本均值和重复运行波动必须分别记录；不能由均值推出尾延迟。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "不同样本平均 ≠ 重复稳定性",
+        "来源": "Conv3D／证据与反压结构化记录"
+      },
+      "depends_on": []
+    },
+    {
+      "key": "oom-without-ttft",
+      "rank": 9,
+      "assessment": "discrimination",
+      "domain": "benchmark-accounting",
+      "fact_scope": {
+        "kind": "evergreen"
+      },
+      "recall_target": "界定oom且无首token时不存在有限ttft基线",
+      "layer": "atomic",
+      "quality": "A",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 5,
+      "template_id": "technical-qa",
+      "source_ids": [
+        "case-log"
+      ],
+      "content_summary": "A理由：防止对没有首 Token 的 OOM 用例伪造 TTFT 加速比或借用其他工作负载的基线。",
+      "fields": {
+        "问题": "优化前 OOM 且没有首 Token，能计算 TTFT 加速比吗？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "不能；这一条件下没有可用的有限 TTFT 基线。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "可先报告同一工作负载从失败变为可运行，再对可运行且可比的配置计算性能。"
+                }
+              ],
+              "label": "记录"
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "不能用另一模型或另一输入的耗时替代该失败用例的基线。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "可运行基线才有时延比",
+        "来源": "Conv3D／证据与反压结构化记录"
+      },
+      "depends_on": []
+    },
+    {
+      "key": "routing-versus-backpressure",
+      "rank": 10,
+      "assessment": "mechanism",
+      "domain": "serving-flow-control",
+      "fact_scope": {
+        "kind": "evergreen"
+      },
+      "recall_target": "区分负载分流与端到端反压",
+      "layer": "mechanism",
+      "quality": "A",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 5,
+      "template_id": "technical-qa",
+      "source_ids": [
+        "case-log"
+      ],
+      "content_summary": "A理由：回答负载分流为何不能解决全局过载，避免把无界 waiting 队列误称端到端反压。",
+      "fields": {
+        "问题": "负载分流为什么不能替代反压？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "分流选择处理副本；反压用下游容量约束上游继续提交。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "所有副本都忙时，选出较空的副本并不会增加总处理能力。"
+                }
+              ],
+              "label": "过载"
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "无界排队只是积压；要检查容量信号是否真正限制了上游输入。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "选择去哪，与决定能否继续分开",
+        "来源": "Conv3D／证据与反压结构化记录"
+      },
+      "depends_on": []
+    },
+    {
+      "key": "backpressure-versus-rejection",
+      "rank": 11,
+      "assessment": "discrimination",
+      "domain": "serving-flow-control",
+      "fact_scope": {
+        "kind": "evergreen"
+      },
+      "recall_target": "区分背压反馈与入口过载拒绝",
+      "layer": "atomic",
+      "quality": "B",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 3,
+      "template_id": "technical-qa",
+      "source_ids": [
+        "case-log"
+      ],
+      "content_summary": "B理由：区分入口拒绝与上游减速的配合条件，作为完整反压设计的补充辨析。",
+      "fields": {
+        "问题": "反压与过载拒绝有什么区别？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "反压使上游放慢或暂停；过载拒绝通过拒绝超额工作保护接收端。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "拒绝信号被上游用于降低发送速率时，也能参与端到端反馈。"
+                }
+              ],
+              "label": "协作"
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "拒绝响应本身不保证客户端已经减速。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "拒绝动作 ≠ 源头减速",
+        "来源": "Conv3D／证据与反压结构化记录"
+      },
+      "depends_on": []
+    },
+    {
+      "key": "retry-pressure",
+      "rank": 12,
+      "assessment": "mechanism",
+      "domain": "serving-flow-control",
+      "fact_scope": {
+        "kind": "evergreen"
+      },
+      "recall_target": "解释立即重试造成的前端压力及客户端反馈责任",
+      "layer": "mechanism",
+      "quality": "A",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 5,
+      "template_id": "technical-qa",
+      "source_ids": [
+        "case-log"
+      ],
+      "content_summary": "A理由：防止队列限额下的立即重试风暴，明确客户端必须消费反馈并降低提交速率。",
+      "fields": {
+        "问题": "队列有上限，客户端立即重试为何仍可能压垮前端？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "队列限额没有减少重试请求到达前端的速率。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "客户端应减少在途请求，并等待后再重试，使容量限制影响源头。"
+                }
+              ],
+              "label": "反馈"
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "前端是否逐次查询后端取决于实现，不能从频繁重试自动推定。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "反馈必须改变发送行为",
+        "来源": "Conv3D／证据与反压结构化记录"
+      },
+      "depends_on": []
+    },
+    {
+      "key": "allocation-stage-competing-explanations",
+      "rank": 13,
+      "domain": "gpu-memory-diagnosis",
+      "recall_target": "用分阶段显存观测与对象生命周期区分输入重排输出和workspace分配",
+      "assessment": "mechanism",
+      "layer": "mechanism",
+      "fact_scope": {
+        "kind": "evergreen"
+      },
+      "quality": "A",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 5,
+      "template_id": "technical-qa",
+      "fields": {
+        "问题": "一次算子执行前后显存明显增加。候选原因有输入重排物化、输出 Tensor 和算子 Workspace；目前只有“短内层维可能造成 padding”的猜想。怎样安排最小的分阶段观测，才能判断新增分配主要发生在哪个阶段？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "在候选分配阶段的前后分别取可比较的显存 snapshot，并记录对象的创建、存活和释放位置，比较增量发生在哪里。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "label": "拆分阶段",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "将可分离的输入重排放到算子外，在重排前后观测；再在输出和 Workspace 的分配／使用阶段前后观测，避免只比较整次调用前后。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "label": "比较解释",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "结合同时存活对象判断重排结果、输出或 Workspace 谁能解释该阶段增量；只有机制猜想或逻辑 shape 变化，不能确定真实分配来源。"
+                }
+              ]
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "分阶段观测支持分配位置判断；缺少原始 snapshot、对象生命周期或峰值记录时，不反推项目的确切分配量或全程峰值。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "候选阶段前后观测＋同时存活对象",
+        "来源": "Conv3D／证据与反压结构化记录：重排显存定位与竞争解释"
+      },
+      "source_ids": [
+        "case-log"
+      ],
+      "content_summary": "A理由：防止把 padding 猜想直接当成 OOM 根因，支撑用可区分证据选择实际需要优化的分配阶段。",
+      "depends_on": []
+    }
+  ]
+}

@@ -59,6 +59,13 @@
       ]
     },
     {
+      "id": "inference-w3-u1-lesson",
+      "kind": "source-bundle",
+      "patterns": [
+        "课程网页/八周计划/plana-jd-w3-pd-kv-rdma.html"
+      ]
+    },
+    {
       "id": "pytorch-study-logs",
       "kind": "structured-log",
       "patterns": [

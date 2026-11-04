@@ -69,7 +69,7 @@
       "source_ids": [
         "w2-u1-log"
       ],
-      "content_summary": "纠正EP必然触发All-to-All的判断",
+      "content_summary": "纠正EP必然触发All-to-All的判断；2026-11-03复核：A理由：防止把EP必然等同于All-to-All而误判真实执行路径；能解释输入复制布局下的替代归约。",
       "depends_on": []
     },
     {
@@ -82,13 +82,13 @@
       "fact_scope": {
         "kind": "evergreen"
       },
-      "quality": "A",
+      "quality": "B",
       "fact_status": "verified",
       "lifecycle": "active",
-      "priority": 5,
+      "priority": 3,
       "template_id": "technical-qa",
       "fields": {
-        "问题": "启用 EP 后，能否判断各卡原始 Token 一定不同，或每个 Token 的 H 维向量一定被切开？",
+        "问题": "分析一个启用EP的MoE部署时，专家参数归属、Token行分布和单个Token的隐藏维切分应怎样分别判断？为了确定dispatch的数据布局，还需要知道哪些并行组合条件？",
         "答案": {
           "blocks": [
             {
@@ -96,7 +96,7 @@
               "parts": [
                 {
                   "type": "text",
-                  "text": "不能。专家参数归属、Token 行分布和隐藏维切分是不同的布局问题。"
+                  "text": "EP描述专家参数的分布；Token行是复制还是分片、单行H维是否切分，还要分别核对DP、TP、SP等组合及专家内部TP约定。"
                 }
               ]
             },
@@ -137,7 +137,7 @@
       "source_ids": [
         "w2-u1-log"
       ],
-      "content_summary": "区分专家参数分布与Token激活的切分轴",
+      "content_summary": "区分专家参数分布与Token激活的切分轴；2026-11-03复核：B理由：保留专家参数、Token行和隐藏维的布局辨析，便于组合并行策略；来源中后续判断已经正确，按迁移基础而非高优先纠错保留。",
       "depends_on": []
     },
     {
@@ -150,10 +150,10 @@
       "fact_scope": {
         "kind": "evergreen"
       },
-      "quality": "A",
+      "quality": "B",
       "fact_status": "verified",
       "lifecycle": "active",
-      "priority": 5,
+      "priority": 3,
       "template_id": "technical-qa",
       "fields": {
         "问题": "T 个 Token 各选择 K 个不同的逻辑专家，且不丢弃分配。总专家任务数和单个专家任务数分别满足什么约束？",
@@ -204,7 +204,7 @@
       "source_ids": [
         "w2-u1-log"
       ],
-      "content_summary": "核对top-k分配总数和单专家Token数上界",
+      "content_summary": "核对top-k分配总数和单专家Token数上界；2026-11-03复核：B理由：保留检查Token–expert任务守恒和容量上界的方法；属于已掌握的计数基础，不再将单纯TK计数列为A级。",
       "depends_on": []
     },
     {
@@ -217,13 +217,13 @@
       "fact_scope": {
         "kind": "evergreen"
       },
-      "quality": "A",
+      "quality": "B",
       "fact_status": "verified",
       "lifecycle": "active",
-      "priority": 5,
+      "priority": 3,
       "template_id": "technical-qa",
       "fields": {
-        "问题": "同一个隐藏向量 x 同时被专家 E0 和 E2 选中。能否只计算 E0(x)，再将其结果复用为 E2(x)？",
+        "问题": "同一个隐藏向量x将交给专家E0和E2处理。若要用E0(x)代替E2(x)，需要证明什么？请区分共享一份输入存储与复用一次计算结果。",
         "答案": {
           "blocks": [
             {
@@ -231,7 +231,7 @@
               "parts": [
                 {
                   "type": "text",
-                  "text": "一般不能；两个专家的参数不同，输入相同不足以证明输出等价。"
+                  "text": "必须证明两个专家对所需输入的输出等价；仅有输入相同不足以复用结果，因为专家参数可以不同。"
                 }
               ]
             },
@@ -262,7 +262,7 @@
       "source_ids": [
         "w2-u1-log"
       ],
-      "content_summary": "区分相同输入存储与不同专家输出的复用",
+      "content_summary": "区分相同输入存储与不同专家输出的复用；2026-11-03复核：B理由：保留输入存储复用与计算结果复用的等价性边界；来源首答正确，按稳定迁移知识保留。",
       "depends_on": []
     },
     {
@@ -339,7 +339,7 @@
       "source_ids": [
         "w2-u1-log"
       ],
-      "content_summary": "解释top-k展开后的结果如何还原原Token",
+      "content_summary": "解释top-k展开后的结果如何还原原Token；2026-11-03复核：A理由：防止把专家打包行直接当作原Token输出，或遗漏top-k加权汇合，造成静默错误。",
       "depends_on": []
     },
     {
@@ -406,7 +406,7 @@
       "source_ids": [
         "w2-u1-log"
       ],
-      "content_summary": "依据目标设备去重规则计算激活传输量",
+      "content_summary": "依据目标设备去重规则计算激活传输量；2026-11-03复核：A理由：防止混用目标GPU和目标节点的去重粒度，成倍误估跨节点载荷和通信瓶颈。",
       "depends_on": []
     },
     {
@@ -493,7 +493,7 @@
       "source_ids": [
         "w2-u1-log"
       ],
-      "content_summary": "解释回传前局部加权合并如何减少向量份数",
+      "content_summary": "解释回传前局部加权合并如何减少向量份数；2026-11-03复核：A理由：防止局部合并后回源时重复施加路由权重，并能解释保持数学关系的载荷缩减。",
       "depends_on": []
     },
     {
@@ -571,7 +571,7 @@
       "source_ids": [
         "w2-u1-log"
       ],
-      "content_summary": "按独立与共享带宽资源推导通信时间下界",
+      "content_summary": "按独立与共享带宽资源推导通信时间下界；2026-11-03复核：A理由：回答通信时间下界的面试题，防止把独立双向、共享出口和串行阶段按同一个字节总量计算。",
       "depends_on": []
     },
     {
@@ -584,10 +584,10 @@
       "fact_scope": {
         "kind": "evergreen"
       },
-      "quality": "A",
+      "quality": "B",
       "fact_status": "verified",
       "lifecycle": "active",
-      "priority": 5,
+      "priority": 3,
       "template_id": "technical-qa",
       "fields": {
         "问题": "router、专家 placement、EP 和 EPLB 分别决定什么？为了均衡设备任务数，能否把某 Token 选中的 E2 直接换成参数不同的 E1？",
@@ -639,7 +639,7 @@
       "source_ids": [
         "w2-u1-log"
       ],
-      "content_summary": "区分逻辑路由专家放置与EPLB的职责",
+      "content_summary": "区分逻辑路由专家放置与EPLB的职责；2026-11-03复核：B理由：保留放置与逻辑专家选择的职责区分；来源中学习者已独立说明不改变router选择，降低重复复习优先级。",
       "depends_on": []
     },
     {
@@ -652,10 +652,10 @@
       "fact_scope": {
         "kind": "evergreen"
       },
-      "quality": "A",
+      "quality": "B",
       "fact_status": "verified",
       "lifecycle": "active",
-      "priority": 5,
+      "priority": 3,
       "template_id": "technical-qa",
       "fields": {
         "问题": "推理中同一逻辑专家 E2 有两份相同参数的物理副本。每条 (Token,E2) 分配应怎样执行？增加副本会改变逻辑专家数或 top-k 吗？",
@@ -707,7 +707,7 @@
       "source_ids": [
         "w2-u1-log"
       ],
-      "content_summary": "保持冗余专家副本下的逻辑任务唯一性",
+      "content_summary": "保持冗余专家副本下的逻辑任务唯一性；2026-11-03复核：B理由：保留物理副本与逻辑任务唯一性的区别及权重存储代价；来源首答已正确，作为迁移基础保留。",
       "depends_on": []
     },
     {
@@ -775,7 +775,7 @@
       "source_ids": [
         "w2-u1-log"
       ],
-      "content_summary": "区分路由需求保留任务与padding槽位",
+      "content_summary": "区分路由需求保留任务与padding槽位；2026-11-03复核：A理由：防止把补齐后的相同形状当成任务无丢失证据，导致padding或丢弃贡献进入错误的combine判断。",
       "depends_on": []
     },
     {
@@ -788,10 +788,10 @@
       "fact_scope": {
         "kind": "evergreen"
       },
-      "quality": "A",
+      "quality": "B",
       "fact_status": "verified",
       "lifecycle": "active",
-      "priority": 5,
+      "priority": 3,
       "template_id": "technical-qa",
       "fields": {
         "问题": "较大的 GEMM 往往更容易利用芯片算力，为什么某些 MoE 方案仍设置专家容量，而不把每个专家的输入无限增大？",
@@ -843,7 +843,7 @@
       "source_ids": [
         "w2-u1-log"
       ],
-      "content_summary": "解释专家容量为什么不能只看单个GEMM利用率",
+      "content_summary": "解释专家容量为什么不能只看单个GEMM利用率；2026-11-03复核：B理由：保留单GEMM效率与全层热点、显存及padding成本的取舍；作为设计理由复习，不要求背记例子中的槽位数。",
       "depends_on": []
     },
     {
@@ -911,7 +911,7 @@
       "source_ids": [
         "w2-u1-log"
       ],
-      "content_summary": "判断丢弃专家分配后残差是否恢复缺失贡献",
+      "content_summary": "判断丢弃专家分配后残差是否恢复缺失贡献；2026-11-03复核：A理由：防止把丢弃专家分配当成由残差或重归一化自动补偿的等价优化。",
       "depends_on": []
     },
     {
@@ -979,7 +979,7 @@
       "source_ids": [
         "w2-u1-log"
       ],
-      "content_summary": "区分显式专家分配丢弃与一般推理服务过载",
+      "content_summary": "区分显式专家分配丢弃与一般推理服务过载；2026-11-03复核：A理由：防止由服务压力或buffer容量上限直接宣称框架静默少算专家，混淆调度故障与模型语义。",
       "depends_on": []
     },
     {
@@ -992,10 +992,10 @@
       "fact_scope": {
         "kind": "evergreen"
       },
-      "quality": "A",
+      "quality": "B",
       "fact_status": "verified",
       "lifecycle": "active",
-      "priority": 5,
+      "priority": 3,
       "template_id": "technical-qa",
       "fields": {
         "问题": "无 bias 的 SwiGLU 专家收到 P[n,H]，中间维度为 F，采用行向量数学布局。写出三组权重、门控中间激活 U 和输出 Z 的形状；n 增大时哪些形状改变？",
@@ -1046,7 +1046,7 @@
       "source_ids": [
         "w2-u1-log"
       ],
-      "content_summary": "推导SwiGLU专家的激活与权重形状",
+      "content_summary": "推导SwiGLU专家的激活与权重形状；2026-11-03复核：B理由：保留沿SwiGLU计算链推导激活和权重形状的可迁移方法；来源已独立掌握，不再将形状复述设为A级。",
       "depends_on": []
     },
     {
@@ -1104,7 +1104,7 @@
       "source_ids": [
         "w2-u1-log"
       ],
-      "content_summary": "区分SwiGLU门控与MoE专家路由",
+      "content_summary": "区分SwiGLU门控与MoE专家路由；2026-11-03复核：B理由：同名gate存在不同作用轴，保留辨析以减少术语干扰。",
       "depends_on": []
     },
     {
@@ -1171,7 +1171,7 @@
       "source_ids": [
         "w2-u1-log"
       ],
-      "content_summary": "由SwiGLU中间维切分推导下投影归约",
+      "content_summary": "由SwiGLU中间维切分推导下投影归约；2026-11-03复核：A理由：回答TP为何需要输出归约的面试题，防止把形状完整的局部部分和当成数值完整输出。",
       "depends_on": []
     },
     {
@@ -1239,7 +1239,7 @@
       "source_ids": [
         "w2-u1-log"
       ],
-      "content_summary": "解释先截取不同Token行再AllReduce为何错误",
+      "content_summary": "解释先截取不同Token行再AllReduce为何错误；2026-11-03复核：A理由：防止将不同全局Token的局部切片直接AllReduce，造成跨Token错位求和和贡献丢失。",
       "depends_on": []
     },
     {
@@ -1307,7 +1307,7 @@
       "source_ids": [
         "w2-u1-log"
       ],
-      "content_summary": "连接TP与SP的前向布局转换",
+      "content_summary": "连接TP与SP的前向布局转换；2026-11-03复核：A理由：回答TP与SP如何连接完整前向布局的面试题，说明AG、FFN、RS及本地LayerNorm的必要条件。",
       "depends_on": []
     },
     {
@@ -1374,7 +1374,7 @@
       "source_ids": [
         "w2-u1-log"
       ],
-      "content_summary": "解释分块Attention为何需要归一化统计",
+      "content_summary": "解释分块Attention为何需要归一化统计；2026-11-03复核：A理由：防止直接相加局部softmax输出；能用归一化质量说明分块Attention合并为何需要额外统计。",
       "depends_on": []
     },
     {
@@ -1395,7 +1395,7 @@
       "priority": 3,
       "template_id": "technical-qa",
       "fields": {
-        "问题": "在Megatron Core 0.15的cp_comm_type中，all_gather、p2p、a2a、a2a+p2p各表示怎样的CP通信布局？“Q留本地”适用于全部路径吗？",
+        "问题": "在Megatron Core 0.15的cp_comm_type中，按K/V如何取得、QKV切分轴是否转换这两个维度，比较all_gather、p2p、a2a、a2a+p2p的布局；“Q留本地”的适用范围怎样确定？",
         "答案": {
           "blocks": [
             {
@@ -1403,7 +1403,7 @@
               "parts": [
                 {
                   "type": "text",
-                  "text": "不是全部。前两类以本地Q处理收集或流动的K/V；Ulysses式A2A会交换QKV并转换切分轴。"
+                  "text": "all_gather和p2p保持Q本地，分别消费收集或流动的K/V；Ulysses式a2a交换QKV并转换切分轴，a2a+p2p分层组合两类路径，所以Q留本地不是全部CP的共同约定。"
                 }
               ]
             },
@@ -1444,7 +1444,7 @@
       "source_ids": [
         "w2-u1-log"
       ],
-      "content_summary": "识别Megatron-Core 0.15中CP通信路径的布局差异",
+      "content_summary": "识别Megatron-Core 0.15中CP通信路径的布局差异；2026-11-03复核：B理由：保留固定版本CP路径的布局差异，防止把Q留本地外推到所有通信类型。",
       "depends_on": []
     },
     {
@@ -1457,13 +1457,13 @@
       "fact_scope": {
         "kind": "evergreen"
       },
-      "quality": "A",
+      "quality": "B",
       "fact_status": "verified",
       "lifecycle": "active",
-      "priority": 5,
+      "priority": 3,
       "template_id": "technical-qa",
       "fields": {
-        "问题": "GPU0/1组成DP副本A的TP组，GPU2/3组成副本B的TP组，分别处理不同请求批次。四卡局部下投影都为[T,H]时，能合成一次四卡AllReduce吗？",
+        "问题": "GPU0/1组成DP副本A的TP组，GPU2/3组成副本B的TP组，分别处理不同请求批次。四卡局部下投影都为[T,H]：应怎样划定SUM归约组，依据哪项逻辑输出关系判断？",
         "答案": {
           "blocks": [
             {
@@ -1471,7 +1471,7 @@
               "parts": [
                 {
                   "type": "text",
-                  "text": "不能；两组部分和分别属于不同请求批次，跨组相加会混合不同逻辑输出。"
+                  "text": "分别在GPU0/1和GPU2/3内归约；只有属于同一请求批次、同一输出位置的部分和才能相加。"
                 }
               ]
             },
@@ -1502,7 +1502,7 @@
       "source_ids": [
         "w2-u1-log"
       ],
-      "content_summary": "区分DP副本之间与副本内TP归约的输出身份",
+      "content_summary": "区分DP副本之间与副本内TP归约的输出身份；2026-11-03复核：B理由：保留用逻辑输出身份确定归约组的迁移原则；来源首答已完整说明不同请求不能相加。",
       "depends_on": []
     },
     {
@@ -1515,10 +1515,10 @@
       "fact_scope": {
         "kind": "evergreen"
       },
-      "quality": "A",
+      "quality": "B",
       "fact_status": "verified",
       "lifecycle": "active",
-      "priority": 5,
+      "priority": 3,
       "template_id": "technical-qa",
       "fields": {
         "问题": "仅考虑前向：两个 PP 阶段分别耗时1ms、3ms，每个阶段同时只能处理一个 microbatch；输入充足，忽略通信与其他开销。从空流水线开始，首批最早多久完成，持续输出最短间隔是多少？为什么？",
@@ -1570,7 +1570,7 @@
       "source_ids": [
         "w2-u1-log"
       ],
-      "content_summary": "区分前向流水线首批延迟与持续产出间隔",
+      "content_summary": "区分前向流水线首批延迟与持续产出间隔；2026-11-03复核：B理由：保留单批依赖链与瓶颈阶段的不同时间含义；数值只作给定条件下的推导，不以首答正确的算术作为A级考点。",
       "depends_on": []
     },
     {
@@ -1589,7 +1589,7 @@
       "priority": 5,
       "template_id": "technical-qa",
       "fields": {
-        "问题": "推理副本由两个 TP rank 协同执行，新请求需在每个 rank 分别预留6个 KV 块，且副本等待队列必须有空位。为什么只比较两卡可用块数之和与总需求12不够，应如何检查？所有副本均不能准入且路由器有界等待队列已满时怎么办？",
+        "问题": "推理副本由两个TP rank协同执行，新请求需在每个rank分别预留6个KV块，且副本等待队列必须有空位。应怎样判断该副本可以接收请求？请解释只比较两卡可用块数之和与总需求12为什么不够。",
         "答案": {
           "blocks": [
             {
@@ -1597,7 +1597,7 @@
               "parts": [
                 {
                   "type": "text",
-                  "text": "不能；每个rank都必须分别满足6块要求，并且副本队列有空位。"
+                  "text": "每个rank都必须分别至少有6个可用块，副本队列也必须有空位；资源总和不能代替逐rank的准入检查。"
                 }
               ]
             },
@@ -1613,7 +1613,7 @@
             },
             {
               "type": "point",
-              "label": "过载",
+              "label": "延伸：过载处理",
               "parts": [
                 {
                   "type": "text",
@@ -1638,7 +1638,7 @@
       "source_ids": [
         "w2-u1-log"
       ],
-      "content_summary": "按每个TP rank的约束判断副本准入",
+      "content_summary": "按每个TP rank的约束判断副本准入；2026-11-03复核：A理由：防止把TP组资源相加当作任意共享池，接收某个rank实际无法容纳的新请求。",
       "depends_on": []
     },
     {
@@ -1653,7 +1653,7 @@
       },
       "quality": "B",
       "fact_status": "verified",
-      "lifecycle": "active",
+      "lifecycle": "archived",
       "priority": 3,
       "template_id": "correction",
       "fields": {
@@ -1697,7 +1697,7 @@
       "source_ids": [
         "w2-u1-log"
       ],
-      "content_summary": "正确计算闭区间Token行数及BF16载荷",
+      "content_summary": "2026-11-03本地归档：本轮按C级价值判定的一次算术口误，不进入正式复习；quality保留历史B以兼容工具的归档记录，不能据此重新纳入导出。",
       "depends_on": []
     },
     {
@@ -1716,7 +1716,7 @@
       "priority": 3,
       "template_id": "technical-qa",
       "fields": {
-        "问题": "多个 MoE 专家的矩阵运算采用 grouped GEMM，是否意味着它们共享权重，或整条 SwiGLU 专家计算链只需一次 kernel 调用？",
+        "问题": "多个MoE专家采用grouped GEMM时，这种组织方式怎样保留各专家的计算身份？仅知道这个名称，对整条SwiGLU链的kernel融合能作出哪些判断？",
         "答案": {
           "blocks": [
             {
@@ -1724,7 +1724,7 @@
               "parts": [
                 {
                   "type": "text",
-                  "text": "都不能据此推出。grouped GEMM 共同组织多个独立矩阵乘，各专家仍使用自己的权重。"
+                  "text": "grouped GEMM共同组织多个独立矩阵乘，各专家仍使用自己的权重；仅凭名称不能确定整条SwiGLU链的kernel数量或融合范围。"
                 }
               ]
             },
@@ -1755,7 +1755,7 @@
       "source_ids": [
         "w2-u1-log"
       ],
-      "content_summary": "区分grouped GEMM组织方式与专家计算语义",
+      "content_summary": "区分grouped GEMM组织方式与专家计算语义；2026-11-03复核：B理由：保留共同组织矩阵乘与共享权重、整链融合之间的边界，避免从名称推断实现。",
       "depends_on": []
     }
   ]
