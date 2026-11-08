@@ -1,0 +1,886 @@
+{
+  "schema": "memo-cards.request/v1",
+  "output_collection": "inference-cards",
+  "target": "推理框架/cards/2026-11-06-W3-U2-KV布局与定量模型.md",
+  "selection": "selected",
+  "sources": [
+    {
+      "id": "w3-u2-log",
+      "collection": "inference-study-logs",
+      "path": "推理框架/log/2026-11-06-W3-U2-KV布局与定量模型.md",
+      "sha256": "53bf95396146c70831afecd9c99b06a719ccd732c7a45cee3d3cb809920c733c",
+      "summary": "W3单元二的可追溯结构化学习记录：KV布局、CP、MLA与hybrid状态。"
+    }
+  ],
+  "cards": [
+    {
+      "key": "u2-memory-payload-scopes",
+      "recall_target": "按实际占用和选定片段区分有效KV、分配容量与传输payload",
+      "assessment": "mechanism",
+      "layer": "mechanism",
+      "fact_scope": {
+        "kind": "evergreen"
+      },
+      "quality": "B",
+      "template_id": "technical-qa",
+      "fields": {
+        "问题": "分页 KV cache 中，请求只填满了部分已分配槽位，另外还有预留空间。本次交接只发送选中的块，并按各块 descriptor 的完整长度搬运。估算时怎样区分有效 KV、分配容量和 payload，什么时候三者会不同？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "分别统计有效数据、实际占用空间和本次被传输的字节，不能互相代用。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "有效 KV 按已经形成的有效状态元素计数，不把未来预留位置当成已产生的数据。"
+                }
+              ],
+              "label": "有效数据"
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "分配容量由实际占用块及其物理页尺寸决定，可能含尾块空槽、请求预留或页 padding。"
+                }
+              ],
+              "label": "占用空间"
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "payload 按本次选中的片段长度求和；本题按完整 descriptor 传输，所以被选中尾块的空槽也可能随块搬运。"
+                }
+              ],
+              "label": "网络账单"
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "只有选中全部占用块、传输长度与分配粒度一致且没有额外表示时，payload 才可能恰好等于占用容量。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "有效状态 → 实际占用 → 选中片段",
+        "来源": "W3 U2 学习记录 · u2-p06、u2-p07"
+      },
+      "domain": "llm-inference-kv",
+      "rank": 1,
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 3,
+      "source_ids": [
+        "w3-u2-log"
+      ],
+      "depends_on": [],
+      "content_summary": "按实际占用和选定片段区分有效KV、分配容量与传输payload"
+    },
+    {
+      "key": "u2-shared-link-lower-bound",
+      "recall_target": "解释并发rank共享瓶颈时的传输下界及其证明范围",
+      "assessment": "mechanism",
+      "layer": "mechanism",
+      "fact_scope": {
+        "kind": "evergreen"
+      },
+      "quality": "B",
+      "template_id": "technical-qa",
+      "fields": {
+        "问题": "四个 rank 各有 S byte 的 payload，全部数据经过同一条总有效带宽为 W byte/s 的瓶颈链路，无重复读取或重试。怎样构造理想搬运时间下界？四路同时提交是否应再把下界除以四，这个结果又能否代表端到端交接延迟？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "共享瓶颈必须搬完合计 4S byte，理想下界为 4S/W；并发不增加这条链路的总带宽预算。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "要先确认每 rank 是各自独占通路，还是共享同一带宽瓶颈；前者与本题是不同假设。"
+                }
+              ],
+              "label": "预算归属"
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "该值只覆盖指定 payload 的理想搬运；排队、描述准备、重排、同步及消费者就绪还要沿真实关键路径观测。"
+                }
+              ],
+              "label": "延迟范围"
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "并发是否额外引入竞争开销需测量，不能仅凭“同时提交”断言一定更慢或按 rank 数加速。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "先合计经过瓶颈的字节，再谈有效带宽与端到端边界",
+        "来源": "W3 U2 学习记录 · u2-p08、u2-p11"
+      },
+      "domain": "llm-inference-kv",
+      "rank": 2,
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 3,
+      "source_ids": [
+        "w3-u2-log"
+      ],
+      "depends_on": [],
+      "content_summary": "解释并发rank共享瓶颈时的传输下界及其证明范围"
+    },
+    {
+      "key": "u2-heterogeneous-tp-head-mapping",
+      "recall_target": "按查询头与KV头的语义依赖构建异TP交接映射",
+      "assessment": "mechanism",
+      "layer": "mechanism",
+      "fact_scope": {
+        "kind": "evergreen"
+      },
+      "quality": "A",
+      "template_id": "technical-qa",
+      "fields": {
+        "问题": "同一普通 GQA 模型的 P、D 使用不同 TP；两侧都按完整 KV 头切分或复制缓存，精度与布局相容，没有 CP。P→D 交接能否保留旧的同编号 rank 一一对应？应依据什么确定源片段、接收 rank 和拼接关系？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "映射应依据 D 的查询头需要哪些逻辑 KV 头，以及这些 KV 头实际位于哪些 P rank，而不是仅比较 rank 编号。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "先从 D 的本地查询头分组确定所需 KV 头；再检查 P 的分片与副本，选出对应源 rank 和头片段。"
+                }
+              ],
+              "label": "需求到来源"
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "按 D 的本地头顺序和目标布局分发或拼接；需要同一 KV 头的多个 D rank 都必须获得正确数据。"
+                }
+              ],
+              "label": "来源到目标"
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "只有两侧分工与映射恰好一致时，简单一一对应才成立；总字节数相同也不能证明头归属正确。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "D 查询头需求 → 逻辑 KV 头 → P 源片段 → D 目标布局",
+        "来源": "W3 U2 学习记录 · u2-p03、u2-p21"
+      },
+      "domain": "llm-inference-kv",
+      "rank": 3,
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 5,
+      "source_ids": [
+        "w3-u2-log"
+      ],
+      "depends_on": [],
+      "content_summary": "A理由：防止 P/D 异 TP 时沿用 rank 编号直发，造成 D 缺少或读取错误的 KV 头。 按查询头与KV头的语义依赖构建异TP交接映射"
+    },
+    {
+      "key": "u2-dcp-lse-combine",
+      "recall_target": "用softmax分母贡献合并历史分片的局部attention输出",
+      "assessment": "mechanism",
+      "layer": "mechanism",
+      "fact_scope": {
+        "kind": "evergreen"
+      },
+      "quality": "A",
+      "template_id": "technical-qa",
+      "fields": {
+        "问题": "同一个查询的完整有效历史被分成互不重叠的片段；整体至少有一个未被 mask 的有效位置；各片段使用一致的打分与 mask 语义，得到局部归一化 attention 输出 O_i，以及本片段分数的 log-sum-exp 值 L_i。怎样恢复完整历史的输出，为什么片段 Token 数量不能直接作为合并权重？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "按各分片 softmax 分母对全局分母的贡献重新加权局部输出，再求和。"
+                }
+              ]
+            },
+            {
+              "type": "display",
+              "parts": [
+                {
+                  "type": "formula",
+                  "katex": "w_i=\\exp\\!\\left(L_i-\\operatorname{logsumexp}_j L_j\\right),\\qquad O=\\sum_i w_i O_i"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "L_i 反映该查询在分片上所有 exp(score) 的总量；Token 数只给出项数，不能反映分数大小，因此不能代替归一化权重。"
+                }
+              ],
+              "label": "为什么"
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "各分片必须针对同一查询并共同覆盖所需历史；修改本地序列长度不会补出未参与计算的 KV。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "局部输出＋局部分母信息 → 全局归一化",
+        "来源": "W3 U2 学习记录 · u2-p04"
+      },
+      "domain": "llm-inference-kv",
+      "rank": 4,
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 5,
+      "source_ids": [
+        "w3-u2-log"
+      ],
+      "depends_on": [],
+      "content_summary": "A理由：防止把 DCP 的局部 attention 按片段长度平均，产生看似合理但数值错误的输出。 用softmax分母贡献合并历史分片的局部attention输出"
+    },
+    {
+      "key": "u2-pcp-intralayer-dependency",
+      "recall_target": "解释PCP同层先产生缓存状态再通信并行attention的因果关系",
+      "assessment": "mechanism",
+      "layer": "mechanism",
+      "fact_scope": {
+        "kind": "snapshot",
+        "product": "vLLM MLA PCP",
+        "commit": "d7ada3aace051fecec553c185225db2259c2ac6a"
+      },
+      "quality": "B",
+      "template_id": "technical-qa",
+      "fields": {
+        "问题": "在 vLLM d7ada3aace05 所读的 MLA PCP 路径中，不同 rank 负责同一层的不同查询位置，后段查询需要其他 rank 的历史缓存状态。这个依赖为什么不要求各段按位置顺序串行算完本层 attention 输出？请沿一层的数据流说明。",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "等待的是其他 rank 已产生的本层缓存状态，而不是它们的本层 attention 输出。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "各 rank 先从本层输入并行生成本地查询与缓存状态；必要的归一化、RoPE 等变换也在进入 attention 前完成。"
+                }
+              ],
+              "label": "本地产生"
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "通过该路径的 gather 交换所需缓存状态，使远端数据就绪。"
+                }
+              ],
+              "label": "跨卡依赖"
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "随后各 rank 并行计算自己负责的查询行；因果 mask 约束能读取哪些位置，不要求同层输出按位置逐段串行。"
+                }
+              ],
+              "label": "并行计算"
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "通信、同步与负载不均衡仍有成本，不能由可并行直接推出线性加速。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "同层输入 → 查询/缓存状态 → gather → attention",
+        "来源": "W3 U2 学习记录 · u2-p05"
+      },
+      "domain": "llm-inference-kv",
+      "rank": 5,
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 3,
+      "source_ids": [
+        "w3-u2-log"
+      ],
+      "depends_on": [],
+      "content_summary": "解释PCP同层先产生缓存状态再通信并行attention的因果关系"
+    },
+    {
+      "key": "u2-batch-blocktable-alignment",
+      "recall_target": "诊断分页attention中batch行重排引发的历史KV错读",
+      "assessment": "mechanism",
+      "layer": "mechanism",
+      "fact_scope": {
+        "kind": "snapshot",
+        "product": "vLLM 分页 attention",
+        "commit": "d7ada3aace051fecec553c185225db2259c2ac6a"
+      },
+      "quality": "A",
+      "template_id": "technical-qa",
+      "fields": {
+        "问题": "vLLM d7ada3aace05 的分页 attention 路径中，两个长度相同但历史不同的请求从 batch [A,B] 改为 [B,A]；Q、slot_mapping、seq_lens 已按新顺序准备，新 K/V 也写对了位置，block_table 却仍是旧行序。为什么 shape 检查无法发现问题，应恢复哪条对应关系？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "查询行与历史块表行不再属于同一请求，A、B 可能读取对方的 KV；相同 shape 不能校验请求身份。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "slot_mapping 解决本步新 K/V 写到哪里；block_table 配合有效长度解决该查询读取哪些历史物理块，二者不是同一个检查。"
+                }
+              ],
+              "label": "写与读"
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "沿本步请求顺序到 metadata 再到 backend 参数，恢复 Q、块表行、序列长度和请求身份的一致对应。"
+                }
+              ],
+              "label": "修复关系"
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "本题已假定新写入正确；只重复检查写入地址或张量维度，不能排除历史读取串请求。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "shape 对齐不等于请求身份对齐",
+        "来源": "W3 U2 学习记录 · u2-p12"
+      },
+      "domain": "llm-inference-kv",
+      "rank": 6,
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 5,
+      "source_ids": [
+        "w3-u2-log"
+      ],
+      "depends_on": [],
+      "content_summary": "A理由：防止把正确 shape 和 slot_mapping 当作充分条件，漏掉跨请求读取历史缓存的静默错误。 诊断分页attention中batch行重排引发的历史KV错读"
+    },
+    {
+      "key": "u2-mla-compression-reordering",
+      "recall_target": "解释MLA压缩持久状态与decode计算重排如何共同节省KV",
+      "assessment": "mechanism",
+      "layer": "mechanism",
+      "fact_scope": {
+        "kind": "snapshot",
+        "product": "vLLM / DeepSeek-V3 dense MLA",
+        "commit": "d7ada3aace051fecec553c185225db2259c2ac6a"
+      },
+      "quality": "A",
+      "template_id": "technical-qa",
+      "fields": {
+        "问题": "在 DeepSeek-V3 dense MLA 的 decode 路径（vLLM d7ada3aace05）中，怎样减少长期保存的 KV，同时继续完成 attention？请按持久状态、查询评分、value 输出这条链解释，不要求背压缩维数。",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "长期保存共享压缩 latent c 与位置 key，并重排查询和 value 计算，避免为每个历史位置长期保留展开的各头 K/V。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "c 是各查询头共用的压缩历史表示，位置 key 作为额外组件保留；它不是按查询头数量复制的完整 K/V。"
+                }
+              ],
+              "label": "持久状态"
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "以列向量表述，用内容 key 上投影矩阵的转置变换内容 query，使它直接与 latent 点积，等价于原来与展开内容 key 的点积；位置分支仍单独参与打分。"
+                }
+              ],
+              "label": "查询侧"
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "先按 attention 权重汇总 latent，再完成 value 上投影，而非逐位置重建全部历史 V 后再汇总。"
+                }
+              ],
+              "label": "输出侧"
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "这里的重排不等于预先把所有大矩阵合并为一个矩阵；每 rank 的副本与位置分片仍需另行核对。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "压缩历史＋查询变换＋latent 汇总后上投影",
+        "来源": "W3 U2 学习记录 · u2-p13"
+      },
+      "domain": "llm-inference-kv",
+      "rank": 7,
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 5,
+      "source_ids": [
+        "w3-u2-log"
+      ],
+      "depends_on": [],
+      "content_summary": "A理由：支撑“MLA 为什么节省缓存、计算怎样仍然成立”的机制面试题，避免只记压缩维数而不理解设计。 解释MLA压缩持久状态与decode计算重排如何共同节省KV"
+    },
+    {
+      "key": "u2-mla-history-cost",
+      "recall_target": "区分MLA免去历史展开的收益与仍随历史增长的attention工作",
+      "assessment": "mechanism",
+      "layer": "mechanism",
+      "fact_scope": {
+        "kind": "snapshot",
+        "product": "vLLM / DeepSeek-V3 dense MLA",
+        "commit": "d7ada3aace051fecec553c185225db2259c2ac6a"
+      },
+      "quality": "B",
+      "template_id": "technical-qa",
+      "fields": {
+        "问题": "DeepSeek-V3 dense MLA 的普通 decode 路径（vLLM d7ada3aace05）保存 latent 与位置 key，并通过重排避免逐位置展开全部历史 K/V。在仍对完整有效历史执行 attention 的条件下，上下文继续增长会怎样影响主要读取与计算？优化究竟省掉了哪部分工作？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "省掉的是历史 K/V 的完整展开及相应大表示，不是对历史位置执行 attention 的全部工作。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "历史 latent／位置状态的访问与查询打分仍覆盖越来越多的历史位置。"
+                }
+              ],
+              "label": "读取与打分"
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "softmax 的归一化和按权重汇总 latent 也仍依赖历史；因此不能把“不展开”解释成 decode 成本与历史长度无关。"
+                }
+              ],
+              "label": "归一化与汇总"
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "实际延迟还受 kernel、带宽和并行实现影响；这张卡只判断依赖关系，不给出未经测量的加速比。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "不展开历史 K/V，仍要读取、打分、归一化和汇总历史",
+        "来源": "W3 U2 学习记录 · u2-p14"
+      },
+      "domain": "llm-inference-kv",
+      "rank": 8,
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 3,
+      "source_ids": [
+        "w3-u2-log"
+      ],
+      "depends_on": [],
+      "content_summary": "区分MLA免去历史展开的收益与仍随历史增长的attention工作"
+    },
+    {
+      "key": "u2-mla-tp-dcp-accounting",
+      "recall_target": "区分dense MLA的TP latent副本与DCP历史位置分片",
+      "assessment": "mechanism",
+      "layer": "mechanism",
+      "fact_scope": {
+        "kind": "snapshot",
+        "product": "vLLM / DeepSeek-V3 dense MLA",
+        "commit": "d7ada3aace051fecec553c185225db2259c2ac6a"
+      },
+      "quality": "B",
+      "template_id": "technical-qa",
+      "fields": {
+        "问题": "以 vLLM d7ada3aace05 所读的 DeepSeek-V3 dense MLA 路径为准：缓存精度、模型和历史长度不变。未开 DCP 时增加 TP，与保持 TP 再用 DCP 均分历史位置，对每 rank 的有效 latent 缓存分别有什么影响？为什么不能把 TP、DCP 机械地当成两个相同除数？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "该路径中 TP 主要改变查询头与投影工作分工，latent 历史仍可在 TP rank 间复制；DCP 则改变各 rank 持有的历史位置集合。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "不开 DCP 时，各 TP rank 为自己的计算保留完整 c 历史，不能把共享 latent 维度直接按 TP 再除一次。"
+                }
+              ],
+              "label": "TP 侧"
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "DCP 均分位置时，每 rank 保存的位置减少；每个位置的 latent 记录宽度并没有因此缩小。"
+                }
+              ],
+              "label": "DCP 侧"
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "这是指定 dense MLA 实现与条件下的有效数据账单；实际分配、尾块及副本合计仍按真实归属计算。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "投影/查询分工与历史位置归属是不同轴",
+        "来源": "W3 U2 学习记录 · u2-p15"
+      },
+      "domain": "llm-inference-kv",
+      "rank": 9,
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 3,
+      "source_ids": [
+        "w3-u2-log"
+      ],
+      "depends_on": [],
+      "content_summary": "区分dense MLA的TP latent副本与DCP历史位置分片"
+    },
+    {
+      "key": "u2-hybrid-state-budget",
+      "recall_target": "按持久状态类型和保留版本数估算混合模型缓存",
+      "assessment": "mechanism",
+      "layer": "mechanism",
+      "fact_scope": {
+        "kind": "snapshot",
+        "product": "vLLM / Qwen3-Next GatedDeltaNet",
+        "commit": "d7ada3aace051fecec553c185225db2259c2ac6a"
+      },
+      "quality": "A",
+      "template_id": "technical-qa",
+      "fields": {
+        "问题": "将 DeepSeek-V3 MLA 的容量估算迁移到所读 Qwen3-Next 的 GatedDeltaNet＋full-attention 实现（vLLM d7ada3aace05）时，为什么不能只替换层数？应怎样按状态类型与运行时保留策略建立容量账单？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "先按不同层实际保留的状态分别计数，再计入各自的精度和保留份数；单一的每 Token KV 公式不覆盖整个混合模型。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "full-attention 层保存历史 K/V，容量随保留位置数增长。"
+                }
+              ],
+              "label": "历史缓存"
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "递推层保留状态矩阵与近期卷积尾部，按其实际张量形状计算，而不是给每个历史 Token 都复制一份最新状态。"
+                }
+              ],
+              "label": "递推状态"
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "再核对推测候选、前缀检查点及在途状态的份数，以及 dtype、padding 等实际占用条件。"
+                }
+              ],
+              "label": "运行时份数"
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "基础规划数量不能自动当作所有异步执行情况下的绝对上限。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "状态类型 × 实际形状 × 精度 × 保留份数",
+        "来源": "W3 U2 学习记录 · u2-p16、u2-p19"
+      },
+      "domain": "llm-inference-kv",
+      "rank": 10,
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 5,
+      "source_ids": [
+        "w3-u2-log"
+      ],
+      "depends_on": [],
+      "content_summary": "A理由：防止用一条普通KV或MLA公式覆盖混合模型，遗漏递推状态、卷积尾部和运行时快照容量。 按持久状态类型和保留版本数估算混合模型缓存"
+    },
+    {
+      "key": "u2-gdn-spec-state-selection",
+      "recall_target": "在推测解码接受边界选择一致的递推状态快照",
+      "assessment": "mechanism",
+      "layer": "mechanism",
+      "fact_scope": {
+        "kind": "snapshot",
+        "product": "vLLM / Qwen3-Next GatedDeltaNet",
+        "commit": "d7ada3aace051fecec553c185225db2259c2ac6a"
+      },
+      "quality": "A",
+      "template_id": "technical-qa",
+      "fields": {
+        "问题": "在所读 GDN 推测路径（vLLM d7ada3aace05）中，target 处理一个已确定的普通输入和一串候选，并保存各接受边界对应的递推矩阵。若只接受候选的一个前缀、之后重新采样新 Token，下一轮怎样选择状态？卷积尾部需要满足什么条件？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "从“普通输入加上被接受候选前缀”对应的状态继续处理新采样 Token，并让卷积尾部对应同一前缀。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "整串候选末尾的状态已经包含被拒 Token 的影响，不能直接拿来继续；把位置计数改回去也不会恢复矩阵数值。"
+                }
+              ],
+              "label": "排除污染"
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "已有正确边界快照时，可以直接选择它，不必回到本轮最初状态重新计算全部已接受输入。"
+                }
+              ],
+              "label": "复用快照"
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "矩阵、卷积尾部和有效前缀必须一致；不能只恢复其中一个对象。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "选接受前缀的状态，而不是候选串末尾的状态",
+        "来源": "W3 U2 学习记录 · u2-p17、u2-p18"
+      },
+      "domain": "llm-inference-kv",
+      "rank": 11,
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 5,
+      "source_ids": [
+        "w3-u2-log"
+      ],
+      "depends_on": [],
+      "content_summary": "A理由：防止推测拒绝后继续使用含被拒Token影响的递推状态，或只修改长度而不恢复状态内容。 在推测解码接受边界选择一致的递推状态快照"
+    },
+    {
+      "key": "u2-hybrid-prefix-replay",
+      "recall_target": "从匹配检查点重放以恢复混合模型的一致前缀状态",
+      "assessment": "mechanism",
+      "layer": "mechanism",
+      "fact_scope": {
+        "kind": "evergreen"
+      },
+      "quality": "A",
+      "template_id": "technical-qa",
+      "fields": {
+        "问题": "一个 full-attention＋递推状态混合模型要恢复到前 t 个 Token。已有正确 full-attention K/V 到 t，但递推层只有更早 s<t 的完整检查点和更晚 r>t 的最终状态；检查点含各层矩阵及卷积尾部。共同前缀、权重、精度和位置设置相同，输入可重新取得，却没有可直接复用的中间激活。如何尽量复用已有数据，恢复一致状态？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "使用较早的匹配检查点，再重放第 s+1 到 t 个输入，使各层状态到达目标前缀。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "更晚的状态包含 t 之后输入的影响，修改长度标签不能把数值还原成目标前缀的状态。"
+                }
+              ],
+              "label": "选择边界"
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "已有 full-attention K/V 可以保留；没有中间激活时，仍需完成状态推进所需的逐层前向，不能把“已有KV”当作后续递推层已恢复。"
+                }
+              ],
+              "label": "重建依赖"
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "最终使用的历史 K/V、各层递推矩阵和卷积尾部必须对应同一个正确前缀；这里假定实现支持状态保存与恢复。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "匹配检查点 → 重放缺口 → 各层同一前缀",
+        "来源": "W3 U2 学习记录 · u2-p20、u2-p22"
+      },
+      "domain": "llm-inference-kv",
+      "rank": 12,
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 5,
+      "source_ids": [
+        "w3-u2-log"
+      ],
+      "depends_on": [],
+      "content_summary": "A理由：防止跨请求前缀复用时把较长递推状态改长度标签直接使用，造成混合层状态不一致。 从匹配检查点重放以恢复混合模型的一致前缀状态"
+    }
+  ]
+}

@@ -1,0 +1,597 @@
+{
+  "schema": "memo-cards.request/v1",
+  "output_collection": "inference-cards",
+  "target": "推理框架/cards/2026-11-07-W3-U4-故障处理与系统设计.md",
+  "selection": "selected",
+  "sources": [
+    {
+      "id": "w3-u4-log",
+      "collection": "inference-study-logs",
+      "path": "推理框架/log/2026-11-07-W3-U4-故障处理与系统设计.md",
+      "sha256": "b77e96cbc63545633468464565eaaff42464cd0988932f9b8feb373d5ff2ed34",
+      "summary": "W3单元四的可追溯结构化学习记录：尝试身份、peer、租约、测试断言与适配设计。"
+    }
+  ],
+  "cards": [
+    {
+      "key": "attempt-readers",
+      "rank": 1,
+      "domain": "llm-inference-pd",
+      "recall_target": "按尝试与读者身份归属完成通知并维持旧尝试清理责任",
+      "assessment": "mechanism",
+      "layer": "mechanism",
+      "fact_scope": {
+        "kind": "evergreen"
+      },
+      "quality": "A",
+      "fact_status": "verified",
+      "template_id": "technical-qa",
+      "fields": {
+        "问题": "请求 R 从尝试 a 重试为 b。P 为每次尝试等待读者 A、B 各自不再读取的通知；通知允许重复交付。收到 (R,a,A)、(R,b,A)、(R,b,A) 后，应怎样更新两次尝试的完成状态？为什么只按 R 累计消息数不够？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "a 和 b 都只取得读者 A 的有效通知，都仍缺 B；重复的 (R,b,A) 只生效一次，两个尝试继续各自保留清理责任。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "归属先匹配请求与尝试，再按读者身份判重；否则旧尝试通知或同一读者的重发会被错误地算成新读者已结束。"
+                }
+              ],
+              "label": "身份"
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "这是允许重复交付的协议设计模型；是否需要应用层判重、固定实现是否已经做到，要另核对通知交付合同。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "按尝试与读者身份归属完成通知并维持旧尝试清理责任",
+        "来源": "W3-U4 学习记录 · u4-p02"
+      },
+      "lifecycle": "active",
+      "priority": 5,
+      "source_ids": [
+        "w3-u4-log"
+      ],
+      "depends_on": [],
+      "content_summary": "A理由：防止重复或迟到通知提前解除源KV保护，支撑重试幂等设计追问。"
+    },
+    {
+      "key": "notification-retry",
+      "rank": 2,
+      "domain": "llm-inference-pd",
+      "recall_target": "区分通知重发与数据读取重试的事件身份",
+      "assessment": "mechanism",
+      "layer": "mechanism",
+      "fact_scope": {
+        "kind": "evergreen"
+      },
+      "quality": "B",
+      "fact_status": "verified",
+      "template_id": "technical-qa",
+      "fields": {
+        "问题": "某通知协议要求接收方确认：A 已完成请求 R 的读取尝试 b，P 收到完成通知并处理，但返回给 A 的确认丢失。A 重发完成通知时，事件身份应该怎样处理？为什么 P 会收到重复通知，却没有发生第二次读取？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "重发仍表示同一次读取完成，应保留原事件身份；重复的是通知交付，不是读取尝试。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "A 无法区分通知未送达与确认丢失，只能重新发送；P 需要把已经处理的同一事件识别出来，避免再次产生完成或引用归还效果。"
+                }
+              ],
+              "label": "原因"
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "应用层重复交付与底层报文重传不是同一保证；不能仅从网络重传推定应用会收到重复消息。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "区分通知重发与数据读取重试的事件身份",
+        "来源": "W3-U4 学习记录 · u4-p03"
+      },
+      "lifecycle": "active",
+      "priority": 3,
+      "source_ids": [
+        "w3-u4-log"
+      ],
+      "depends_on": [],
+      "content_summary": "区分通知重发与数据读取重试的事件身份"
+    },
+    {
+      "key": "peer-incarnation",
+      "rank": 3,
+      "domain": "llm-inference-pd",
+      "recall_target": "在peer实例改变后分离新访问资源与旧操作清理",
+      "assessment": "mechanism",
+      "layer": "mechanism",
+      "fact_scope": {
+        "kind": "evergreen"
+      },
+      "quality": "A",
+      "fact_status": "verified",
+      "template_id": "technical-qa",
+      "fields": {
+        "问题": "远端服务在同一地址重启，握手确认 engine 身份已经改变。本地仍有引用旧 peer 描述的在途传输。新请求的访问路径和旧传输的清理路径，应如何安排？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "新操作使用与新实例匹配且有效的描述；旧操作仍按旧实例、旧handle与旧区域的访问关系独立收尾。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "服务地址相同不能保证注册身份、地址范围或权限不变；新握手也不会把已提交的旧操作自动迁移到新实例。"
+                }
+              ],
+              "label": "原因"
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "保留旧操作仍需的本地关联与资源，取得安全停止或完成依据并解除其他引用后，再回收；需要重试时作为新尝试重新准备。"
+                }
+              ],
+              "label": "衔接"
+            }
+          ]
+        },
+        "锚点": "在peer实例改变后分离新访问资源与旧操作清理",
+        "来源": "W3-U4 学习记录 · u4-p04"
+      },
+      "lifecycle": "active",
+      "priority": 5,
+      "source_ids": [
+        "w3-u4-log"
+      ],
+      "depends_on": [],
+      "content_summary": "A理由：避免把新peer握手当成旧DMA迁移或旧资源可立即删除的依据。"
+    },
+    {
+      "key": "lease-access",
+      "rank": 4,
+      "domain": "llm-inference-pd",
+      "recall_target": "区分租约状态与实际内存访问完成的证据",
+      "assessment": "mechanism",
+      "layer": "mechanism",
+      "fact_scope": {
+        "kind": "evergreen"
+      },
+      "quality": "B",
+      "fact_status": "verified",
+      "template_id": "technical-qa",
+      "fields": {
+        "问题": "P 用租约保留源 KV，D 通过心跳续租。分别观察到“心跳及时到达”和“心跳在到期之后才到达”时，能对某次旧读取是否仍访问源区作出什么判断？回收还需要什么依据？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "仅凭这两种心跳时序都不能确定旧读取是否仍在访问；回收仍需要该访问的完成、停止或隔离保证，以及其他引用已解除。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "心跳维护的是协议层保留政策，可以在读取尚未开始时续租，也可能在读取已经结束后迟到；它与数据操作的执行进度不一一对应。"
+                }
+              ],
+              "label": "原因"
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "租约到期分支或mock的done状态只说明软件策略被触发，不能单独证明真实RNIC已停止访存。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "区分租约状态与实际内存访问完成的证据",
+        "来源": "W3-U4 学习记录 · u4-p05"
+      },
+      "lifecycle": "active",
+      "priority": 3,
+      "source_ids": [
+        "w3-u4-log"
+      ],
+      "depends_on": [],
+      "content_summary": "区分租约状态与实际内存访问完成的证据"
+    },
+    {
+      "key": "queued-lease",
+      "rank": 5,
+      "domain": "llm-inference-pd",
+      "recall_target": "解释源目标就绪且任务受理后仍可排队并需要续租",
+      "assessment": "mechanism",
+      "layer": "mechanism",
+      "fact_scope": {
+        "kind": "evergreen"
+      },
+      "quality": "B",
+      "fact_status": "verified",
+      "template_id": "technical-qa",
+      "fields": {
+        "问题": "源 KV 区 S 已可读，目标区 T 已分配，传输任务也已被后端受理，但测试暂时不推进队列。为什么这时还可能需要向 P 续租 S？这种“排队”与目标区未准备好有什么区别？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "排队表示已受理的任务尚未执行访存，未来仍需读 S，因此等待期间可以需要续租；这不意味着 T 尚未准备好。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "资源就绪、任务受理、开始访存和操作完成是不同事件。受控测试将执行暂停在受理之后，才能稳定制造后续查询、续租和清理的交错。"
+                }
+              ],
+              "label": "时序"
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "续租保护的是源区保留期限，不能用来证明写入已开始或已经完成。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "解释源目标就绪且任务受理后仍可排队并需要续租",
+        "来源": "W3-U4 学习记录 · u4-p06"
+      },
+      "lifecycle": "active",
+      "priority": 3,
+      "source_ids": [
+        "w3-u4-log"
+      ],
+      "depends_on": [],
+      "content_summary": "解释源目标就绪且任务受理后仍可排队并需要续租"
+    },
+    {
+      "key": "intermediate-assertions",
+      "rank": 6,
+      "domain": "llm-inference-pd",
+      "recall_target": "用中间保护与最终一次性收尾断言验证异步故障回收",
+      "assessment": "mechanism",
+      "layer": "mechanism",
+      "fact_scope": {
+        "kind": "evergreen"
+      },
+      "quality": "A",
+      "fact_status": "verified",
+      "template_id": "technical-qa",
+      "fields": {
+        "问题": "受控软件后端中，源区 S 已就绪，目标块 T 已分配，且除本次传输外没有其他使用者。旧写已受理但尚未执行；查询状态报错，第一次释放handle失败。测试随后推进旧写结束并允许释放成功，只检查最终请求进入结束集合和失败集合。要检验资源回收逻辑，还应在故障过程和收尾后观察什么？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "既要断言旧访问未结束时T没有被回池或重新分配，也要断言最终只归还一次、不重复上报，并正确清除追踪。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "查询或释放失败时，handle、请求和块的关联仍需保留；观察内存池归还与分配事件，才能发现曾经提前复用但最后看起来为空的错误。"
+                }
+              ],
+              "label": "中间状态"
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "旧访问结束且释放成功后，检查最终回收和终结效果只发生一次；随后再次推进或查询不应重复归还或上报。"
+                }
+              ],
+              "label": "最终状态"
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "这些断言证明受控后端中的软件时序，不能替代真实RNIC取消、停止访问或设备可见性的验证。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "用中间保护与最终一次性收尾断言验证异步故障回收",
+        "来源": "W3-U4 学习记录 · u4-p07"
+      },
+      "lifecycle": "active",
+      "priority": 5,
+      "source_ids": [
+        "w3-u4-log"
+      ],
+      "depends_on": [],
+      "content_summary": "A理由：避免仅看最终集合而漏掉短暂提前复用和重复回收，能直接回答故障测试设计题。"
+    },
+    {
+      "key": "adapter-native",
+      "rank": 7,
+      "domain": "llm-inference-pd",
+      "recall_target": "解释平台能力声明为什么不能代替真实设备直传接入",
+      "assessment": "mechanism",
+      "layer": "mechanism",
+      "fact_scope": {
+        "kind": "evergreen"
+      },
+      "quality": "A",
+      "fact_status": "verified",
+      "template_id": "technical-qa",
+      "fields": {
+        "问题": "给一种新加速器接入CPU发起的PD PULL，基础prefill/decode已可执行。开发者只在platform adapter里声明支持设备内存类型，就认为网络可以直接访问显存。还需要沿哪些接口责任验证接入，为什么？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "能力声明只提供选择与描述信息；实际设备内存识别、注册与访问、传输完成和设备消费依赖，仍要由对应后端与connector打通。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "Native transport／驱动必须能识别实际分配、建立有效注册并按合同执行与报告；字符串或支持表不能产生设备内存到RNIC的访问能力。"
+                }
+              ],
+              "label": "底层"
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "Connector／worker要把生产可读、提交跟踪、接收后处理和消费依赖接入请求生命周期；现有hook表达不了时才评估必要扩展。"
+                }
+              ],
+              "label": "框架衔接"
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "目标平台是否支持、如何保证可见性仍需具体合同与测试，不能由配置成功推出。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "解释平台能力声明为什么不能代替真实设备直传接入",
+        "来源": "W3-U4 学习记录 · u4-p08"
+      },
+      "lifecycle": "active",
+      "priority": 5,
+      "source_ids": [
+        "w3-u4-log"
+      ],
+      "depends_on": [],
+      "content_summary": "A理由：防止把配置支持表当成完整硬件适配，支撑新加速器接入的工程职责说明。"
+    },
+    {
+      "key": "failure-policy",
+      "rank": 8,
+      "domain": "llm-inference-pd",
+      "recall_target": "区分KV加载失败后的业务策略与旧传输清理条件",
+      "assessment": "mechanism",
+      "layer": "mechanism",
+      "fact_scope": {
+        "kind": "evergreen"
+      },
+      "quality": "B",
+      "fact_status": "verified",
+      "template_id": "technical-qa",
+      "fields": {
+        "问题": "PD connector已经确认KV加载失败。调度器可选择fail结束请求，或者recompute重新计算。选择其中任一种策略，怎样影响旧传输handle和缓冲区的回收依据？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "两种策略决定业务请求接下来如何处理，都不自动建立旧传输停止访问或缓冲区可复用的依据。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "失败路径仍需保留必要追踪，按后端合同安全收尾；要回收的区域还必须解除计算及其他引用。选择重算时尤其要防止旧访问污染新计算。"
+                }
+              ],
+              "label": "原因"
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "具体上报与资源交接顺序由实现合同决定；学习方案首版选择安全收尾后fail，不代表系统已实现自动重传。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "区分KV加载失败后的业务策略与旧传输清理条件",
+        "来源": "W3-U4 学习记录 · u4-p09"
+      },
+      "lifecycle": "active",
+      "priority": 3,
+      "source_ids": [
+        "w3-u4-log"
+      ],
+      "depends_on": [],
+      "content_summary": "区分KV加载失败后的业务策略与旧传输清理条件"
+    },
+    {
+      "key": "read-relocation",
+      "rank": 9,
+      "domain": "llm-inference-pd",
+      "recall_target": "在设备直传READ仅目标变址时更新有效注册与本地描述",
+      "assessment": "mechanism",
+      "layer": "mechanism",
+      "fact_scope": {
+        "kind": "evergreen"
+      },
+      "quality": "A",
+      "fact_status": "verified",
+      "template_id": "technical-qa",
+      "fields": {
+        "问题": "D的CPU发起设备直传READ，从P设备区S读入D设备区T，无Host中转。S的地址、注册及有效性不变；D将新操作目标改为尚未被有效注册覆盖的T_new，旧handle仍可能写T。新操作要更新什么，旧T何时能回收？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "为T_new建立有效注册并更新本地接收描述；S的有效注册与远端源描述可沿用。旧T按访问它的旧操作与其他引用结束条件回收。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "READ的本地描述对应D的接收区，远端描述对应P的源区；仅改变量引用或地址字段，不会建立新区域的注册与权限。"
+                }
+              ],
+              "label": "对应关系"
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "不必机械等待写T_new的新操作结束才能回收旧T；共享MR／pool仍被其他区域使用时，也不能因旧T不再使用就注销整个注册。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "在设备直传READ仅目标变址时更新有效注册与本地描述",
+        "来源": "W3-U4 学习记录 · u4-p11"
+      },
+      "lifecycle": "active",
+      "priority": 5,
+      "source_ids": [
+        "w3-u4-log"
+      ],
+      "depends_on": [],
+      "content_summary": "A理由：防止缓冲区变址后继续使用失效描述或提前释放旧区域，检验READ方向与注册边界迁移。"
+    },
+    {
+      "key": "failure-design-oral",
+      "rank": 10,
+      "domain": "llm-inference-pd",
+      "recall_target": "向面试官串联PD重试归属、peer变化、租约和故障验证的设计",
+      "assessment": "oral",
+      "layer": "oral",
+      "fact_scope": {
+        "kind": "evergreen"
+      },
+      "quality": "B",
+      "fact_status": "verified",
+      "template_id": "oral",
+      "fields": {
+        "问题": "向面试官解释一个允许完成通知重复、请求重试和peer重启的PD系统：沿“尝试归属→新旧peer→回收证据→测试观察”说明异常处理如何保持一致。重点说明原则，不要求背具体API。",
+        "参考回答": "我会先按请求、尝试和读者身份归属并去重通知，让新旧尝试各自维护完成与清理责任；新尝试的通知不能替旧尝试解除保护。Peer在同一地址重启后，新操作使用新实例的有效描述，旧在途操作仍按旧身份和旧资源关系收尾，不能靠重新握手迁移。租约或心跳只说明保留政策，不能替代实际访问完成、停止或隔离的依据；回收还要解除其他引用。测试上既观察故障中间handle和块关联仍保留、目标不被复用，也检查安全收尾后只归还和上报一次。受控软件测试只能证明该模型里的逻辑，真实RNIC的停止访问和可见性仍需要相应验证。",
+        "评分锚点": [
+          "按尝试与读者去重并保留旧清理责任",
+          "新peer访问与旧操作收尾分开",
+          "租约不代替访存及引用结束依据",
+          "中间不复用、最终一次收尾，并限定软件测试证明范围"
+        ],
+        "来源": "W3-U4 学习记录 · u4-p02、u4-p04、u4-p05、u4-p07"
+      },
+      "lifecycle": "active",
+      "priority": 3,
+      "source_ids": [
+        "w3-u4-log"
+      ],
+      "depends_on": [
+        "attempt-readers",
+        "peer-incarnation",
+        "lease-access",
+        "intermediate-assertions"
+      ],
+      "content_summary": "将已核验的异常身份、租约和测试断言串成一条系统设计口述。"
+    }
+  ]
+}
