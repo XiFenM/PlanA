@@ -1,7 +1,8 @@
 ## 项目：GLM-5.3-Flash 模型适配与优化（已完成）
 
-> 事实依据：此前整理时引用的《GLM-5.3-Flash 推理适配项目总结》及本人 2026-11-02 的问答补充；沿用旧档案中未被新材料替代的实践细节。项目已完成，由云服务团队正式生产上线。
+> 事实依据：此前整理时引用的《GLM-5.3-Flash 推理适配项目总结》、本人 2026-11-02 的问答补充，以及 2026-11-09 合并的适配细节材料；沿用旧档案中未被新材料替代的实践细节。项目已完成，由云服务团队正式生产上线。
 > 来源可用性说明（2026-11-09）：原链接所指的 `GLM-5.3-flash-project-summary.md` 当前不在本目录中，不能当作本仓库内可打开的独立证据。保留本档案已经记录的本人确认及来源归属，不补造总结文件；原始代码、日志和评测索引尚未在本次整理中重新核验。
+> 补充材料中的源码定位使用原工程内相对路径，行号沿用材料记录，不是本仓库链接；上游布局描述限于项目当时参考的 GLM5 路径，不泛化为所有 vLLM／CUDA 版本。
 > 本档案整理项目经历、职责和结果口径；下方【待补充／待核验】用于完善复现与面试材料，不改变已交付状态。
 > 对外统一使用“自研 AI 加速芯片”，不写内部代号、内部仓库名或内部算子编号。
 
@@ -57,9 +58,69 @@
 
 #### 2. 修复混合 KV cache 的两次 OOM
 
-第一次 OOM 来自分组、容量核算与实际分配不一致：上游将 34 层 KDA 合为一组，假设 KDA 状态页可以装入 MLA 页，但目标平台按层独立分配，且实际 KDA 页更大，导致 `num_blocks` 高估。我将 KDA 拆成每层独立 spec，并分别处理 MLA、KPool index 和 KPool tail，按真实页大小计费。
+两次 OOM 分别来自分组计费模型与物理页 Padding，修复位置不同。混合 cache 包含 11 个 full MLA 主 cache、11 个 KPool index cache、11 个 KPool tail cache，以及 34 个 KDA／Mamba 状态 cache。TP=8 时，每个 rank、每层 KDA 的一个状态 block 包含：
 
-第二次 OOM 来自平台层沿用共享页布局的额外 Padding。核对实际访问范围后，去掉这部分不必要的补齐，使核算与分配使用一致的页容量。旧档案中的 CPU 分组／核算／分配单测，以及真机容量由 45,409 提升至 148,762 tokens 的结果继续保留，显存利用率为 0.85。
+| 状态 | 形状 | dtype | 每 block 字节数 |
+|---|---|---|---:|
+| 因果短卷积滑窗 `conv_state` | `[3, 3072]` | BF16 | 18,432 B |
+| delta-rule 递推矩阵 `recurrent_state` | `[8, 128, 128]` | FP32 | 524,288 B |
+| 合计 | 两种状态打包 | — | 542,720 B，约 0.518 MiB |
+
+当时未扩大的 MLA 页为 256 KiB（0.25 MiB），小于 KDA 的真实状态页。
+
+##### 第一次：分组与逐层分配的计费口径不一致
+
+启动在申请 Mamba cache 时触发 `Tried to allocate 674 MiB`，材料同时记录 `GPU KV cache size: 45,409 tokens`。上游 `_get_kv_cache_groups_glm5_next` 将 34 层 KDA 合为一个 Mamba 组，按共享页布局核算，并设置 `page_size_padded = MLA page`；移植时沿用了 256 KiB 的 MLA 页假设。目标 runner 却为每个 KDA 层独立申请 raw byte-page tensor，实际需要 34 份 `num_blocks × 542,720 B`。
+
+这使规划器的共享页成本模型与 worker 的逐层分配不一致，材料记录 `num_blocks` 高估一度约 6.5 倍。仅降低 `gpu_memory_utilization` 不能修正 cache 拓扑和计费口径。
+
+我在 `patch/patch_kv_cache_utils.py` 中增加模型专用分组，并同步修正每 block 字节统计：
+
+```text
+1 个 full MLA 组
+1 个 KPool index 组
+1 个 KPool tail 组
+34 个 KDA 各自独立的 MambaSpec 组
+```
+
+每层 KDA 使用真实页大小 `542,720 B`，设置 `page_size_padded=None`；其余 attention cache 仍通过 `UniformTypeKVCacheSpecs` 合并。分组后按实际逐层 allocation 求和，使容量核算与分配使用同一成本模型。
+
+CPU 离线闭环记录为 `num_blocks=1509`、每 block 合计约 `20.734 MiB`，即 `1509 × 20.734 MiB ≈ 30.55 GiB`，对应可用 KV 空间约 `30.56 GiB`。`tests/test_glm5_kv_grouping_dlc.py` 覆盖“分组 → num_blocks → 每层实际字节”的完整链路。
+
+这里保留原日志中的 45,409 tokens，但不沿用补充材料的 `45,409 = 177 × 256`：该乘积实际为 45,312，不能据此反推当时的物理 block 数。离线 1,509 blocks、后续 Padding 排查中的 771 blocks 和真机 token 容量来自不同阶段，不合并为同一配置。
+
+##### 第二次：独立分配仍沿用共享页 Padding
+
+分组修复后启动仍然 OOM，日志显示真实 `page_size_bytes=542,720 B`，但 `page_size_padded=786,432 B`，即被补到 0.75 MiB。原因是平台层仍调用 `_align_hybrid_block_size`：为让共享页容纳 Mamba 状态，先增大 attention block size，再把 Mamba 页补齐到相同的 attention 页大小。
+
+目标 runner 已经逐层独立分配，MLA 与 KDA 不共享 backing storage；`bind_kv_cache` 只读取 conv／recurrent 的真实内容，Padding 尾部不参与计算。因此这层补齐只会占用额外显存。按材料给出的页大小和 771 blocks 重新计算：
+
+```text
+每个 KDA block 多分配 = 786,432 − 542,720 = 243,712 B = 238 KiB
+34 层 × 771 blocks × 243,712 B ≈ 5.95 GiB
+```
+
+补充材料中的“约 230 KiB／5.7 GiB”与上述输入不一致，改按算式保留约 5.95 GiB；这只是目标平台该次逐层分配的额外容量估算，不用于推算上游共享池的总开销。
+
+我在平台 `update_block_size_for_backend` 中继续解析 backend 首选 block size，但跳过 `_align_hybrid_block_size`，保持 `mamba_page_size_padded=None`；同时让 `patch/patch_kv_cache_interface.py` 中 Mamba 的 `page_size_bytes_padded` 返回真实 `page_size_bytes`，防止后续核算再次引入 Padding。
+
+修复后记录为 `page_size_padded=None`、真实页大小 `542,720 B`，34 层 KDA 全部分配成功。显存利用率 0.85 下，启动日志容量由 45,409 提升至 148,762 tokens。排错时也排除了仅降低显存利用率、启用目标 allocator 不支持的 `expandable_segments:True`，或继续调整已经确定的状态形状等方向。
+
+##### 上游共享页布局成立的前提
+
+补充材料记录的 NVIDIA GLM5 路径通过 `allocate_kv_cache` 申请统一的 `int8` backing buffer，再用 `as_strided` 为不同层与 cache group 建立 view。`KVCacheTensor` 的关键约束是：**同一个全局 block ID 在同一时刻只由一个 cache group 拥有**。因此，不同 group 的 view 可以映射重叠地址，而同一时刻实际使用这些字节的 group 仍然唯一。
+
+例如，block 17 分给 MLA 组时按 MLA 页解释，回收后分给 KDA 组时按状态页解释；同一个请求的 MLA cache 与 KDA state 使用不同的全局 block ID。材料中的 `bytes_per_block` 只计 MLA 与 KPool index，Mamba 和 tail 使用重叠 view，前提正是物理分配与 block 所有权共同遵守这套布局。
+
+为让共享槽位容纳不同类型，平台先增大 MLA 页到足以容纳 KDA，再将 KDA 补齐到相同大小。对应的约束检查是 `mamba.real_page_size_bytes <= mla_page`；在该例中，MLA 页从 256 KiB 扩到 786,432 B 后，真实 542,720 B 的 KDA 状态才可放入。Padding 换来统一页池、跨类型 block 复用，并为调度、prefix cache 和 KV transfer 提供统一布局。
+
+| 比较项 | 材料记录的上游共享页路径 | 本项目目标平台路径 |
+|---|---|---|
+| 物理分配 | 统一 backing buffer，group 间可建立重叠 view | 按层独立 allocation |
+| 页大小约束 | 共享页须容纳各类状态，需要对齐／Padding | 按真实状态字节分配，无须为另一类 cache 补齐 |
+| 非连续访问 | 对应 CUDA／Triton Kernel 在设备端按指针与 stride 寻址 | 当时后端的 `KernelDesc` 路径要求紧凑、无 storage offset 的输入；相关 view 触发物化／搬运 |
+
+支持设备端 stride 并不意味着非连续访问没有性能成本，也不能由此推断目标硬件永远不能实现共享页；本次修复针对的是当时 runner、后端和算子接口的实际约束。分组计费、去掉无用 Padding、拆成连续状态池分别解决核算、容量和访问路径问题。
 
 总结另给出后续配置的单请求预算：`B(L)=69+2×ceil(L/256)`，其中 L 为请求长度，69 对应 34 层 KDA 各 2 个状态 block 和 1 个 tail block。相应的容量推导与实际验证长度见“容量与长上下文”。
 
@@ -67,9 +128,67 @@
 
 早期服务能够执行，但同一短 prompt 下，prefill 单步 Host 耗时约 179 s，decode 单步约 120 s。通过 `py-spy`、模型内 Profile 和隔离微基准，我定位到 conv state 与 recurrent state 打包在同一字节页后形成非连续 view；目标后端对这类访问退化为 Host 逐元素搬运，开销与整个 Storage 大小相关。
 
-我将两种状态拆成独立连续池，保持总字节数及 block ID 语义，适配清零、runner 绑定和状态迁移。该阶段通过 21 项单测和真机对照；在相同短 prompt 的插桩测量中，prefill 单步 Host 耗时降至约 5.7 s，decode 降至约 2.6 s。适配期保留回退开关，发布期的代码清理另见第 8 项。
+##### 为什么打包页会触发搬运退化
 
-隔离微基准中，只搬运 8 页／约 4 MiB 时，`index_select + clone` 的连续池与页内 view 耗时为 0.181 ms／579.7 ms，`index_copy_` 为 1.544 ms／1,873.0 ms。这些结果支持布局路径的归因，不能换算成端到端吞吐提升倍数。
+拆池前，本项目每层状态以 `int8 [P, 1, 1, 542720]` 存储，P 为状态 block 数。`MambaBase.bind_kv_cache` 按每页字节区间 `[0, 18432)` 和 `[18432, 542720)` 绑定 conv 与 recurrent。虽然页内各状态紧凑，但同一种状态跨 block 时要跳过整张打包页：
+
+| 状态 | 形状 | 紧凑时 `stride(0)` | 打包页 view 的 `stride(0)` |
+|---|---|---:|---:|
+| conv | `[P, 3, 3072]`，BF16 | 9,216 | 271,360 |
+| recurrent | `[P, 8, 128, 128]`，FP32 | 131,072 | 135,680 |
+
+表中 stride 以各自 dtype 的元素数计，实际跨页距离都是 542,720 B。两个 view 均非连续，相关后端路径无法直接使用正常 DMA，转而由 Host 参与搬运。
+
+隔离微基准从 1,168 个 block 中只访问 8 个、约 4 MiB 的 recurrent 数据；卷积也做了连续池／打包页 view 对照：
+
+| 操作 | 连续池 | 打包页 view |
+|---|---:|---:|
+| `index_select + clone` | 0.181 ms | 579.7 ms |
+| `index_copy_` | 1.544 ms | 1,873 ms |
+| KDA conv prefill | 0.166 ms | 1,396 ms |
+| KDA conv update | 0.259 ms | 1,339 ms |
+
+模型内 Profile 同样显示：prefill 的 gather／scatter／conv 合计约占 96%，decode 的 conv update／recurrent 合计约占 96%，设备计算少而 8 个 worker 的 CPU 占用高。材料估计单独优化 gather／scatter 只能覆盖约 64% 的开销，但未明确该比例的统计口径；卷积路径仍然受影响。每层、每步临时调用 `.contiguous()` 也会保留物化成本，因此需要在分配阶段改变物理布局。
+
+##### 拆池方式与接口适配
+
+我通过 `get_state_shape()`／`get_state_dtype()` 获取各状态规格，为两类状态分别分配连续 tensor：
+
+```text
+conv_pool = BF16 [P, 3, 3072]       stride(0) = 9216
+rec_pool  = FP32 [P, 8, 128, 128]   stride(0) = 131072
+
+block b → conv_pool[b]
+        → rec_pool[b]
+```
+
+两池仍使用同一个 block ID，`num_blocks`、block table 与调度器的状态块生命周期不变；模型侧仍按 `conv_state, recurrent_state = self.kv_cache` 访问。每 block 合计仍为 542,720 B，拆池本身不减少状态字节数；第 2 项去除 Padding 才是容量修复。
+
+实现采用 `MambaStatePool` 容器，它是 `list` 子类，用于容纳不同形状与 dtype 的 tensor。补充材料记录的发布实现按规格自动判断：各状态的每 block 字节数均满足 512 B 对齐才拆池；本模型 conv 为 `36 × 512 B`，recurrent 为 `1024 × 512 B`。不满足该条件时分配器回退打包页。早期设计曾使用拆池开关，不将其写成最终发布必须配置的选项。
+
+| 实现定位（沿用材料中的行号） | 修改内容 |
+|---|---|
+| `worker/mamba_cache.py:51` | 分配独立状态池并封装为 `MambaStatePool` |
+| `patch/patch_mamba_state_pool.py:55` | patch `MambaBase.bind_kv_cache`；识别容器后校验各状态的形状、dtype、block 数与 `is_contiguous()`，直接绑定为 tuple |
+| `worker/dlc_model_runner.py:7206` | Mamba 分支调用拆池分配器；cache 清理、日志及 FP8 scale 初始化等通用代码兼容容器条目，不代表本模型已启用 FP8 |
+| `patch/patch_kv_block_zeroer.py:119` | 遍历池内每个 tensor 清零，不再假设 cache 条目本身就是 Tensor |
+
+##### 结果与后续优化的边界
+
+该阶段通过 21 项单测和真机对照。在相同短 prompt 的模型内插桩中，Host 耗时记录如下；单步与单次调用分别列示，不能相加或混算：
+
+| 测量项 | 拆池前 | 拆池后 | 单位 |
+|---|---:|---:|---|
+| prefill | 179,434 | 5,703 | ms／step |
+| decode | 119,962 | 2,579 | ms／step |
+| conv prefill | 1,941 | 0.40 | ms／call |
+| conv update | 1,835 | 0.19 | ms／call |
+| state gather | 729 | 44 | ms／call |
+| state scatter | 2,444 | 36 | ms／call |
+
+这些是布局归因实验与 Host 计时，不能换算成端到端吞吐提升倍数，也不与上面的隔离微基准逐项拼接。
+
+拆池恢复了连续状态访问，但通用 `index_copy_` 在该阶段仍扫描整个 584 MiB recurrent pool（1,168 blocks），没有只搬运目标页。之后继续接入专用 state gather／scatter 按页搬运，并修复 HBM 16 GiB 以上的地址换算回绕；对应算子接入与协作分工见第 4、7 项。584 MiB 只指 recurrent pool，不包含 conv。发布期其他 native／fallback 清理见第 8 项。
 
 #### 4. 验收并接入融合算子
 
@@ -106,7 +225,41 @@
 | KDA state pool 地址换算回绕 | 目标路径以 32 位进行地址单位换算，超过 16 GiB 后回绕，gather 未正确写入；将 metadata、word offset、地址转换和 gather／scatter 共用 copy 路径统一为 64 位 | 我负责定位问题，算子同事修改代码，我再进行功能与性能验收；补充高地址 gather／scatter 回归 |
 | sparse MLA null block 被 warmup 污染 | 修复前一根因后，首个 NaN 从 layer 0 移到 layer 3；dummy warmup 以全 0 slot mapping 将 NaN 写入 null block 0，无效 top-k 索引读取该块并在 mask 前进入计算 | 我完成定位、代码修复和验收：在全部 dummy／warmup 完成后、服务 ready 前再次清零 null block，服务级请求恢复正常 |
 
-总结中的 dummy run 改用 `PAD_SLOT_ID(-1)`／scratch block、读取端提前清理无效索引属于后续加固建议，不计为本次已实现。HTTP 成功、单元测试通过和模型正确性分别验证，不能互相替代。
+##### null block 污染为什么会跨越 warmup 和正式请求
+
+本路径保留物理 block 0 作为 `NULL_BLOCK_ID`，供 padding、无效索引及占位访问使用，并依赖其内容全零。它不属于正式请求，也不进入正常 block 分配／释放列表；这意味着请求不分配它，但计算仍可能读取它。
+
+V1 启动的 `_dummy_run()` 预热 sampler 和模型路径，dummy batch 没有真实请求的 block table，`slot_mapping` 默认为全 0。cache 写入将其当成真实 slot；该次 dummy latent 含 NaN，于是 11 个相关 sparse MLA／indexer 层的 block 0 被污染。初始化的 `torch.zeros` 和最初的 KVBlockZeroer 都发生在 warmup 之前，不能保证 warmup 后仍为零。
+
+正式请求使用 block 1 及之后的空间。block 0 不会出现在“本步新分配 block”列表中，常规清零与请求回收不会覆盖它；没有显式修复时，污染可持续到 worker 退出。
+
+读取端的 top-k buffer 宽度为 2048，短上下文、causal mask、padding 或候选未填满都会留下无效项。补充材料定位到 `attention/sparse_attention/sparse_attention_kv_cache/sparse_attention_kv_cache_bf16.cpp:1821`：该路径将无效或越界索引映射到 0，有效索引保持原值。因此正式请求即使没有分配 block 0，仍会通过无效 top-k 项访问这块物理内存。
+
+```text
+KV cache 初始清零
+    → dummy warmup：全 0 slot_mapping 将 NaN 写入 null block
+    → 正式请求的无效 top-k 项映射到 block 0
+    → gather NaN latent，在 score mask 前进入 QK 计算
+    → 该故障路径中首个 sparse MLA 层出现 NaN
+    → 后续残差传播，logits 含 NaN，输出连续感叹号
+```
+
+材料还记录过 405,248 行 cache 中仅一行 NaN 的情形，说明污染不需要覆盖整个 cache。这里能确认的是故障 Kernel 在 mask 前读入了 NaN，且后续 mask 没有隔离该路径的输出污染；不能泛化为“所有 QK 后的 mask 都必然失效”。安全覆写无效分数可以清除相应位置的 NaN，是否还有累加、归约或 value 读取污染需结合实际 Kernel 数据流判断。
+
+##### 修复位置与执行顺序
+
+我在全部 dummy／warmup 完成后、服务 ready 之前再次清零 block 0，并同步设备，材料定位为 `worker/dlc_worker.py:709`。对应调用顺序为：
+
+```python
+if hasattr(self.model_runner, "_zero_block_ids"):
+    self.model_runner._zero_block_ids([0])
+
+torch.dlc.synchronize()
+```
+
+清零位于 warmup 最后一次 cache 写入之后，并放在 `is_last_rank` 分支之外，使所有 TP／PP rank 都清理本 rank 的 cache。补充材料说明插入位置考虑了 V1 sampler dummy 与 V2 warmup 的收尾，但本项目发布验收范围仍为 V1，不据此扩张为 V2 已交付。
+
+dummy run 改用 `PAD_SLOT_ID(-1)` 跳过写入、使用 scratch block、在 gather 后而 QK 前清零无效 latent，以及启动时断言 null block 全零，均属于后续加固建议，不计为本次已实现。HTTP 成功、单元测试通过和模型正确性分别验证，不能互相替代。
 
 #### 8. 完成发布与交接
 
@@ -206,11 +359,11 @@ replay cache 的另一组三档单并发对照中，`gap_p50` 由 63.78／74.42�
 
 ### 面试深挖点
 
-1. 混合缓存的分组、容量核算与实际分配怎样保持一致？两次 OOM 分别发生在哪一层，为什么两次修复不同？
-2. 状态拆池为什么能同时影响 gather、scatter 和卷积？怎样用隔离实验区分布局开销与 Kernel 计算开销？
+1. 混合缓存的分组、容量核算与实际分配怎样保持一致？两次 OOM 分别发生在哪一层，为什么两次修复不同？上游依靠哪些物理布局与 block 所有权前提支持共享页，为什么本次不能直接沿用？
+2. 状态拆池为什么能同时影响 gather、scatter 和卷积？怎样用隔离实验区分布局开销与 Kernel 计算开销？如何在保持 block ID 语义和总字节数不变的情况下适配绑定、清零与迁移？
 3. KPool 的逐 head 非线性与加权顺序为什么必须保留？算子接入怎样同时验证数值正确和真实路径命中？
 4. Graph bucket 补齐输入后，metadata、状态槽和 buffer 生命周期为什么也要改变？什么条件下 graph 可能变慢？
-5. NaN 的第一个出现位置如何帮助区分两个根因？低地址单测和 HTTP 200 为什么不足以证明模型正确？
+5. NaN 的第一个出现位置如何帮助区分两个根因？warmup 为什么能污染正式请求会读取的 null block，为什么必须在最后一次 warmup 写入后由所有 rank 清零？低地址单测和 HTTP 200 为什么不足以证明模型正确？
 6. 怎样解释 Host 单步、带 Profile 的步骤、token gap、TTFT 和端到端吞吐之间的差别？哪些收益属于本人插件改动，哪些属于算子协作？
 
 ### 口述基线（文稿已更新，待本人复述）
