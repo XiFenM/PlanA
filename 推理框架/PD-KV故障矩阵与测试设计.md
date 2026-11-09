@@ -2,7 +2,7 @@
 
 基线：vLLM `d7ada3aace051fecec553c185225db2259c2ac6a`，以已核验的 PULL 路径为主。本稿只整理源码、测试规格与拟议设计；没有执行测试，也没有 GPU/RDMA 实测。下列“现有断言”与“建议补充”分别记账。
 
-本文件提供[Change Card 03 两分支设计](../面试准备/自我准备/ChangeCard-03-PD-KV-transport.md)共用的异常验证规格；设备直传与 Host 中转的专用数据路径检查见该卡第 7 节。 F8 用于 W3 的 PULL／PUSH 职责对照，不扩展该卡首版 PULL 的实现范围。课程范围与学习证据见[单元四账本](../计划/八周冲刺进度/W3.md#lesson-plana-jd-w3-failure-system-design)。
+本文件提供[Change Card 03 两分支设计](../面试准备/自我准备/学习设计/ChangeCard-03-PD-KV-transport.md)共用的异常验证规格；设备直传与 Host 中转的专用数据路径检查见该卡第 7 节。 F8 用于 W3 的 PULL／PUSH 职责对照，不扩展该卡首版 PULL 的实现范围。课程范围与学习证据见[单元四账本](../计划/八周冲刺进度/W3.md#lesson-plana-jd-w3-failure-system-design)。
 
 
 <a id="failure-state-machines"></a>

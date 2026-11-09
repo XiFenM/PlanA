@@ -1,0 +1,99 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>简历 · 端到端推理性能与模型优化</title>
+<style>
+
+
+:root { color-scheme: light; --ink:#182631; --secondary:#465460; --rule:#c9d1d7; }
+* { box-sizing:border-box; }
+body { margin:0; background:#eef1f3; color:var(--ink); font-family:"Noto Sans CJK SC","PingFang SC","Microsoft YaHei",sans-serif; font-size:11pt; line-height:1.5; -webkit-font-smoothing:antialiased; }
+main { width:210mm; margin:24px auto; padding:14mm 16mm 15mm; background:#fff; box-shadow:0 2px 18px #263a4d16; }
+.resume-header { padding-bottom:8pt; border-bottom:1.5pt solid var(--ink); margin-bottom:10pt; }
+h1 { margin:0 0 5pt; font-size:21pt; line-height:1.25; font-weight:700; }
+.resume-header p { margin:3pt 0 0; font-size:10pt; }
+.resume-header p:last-child { font-size:11pt; margin-top:5pt; }
+h2 { margin:0 0 5pt; padding-bottom:3pt; border-bottom:.6pt solid var(--rule); font-size:12pt; line-height:1.4; font-weight:700; break-after:avoid; }
+h3 { margin:0 0 4pt; font-size:11pt; line-height:1.5; font-weight:700; break-after:avoid; }
+p { margin:0 0 5pt; orphans:2; widows:2; }
+.resume-section { margin-top:10pt; }
+.entry { margin-top:8pt; break-inside:avoid; page-break-inside:avoid; }
+.entry:first-of-type { margin-top:0; }
+.date { margin:-1pt 0 5pt; font-size:9.5pt; color:var(--secondary); }
+ul { margin:0; padding-left:1.15em; }
+li { padding-left:.1em; margin:0 0 4pt; orphans:2; widows:2; break-inside:avoid; }
+li:last-child { margin-bottom:0; }
+strong { font-weight:700; }
+code { font-family:"DejaVu Sans Mono","Noto Sans Mono CJK SC",monospace; font-size:.89em; }
+.education { break-inside:avoid; }
+.education ul { list-style:none; padding:0; }
+.education li { padding:0; margin-bottom:3pt; }
+@page { size:A4; margin:13mm 15mm 14mm; }
+@media print {
+  html,body { background:#fff; }
+  body { font-size:10.5pt; line-height:1.45; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+  .resume-section { margin-top:8pt; }
+  .entry { margin-top:7pt; }
+  h2 { margin-bottom:4pt; font-size:11.5pt; }
+  li { margin-bottom:3pt; }
+  p { margin-bottom:4pt; }
+  .date { margin-bottom:4pt; }
+  main { width:auto; margin:0; padding:0; box-shadow:none; }
+}
+@media screen and (max-width:820px) {
+  main { width:100%; margin:0; padding:24px; box-shadow:none; }
+  body { font-size:15px; }
+  .entry { break-inside:auto; }
+}
+</style>
+</head>
+<body><main id="resume">
+<header class="resume-header"><h1>姓名（待填写）</h1><p>手机：待填写 ｜ 邮箱：待填写 ｜ 目标地点：上海</p>
+<p><strong>求职方向：大模型推理性能优化／模型部署与加速</strong></p></header>
+<section class="resume-section" aria-labelledby="s0"><h2 id="s0">个人概述</h2><p>具备 3 年以上软件开发经验，2024 年起从事自研非 CUDA 加速芯片上的 PyTorch、vLLM 适配与推理优化。主要围绕 Host 调度、数据搬运、缓存与内存布局定位瓶颈，通过框架改动及算子协作改善模型时延和显存利用，并完成正确性回归与交付验证。</p></section>
+<section class="resume-section" aria-labelledby="s1"><h2 id="s1">专业能力</h2><ul>
+<li><strong>性能分析</strong>：使用 PyTorch／vLLM Profile、Trace、隔离微基准和受控对照，区分 Host、算子、拷贝及布局转换开销；按工作负载分析 TTFT、TPOT、吞吐与显存容量。</li>
+<li><strong>框架与模型</strong>：具备 PyTorch、vLLM 源码修改与后端调试经验，理解 prefill／decode、KV cache、Graph 执行与多模态推理链路，具备量化模型部署经验。</li>
+<li><strong>定量与验证</strong>：能够基于 shape、dtype、读写与复用假设进行 Roofline、显存容量及传输时间下界估算；通过算子数值对照、模型输出比较和回归测试验证优化效果。</li>
+<li><strong>工程开发</strong>：使用 Python、C++ 进行框架开发与性能调试，熟练使用 Linux、Git、Bash；具备 Triton 编程与 GPU 正确性验证实践。</li>
+</ul></section>
+<section class="resume-section" aria-labelledby="s2"><h2 id="s2">工作经历</h2>
+<article class="entry"><h3>中昊芯英／上海泰则｜AI 框架开发工程师</h3><p class="date">2024.06 — 至今</p>
+<ul>
+<li>负责 PyTorch、vLLM 在自研 AI 加速芯片上的模型部署与推理优化，围绕时延、吞吐和显存占用开展性能分析与验证。</li>
+<li>承担模型与框架的精度、性能及稳定性问题定位，梳理执行链路，分析框架、算子与硬件后端之间的影响。</li>
+<li>协同算子、通信和 Runtime 团队推进跨层优化，负责框架侧改动、接口集成及回归验收。</li>
+<li>支持客户部署、第三方测评与版本交付，沉淀模型压测、性能分析和问题排查文档。</li>
+</ul></article>
+<article class="entry"><h3>国药控股数字科技｜助理架构师</h3><p class="date">2023.04 — 2024.04（2023.04 — 2023.06 为实习）</p>
+<ul>
+<li>参与数据质量监控相关功能与工具研发，支持数据质量检查、指标血缘追踪与异常定位。</li>
+</ul></article></section>
+<section class="resume-section" aria-labelledby="s3"><h2 id="s3">代表项目</h2>
+<article class="entry"><h3>GLM-5.3-Flash 推理性能与缓存容量优化</h3><p>负责模型在既有 vLLM 插件中的接入及插件侧优化，交付 8 卡 TP8、AWQ 4-bit 权重／BF16 激活的文本推理版本，由云服务团队生产上线。</p>
+<ul>
+<li>通过框架 Profile 和隔离微基准，定位非连续状态页引发的 Host 逐元素搬运，将卷积与递推状态拆为连续池。同一短 prompt 的插桩对照中，<strong>decode 单步 Host 耗时由约 120 s 降至 2.6 s</strong>。</li>
+<li>修正混合缓存分组、页容量核算及 Padding，解决启动 OOM；相同部署配置与显存预算下，<strong>KV cache 容量由 45,409 提升至 148,762 tokens</strong>。</li>
+<li>针对 Host 下发与数据往返开销，合并 metadata H2D、复用持久 buffer、减少阻塞 D2H，并接入算子团队的融合实现；完成 decode Graph 的 metadata 与补齐适配，插件发布定向回归 <strong>161 项通过</strong>。</li>
+</ul></article>
+<article class="entry"><h3>多模态视觉 Encoder 的 Conv3D 布局优化</h3><ul>
+<li>从视频输入 OOM 追踪到 Conv3D 通道末置处理：小通道在大量空间位置重复补齐，造成临时存储膨胀。通过真实 shape 单例与显存变化分析定位问题，负责模型侧调用重构及初始化权重布局调整。</li>
+<li>保留二维展平输入和权重，向专用 Conv3D 传递原始维度信息，与算子团队共同完成接口和计算路径调整；专用算子由算子同事实现，联合方案消除了已观察到的 OOM。</li>
+<li>在 <strong>Qwen2.5-VL-32B 的 10 个图片测例</strong>中，单请求平均 TTFT 从分钟级降至 <strong>5 秒以内</strong>，模型输出 Token 与 CPU Conv3D 路径一致；该结果限定于图片测试组，不外推视频模型级验证。</li>
+</ul></article>
+<article class="entry"><h3>ECG 多模态模型部署与权重预排布</h3><ul>
+<li>负责基于 Transformers 的客户模型部署与性能优化。通过 Profile 分析 Host 准备、小 shape 计算及矩阵乘开销，调整执行路径、接入融合算子，并以 Roofline 初步估算辅助判断权重访存瓶颈。</li>
+<li>在 PyTorch 框架侧实现 Tensor 扩展，于加载阶段完成静态权重的 blocked Col-major 预排布，供 prefill／decode 复用；同芯片新旧布局对照中，MatMul 与模型 logits 逐元素数值相等，输出 Token 一致。</li>
+<li>联合优化后，单请求端到端时延从 <strong>30–40 s 降至 20 s 以内</strong>，达到客户验收目标。前后均取 <strong>10 次平均</strong>，包含图像预处理及完整输出，平均生成约 700–800 token；整体收益包含 Host、小 shape、融合与布局改动。</li>
+</ul></article></section>
+<section class="resume-section" aria-labelledby="s4"><h2 id="s4">个人技术实践</h2><ul>
+<li>实现 Triton MatMul、Fused Softmax、FP16 Attention 前向等练习并完成 GPU 数值与边界验证；围绕矩阵乘的分块、流水级数和持久调度进行受控性能比较，结合读写量与资源用量解释硬件和 shape 边界。</li>
+</ul></section>
+<section class="resume-section education" aria-labelledby="s5"><h2 id="s5">教育背景</h2><ul>
+<li><strong>复旦大学｜应用统计硕士，大数据学院</strong>｜2021.09 — 2023.06</li>
+<li><strong>上海大学｜数学与应用数学学士，理学院</strong>｜2017.09 — 2021.06</li>
+</ul></section>
+</main></body>
+</html>

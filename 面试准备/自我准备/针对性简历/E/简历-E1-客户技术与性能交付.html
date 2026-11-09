@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>简历 · AI 客户技术／模型部署与性能交付</title>
+<style>
+
+:root { color-scheme: light; --ink:#182631; --secondary:#465460; --rule:#c9d1d7; }
+* { box-sizing:border-box; }
+body { margin:0; background:#eef1f3; color:var(--ink); font-family:"Noto Sans CJK SC","PingFang SC","Microsoft YaHei",sans-serif; font-size:11pt; line-height:1.5; -webkit-font-smoothing:antialiased; }
+main { width:210mm; margin:24px auto; padding:14mm 16mm 15mm; background:#fff; box-shadow:0 2px 18px #263a4d16; }
+.resume-header { padding-bottom:8pt; border-bottom:1.5pt solid var(--ink); margin-bottom:10pt; }
+h1 { margin:0 0 5pt; font-size:21pt; line-height:1.25; font-weight:700; }
+.resume-header p { margin:3pt 0 0; font-size:10pt; }
+.resume-header p:last-child { font-size:11pt; margin-top:5pt; }
+h2 { margin:0 0 5pt; padding-bottom:3pt; border-bottom:.6pt solid var(--rule); font-size:12pt; line-height:1.4; font-weight:700; break-after:avoid; }
+h3 { margin:0 0 4pt; font-size:11pt; line-height:1.5; font-weight:700; break-after:avoid; }
+p { margin:0 0 5pt; orphans:2; widows:2; }
+.resume-section { margin-top:10pt; }
+.entry { margin-top:8pt; break-inside:avoid; page-break-inside:avoid; }
+.entry:first-of-type { margin-top:0; }
+.date { margin:-1pt 0 5pt; font-size:9.5pt; color:var(--secondary); }
+ul { margin:0; padding-left:1.15em; }
+li { padding-left:.1em; margin:0 0 4pt; orphans:2; widows:2; break-inside:avoid; }
+li:last-child { margin-bottom:0; }
+strong { font-weight:700; }
+code { font-family:"DejaVu Sans Mono","Noto Sans Mono CJK SC",monospace; font-size:.89em; }
+.education { break-inside:avoid; }
+.education ul { list-style:none; padding:0; }
+.education li { padding:0; margin-bottom:3pt; }
+@page { size:A4; margin:13mm 15mm 14mm; }
+@media print {
+  html,body { background:#fff; }
+  body { font-size:10.5pt; line-height:1.45; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+  .resume-section { margin-top:8pt; }
+  .entry { margin-top:7pt; }
+  h2 { margin-bottom:4pt; font-size:11.5pt; }
+  li { margin-bottom:3pt; }
+  p { margin-bottom:4pt; }
+  .date { margin-bottom:4pt; }
+  main { width:auto; margin:0; padding:0; box-shadow:none; }
+}
+@media screen and (max-width:820px) {
+  main { width:100%; margin:0; padding:24px; box-shadow:none; }
+  body { font-size:15px; }
+  .entry { break-inside:auto; }
+}
+</style>
+</head>
+<body><main id="resume">
+<header class="resume-header"><h1>姓名（待填写）</h1><p>手机：待填写 ｜ 邮箱：待填写 ｜ 目标地点：上海</p>
+<p><strong>求职方向：AI 客户技术／模型部署与性能交付</strong></p></header>
+<section class="resume-section" aria-labelledby="s0"><h2 id="s0">个人概述</h2><p>具备 3 年以上软件开发经验，2024 年起从事自研非 CUDA 加速芯片上的模型适配与推理优化。能够从客户工作负载出发，将功能、精度和性能问题拆解为可复现的工程任务，协同框架、算子、Runtime 和云服务团队完成验证与交付，具备客户模型部署及第三方测评支持经验。</p></section>
+<section class="resume-section" aria-labelledby="s1"><h2 id="s1">专业能力</h2><ul>
+<li><strong>模型与框架</strong>：具备 PyTorch、vLLM 源码修改和后端调试经验，能够沿模型执行、Tensor 布局和数据搬运路径分析适配问题。</li>
+<li><strong>性能诊断</strong>：使用 Profile／Trace、受控实验和 Roofline 初步估算区分 Host、算子与访存开销；根据工作负载比较端到端时延、TTFT、吞吐和显存占用。</li>
+<li><strong>正确性与交付</strong>：通过算子数值对照、模型输出比较和请求重放验证方案，明确测试条件、回归范围与跨团队职责，形成部署和排障文档。</li>
+<li><strong>工程开发</strong>：使用 Python、C++ 进行框架开发与调试，熟练使用 Linux、Git、Bash；具备 Triton 编程与 GPU 数值验证实践。</li>
+</ul></section>
+<section class="resume-section" aria-labelledby="s2"><h2 id="s2">工作经历</h2>
+<article class="entry"><h3>中昊芯英／上海泰则｜AI 框架开发工程师</h3><p class="date">2024.06 — 至今</p>
+<ul>
+<li>负责 PyTorch、vLLM 在自研 AI 加速芯片上的适配与模型部署支持，维护模型执行层、硬件后端及算子接口。</li>
+<li>承担客户和测评场景下的精度、性能与稳定性问题定位，将问题转化为可复现的输入、测试和优化需求。</li>
+<li>协同算子、通信、Runtime 和云服务团队推进方案集成、正确性验证与性能回归，支持模型版本交付。</li>
+<li>整理部署配置、模型压测和问题排查文档，支持技术沟通与后续同类问题处理。</li>
+</ul></article>
+<article class="entry"><h3>国药控股数字科技｜助理架构师</h3><p class="date">2023.04 — 2024.04（2023.04 — 2023.06 为实习）</p>
+<ul>
+<li>参与数据质量监控相关功能与工具研发，支持数据质量检查、指标血缘追踪与异常定位。</li>
+</ul></article></section>
+<section class="resume-section" aria-labelledby="s3"><h2 id="s3">代表项目</h2>
+<article class="entry"><h3>ECG 客户模型部署与时延优化</h3><p>面向客户基于 Transformers 的 ECG 多模态模型，负责环境搭建、适配验证、性能分析与服务交付，围绕客户的端到端时延目标推进优化。</p>
+<ul>
+<li>通过 Profile 分析 Host 准备、小 shape 计算和矩阵乘开销，调整执行路径并接入融合算子；结合 Roofline 初步估算选择权重访存优化方向。</li>
+<li>在 PyTorch 框架侧实现静态权重预排布，供 prefill／decode 复用，与算子团队协同集成。同芯片新旧布局对照中，MatMul 和模型 logits 逐元素数值相等，输出 Token 一致。</li>
+<li>联合优化后，单请求端到端时延从 <strong>30–40 s 降至 20 s 以内</strong>，达到客户验收目标。优化前后各测 <strong>10 次取平均</strong>，包含图像预处理与完整输出，平均生成约 700–800 token；结果包含 Host、小 shape、融合与布局改动的共同收益。</li>
+</ul></article>
+<article class="entry"><h3>多模态模型的 Conv3D 布局适配</h3><ul>
+<li>从 Qwen 视觉模型的视频输入 OOM 提取真实 shape 单例，定位通道末置处理引发的小通道重复补齐；负责模型调用重构与初始化权重布局，与算子团队共同确定接口方案。</li>
+<li>保留二维展平输入和权重，衔接算子团队实现的专用 Conv3D，联合方案消除了已观察到的 OOM。在 <strong>Qwen2.5-VL-32B 的 10 个图片测例</strong>中，单请求平均 TTFT 从分钟级降至 <strong>5 秒以内</strong>，输出 Token 与 CPU Conv3D 路径一致。</li>
+</ul></article>
+<article class="entry"><h3>客户现场异步 H2D 精度异常修复</h3><ul>
+<li>基于现场同事收集的异常请求，建立确定性重放与异步／阻塞对照，从首个分叉 Token 和中间 Tensor 缩小范围；先提供阻塞 H2D 的临时规避方案，再定位 CPU 准备与拷贝提交之间的依赖缺口。</li>
+<li>在框架／后端层补齐异步标记与等待，复用既有 Runtime 能力完成修复。恢复原异步配置并撤去临时阻塞与额外诊断等待后，<strong>168 条现场请求连续重放 5 轮</strong>，未再观察到原异常。</li>
+</ul></article></section>
+<section class="resume-section" aria-labelledby="s4"><h2 id="s4">个人技术实践</h2><ul>
+<li>实现 Triton MatMul、Fused Softmax、FlashAttention 式 FP16 Attention 前向等练习，完成 GPU 数值与边界验证；通过受控性能比较，分析优化收益随硬件和输入形状变化的条件。</li>
+</ul></section>
+<section class="resume-section education" aria-labelledby="s5"><h2 id="s5">教育背景</h2><ul>
+<li><strong>复旦大学｜应用统计硕士，大数据学院</strong>｜2021.09 — 2023.06</li>
+<li><strong>上海大学｜数学与应用数学学士，理学院</strong>｜2017.09 — 2021.06</li>
+</ul></section>
+</main></body>
+</html>

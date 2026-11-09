@@ -4,7 +4,7 @@
 > 时间范围：2026-08-30 05:19:16 UTC～2026-09-08 09:23:16 UTC；不包含本次归档与制卡操作对话。
 > 结构化提取 source SHA-256：`7cbdb629a6efa75de559753604b17c52448575aa51e5cc655cb6cbf153d5898c`。
 > 可追溯文本：私有归档 `sl-22e6e0a4514b45e3aa993aa12959fc91`，状态 `final`，可见内容 SHA-256 为 `b346c04b4c03097faf57259f7675d7c1b7eaf90530a027a7332246cca0b89c3d`。归档时 source SHA-256 为 `f0ce3162b9d0957d1eb206fdfda9d93a80e5ef841541365f1c1de1d8533f032f`；期间仅选定终点之外的操作继续追加，选定消息及 ID 未变。
-> 关联：[请求生命周期与输出处理](../深入学习理解vLLM/2-Request-Lifecycle-and-Output.md)、[仓库与进程架构](../深入学习理解vLLM/1-Repository-and-Process-Architecture.md)、[项目档案](../../面试准备/自我准备/projects.md)、[Lesson 证据](../EP-PD自研芯片适配设计与验证包.md#lesson-plana-jd-w1-vllm-execution-boundaries)。
+> 关联：[请求生命周期与输出处理](../深入学习理解vLLM/2-Request-Lifecycle-and-Output.md)、[仓库与进程架构](../深入学习理解vLLM/1-Repository-and-Process-Architecture.md)、[项目档案](../../面试准备/自我准备/projects/README.md)、[Lesson 证据](../EP-PD自研芯片适配设计与验证包.md#lesson-plana-jd-w1-vllm-execution-boundaries)。
 > 事实范围：vLLM 实现结论固定为 `v0.26.0 @ 568afb3a13806beb53bb2e6bd518269357b237c0`，执行侧限定 MRV1；插件旁支另用自研插件提交 `4fd99a4f21d720347c6dec54253504f8321c0437`。项目数字保留为用户自述或待核事项，不等同于本轮实测。
 > 覆盖说明：检查了整个选定会话，包含早期规划、项目复盘、Pass A–B 复习、Pass C–E、KV 账本和整段复述。修复旧 IDE 包装识别后补回 16 条用户作答，原有 308 条消息 ID 保持不变。可追溯文本不含隐藏推理、工具结果、客户端注入或附件正文；本记录不替代文章、课程状态或最终能力结论。
 
@@ -16,7 +16,7 @@
 
 - [纠错] **E03：TP=2 不保证所有模型存储恰好各半。**场景：两 rank 部署。我说“两个Worker+ModelRunner各自持有一半模型切片”→ 更准确：按 TP 规则分片，部分参数或状态仍可能复制。原因：是否切分、切分轴和复制项取决于具体层及实现，不能只把总参数量除以卡数。（原答：`msg-ba47ecbf1526b9f7f7ac`；澄清：`msg-f02d7bfeb496c10243c3`）
 
-- [纠错] **E04：容量、预算和分配量不能混算。**场景：Conv3D OOM。我说“模型权重占用大约70GB，kv cache预分配了大约50GB，两卡一共还剩下8GB左右的空间……照理来说应该是充足的。”→ 若每卡 64 GB、利用率确为 0.9，两卡预算是 `2×64×0.9=115.2 GB`，口述的 `70+50=120 GB` 已超过这一预算。原因：直接用总容量减分配量，遗漏了预算上限；单卡／总量、GB／GiB、估算／实测也需统一。这是口述账本的矛盾，不据此替项目补造真实分配量。（原答：`msg-f19b2b417175f579b4c9`；澄清：`msg-2454c08b7a1de8d4dbab`；去向：[Conv3D 待核字段](../../面试准备/自我准备/projects.md#project1-oral-baseline-20260902)）
+- [纠错] **E04：容量、预算和分配量不能混算。**场景：Conv3D OOM。我说“模型权重占用大约70GB，kv cache预分配了大约50GB，两卡一共还剩下8GB左右的空间……照理来说应该是充足的。”→ 若每卡 64 GB、利用率确为 0.9，两卡预算是 `2×64×0.9=115.2 GB`，口述的 `70+50=120 GB` 已超过这一预算。原因：直接用总容量减分配量，遗漏了预算上限；单卡／总量、GB／GiB、估算／实测也需统一。这是口述账本的矛盾，不据此替项目补造真实分配量。（原答：`msg-f19b2b417175f579b4c9`；澄清：`msg-2454c08b7a1de8d4dbab`；去向：[Conv3D 待核字段](../../面试准备/自我准备/projects/multimodal-inference-project.md#project1-oral-baseline-20260902)）
 
 - [要点] **E05：局部对齐放大能否直接当作整个模型的显存倍率？**不能。按当时给定的 BF16、512 B 末维对齐假设，3 元素补到 256 元素的局部倍率约 85.3；一个 patch 的 `2×14×14×3=1176` 元素补到 1280。它们只描述具体物化布局的存储量，不证明模型整体占用或布局变换的数学等价。（来源：`msg-f19b2b417175f579b4c9`、`msg-2454c08b7a1de8d4dbab`）
 
@@ -157,9 +157,9 @@
 
 ## 遗留
 
-- [遗留] Conv3D 的准确模型版本、GB／GiB 与单卡／总量账本、TTFT 幅度、Profile 分母及布局／Kernel 收益拆分，仍需原始资料核验；不把口述数字直接制成确定答案。（去向：[项目一待核字段](../../面试准备/自我准备/projects.md#project1-oral-baseline-20260902)）
-- [遗留] ECG 的 Transformers／vLLM 运行边界、具体存储冲突层级与各项优化收益仍需核对；本记录中的 Roofline 公式只是声明假设下的算术模型。（去向：[项目二待核字段](../../面试准备/自我准备/projects.md#project2-oral-baseline-20260902)）
-- [遗留] H2D 修复与 168 条请求重放 5 轮为用户口述来源，不升级为本轮源码审计或所有负载的正确性证明；撤回的 diff 不再作为依据。（去向：[项目三当前来源](../../面试准备/自我准备/projects.md#project3-oral-baseline-20260902)）
-- [遗留] 训练通信的可比 workload、精度回归、实际并行组合和性能归因仍需原始记录；“接触过某并行策略”不等于完整实现经验。（去向：[项目四待核字段](../../面试准备/自我准备/projects.md#project4-oral-baseline-20260903)）
+- [遗留] Conv3D 的准确模型版本、GB／GiB 与单卡／总量账本、TTFT 幅度、Profile 分母及布局／Kernel 收益拆分，仍需原始资料核验；不把口述数字直接制成确定答案。（去向：[项目一待核字段](../../面试准备/自我准备/projects/multimodal-inference-project.md#project1-oral-baseline-20260902)）
+- [遗留] ECG 的 Transformers／vLLM 运行边界、具体存储冲突层级与各项优化收益仍需核对；本记录中的 Roofline 公式只是声明假设下的算术模型。（去向：[项目二待核字段](../../面试准备/自我准备/projects/ECG-project.md#project2-oral-baseline-20260902)）
+- [遗留] H2D 修复与 168 条请求重放 5 轮为用户口述来源，不升级为本轮源码审计或所有负载的正确性证明；撤回的 diff 不再作为依据。（去向：[项目三当前来源](../../面试准备/自我准备/projects/vLLM-V1-async-H2D-project.md#project3-oral-baseline-20260902)）
+- [遗留] 训练通信的可比 workload、精度回归、实际并行组合和性能归因仍需原始记录；“接触过某并行策略”不等于完整实现经验。（去向：[项目四待核字段](../../面试准备/自我准备/projects/DeepSpeed-Megatron-project.md#project4-oral-baseline-20260903)）
 - [遗留] 插件不同 block size 的端到端正确性／性能及设备底层存储／DMA 机制，未由本轮验证；同事的 256 选型说明保留为转述。（去向：[硬件旁支遗留](2026-09-07-kv-padding-block-size.md#遗留)）
 - [遗留] 运行路径与最小验证已登记为待做实践；口头任务移交后续 Mock。延期、文稿保存与本记录生成均不代替实践结果，具体安排只回查[学习断点](../../计划/学习断点.md)和[W1-P1](../EP-PD自研芯片适配设计与验证包.md#w1-p1-runtime-output-validation)，不从过程记录恢复课程状态。

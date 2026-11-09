@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>简历 · ML 数据与工作流工程／AI 工程开发</title>
+<style>
+
+:root { color-scheme: light; --ink:#182631; --secondary:#465460; --rule:#c9d1d7; }
+* { box-sizing:border-box; }
+body { margin:0; background:#eef1f3; color:var(--ink); font-family:"Noto Sans CJK SC","PingFang SC","Microsoft YaHei",sans-serif; font-size:11pt; line-height:1.5; -webkit-font-smoothing:antialiased; }
+main { width:210mm; margin:24px auto; padding:14mm 16mm 15mm; background:#fff; box-shadow:0 2px 18px #263a4d16; }
+.resume-header { padding-bottom:8pt; border-bottom:1.5pt solid var(--ink); margin-bottom:10pt; }
+h1 { margin:0 0 5pt; font-size:21pt; line-height:1.25; font-weight:700; }
+.resume-header p { margin:3pt 0 0; font-size:10pt; }
+.resume-header p:last-child { font-size:11pt; margin-top:5pt; }
+h2 { margin:0 0 5pt; padding-bottom:3pt; border-bottom:.6pt solid var(--rule); font-size:12pt; line-height:1.4; font-weight:700; break-after:avoid; }
+h3 { margin:0 0 4pt; font-size:11pt; line-height:1.5; font-weight:700; break-after:avoid; }
+p { margin:0 0 5pt; orphans:2; widows:2; }
+.resume-section { margin-top:10pt; }
+.entry { margin-top:8pt; break-inside:avoid; page-break-inside:avoid; }
+.entry:first-of-type { margin-top:0; }
+.date { margin:-1pt 0 5pt; font-size:9.5pt; color:var(--secondary); }
+ul { margin:0; padding-left:1.15em; }
+li { padding-left:.1em; margin:0 0 4pt; orphans:2; widows:2; break-inside:avoid; }
+li:last-child { margin-bottom:0; }
+strong { font-weight:700; }
+code { font-family:"DejaVu Sans Mono","Noto Sans Mono CJK SC",monospace; font-size:.89em; }
+.education { break-inside:avoid; }
+.education ul { list-style:none; padding:0; }
+.education li { padding:0; margin-bottom:3pt; }
+@page { size:A4; margin:13mm 15mm 14mm; }
+@media print {
+  html,body { background:#fff; }
+  body { font-size:10.5pt; line-height:1.45; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+  .resume-section { margin-top:8pt; }
+  .entry { margin-top:7pt; }
+  h2 { margin-bottom:4pt; font-size:11.5pt; }
+  li { margin-bottom:3pt; }
+  p { margin-bottom:4pt; }
+  .date { margin-bottom:4pt; }
+  main { width:auto; margin:0; padding:0; box-shadow:none; }
+}
+@media screen and (max-width:820px) {
+  main { width:100%; margin:0; padding:24px; box-shadow:none; }
+  body { font-size:15px; }
+  .entry { break-inside:auto; }
+}
+</style>
+</head>
+<body><main id="resume">
+<header class="resume-header"><h1>姓名（待填写）</h1><p>手机：待填写 ｜ 邮箱：待填写 ｜ 目标地点：上海</p>
+<p><strong>求职方向：ML 数据与工作流工程／AI 工程开发</strong></p></header>
+<section class="resume-section" aria-labelledby="s0"><h2 id="s0">个人概述</h2><p>具备 3 年以上软件开发经验，具有数学与应用统计背景。曾参与数据质量监控平台建设，开发指标血缘相关解析工具；2024 年起从事 PyTorch、vLLM 适配与模型交付。工程实践覆盖数据与接口检查、模型加载验证、请求重放和回归测试，能够明确输入条件、定位异常并验证修复结果。</p></section>
+<section class="resume-section" aria-labelledby="s1"><h2 id="s1">专业能力</h2><ul>
+<li><strong>数据质量与追踪</strong>：参与数据入湖、质量规则、异常监控和可视化相关建设，具有看板解析及指标血缘追踪工具开发经历。</li>
+<li><strong>模型工程验证</strong>：具备模型权重映射、执行路径和框架后端调试经验；通过静态检查、数值对照、请求重放与回归用例验证模型接入和修改。</li>
+<li><strong>实验与诊断</strong>：使用 Profile／Trace、受控对照和分层日志缩小问题范围，区分输入、配置、执行过程与输出结果，保留可比较的测量条件。</li>
+<li><strong>工程开发</strong>：使用 Python、C++ 进行工具与框架开发，熟练使用 Linux、Git、Bash；具备测试脚本、环境验证和技术文档整理经验。</li>
+</ul></section>
+<section class="resume-section" aria-labelledby="s2"><h2 id="s2">工作经历</h2>
+<article class="entry"><h3>中昊芯英／上海泰则｜AI 框架开发工程师</h3><p class="date">2024.06 — 至今</p>
+<ul>
+<li>负责模型在自研 AI 加速芯片上的框架接入，维护 PyTorch、vLLM 与硬件后端之间的接口及执行兼容性。</li>
+<li>承担模型精度、性能及稳定性问题的诊断，建立可复现输入和对照条件，推进框架侧修改与验证。</li>
+<li>编写适配检查、测试与问题分析脚本，整理环境、回归和交付文档，支持版本验证及第三方测评。</li>
+<li>协同模型、算子、通信、Runtime 和云服务团队处理跨层问题，明确接口输入、输出与验收范围。</li>
+</ul></article>
+<article class="entry"><h3>国药控股数字科技｜助理架构师</h3><p class="date">2023.04 — 2024.04（2023.04 — 2023.06 为实习）</p>
+<ul>
+<li>参与数据质量监控相关功能与工具研发，支持质量规则、异常监控、可视化及指标追踪。</li>
+</ul></article></section>
+<section class="resume-section" aria-labelledby="s3"><h2 id="s3">代表项目</h2>
+<article class="entry"><h3>数据质量监控平台与看板解析工具</h3><ul>
+<li>参与数据质量监控平台建设，涉及数据入湖、质量规则、异常监控和可视化之间的流程衔接。</li>
+<li>开发数据看板解析工具，辅助指标血缘追踪与异常定位。</li>
+</ul></article>
+<article class="entry"><h3>GLM-5.3-Flash 模型加载与发布验证</h3><ul>
+<li>独立负责模型在既有 vLLM 硬件插件中的接入，处理模型注册、权重映射、混合 KV cache 与状态池；编写权重文件头与索引的静态审计脚本，检查映射遗漏、异常项和重复目标。</li>
+<li>按本次启用的文本推理范围区分应加载与应跳过的权重，结合参考路径进行语义核对；验收融合实现时加入调用计数检查，避免仅凭数值比较就误判实际执行路径。</li>
+<li>修复缓存分配和 warmup 状态问题，完成插件发布定向回归 <strong>161 项通过</strong>；交付 <strong>8 卡 TP8、AWQ 4-bit 权重／BF16 激活</strong>的文本版本，由云服务团队生产上线。</li>
+</ul></article>
+<article class="entry"><h3>vLLM V1 请求重放与异常回归</h3><ul>
+<li>针对 Qwen3-32B 的低概率输出异常，统一请求重放、异常分类与异步／阻塞对照，从首个分叉 Token、logits 和中间 Tensor 检查执行差异，避免将后续传播误差当作初始原因。</li>
+<li>沿 CPU 数据准备、拷贝提交和设备消费定位依赖缺口，在框架／后端层补齐异步标记与等待，将修复落实为可重复的请求集验证。</li>
+<li>恢复原异步配置并撤去临时阻塞与额外诊断等待后，<strong>168 条现场请求连续重放 5 轮</strong>，未再观察到原异常；结果限定于该请求集和配置。</li>
+</ul></article></section>
+<section class="resume-section" aria-labelledby="s4"><h2 id="s4">个人技术实践</h2><ul>
+<li>实现 C++ CPU 多线程单槽缓冲练习，处理发布、消费、关闭及内存复用，通过功能用例和 ASan 对照检查生命周期问题。</li>
+<li>基于固定源码梳理 vLLM 请求生命周期、执行边界和输出处理，整理技术文档；通过窄范围输出契约用例验证 stop、清理和迟到输出行为。</li>
+</ul></section>
+<section class="resume-section education" aria-labelledby="s5"><h2 id="s5">教育背景</h2><ul>
+<li><strong>复旦大学｜应用统计硕士，大数据学院</strong>｜2021.09 — 2023.06</li>
+<li><strong>上海大学｜数学与应用数学学士，理学院</strong>｜2017.09 — 2021.06</li>
+</ul></section>
+</main></body>
+</html>

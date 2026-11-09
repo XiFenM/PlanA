@@ -1,6 +1,6 @@
 <a id="yixing-host-padding-listening-check"></a>
 
-> 核对对象为奕行智能二面的 Host Padding 竞态片段。本卡整理回听位置与待核事项，本次没有重新收听录音；实际回听按 W4 安排。F2 是[能力诊断](AMD-AI框架开发工程师胜任力诊断-2026-08-29.md)中的中等置信现场证据等级，现有分析来自单模型音频理解，没有独立 ASR 或人工回听交叉验证。
+> 核对对象为奕行智能二面的 Host Padding 竞态片段。本卡整理回听位置与待核事项，本次没有重新收听录音；实际回听按 W4 安排。F2 是[能力诊断](../自我准备/AMD-AI框架开发工程师胜任力诊断-2026-08-29.md)中的中等置信现场证据等级，现有分析来自单模型音频理解，没有独立 ASR 或人工回听交叉验证。
 
 ## 来源与项目关联
 
@@ -9,11 +9,11 @@
 | 记录与问题 | `interview-yixing-recording-02`，`YX2-Q12` |
 | 回听线索 | 约 `37:35–40:50`；时间来自既有分析，只作定位参考，尚未人工校准 |
 | 原片记录 | `daily-work` 中的 `work/managed/interview-video-analysis/incoming/奕行智能-2.mkv`；既有审计记录时长为 `44:14.033`，本次未检查原片 |
-| 音频分析依据 | [音频证据审计](../面试问题经验/分析成果/analysis/interview-yixing-recording-02.audio-evidence-audit.md)中的 YX2-Q12、技术核验第 7 节及优先回听表 |
-| 报告依据 | [二面最终报告](../面试问题经验/分析成果/reports/interview-yixing-recording-02-analysis.md)第 8 节 |
+| 音频分析依据 | [音频证据审计](分析成果/analysis/interview-yixing-recording-02.audio-evidence-audit.md)中的 YX2-Q12、技术核验第 7 节及优先回听表 |
+| 报告依据 | [二面最终报告](分析成果/reports/interview-yixing-recording-02-analysis.md)第 8 节 |
 | 范围依据 | [W2 单元四安排](../../计划/八周冲刺进度/W2-学习计划.md#w2-unit-4-quantitative-evidence)：先保留回听核对材料，完整审计留到 W4 |
 
-2026-11-01，用户确认该片段讲述的就是 [Qwen3-32B／vLLM V1 异步 H2D 案例](vLLM-V1-Async-H2D-Case-Card.md)。这项确认建立了案例关联，但没有把旧分析中的数字和内容概述变成已经核实的现场原话。项目当前确认的修复、职责和回归事实仍由该 Case Card 承载。
+2026-11-01，用户确认该片段讲述的就是 [Qwen3-32B／vLLM V1 异步 H2D 案例](../自我准备/projects/vLLM-V1-async-H2D-project.md#vllm-v1-async-h2d-case-card-v1)。这项确认建立了案例关联，但没有把旧分析中的数字和内容概述变成已经核实的现场原话。项目当前确认的修复、职责和回归事实由对应项目文件的“核心案例、验证证据与边界”章节承载。
 
 ## 待回听核对
 

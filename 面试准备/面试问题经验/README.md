@@ -11,7 +11,7 @@
 | 地平线，2026-08-13                   | 完整音频的双 ASR、结构化分析与技术审计；本归档未收录原始录像 | [双 ASR 校准版复盘](分析成果/reports/interview-20260813-01-self-review-asr-calibrated.md) | 原视频已在 daily-work 补回，本次未归档           |
 | 小红书，轮次未记录                   | 只有 5 组重要问题简记，没有现场作答                          | [最终分析报告](分析成果/reports/interview-xiaohongshu-notes-01-analysis.md)               | [面试简记](原始素材/小红书/小红书简记.md)        |
 | 奕行智能简记，轮次未记录             | 只有主题级简记，没有完整问答                                 | [最终分析报告](分析成果/reports/interview-yixing-notes-01-analysis.md)                    | [面试简记](原始素材/奕行智能/奕行智能简记.md)    |
-| 奕行智能二面，日期未确认             | 完整音频的单模型理解与本地证据审计；没有独立 ASR 逐字稿      | [二面最终分析报告](分析成果/reports/interview-yixing-recording-02-analysis.md)            | 本次仅归档分析成果，原视频仍在 daily-work        |
+| 奕行智能二面，日期未确认             | 完整音频的单模型理解与本地证据审计；没有独立 ASR 逐字稿      | [二面最终分析报告](分析成果/reports/interview-yixing-recording-02-analysis.md)、[Host Padding 回听核对卡](奕行二面-Host-Padding-回听核对卡.md) | 本次仅归档分析成果，原视频仍在 daily-work        |
 | XG 科技一面，2026-08-18              | 后半段带时间戳文字记录、AI 纪要与 2 张图                     | [一面最终分析报告](分析成果/reports/interview-xg-20260818-01-analysis.md)                 | [一面原始素材](原始素材/XG科技/2026-08-18-一面/) |
 | XG 科技二面，2026-08-24              | 主体较完整的带时间戳文字记录、AI 纪要与 4 张图               | [二面最终分析报告](分析成果/reports/interview-xg-20260824-02-analysis.md)                 | [二面原始素材](原始素材/XG科技/2026-08-24-二面/) |
 | 安霸半导体，2026-08-28（容器元数据） | 完整音频的单模型理解与本地证据审计；分析副本已做响度归一化   | [最终分析报告](分析成果/reports/interview-ambarella-20260828-01-analysis.md)              | 本次仅归档分析成果，原视频仍在 daily-work        |
@@ -26,6 +26,7 @@
 面试问题经验/
 ├── README.md                     # 本入口
 ├── common_problems.md            # 跨面试问题主题汇总
+├── 奕行二面-Host-Padding-回听核对卡.md # 待核回听位置、数字与项目关联
 ├── 分析成果/                     # 报告、审计、转写和配套证据
 │   ├── analysis/                 # 结构化分析与技术 QA
 │   ├── reports/                  # 逐场复盘报告
@@ -85,6 +86,7 @@
 ### 奕行智能二面：日期未确认
 
 - [二面最终分析报告](分析成果/reports/interview-yixing-recording-02-analysis.md)
+- [Host Padding 回听核对卡](奕行二面-Host-Padding-回听核对卡.md)：2026-11-09 从“自我准备”移入，记录待核内容，不代表已完成实际回听。
 - [音频证据审计](分析成果/analysis/interview-yixing-recording-02.audio-evidence-audit.md)
 - [全音频理解原始结果](分析成果/analysis/understand-yixing-recording-02-20260829.audio.md)
 - [响应元数据](分析成果/analysis/understand-yixing-recording-02-20260829.audio.md.response.json)

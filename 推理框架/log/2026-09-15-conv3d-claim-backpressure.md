@@ -2,13 +2,13 @@
 
 > 来源：codex:`01a0511a-d5ac-7211-a2c1-d86facc92a61` · `msg-e404c8747aca07e53103` → `msg-715e7ee0b325e1d04d59`，共 84 条可见消息；source SHA-256：`6d7ceb55799f166881e4b85d4d18d958807b0d2f91ab0d33a036b96f3bf4613a`。
 > 续段：codex:`01a0511a-d5ac-7211-a2c1-d86facc92a61` · `msg-95c2d9f86288f030333b` → `msg-58abfe93b7595803c408`，共 36 条可见消息；source SHA-256：`0e1e68abb4a1586e020b8e33bb5b61424db814fc6985054d149aee401d060ac3`。
-> 关联：[Conv3D Case Card v1](../../面试准备/自我准备/projects.md#project1-conv3d-case-card-v1)、[练习证据账本](../EP-PD自研芯片适配设计与验证包.md#w1-conv3d-case-card-practice-20260914)、[W1 验收门](../../计划/高级AI框架开发工程师-八周证据冲刺计划.md#64-验收门)。
+> 关联：[Conv3D Case Card v1](../../面试准备/自我准备/projects/multimodal-inference-project.md#project1-conv3d-case-card-v1)、[练习证据账本](../EP-PD自研芯片适配设计与验证包.md#w1-conv3d-case-card-practice-20260914)、[W1 验收门](../../计划/高级AI框架开发工程师-八周证据冲刺计划.md#64-验收门)。
 > 记录职责：只保留本轮特有的理解变化、纠错与可制卡要点；稳定项目叙述、职责和测试范围以 Case Card 为准。本记录不保存未确认可披露的硬件对齐粒度、性能时延或原始日志值。
 > 可追溯文本的私有归档状态与回执见[本次收尾记录](../EP-PD自研芯片适配设计与验证包.md#plana-jd-w1-20260915-wrap-up)；上述消息 ID 用于回查选定的本地源。
 
 ## 学习过程
 
-- [要点] 逻辑 Shape 与物理存储为什么不能混为一谈？——逻辑 Shape 描述索引空间和张量语义；实际容量还取决于 Storage、Stride、物理内层维、Padding 和分配生命周期。同一个逻辑 Shape 可以复用旧存储，也可以因重排而产生新的大缓冲区；稳定案例边界见 [Case Card F3](../../面试准备/自我准备/projects.md#project1-conv3d-case-card-v1)。（来源：`msg-a48fc103f8dd978787a9`、`msg-7cc0f581c9aedc97ea8b`）
+- [要点] 逻辑 Shape 与物理存储为什么不能混为一谈？——逻辑 Shape 描述索引空间和张量语义；实际容量还取决于 Storage、Stride、物理内层维、Padding 和分配生命周期。同一个逻辑 Shape 可以复用旧存储，也可以因重排而产生新的大缓冲区；稳定案例边界见 [Case Card F3](../../面试准备/自我准备/projects/multimodal-inference-project.md#project1-conv3d-case-card-v1)。（来源：`msg-a48fc103f8dd978787a9`、`msg-7cc0f581c9aedc97ea8b`）
 
 - [转折] 最初从五维输入开始描述通道重排，随后追问将范围扩展到 Host 原始二维输入与 H2D。补充后的历史路径是 Host 二维输入先完成 H2D 准备，设备侧 `view` 复用原存储，之后通道重排才生成新的存储。这里保存的是执行链的补全，不把先前较窄范围的回答记为错误。（初始描述：`msg-41d687a148e5cca7ea76`；补充：`msg-a48fc103f8dd978787a9`）
 
@@ -28,7 +28,7 @@
 
 - [要点] CPU golden 与设备结果怎样保证比较的是同一逻辑数据？——先让同一份输入和权重参与 CPU 参考计算，再按共同映射展平并传给设备；若两端输出只差单例维，则只移除这些单例维并保留样本轴与输出通道轴。Shape 对齐不能替代数值容差检查。（来源：`msg-0664a8f04b07a336da35`、`msg-93d8dba02ccb7f30138c`、`msg-8e1bf5af603688701c1d`）
 
-- [要点] 单算子正确性通过能否自动证明整模型与所有输入正确？——不能。单算子检查只裁决所用 Shape、dtype、参考与容差；模型级回归还要固定模型、输入集合和输出判据，未覆盖的输入类型必须继续写明。实际项目覆盖范围见 [Case Card F5–F6](../../面试准备/自我准备/projects.md#project1-conv3d-case-card-v1)。（来源：`msg-743e58b420ea0588269a`、`msg-7a2ef468b254294aa246`、`msg-a53c7b32fe4ac3ac789b`）
+- [要点] 单算子正确性通过能否自动证明整模型与所有输入正确？——不能。单算子检查只裁决所用 Shape、dtype、参考与容差；模型级回归还要固定模型、输入集合和输出判据，未覆盖的输入类型必须继续写明。实际项目覆盖范围见 [Case Card F5–F6](../../面试准备/自我准备/projects/multimodal-inference-project.md#project1-conv3d-case-card-v1)。（来源：`msg-743e58b420ea0588269a`、`msg-7a2ef468b254294aa246`、`msg-a53c7b32fe4ac3ac789b`）
 
 - [转折] 用户先说“每组测试执行了1次，耗时是统计平均得到的”，进一步澄清一次测试可包含多条请求；随后将图片组的跨样本均值与视频组的单样本单次观测分开。此前导师把十例平均套用于两组的解读据此修正。跨样本平均、单样本观测和同一样本重复运行回答不同问题；不把这段逐步恢复记录的过程记作用户的统计计算错误。（初答：`msg-7b871432e06788cef2cf`；图片澄清：`msg-e8e39ab13895cfcfbfa9`；视频澄清：`msg-abcdf37a22eaeeaf79a7`）
 
@@ -36,7 +36,7 @@
 
 - [转折] 学习者随后确认，固定的单算子 Shape 来自另外选取的复现输入，并不是模型级数据集中所有测例的共同 Shape。这个区分阻止了把一个算子样本的形状、一个模型级样本集合的均值和另一个单次观测揉成同一 Workload。（来源：`msg-8b8c18ad5258d240298c`、`msg-a90473112c048bc0d29c`）
 
-- [高价值问题] 用户自行核对过内部原始记录，但没有提供可定位原件时，能支持什么？——可以作为用户确认的历史事实和项目叙述来源，但不能冒充 Agent 已完成的 commit、Issue、snapshot 或 Benchmark 独立审计；无法安全定位的原值继续标为待核。当前项目采用的来源边界见 [Case Card](../../面试准备/自我准备/projects.md#project1-conv3d-case-card-v1)。（来源：`msg-0481d3ec1f928705412a`、`msg-8c984fcf95c633b6ca16`）
+- [高价值问题] 用户自行核对过内部原始记录，但没有提供可定位原件时，能支持什么？——可以作为用户确认的历史事实和项目叙述来源，但不能冒充 Agent 已完成的 commit、Issue、snapshot 或 Benchmark 独立审计；无法安全定位的原值继续标为待核。当前项目采用的来源边界见 [Case Card](../../面试准备/自我准备/projects/multimodal-inference-project.md#project1-conv3d-case-card-v1)。（来源：`msg-0481d3ec1f928705412a`、`msg-8c984fcf95c633b6ca16`）
 
 - [要点] 什么才是端到端 backpressure？——下游容量约束必须通过等待、额度、窗口或状态反馈影响上游的提交速率，使上游放慢或暂停；仅限制执行并发、同时允许请求无限进入 waiting 队列，只是把压力存入队列，没有传回请求源头。（来源：`msg-82778d4095308cbe0a77`、`msg-b1537d7168818c098fb2`）
 
@@ -48,5 +48,5 @@
 
 ## 遗留
 
-- [遗留] 实际框架／模型 revision、Stride、物理存储描述、原始 snapshot、累加 dtype、精确性能结果和披露范围仍待原记录核对。（去向：[Conv3D Case Card v1 的待核字段](../../面试准备/自我准备/projects.md#project1-conv3d-case-card-v1)）
+- [遗留] 实际框架／模型 revision、Stride、物理存储描述、原始 snapshot、累加 dtype、精确性能结果和披露范围仍待原记录核对。（去向：[Conv3D Case Card v1 的待核字段](../../面试准备/自我准备/projects/multimodal-inference-project.md#project1-conv3d-case-card-v1)）
 - [遗留] 用户自核来源尚未形成可重新定位的脱敏锚点，不能升级为 Agent 独立审计。（去向：[练习账本 findings](../EP-PD自研芯片适配设计与验证包.md#w1-conv3d-case-card-findings)）

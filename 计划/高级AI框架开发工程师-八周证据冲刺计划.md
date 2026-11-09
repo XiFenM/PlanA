@@ -229,7 +229,7 @@ AMD AI framework readiness pack
 → 回归、限制和未完成项
 ```
 
-首批固定为 Conv3D、blocked/Col-major layout、`projects.md` 中 Qwen3-32B/vLLM V1 的低概率 H2D/D2D 异常。第三项的当前根因、修复与回归状态由[项目三口述基线](../面试准备/自我准备/projects/vLLM-V1-async-H2D-project.md#project3-oral-baseline-20260902)维护；本计划不复制或另行裁决。
+首批固定为 Conv3D、blocked/Col-major layout、异步 H2D 项目档案中 Qwen3-32B/vLLM V1 的低概率 H2D/D2D 异常。第三项的当前根因、修复与回归状态由[项目三口述基线](../面试准备/自我准备/projects/vLLM-V1-async-H2D-project.md#project3-oral-baseline-20260902)维护；本计划不复制或另行裁决。
 
 ## 5. 时间预算与周节奏
 
@@ -300,7 +300,7 @@ W1–W3 按前四项及本周具体技术门验收。口头项目在对应 Mock 
 |    2 | 追`request → processor → EngineCoreRequest → scheduler → KV manager → model runner → attention backend`                                                   | sequence diagram、8–12 个文件 source map |
 |    3 | 说明 V1 与实际 model runner/backend/fallback，以及 DP replica routing/backpressure/DPLB 的选择边界                                                                | 运行路径指纹；无环境时交源码决策树        |
 |    4 | 完成 KV block、Prefix Cache、PagedAttention 的概念与生命周期对照                                                                                                  | 单位严格的 KV 小账本                      |
-|    5 | 审计[CV](../面试准备/自我准备/CV.md)、[projects](../面试准备/自我准备/projects/README.md) 和[自我介绍](../面试准备/自我准备/self-introduction.md)中的“熟悉/掌握/深入理解” | claim-evidence 矩阵首版                   |
+|    5 | 审计[CV](../面试准备/自我准备/过往简历/初始版本/CV.md)、[projects](../面试准备/自我准备/projects/README.md) 和[自我介绍](../面试准备/自我准备/self-introduction.md)中的“熟悉/掌握/深入理解” | claim-evidence 矩阵首版                   |
 |    6 | 做 C++/Linux 基线测试：RAII、override/name hiding、ELF、shared library、ownership                                                                                 | 红黄绿缺口表                              |
 |    7 | 将 Conv3D 案例写成第一张 Case Card                                                                                                                                | shape、基线、正确性、个人职责和待核数据   |
 
@@ -321,7 +321,7 @@ W1–W3 按前四项及本周具体技术门验收。口头项目在对应 Mock 
 - KV 账本统一 token、element、byte、block 和 address alignment。
 - [Claim-evidence 矩阵](../面试准备/自我准备/Claim-evidence矩阵.md)至少审计 10 条，区分已证明、需降级与待补证。
 - C++／Linux 基线定位具体知识缺口；实践验证按 W1-P2 的明确约定进行，不以书面通过代替。
-- [Conv3D Case Card](../面试准备/自我准备/Conv3D-Case-Card.md)能说明 Workload、机制、验证、职责和待核字段，不只保留一个性能百分比。
+- [Conv3D Case Card](../面试准备/自我准备/projects/multimodal-inference-project.md#project1-conv3d-case-card-v1)能说明 Workload、机制、验证、职责和待核字段，不只保留一个性能百分比。
 
 P1／P2 的实践要求不因概念与材料项完成而取消；本次结构调整不改变原来的验收边界或后续周次授权。
 
@@ -593,7 +593,7 @@ W4 之后插入的有效周，承接 Claim 复核中 SGLang（`CL04`）、Specul
 
 1. 整理 readiness pack 索引，逐项链接证据和未完成项。
 2. 按 `87545`、`78999`、`89398/MORI` 分别生成一页 claim-evidence 对照。
-3. 校准 [CV](../面试准备/自我准备/CV.md)、[projects](../面试准备/自我准备/projects/README.md) 和[自我介绍](../面试准备/自我准备/self-introduction.md)；实际修改前单独确认事实口径。
+3. 校准 [CV](../面试准备/自我准备/过往简历/初始版本/CV.md)、[projects](../面试准备/自我准备/projects/README.md) 和[自我介绍](../面试准备/自我准备/self-introduction.md)；实际修改前单独确认事实口径。
 4. 做两场推理 Mock：一场框架/性能，一场分布式/AMD；W7 训练 Mock 计作第三场。
 5. 每场记录：问题、原答、缺口类型、修正答、证据链接和是否通过复测。
 6. 准备中文／英文项目陈述、三个 STAR、反问问题和未知问题处理材料，并在本周两场推理 Mock 内演练约 5 分钟陈述；不另加独立口头验收。
@@ -769,7 +769,7 @@ W4 之后插入的有效周，承接 Claim 复核中 SGLang（`CL04`）、Specul
 
 - 胜任力结论以[2026-08-29 诊断](../面试准备/自我准备/AMD-AI框架开发工程师胜任力诊断-2026-08-29.md)为基线。
 - 面试现场证据来自[面试问题经验目录](../面试准备/面试问题经验/README.md)。
-- 简历事实以[CV.md](../面试准备/自我准备/CV.md)为真源；HTML 不单独维护事实。
+- 简历事实以[CV.md](../面试准备/自我准备/过往简历/初始版本/CV.md)为真源；HTML 不单独维护事实。
 - 项目故事以[projects/](../面试准备/自我准备/projects/README.md)为真源。
 - 市场岗位以[市场岗位需求索引](<../Job Description/AI框架方向/市场岗位需求/README.md>)和企业官方页面为准；投递前重新核对状态。
 

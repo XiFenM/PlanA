@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>简历 · AI 框架与后端集成</title>
+<style>
+
+:root { color-scheme: light; --ink:#182631; --secondary:#465460; --rule:#c9d1d7; }
+* { box-sizing:border-box; }
+body { margin:0; background:#eef1f3; color:var(--ink); font-family:"Noto Sans CJK SC","PingFang SC","Microsoft YaHei",sans-serif; font-size:11pt; line-height:1.5; -webkit-font-smoothing:antialiased; }
+main { width:210mm; margin:24px auto; padding:14mm 16mm 15mm; background:#fff; box-shadow:0 2px 18px #263a4d16; }
+.resume-header { padding-bottom:8pt; border-bottom:1.5pt solid var(--ink); margin-bottom:10pt; }
+h1 { margin:0 0 5pt; font-size:21pt; line-height:1.25; font-weight:700; }
+.resume-header p { margin:3pt 0 0; font-size:10pt; }
+.resume-header p:last-child { font-size:11pt; margin-top:5pt; }
+h2 { margin:0 0 5pt; padding-bottom:3pt; border-bottom:.6pt solid var(--rule); font-size:12pt; line-height:1.4; font-weight:700; break-after:avoid; }
+h3 { margin:0 0 4pt; font-size:11pt; line-height:1.5; font-weight:700; break-after:avoid; }
+p { margin:0 0 5pt; orphans:2; widows:2; }
+.resume-section { margin-top:10pt; }
+.entry { margin-top:8pt; break-inside:avoid; page-break-inside:avoid; }
+.entry:first-of-type { margin-top:0; }
+.date { margin:-1pt 0 5pt; font-size:9.5pt; color:var(--secondary); }
+ul { margin:0; padding-left:1.15em; }
+li { padding-left:.1em; margin:0 0 4pt; orphans:2; widows:2; break-inside:avoid; }
+li:last-child { margin-bottom:0; }
+strong { font-weight:700; }
+code { font-family:"DejaVu Sans Mono","Noto Sans Mono CJK SC",monospace; font-size:.89em; }
+.education { break-inside:avoid; }
+.education ul { list-style:none; padding:0; }
+.education li { padding:0; margin-bottom:3pt; }
+@page { size:A4; margin:13mm 15mm 14mm; }
+@media print {
+  html,body { background:#fff; }
+  body { font-size:10.5pt; line-height:1.45; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+  .resume-section { margin-top:8pt; }
+  .entry { margin-top:7pt; }
+  h2 { margin-bottom:4pt; font-size:11.5pt; }
+  li { margin-bottom:3pt; }
+  p { margin-bottom:4pt; }
+  .date { margin-bottom:4pt; }
+  main { width:auto; margin:0; padding:0; box-shadow:none; }
+}
+@media screen and (max-width:820px) {
+  main { width:100%; margin:0; padding:24px; box-shadow:none; }
+  body { font-size:15px; }
+  .entry { break-inside:auto; }
+}
+</style>
+</head>
+<body><main id="resume">
+<header class="resume-header"><h1>姓名（待填写）</h1><p>手机：待填写 ｜ 邮箱：待填写 ｜ 目标地点：上海</p>
+<p><strong>求职方向：AI 框架开发／模型与硬件后端集成</strong></p></header>
+<section class="resume-section" aria-labelledby="s0"><h2 id="s0">个人概述</h2><p>具备 3 年以上软件开发经验，2024 年起从事自研非 CUDA 加速芯片上的 PyTorch、vLLM 适配。负责模型接入、后端接口、内存与执行状态管理，完成生产模型交付、异步拷贝能力开发及精度异常修复。能够结合源码、Profile 和受控实验定位跨层问题。</p></section>
+<section class="resume-section" aria-labelledby="s1"><h2 id="s1">专业能力</h2><ul>
+<li><strong>框架与模型</strong>：具备 PyTorch、vLLM 源码修改和后端调试经验；熟悉 vLLM V1 请求执行链、Scheduler／Worker／ModelRunner 分工、KV block 管理及设备扩展边界。</li>
+<li><strong>系统开发</strong>：使用 Python、C++ 进行框架适配；理解 Tensor／Storage／stride、异步拷贝、Stream 依赖和缓冲区生命周期；熟练使用 Linux、Git、Bash。</li>
+<li><strong>定位与验证</strong>：使用框架 Profile／Trace、数值对照、确定性请求重放和回归测试，分析模型执行、Host 调度、内存布局及数据搬运问题。</li>
+</ul></section>
+<section class="resume-section" aria-labelledby="s2"><h2 id="s2">工作经历</h2>
+<article class="entry"><h3>中昊芯英／上海泰则｜AI 框架开发工程师</h3><p class="date">2024.06 — 至今</p>
+<ul>
+<li>负责 vLLM 在自研 AI 加速芯片上的框架适配，维护模型执行层和设备扩展接口，支持大语言模型及多模态模型接入。</li>
+<li>负责 PyTorch 后端中数据拷贝、内存布局与异步执行相关功能的开发和调试，维护与算子库、Runtime 的接口衔接。</li>
+<li>承担模型与框架的精度、性能和稳定性问题定位，协同算子、通信和 Runtime 团队推进修复与回归。</li>
+<li>支持客户部署、第三方测评与版本交付，沉淀模型压测、接口适配和问题排查文档。</li>
+</ul></article>
+<article class="entry"><h3>国药控股数字科技｜助理架构师</h3><p class="date">2023.04 — 2024.04（2023.04 — 2023.06 为实习）</p>
+<ul>
+<li>参与数据质量监控相关功能与工具研发，支持数据质量检查、指标血缘追踪与异常定位。</li>
+</ul></article></section>
+<section class="resume-section" aria-labelledby="s3"><h2 id="s3">代表项目</h2>
+<article class="entry"><h3>GLM-5.3-Flash 模型接入与状态管理</h3><p>模型混合线性注意力、稀疏 MLA 和 MoE，不同缓存与递推状态需要分别处理布局和容量。针对上游执行路径无法直接用于目标平台的问题，先建立原生执行路径校验模型语义，再逐步接入融合算子和 decode Graph。</p>
+<ul>
+<li>独立完成模型在既有 vLLM 硬件插件中的接入，覆盖权重映射、混合 KV cache 与状态池；交付 <strong>8 卡 TP8、AWQ 4-bit 权重／BF16 激活</strong>的文本推理版本，由云服务团队生产上线。</li>
+<li>修正缓存分组、页容量核算与 Padding，解决启动 OOM；相同部署配置与显存预算下，KV cache 容量由 <strong>45,409 提升至 148,762 tokens</strong>。将卷积与递推状态拆为连续池，减少非连续状态页引发的 Host 搬运开销。</li>
+<li>验收并接入算子团队的融合实现，完成 decode Graph 的 metadata 与 Padding 适配；定位并修复 warmup 污染稀疏 MLA 空块的问题，插件发布定向回归 <strong>161 项通过</strong>。</li>
+</ul></article>
+<article class="entry"><h3>PyTorch 后端异步 D2H 能力实现</h3><p>原后端即使指定 <code>non_blocking=True</code>，仍因同步中转、CPU 布局还原和完成等待阻塞 Worker。通过满足 pinned 内存与传输对齐条件，将提交和完成等待分离，为后续工作继续提交提供条件。</p>
+<ul>
+<li>负责 PyTorch C++ 后端异步 D2H 路径，实现对齐的 pinned Host 输出、设备／Host 分配生命周期保护，并衔接算子团队提供的布局转换算子；满足条件时异步提交，不适用时保留同步回退。</li>
+<li>沿 vLLM 硬件插件梳理输出回传、完成等待及下一批输入的依赖，完成目标构建的拷贝契约、回退和生命周期回归，并在 Qwen3-32B、BF16、TP4 下验证请求链路完成。</li>
+</ul></article>
+<article class="entry"><h3>vLLM V1 异步 H2D 精度异常修复</h3><ul>
+<li>针对 Qwen3-32B 的低概率乱码、空回复和重复输出，建立确定性重放与异步／阻塞对照；从首个分叉 Token 和中间 Tensor 追踪，定位原等待未覆盖 CPU Padding 完成及 H2D 提交的问题。</li>
+<li>在框架／后端层补齐异步标记与等待，使消费依赖覆盖 CPU 准备、拷贝提交和设备完成。恢复原异步配置并撤去临时阻塞与额外诊断等待后，<strong>168 条现场请求连续重放 5 轮</strong>，未再观察到原异常。</li>
+</ul></article></section>
+<section class="resume-section" aria-labelledby="s4"><h2 id="s4">个人技术实践</h2><ul>
+<li>实现 Triton MatMul、LayerNorm 前向与两阶段反向、FlashAttention 式 FP16 Attention 前向等练习，并完成 GPU 数值与边界验证。</li>
+</ul></section>
+<section class="resume-section education" aria-labelledby="s5"><h2 id="s5">教育背景</h2><ul>
+<li><strong>复旦大学｜应用统计硕士，大数据学院</strong>｜2021.09 — 2023.06</li>
+<li><strong>上海大学｜数学与应用数学学士，理学院</strong>｜2017.09 — 2021.06</li>
+</ul></section>
+</main></body>
+</html>

@@ -1005,7 +1005,7 @@ html:not(.js) .lp-knob::before, html:not(.js) .lp-knob::after { content: none; }
 <style data-lp-style>.mx-matrix table { min-width:1000px; table-layout:fixed; }.mx-matrix th,.mx-matrix td { width:25%; vertical-align:top; overflow-wrap:anywhere; }#test-design-draft { margin:26px 0; }#test-design-draft > summary { min-height:44px; padding:12px 0; cursor:pointer; font-weight:600; }</style>
 <section class="lp-node" id="node-11" data-stages="st-design" data-rev="5">
 <h2><span class="lp-no">11</span>两条适配分支，共用什么契约，分别补什么能力</h2>
-<p class="lp-spine">对应 Change Card 的平台能力、改造边界和生命周期。完整九段内容见<a href="../../面试准备/自我准备/ChangeCard-03-PD-KV-transport.md">Change Card 03</a>，共用验证规格见<a href="../../推理框架/PD-KV故障矩阵与测试设计.md">故障矩阵与测试设计</a>。</p>
+<p class="lp-spine">对应 Change Card 的平台能力、改造边界和生命周期。完整九段内容见<a href="../../面试准备/自我准备/学习设计/ChangeCard-03-PD-KV-transport.md">Change Card 03</a>，共用验证规格见<a href="../../推理框架/PD-KV故障矩阵与测试设计.md">故障矩阵与测试设计</a>。</p>
 <p>现在把目标定义为：目标平台基础推理已能正确执行，我们为它接入 PD/KV 交接。P/D 使用相同模型、TP、cache 表示、dtype、布局与 block size。两条分支都由 <b>D 侧 CPU 发起 PULL／READ</b>，数据从 P 流向 D；采用哪条数据路径，不改变这一控制方向。</p>
 <figure class="lp-figure lp-toggle is-wide cd-paths" id="fig-11-1">
 <div class="lp-controls"><div class="lp-seg"><button type="button" data-view="direct" aria-pressed="true">A · 设备直传</button><button type="button" data-view="host" aria-pressed="false">B · 双端 Host 中转</button></div></div>
@@ -1043,7 +1043,7 @@ html:not(.js) .lp-knob::before, html:not(.js) .lp-knob::after { content: none; }
 <p>进程与 lease 再增加一层边界：同一地址可能换了实例，同一 ID 的注册描述也可能变化；成功确认新映射不直接结束旧资源责任。心跳与到期决定软件保留策略，旧内存访问是否结束仍需自己的依据。当前源码与 mock 测试能支持到哪一步，就把结论写到哪一步。</p>
 <p>如果最终确认加载失败，本卡采用 fail，由调度器结束请求；它不会自动重算、网络重试或切换 A/B。PUSH 对照也保持同样的安全要求，但主要 WRITE handle 在 P，D 的接收与目标回收还需要独立的跨端合同。</p>
 <p>回到真实规模，上一课 Qwen3-8B 算例的一份全模型 BF16 KV，在 36 层、8 个 KV 头、head_dim 128、8192 个位置下合计 1.125 GiB；不含额外副本、padding 或共享前缀扣除，并非每个 rank 都固定这么多。中转池、网络和执行队列要处理的是实际分片与并发量，不能只凭一个理想带宽数判断首 Token 延迟或吞吐。</p>
-<p>因此验证也要分层：先用明确的 source/test 对应检查控制规则，再通过受控后端把访存、清理和 allocator 连起来，最后在实际平台验证注册、取消／停止访问、可见性和性能。<a href="../../推理框架/PD-KV故障矩阵与测试设计.md">技术矩阵与测试规格</a>规定具体观察；<a href="../../面试准备/自我准备/ChangeCard-03-PD-KV-transport.md">Change Card</a>记录所选边界、改造层次与未验证条件。没有执行的部分继续保持设计层表述。</p>
+<p>因此验证也要分层：先用明确的 source/test 对应检查控制规则，再通过受控后端把访存、清理和 allocator 连起来，最后在实际平台验证注册、取消／停止访问、可见性和性能。<a href="../../推理框架/PD-KV故障矩阵与测试设计.md">技术矩阵与测试规格</a>规定具体观察；<a href="../../面试准备/自我准备/学习设计/ChangeCard-03-PD-KV-transport.md">Change Card</a>记录所选边界、改造层次与未验证条件。没有执行的部分继续保持设计层表述。</p>
 <aside class="lp-note" role="note">规模沿用<a href="plana-jd-w3-kv-layout-bytes.html#node-2">单元二固定 Qwen3-8B 算例</a>，数值已在前课按张量形状用 Python 核算；本段没有新增带宽或设备性能测量。正常生命周期和失败依据分别复用前三课与本课的固定版本说明。</aside>
 </section>
 <section id="acceptance" data-rev="5"><h2>综合核验</h2><p>用一个注册区域重建的迁移场景评审两条适配分支。这里不要求把在线扩容加入首版实现，也不要求无停顿切换；只检查实际内存、注册描述和资源依赖能否保持一致。</p></section>

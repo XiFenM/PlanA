@@ -2,7 +2,7 @@
 
 > 来源一：Claude Code `c2f4076f-0d99-497f-8e81-39dbcebcffd6`，`msg-a0b3e5bc9d26d02600f4` → `msg-5ca8b9b675e89e8d5c5f`，北京时间 2026-10-20 20:46 至 2026-10-29 09:17。
 > 来源二：Codex `01a185a2-6c25-7360-a6d0-505cc50eb975`，`msg-165e21385dc3195ec626` → `msg-1e47ad45fc439fe96984`，北京时间 2026-10-29 11:13 至 15:05。
-> 关联：[W2 单元二](../../计划/八周冲刺进度/W2.md#lesson-plana-jd-w2-moe-ep-source) · [详细验收记录](../../计划/八周冲刺进度/历史记录/W2-学习验收记录.md) · [课程网页](../../课程网页/八周计划/plana-jd-w2-moe-ep-source.html) · [Change Card 02](../../面试准备/自我准备/ChangeCard-02-MoE-EP-dispatch-combine.md)。
+> 关联：[W2 单元二](../../计划/八周冲刺进度/W2.md#lesson-plana-jd-w2-moe-ep-source) · [详细验收记录](../../计划/八周冲刺进度/历史记录/W2-学习验收记录.md) · [课程网页](../../课程网页/八周计划/plana-jd-w2-moe-ep-source.html) · [Change Card 02](../../面试准备/自我准备/学习设计/ChangeCard-02-MoE-EP-dispatch-combine.md)。
 
 > 可追溯对话：[同名原文](../log-raw/2026-10-29-w2-u2-moe-ep-source.md)。
 
@@ -18,7 +18,7 @@
 
 - [高价值问题] 学习者追问“一张卡中可能只有某个token选中的部分几个专家”，那么本卡求和如何得到完整结果。答疑把专家卡内的部分和与跨卡合并分开；这也为后面区分 top-k 加权／求和和跨 rank 归约提供了前置。（来源：Claude · `msg-f741ccc4e0e13df46ffe` → `msg-cb15e8d8008304adac61`。）
 
-- [纠错] 在源卡 combine 负责加权求和的题目中，学习者填写“返回Contiguous”与“output_is_reduced()是False”，却又判断不需要额外 all-reduce。反馈改为由 Experts 返回 Delegate，把处理方式交给 P/F；但导师原表对 Contiguous 的简写和复查题遗漏的并行条件也造成了歧义，后续补明题设后才复答。最终口径以[卡片第 2 段](../../面试准备/自我准备/ChangeCard-02-MoE-EP-dispatch-combine.md)为准：Delegate 不固定处理地点，归约标志也不等于任何配置下都要或都不要 all-reduce。（来源：Claude · `msg-28edccb3dbfddc260b04` → `msg-7db3198a85b20708b7f2` → `msg-47e5c36dc37ca92fbd9f` → `msg-59032160e4c9637c8b38` → `msg-dc2975cff7fbb859ad0b`；Codex · `msg-e25b0f9133da7f16192f`。）
+- [纠错] 在源卡 combine 负责加权求和的题目中，学习者填写“返回Contiguous”与“output_is_reduced()是False”，却又判断不需要额外 all-reduce。反馈改为由 Experts 返回 Delegate，把处理方式交给 P/F；但导师原表对 Contiguous 的简写和复查题遗漏的并行条件也造成了歧义，后续补明题设后才复答。最终口径以[卡片第 2 段](../../面试准备/自我准备/学习设计/ChangeCard-02-MoE-EP-dispatch-combine.md)为准：Delegate 不固定处理地点，归约标志也不等于任何配置下都要或都不要 all-reduce。（来源：Claude · `msg-28edccb3dbfddc260b04` → `msg-7db3198a85b20708b7f2` → `msg-47e5c36dc37ca92fbd9f` → `msg-59032160e4c9637c8b38` → `msg-dc2975cff7fbb859ad0b`；Codex · `msg-e25b0f9133da7f16192f`。）
 
 - [纠错] 学习者最初认为空闲 rank 会“从prefill的8000tokens向上pad到graph录制的token长度”，把启用 graph 理解成每步都使用最大录图长度。题设的大 prefill 已超出录制范围、导致全组 eager，空闲 rank 此时只需假 Token 行；学习者在变式中改答“实际算1行的假token”。导师承认录制上限此前未讲，这部分信息缺口不归为学习者错误。（来源：Claude · `msg-93c16918cb3c38bebe44` → `msg-a962f34016da9f008c1e` → `msg-8e6587f51eeaf023328f`。）
 
@@ -104,5 +104,5 @@
 
 ## 遗留
 
-- [遗留] 真实后端接入、输入加权支持、图重放、容量保护、量化路径、实际性能及故障恢复的验证仍有边界，统一回到 [Change Card 第 9 段](../../面试准备/自我准备/ChangeCard-02-MoE-EP-dispatch-combine.md)；不把设计推导或假想算例作为用户实测结果。
+- [遗留] 真实后端接入、输入加权支持、图重放、容量保护、量化路径、实际性能及故障恢复的验证仍有边界，统一回到 [Change Card 第 9 段](../../面试准备/自我准备/学习设计/ChangeCard-02-MoE-EP-dispatch-combine.md)；不把设计推导或假想算例作为用户实测结果。
 - [遗留] 最终理解判断、已接受的帮助与教学版本关系，以 [W2 验收记录](../../计划/八周冲刺进度/历史记录/W2-学习验收记录.md)为准；后续学习位置只由[学习断点](../../计划/学习断点.md)维护。

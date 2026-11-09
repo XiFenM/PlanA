@@ -897,7 +897,7 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
 </section>
 <section id="spine" data-rev="1"><h2>回看资料</h2><div class="lp-table"><table><thead><tr><th>资料</th><th>用于回答什么</th><th>阅读方式</th></tr></thead><tbody>
 <tr><td><a href="../../计划/八周冲刺进度/W3-学习计划.md">W3 四单元学习路线</a></td><td>这周为何安排这些内容</td><td>定位主题，不需要重新逐课学习</td></tr>
-<tr><td><a href="../../面试准备/自我准备/ChangeCard-03-PD-KV-transport.md">PD/KV 两分支 Change Card</a></td><td>新设备直传与 Host 中转适配</td><td>问题 4 与完整系统设计之后对照</td></tr>
+<tr><td><a href="../../面试准备/自我准备/学习设计/ChangeCard-03-PD-KV-transport.md">PD/KV 两分支 Change Card</a></td><td>新设备直传与 Host 中转适配</td><td>问题 4 与完整系统设计之后对照</td></tr>
 <tr><td><a href="../../推理框架/PD-KV故障矩阵与测试设计.md">故障矩阵与测试设计</a></td><td>失败状态、断言与证明范围</td><td>问题 5–6 之后查具体 source/test</td></tr>
 </tbody></table></div>
 <p>技术细节沿用 W3 的 vLLM 固定版本 <code>d7ada3aace051fecec553c185225db2259c2ac6a</code>。岗位页面以 2026-11-07 查阅的公开内容说明能力方向；招聘要求与实现版本承担不同的证据角色。</p></section>
@@ -1003,7 +1003,7 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
 </section>
 <section class="lp-node" id="node-5" data-stages="st-integration" data-rev="6">
 <h2><span class="lp-no">5</span>问题四：给一种新加速器接入 PD</h2>
-<p class="lp-spine">复习定位：<a href="../../面试准备/自我准备/ChangeCard-03-PD-KV-transport.md">两分支 Change Card</a>；先画路径，再对照职责与接口。</p>
+<p class="lp-spine">复习定位：<a href="../../面试准备/自我准备/学习设计/ChangeCard-03-PD-KV-transport.md">两分支 Change Card</a>；先画路径，再对照职责与接口。</p>
 <p class="w3i-prompt">“目标设备已经可以正确执行 prefill／decode。你会怎样接入 PD？支持设备直传与只支持 Host RDMA 时，工作分别落在哪些层？”</p>
 <p>共同前提仍是同模型、同 TP、同 cache 表示与布局，由 D 的 CPU 发起 PULL。设备直传是需要核验的能力：硬件支持、驱动能导出内存、选定 native backend 能注册和访问，缺少任何一环都不能仅靠配置宣称可用。</p>
 <details class="w3i-answer"><summary>展开两分支回答与职责表</summary>
@@ -1020,7 +1020,7 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
 <p>首版可以显式选择分支，在启动时验证条件，不满足就报告缺失能力。Host 路径还要核对 pinned Host／异步 copy 的 runtime 要求、块索引语义与 pool 背压；RDMA 注册不自动满足另一套设备 runtime 的所有 Host 内存要求。</p>
 <p><b>容易失分的说法：</b>“加一个设备类型就支持了”“Host 中转把显存也都注册就行”“CPU 发起就不是设备直传”，或预先断言直传在所有负载下更快。</p>
 </details>
-<aside class="lp-note" role="note">回看<a href="../../面试准备/自我准备/ChangeCard-03-PD-KV-transport.md">两分支 Change Card</a>和<a href="plana-jd-w3-rdma-fallback.html">单元三</a>。卡片是条件式学习设计，具体目标平台能力仍需核验。</aside>
+<aside class="lp-note" role="note">回看<a href="../../面试准备/自我准备/学习设计/ChangeCard-03-PD-KV-transport.md">两分支 Change Card</a>和<a href="plana-jd-w3-rdma-fallback.html">单元三</a>。卡片是条件式学习设计，具体目标平台能力仍需核验。</aside>
 <p class="lp-lead"><b>回答主线</b>先画实际数据路径，逐段标出访问对象、执行者和完成依赖，再把改动落到平台、后端与 connector。</p>
 </section>
 <section class="lp-node" id="node-6" data-stages="st-reliability" data-rev="7">
@@ -1057,12 +1057,12 @@ THE FONT SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
 <p>没有目标设备时，可以交付固定源码对应、故障矩阵、fixture／输入／事件顺序／断言明确的测试规格，并指出实现和执行状态。W3 的相关材料属于这个设计与源码范围；不能将它们表述成已经跑通目标平台或取得性能提升。</p>
 <p><b>容易失分的说法：</b>“mock 全过就说明 RDMA 安全”“只看最终没有泄漏”“吞吐提高 20%，所以一定是传输快了”，或不说明测试是否实际运行。</p>
 </details>
-<aside class="lp-note" role="note">具体规格见<a href="../../推理框架/PD-KV故障矩阵与测试设计.md">故障矩阵与测试设计</a>；两分支 correctness 与性能观察量见<a href="../../面试准备/自我准备/ChangeCard-03-PD-KV-transport.md">Change Card §7–9</a>。</aside>
+<aside class="lp-note" role="note">具体规格见<a href="../../推理框架/PD-KV故障矩阵与测试设计.md">故障矩阵与测试设计</a>；两分支 correctness 与性能观察量见<a href="../../面试准备/自我准备/学习设计/ChangeCard-03-PD-KV-transport.md">Change Card §7–9</a>。</aside>
 <p class="lp-lead"><b>回答主线</b>说明你要证明哪条性质、在哪层观察、怎样构造对照，以及证据还不能覆盖什么。</p>
 </section>
 <section class="lp-node" id="node-8" data-stages="st-expression" data-rev="9">
 <h2><span class="lp-no">8</span>沿一个系统设计场景，接住连续追问</h2>
-<p class="lp-spine">串联资料：<a href="../../面试准备/自我准备/ChangeCard-03-PD-KV-transport.md">Change Card 的职责、生命周期和验证章节</a>；先沿同一主例完整讲一遍，再查细节。</p>
+<p class="lp-spine">串联资料：<a href="../../面试准备/自我准备/学习设计/ChangeCard-03-PD-KV-transport.md">Change Card 的职责、生命周期和验证章节</a>；先沿同一主例完整讲一遍，再查细节。</p>
 <p>六类问题可以出现在同一轮面试中。面对“设计跨机 PD 服务”这样的开放问题，先把允许改变的条件与目标讲清，再按下面的顺序逐层展开。这里沿用同模型、同 TP、同布局、同 block size、CPU 发起 PULL 的首版，并显式选路、启动校验，失败安全收尾后采用 fail；P／D 的实际容量与拓扑仍需要具体配置。</p>
 <ol class="w3i-chain">
 <li><b>“为什么需要 PD？”</b><p>先问工作负载、延迟目标和总资源预算；解释隔离带来的独立调优空间，同时指出交接与容量不平衡的成本。用问题一的框架提出可验证假设。</p></li>

@@ -10,7 +10,7 @@
 | 固定源码与历史环境 | [W1 详细验收记录](../计划/八周冲刺进度/历史记录/W1-学习验收记录.md#02-固定源码基线) |
 | 练习约定、详细验收和阶段变更历史 | [W1 学习验收记录](../计划/八周冲刺进度/历史记录/W1-学习验收记录.md) |
 | 面试主张审计 | [Claim-evidence 矩阵](../面试准备/自我准备/Claim-evidence矩阵.md) |
-| 项目案例成果 | [Conv3D Case Card](../面试准备/自我准备/Conv3D-Case-Card.md) |
+| 项目案例成果 | [Conv3D Case Card](../面试准备/自我准备/projects/multimodal-inference-project.md#project1-conv3d-case-card-v1) |
 
 保留此入口，是为了不改写历史学习日志、原始对话和卡片的来源正文。旧 `:行号` 引用不再对应本页行号，请在 Git 提交 `54489e1` 中查看原完整文件；KV 页大小卡片的来源快照对应 `3edd31d71752c880a5cf2e7e8d95dd2c206d74ee`，SHA-256 为 `3d0c46acd756e1c2283c079e2b4912d0b27e0b5dc13dac85e0e51e66b7fb60d2`。本次未刷新卡片的历史来源，也不把本兼容页作为新知识材料。
 
