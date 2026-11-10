@@ -1,7 +1,7 @@
 ## 项目：GLM-5.3-Flash 模型适配与优化（已完成）
 
-> 事实依据：此前整理时引用的《GLM-5.3-Flash 推理适配项目总结》、本人 2026-11-02 的问答补充，以及 2026-11-09 合并的适配细节材料；沿用旧档案中未被新材料替代的实践细节。项目已完成，由云服务团队正式生产上线。
-> 来源可用性说明（2026-11-09）：原链接所指的 `GLM-5.3-flash-project-summary.md` 当前不在本目录中，不能当作本仓库内可打开的独立证据。保留本档案已经记录的本人确认及来源归属，不补造总结文件；原始代码、日志和评测索引尚未在本次整理中重新核验。
+> 事实依据：此前整理时引用的《GLM-5.3-Flash 推理适配项目总结》、本人 2026-11-02 的问答补充，以及 2026-11-09、2026-11-10 合并的适配细节材料；沿用旧档案中未被新材料替代的实践细节。项目已完成，由云服务团队正式生产上线。
+> 来源可用性说明（2026-11-10）：原链接所指的 `GLM-5.3-flash-project-summary.md` 当前不在本目录中，不能当作本仓库内可打开的独立证据。保留本档案已经记录的本人确认及来源归属，不补造总结文件；原始代码、日志和评测索引尚未在本次整理中重新核验。
 > 补充材料中的源码定位使用原工程内相对路径，行号沿用材料记录，不是本仓库链接；上游布局描述限于项目当时参考的 GLM5 路径，不泛化为所有 vLLM／CUDA 版本。
 > 本档案整理项目经历、职责和结果口径；下方【待补充／待核验】用于完善复现与面试材料，不改变已交付状态。
 > 对外统一使用“自研 AI 加速芯片”，不写内部代号、内部仓库名或内部算子编号。
@@ -148,7 +148,7 @@ CPU 离线闭环记录为 `num_blocks=1509`、每 block 合计约 `20.734 MiB`�
 | KDA conv prefill | 0.166 ms | 1,396 ms |
 | KDA conv update | 0.259 ms | 1,339 ms |
 
-模型内 Profile 同样显示：prefill 的 gather／scatter／conv 合计约占 96%，decode 的 conv update／recurrent 合计约占 96%，设备计算少而 8 个 worker 的 CPU 占用高。材料估计单独优化 gather／scatter 只能覆盖约 64% 的开销，但未明确该比例的统计口径；卷积路径仍然受影响。每层、每步临时调用 `.contiguous()` 也会保留物化成本，因此需要在分配阶段改变物理布局。
+模型内 Profile 同样显示：prefill 的 gather／scatter／conv 合计约占 96%，decode 的 conv update／recurrent 合计约占 96%，设备计算少而 8 个 worker 的 CPU 占用高。本次补充的 prefill `py-spy` 窗口中，gather／scatter 采样占比合计为 63.9%，卷积另占 35.2%，说明单独处理 gather／scatter 仍不能覆盖卷积路径；采样比例与上述 Profile 耗时比例分别记录，详见第 5 项。每层、每步临时调用 `.contiguous()` 也会保留物化成本，因此需要在分配阶段改变物理布局。
 
 ##### 拆池方式与接口适配
 
@@ -202,7 +202,59 @@ block b → conv_pool[b]
 
 我结合 Profile、拷贝事件及隔离实验识别 Host 开销，并实施 metadata H2D 合并、pinned／device buffer 常驻、静态参数加载期预物化，以及 KPool 阻塞 D2H 消除。对设备侧 view 物化逐项检查，结合融合算子减少下发次数。
 
+##### 从总耗时定位到 Host 调用路径
+
+判断从同一窗口的 Host／Device 时间线开始：Host 侧使用 PyTorch profiler、`py-spy` 和 Python 事件时间，Device 侧使用 Kernel log 的 `cycles/ops/bytes` 及 trace 的 busy／gap，检查单步 wall time 主要消耗在哪些区间。Host 工作、设备执行与等待可能重叠，因此不能简单相加，也不能直接把多个 Kernel 的 cycles 总和当成整步设备占用时间。
+
+拆池前的现场记录为 8 个 worker 各占约 200% CPU，设备计算很少，而 prefill／decode 单步分别约 179 s／120 s。CPU 高和设备空闲提供排查方向，但尚不能排除同步、通信等待或设备侧停顿，仍需定位调用栈并做隔离对照。
+
+对 TP0 worker 的 `py-spy` 采样命令为：
+
+```bash
+py-spy record --pid <Worker_TP0> \
+  --duration 60 --rate 50 --format speedscope
+```
+
+prefill 窗口的叶子帧分布如下，函数名沿用材料中的诊断定位：
+
+| Host 叶子帧 | 采样占比 |
+|---|---:|
+| `scatter_states_dlc` | 50.1% |
+| `_prefill_new_op`／KDA conv prefill | 35.2% |
+| `gather_initial_states_dlc` | 13.8% |
+
+三项合计约 99.1%，说明采样集中在 KDA 状态搬运与卷积调用附近。叶子帧既可能在执行 Host 工作，也可能在等待设备；这些比例不等于各算子的设备耗时，更不能单独证明 Kernel 没有问题。
+
+##### 用 profiler 区分下发、搬运与同步开销
+
+2026-09-29 的 profiler 窗口记录：20-token prefill 单步约 11.975 s，伴随大量 Host 事件：
+
+| 事件 | 次数 |
+|---|---:|
+| `synLaunchKernelQueue` | 32,287 |
+| `synHostMalloc` | 32,504 |
+| `driver.memcpy` | 33,487 |
+| `aten::item + D2H`（材料中的组合统计项） | 5,607 |
+
+trace 中还出现 `aten::copy_`、`copy_after_async`、`synMemCopyAsync`、`_local_scalar_dense`，以及在该路径中触发同步的 `torch.any`／`torch.equal` 校验。这些记录给出了减少逐调用下发、Host 分配、搬运和标量读回的具体目标；事件之间可能嵌套或关联，不将次数相加为独立操作总数。
+
+同一补充材料另列出关闭 profiler 后，1,211-token 请求的 TTFT 约 13.8 s。它与 20-token、带 profiler 的单步计时具有不同输入、计时窗口和插桩条件，仅保留为阶段记录；不能由两者耗时接近直接断言固定成本支配，或推导开销与 token 数弱相关。
+
+##### 用布局对照验证归因
+
+为区分“Host 正在等待慢 Kernel”与“布局触发 Host 搬运”，我把 KDA gather／scatter 和卷积抽到隔离环境，以相同逻辑操作、相同数据对比连续池与打包页 view。第 3 项已列出完整微基准：连续池的相关调用处于亚毫秒至毫秒级，打包页 view 达到数百至上千毫秒，并伴随 Host staging，耗时与整个 Storage 大小相关。
+
+这里控制的是输入布局和逻辑操作；布局本身可能改变后端分派、物化与搬运路径，不能称为底层执行的每一个 Kernel 都完全相同。进一步在模型与输入保持一致的对照中替换状态池布局，prefill／decode 的 Host 单步由约 179 s／120 s 降至 5.7 s／2.6 s，卷积单次调用也恢复到亚毫秒级。微基准、模型内 Profile 与拆池前后对照共同支持“非连续布局触发 Host fallback”的归因，具体计时见第 3 项。
+
+##### 用设备空洞与队列批大小验证后续优化
+
+后续 decode 的一组 Host／Device 对齐记录显示：Host 每步约 1,510 次 Kernel queue 下发，Device 侧约 3,924 个 Kernel，按这两个计数相除约为 2.60 个 Kernel／批；材料另记录典型批大小约 2.3–2.6。单批设备消费约 150 µs，提交线程等待 Host 主线程继续提供工作，队列批量较小，同时每步存在约 389.5 ms 的设备空洞。
+
+这组记录指向 Host 供给不及时。3,924 是该观察窗口的设备 Kernel 数，下面 3,888 则来自优化对照的基线；两者不视为同一次采样或强行对齐。队列下发次数、设备 Kernel 数与 profiler 事件数也分别记录。
+
 总结中的 profiled decode 对照记录：view 物化由 204 次／步降到 0，Kernel 下发由 3,888 次降到 1,982 次，设备空洞由 389.5 ms 降至 29.1 ms，原约 223 ms／步的长阻塞 D2H 被消除，未再出现大于 0.5 ms 的该类阻塞项。这些是带 Profile 的流水线指标，不能替代干净服务计时。
+
+减少 view 物化、阻塞 D2H、下发次数并接入融合算子后，Host 工作量与设备空洞共同下降，支持后续优化方向；这是多项改动的组合结果，不能把全部收益归给其中某一项。完整证据链为“wall time 异常 → 调用栈与事件定位 → Device trace 对齐 → 隔离布局对照 → 模型内复测”，其中受控布局对照的因果证据强于单独的 CPU 占用率或 gap。
 
 与运行时／通信团队拆分后，allreduce 的主要开销来自等待其他 rank 到达。屏障到达偏斜累计由 220.5 ms 降至 90.4 ms，尚未达到不高于 20 ms 的优化目标；计算与通信重叠未纳入本次发布。
 
@@ -224,6 +276,79 @@ block b → conv_pool[b]
 |---|---|---|
 | KDA state pool 地址换算回绕 | 目标路径以 32 位进行地址单位换算，超过 16 GiB 后回绕，gather 未正确写入；将 metadata、word offset、地址转换和 gather／scatter 共用 copy 路径统一为 64 位 | 我负责定位问题，算子同事修改代码，我再进行功能与性能验收；补充高地址 gather／scatter 回归 |
 | sparse MLA null block 被 warmup 污染 | 修复前一根因后，首个 NaN 从 layer 0 移到 layer 3；dummy warmup 以全 0 slot mapping 将 NaN 写入 null block 0，无效 top-k 索引读取该块并在 mask 前进入计算 | 我完成定位、代码修复和验收：在全部 dummy／warmup 完成后、服务 ready 前再次清零 null block，服务级请求恢复正常 |
+
+##### KDA 地址回绕：从首个异常张量到 gather 未写输出
+
+服务的 `/health` 与推理请求均返回 HTTP 200，但输出稳定为重复的 `!` 类 token；hidden states／logits 中有大量 NaN，Inf 为 0，权重统计未发现 NaN／Inf。结合前向探针，我将排查重点移到模型执行与缓存数据路径；HTTP 成功和权重有限本身不证明 tokenizer、采样或权重映射完全正确。
+
+逐层探针记录 layer 输入／输出、attention、MLP、MoE 的 NaN／Inf 数量、absmax、shape、dtype，以及所在的 warmup／prefill／decode 阶段。首个异常收敛到 layer 0 的 KDA chunk prefill `initial_state`。补充材料将该处形状记录为 `(1583, 8, 128, 128)`，并记录 head 5 的 16,384 个元素为 `0x7fc00000` qNaN，其他 head 留有旧状态位型。这更值得怀疑未写入或地址错误，尚不能单凭位型排除数值计算问题。
+
+关键矛盾是：对应 state page 的 D2H 快照全零，CPU 侧 `has_initial_state=False`，mask 也显示 false，按调用契约 gather 应清零输出，但 `initial_state` 仍有 NaN 和旧值。因此开始检查 gather 是否真正覆盖了输出 buffer，而不只是重复清零源 state page。
+
+最初在低 HBM 地址独立测试 gather，使用正常 mask、输出预填 NaN，并运行约 1 万次压力循环，均通过。这曾将排查方向引向 metadata H2D 生命周期、mask descriptor 和状态清零，但独立测试的内存布局不同于加载大量权重与 KV cache 后的服务进程，不能排除高地址缺陷。
+
+我随后在真实模型进程中，对 layer 0 第一次 gather 做同调用 sentinel 对照：将受检输出预填为 `42`，分别使用原始 mask、克隆 mask、强制 bool false、int32 false 和 bool true。各组都得到：
+
+```text
+eq42 = 131072
+returned_same_ptr = True
+```
+
+这证明该次受检输出的 131,072 个元素没有被覆盖，返回的也是原输出指针。这个计数等于单页的 `8 × 128 × 128`，不是前述 1,583 页状态几何的全量元素数；全量应为 207,486,976，不能把两处观测混成“整个状态池都未写”。单次探针张量与全量形状的具体切片关系仍需原日志核验。
+
+Kernel 日志同时显示 launch 和 stream 正常、未被跳过，实际执行约 9,000–15,000 cycles。结合不同 mask 的结果，问题范围进一步缩小到已启动 Kernel 的有效读写路径；sentinel 本身证明的是目标输出未更新，地址回绕的判断由后续阈值实验与 ABI 审计完成。
+
+##### HBM 地址阈值与目标 ABI 的对应关系
+
+我通过占用 HBM 将 state 与输出放到不同地址段。材料记录的边界对照如下，GiB 为其使用的 HBM 偏移口径，不是把完整设备地址直接换算成容量：
+
+| 观察 | state 地址 | output 地址 | HBM 偏移与结果 |
+|---|---|---|---|
+| 正常样本 | `0x1000003cbc80200` | `0x1000003cbd80200` | 约 15.18 GiB，低于 16 GiB，gather 正常 |
+| 失败样本 | `0x100000407800200` | `0x100000407900200` | 约 16.12 GiB，跨过阈值后失效；`true_eq7=0`、`true_eq42=131072` |
+| 真实模型 | `0x100000898200200` | 材料未列出 | state 偏移约 34.38 GiB，落在已复现的高地址区间 |
+
+材料另记录了占用 18 个 2 GiB dummy buffer 后复现 gather 未写输出的实验，占位总量为 36 GiB。它与下文修复后回归的“先占用 18 GiB”是两次不同实验。
+
+随后审计 `attention/kda/kda_state_pool.h` 的地址换算。旧实现使用 `unsigned long` 接收和计算 word 地址，简化形式为：
+
+```c
+unsigned long dst_word =
+    (unsigned long)dst->address * 32 + ...;
+```
+
+张量描述符中的 `address` 以 128 B 为单位，目标 word 地址以 4 B 为单位，因此需要乘以 32：
+
+```text
+word_addr = address_128B × 128 B / 4 B
+          = address_128B × 32
+
+目标编译器：__SIZEOF_LONG__ = 4，__SIZEOF_POINTER__ = 4
+32 位 word 地址空间：2^32 words × 4 B/word = 16 GiB
+```
+
+目标 ABI 中 `unsigned long` 只有 32 位，乘法与地址中间值发生无符号回绕，丢失高位；边界恰好对应实验中的 16 GiB。这里判断的是设备编译目标的整数宽度，不能用 Host 系统的 `long` 或指针宽度替代。根因位于 gather／scatter 共用的地址换算，源 state 的内容全零也无法防止错误寻址。
+
+##### 全链路 64 位修复与高地址回归
+
+我提供复现与定位，算子同事修改共用地址路径，再由我验收。修复在乘法之前显式扩宽，示意如下：
+
+```c
+unsigned long long dst_word =
+    (unsigned long long)dst->address * 32ULL + kda_word_offset(...);
+```
+
+修改覆盖 `KdaMetadataCache.block`、`kda_word_offset()`、`kda_load_word()`、`kda_page_index()`、`kda_copy_words()`，以及 `dst_word`、`src_word`、`src_relative` 等中间值；对齐掩码的 `127`／`~127` 也改为 `127ULL`／`~127ULL`。这样避免仅把最终接收变量改宽，而中间计算或掩码仍丢失高位。头文件同时供 gather 与 scatter 使用，两条方向一起修复，防止读路径恢复后写路径仍破坏错误地址。
+
+高地址回归采用 `PAGES=1583`、`HEADS=8`、`DIM=128` 的生产几何，先占用 18 GiB HBM，将 state 和输出置于 16 GiB 以上，覆盖 gather true、gather false、PAD page、scatter，以及 sentinel 是否被正确覆盖。修复后记录：
+
+```text
+state = 0x100000490400200
+out   = 0x1000004c1e00200
+1 passed
+```
+
+这是一项定向高地址回归的结果，不与发布回归数量相加。真实服务复测中，layer 0–2 的 NaN 消失，首个 NaN 从 layer 0 后移到 layer 3；它与高地址回归共同支持第一处修复有效，同时暴露出下面独立的 sparse MLA null block 污染，不能把层号后移当成整模已正确。
 
 ##### null block 污染为什么会跨越 warmup 和正式请求
 
@@ -363,8 +488,8 @@ replay cache 的另一组三档单并发对照中，`gap_p50` 由 63.78／74.42�
 2. 状态拆池为什么能同时影响 gather、scatter 和卷积？怎样用隔离实验区分布局开销与 Kernel 计算开销？如何在保持 block ID 语义和总字节数不变的情况下适配绑定、清零与迁移？
 3. KPool 的逐 head 非线性与加权顺序为什么必须保留？算子接入怎样同时验证数值正确和真实路径命中？
 4. Graph bucket 补齐输入后，metadata、状态槽和 buffer 生命周期为什么也要改变？什么条件下 graph 可能变慢？
-5. NaN 的第一个出现位置如何帮助区分两个根因？warmup 为什么能污染正式请求会读取的 null block，为什么必须在最后一次 warmup 写入后由所有 rank 清零？低地址单测和 HTTP 200 为什么不足以证明模型正确？
-6. 怎样解释 Host 单步、带 Profile 的步骤、token gap、TTFT 和端到端吞吐之间的差别？哪些收益属于本人插件改动，哪些属于算子协作？
+5. NaN 的第一个出现位置如何帮助区分两个根因？怎样用 sentinel、地址阈值实验和目标 ABI 将 gather 未写输出收敛到 16 GiB 回绕，为什么只改最终变量类型不够？warmup 为什么能污染正式请求会读取的 null block，为什么必须在最后一次 warmup 写入后由所有 rank 清零？低地址单测和 HTTP 200 为什么不足以证明模型正确？
+6. 怎样结合 Host 采样、profiler 事件、Device trace 和受控布局对照区分 Host 开销与等待慢 Kernel？怎样解释 Host 单步、带 Profile 的步骤、token gap、TTFT 和端到端吞吐之间的差别？哪些收益属于本人插件改动，哪些属于算子协作？
 
 ### 口述基线（文稿已更新，待本人复述）
 
