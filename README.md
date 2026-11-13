@@ -131,8 +131,8 @@ git submodule update --init --recursive -- .agent-skills
 中央规范源是 [`.agent-skills`](.agent-skills) 子模块，固定版本以父仓库记录的 gitlink 为准
 （`git submodule status .agent-skills`），本文不另记提交号。[`.agent-skills.json`](.agent-skills.json) 为 Codex 与 Claude
 同时选择 `guide-learning`、`lesson-pages`、`study-log`、`english-coach`、`memo-cards`、
-`resource-planning` 和 `playwright-cli`，并为六个学习 Skill 引用
-[`.agent-skills-config/`](.agent-skills-config) 下的 Git-tracked 公共配置。`playwright-cli` 无需仓库配置。
+`resource-planning`、`playwright-cli` 和 `vivid-tech-writing`，并为六个学习 Skill 引用
+[`.agent-skills-config/`](.agent-skills-config) 下的 Git-tracked 公共配置。`playwright-cli` 和 `vivid-tech-writing` 无需仓库配置。
 
 materializer 会为有配置的 Skill 在两个宿主副本中生成逐字节一致的 `.agent-skills-context.json`。它只提供
 仓库事实定位、素材目录边界和机械写入上限，不读取学习资料正文，也不保证资料格式或内容正确；实际类型
@@ -185,7 +185,7 @@ uv run --no-project python .agent-skills/tools/materialize_skills.py --repo . --
 
 **两条并行子轨道**：[Leetcode/](Leetcode) 和 [英语/](英语) 继续使用各自的 `学习指引.md` + `进度.md` 双锚文件管理。原 20 周计划中“英语每日 60–75min、排除在 650h 外”属于冻结排程的历史预算；当前八周 Program 将 Leetcode、英语和 Mock 一并计入每个日历周 18h 的目标容量，不再叠加隐藏负担。音频教材仍由同级工具仓库 `../blog-voice` 生产。
 
-**AI 学习工作流（7 个 Skills）**：中央 [`.agent-skills`](.agent-skills) 是 Skill 规范源，
+**AI 学习与写作工作流（8 个 Skills）**：中央 [`.agent-skills`](.agent-skills) 是 Skill 规范源，
 `.agents/skills/` 与 `.claude/skills/` 只是生成的宿主发现视图。Agent 侧路由表与管线图见
 [CLAUDE.md](CLAUDE.md)；[`.agent-skills-config/guide-learning-profile.md`](.agent-skills-config/guide-learning-profile.md)
 只定义 PlanA 的状态路径、单写者、时长归属与领域透镜，不复制中央教学流程：
@@ -195,6 +195,7 @@ uv run --no-project python .agent-skills/tools/materialize_skills.py --repo . --
 | `resource-planning` | **供给侧**：research → refresh → review 的受管资源生命周期 | 「研究／比较资料」；持久动作须精确预览与当次确认 |
 | `guide-learning` | **主干**：来源化教学 → 讲后检查 → 按证据缺口练习 → mastery → 稀疏恢复 | 教我／带我学／继续或恢复 Lesson |
 | `lesson-pages` | **呈现层**：与 `guide-learning` 同时运行，把讲解写进逐段生长的离线课程网页；对话只留指路、检查题与反馈 | 「用网页讲」「把这课做成页面」／本课已有页面 |
+| `vivid-tech-writing` | **表达层**：技术写作诊断、改写、起草、口播与练习；共享教学、课程网页和卡片的语言规范，不读写学习状态 | 「改写技术文章」「更口语化」「减少教材腔」 |
 | `study-log` | **按需交接**：仓库内同名配对的结构化记录与 raw 可见文本；原文仍须确认边界与隐私 | 「整理学习记录／保存原始对话」 |
 | `memo-cards` | **记忆侧**：成熟素材 → Markdown／XLSX 复习卡，可通过官方 API 上传到指定 Markji 章节 | 「制卡」「上传卡片」 |
 | `english-coach` | **英语轨**：学后「英语回顾」专项（主）+ 技术对话轮末反馈（辅） | 「英语回顾」/ 直接写英文 |
