@@ -1,0 +1,206 @@
+{
+  "schema_version": 1,
+  "audited_at": "2026-11-13T10:40:28.615678+00:00",
+  "source_archive": "snapshots/case-20261113T103139Z-6eb079b8-f1fe41.zip",
+  "source_archive_sha256": "36bdb05fecdf3473712c900a03755eb49f8f3b67943f3da0d28a31fb4e736fcc",
+  "source_scope": "Quality stage audited from the stable first-round snapshot; all 8 quality input/raw/report/comparison files verified unchanged in the final returned package.",
+  "archived_code_executed": false,
+  "model_inference_performed_by_audit": false,
+  "method": "trusted local quality._validated_items and compare_quality, plus independent labels/strip/no-truncation/protocol/token/body-hash recomputation",
+  "quality_file_sha256": {
+    "quality_inputs.json": "e331b964aa5b05f2531749cae45d5e2ff4fcb57e0333fcf40cef4bc1a7d1ffa6",
+    "quality_comparison.json": "cbc2c6ae476155bfd631f6390fc5a2f494eb57e224af27e62c702272d862942a",
+    "validation-bf16/quality/quality_inputs.json": "558ff991742354bc77dfecfa45c6d3fcd2e870ed5dd692d36cc39dc663a073b4",
+    "validation-bf16/quality/quality_raw.jsonl": "5af1acbb5a92bd160dd6fbc32307264fa9401cd59896b1afed675feb10be9a12",
+    "validation-bf16/quality/quality_report.json": "555dcc9b28d452b2540fd3997c0b5a6cf6f1c0812aeea5cd0754eeba7d01b946",
+    "validation-awq/quality/quality_inputs.json": "558ff991742354bc77dfecfa45c6d3fcd2e870ed5dd692d36cc39dc663a073b4",
+    "validation-awq/quality/quality_raw.jsonl": "aab1a1e913cc80dae15216e6852db710e8b1b9f77cea6a6a24d4a32b46f06e18",
+    "validation-awq/quality/quality_report.json": "833c7002305ff752681136ca14a1cd084e84063296bde57e7ea8354fe2ee31bf"
+  },
+  "input_sha256": "a24e13b6b451bdf6834b74040d5eb9ce0c1e22228f714e214a758b2cc198bdc7",
+  "dataset_counts": {
+    "field_extraction": 16,
+    "fact_lookup": 16
+  },
+  "generation": {
+    "temperature": 0.0,
+    "max_tokens": 32,
+    "ignore_eos": false,
+    "skip_special_tokens": true,
+    "spaces_between_special_tokens": false
+  },
+  "scoring_rule": "exact match after str.strip(); no other normalization; length-truncated answers are incorrect",
+  "variants": {
+    "bf16": {
+      "checks_passed": true,
+      "request_count": 32,
+      "successful_requests": 32,
+      "correct_count": 30,
+      "accuracy": 0.9375,
+      "by_category_correct_count": {
+        "field_extraction": 16,
+        "fact_lookup": 14
+      },
+      "finish_reason_counts": {
+        "stop": 32
+      },
+      "output_token_count_histogram": {
+        "3": 7,
+        "4": 1,
+        "5": 8,
+        "6": 8,
+        "7": 8
+      },
+      "all_prompt_ids_equal_to_sent_inputs": true,
+      "all_request_body_hashes_reconstructed": true,
+      "errors": [
+        {
+          "request_id": "quality-fact-09",
+          "target_id": "项目09-4",
+          "target_field": "会议室",
+          "expected_answer": "R489",
+          "raw_output": "C310",
+          "actual_output_tokens": 5,
+          "finish_reason": "stop",
+          "selected_source_record": {
+            "编号": "项目09-4",
+            "会议室": "R489",
+            "材料柜": "C310",
+            "联络码": "K1087",
+            "开始时间": "16:00"
+          }
+        },
+        {
+          "request_id": "quality-fact-13",
+          "target_id": "项目13-4",
+          "target_field": "会议室",
+          "expected_answer": "R628",
+          "raw_output": "C879",
+          "actual_output_tokens": 5,
+          "finish_reason": "stop",
+          "selected_source_record": {
+            "编号": "项目13-4",
+            "会议室": "R628",
+            "材料柜": "C879",
+            "联络码": "K5063",
+            "开始时间": "16:15"
+          }
+        }
+      ],
+      "effective_model_config": {
+        "model": "/workspace/W4-U3/cache/bf16/989aa7980e4cf806f80c7fef2b1adb7bc71aa306",
+        "dtype": "torch.bfloat16",
+        "quantization": null,
+        "max_model_len": 4096,
+        "seed": 20261112,
+        "enforce_eager": true,
+        "logprobs_mode": "raw_logprobs"
+      }
+    },
+    "awq": {
+      "checks_passed": true,
+      "request_count": 32,
+      "successful_requests": 32,
+      "correct_count": 31,
+      "accuracy": 0.96875,
+      "by_category_correct_count": {
+        "field_extraction": 16,
+        "fact_lookup": 15
+      },
+      "finish_reason_counts": {
+        "stop": 32
+      },
+      "output_token_count_histogram": {
+        "3": 7,
+        "4": 1,
+        "5": 8,
+        "6": 8,
+        "7": 8
+      },
+      "all_prompt_ids_equal_to_sent_inputs": true,
+      "all_request_body_hashes_reconstructed": true,
+      "errors": [
+        {
+          "request_id": "quality-fact-09",
+          "target_id": "项目09-4",
+          "target_field": "会议室",
+          "expected_answer": "R489",
+          "raw_output": "C310",
+          "actual_output_tokens": 5,
+          "finish_reason": "stop",
+          "selected_source_record": {
+            "编号": "项目09-4",
+            "会议室": "R489",
+            "材料柜": "C310",
+            "联络码": "K1087",
+            "开始时间": "16:00"
+          }
+        }
+      ],
+      "effective_model_config": {
+        "model": "/workspace/W4-U3/cache/awq/3ecffa0ceb27851800f45519bab9c457a04405e1",
+        "dtype": "torch.float16",
+        "quantization": "auto_awq",
+        "max_model_len": 4096,
+        "seed": 20261112,
+        "enforce_eager": true,
+        "logprobs_mode": "raw_logprobs"
+      }
+    }
+  },
+  "paired_outcomes": {
+    "regressions": [],
+    "improvements": [
+      "quality-fact-13"
+    ],
+    "unchanged_correct": 30,
+    "unchanged_incorrect": 1
+  },
+  "comparison_matches": true,
+  "execution_choice": {
+    "dtype": "float16",
+    "attempts": [
+      {
+        "dtype": "bfloat16",
+        "status": "unsupported",
+        "failure_kind": "compatibility"
+      },
+      {
+        "dtype": "float16",
+        "status": "passed",
+        "failure_kind": null
+      }
+    ],
+    "reference_report": "float16.json",
+    "activation_dtype_matches_bf16": false,
+    "full_model_cpu_reference": false,
+    "source_boundary": "Official AWQ card names the base repository, but not the exact source weight revision; compare fixed deployments, not proven identical-base pure quantization."
+  },
+  "issues": [],
+  "conclusion_boundaries": [
+    "32 fixed synthetic tasks only, one quality pass per deployment.",
+    "No production-quality, non-inferiority, or statistical-significance conclusion.",
+    "AWQ uses FP16 activation; baseline uses BF16; exact shared source-weight revision is not proven.",
+    "Local projection correctness and task scores answer different questions."
+  ],
+  "final_archive_verification": {
+    "verified_at": "2026-11-13T10:43:36.112452+00:00",
+    "source_archive": "case-20261113T103139Z-6eb079b8-1eb4d4.zip",
+    "source_archive_sha256": "60ed10eb5641b2d809835b5b2871e47c842166099776f12b463dd95899401501",
+    "quality_files_checked": 8,
+    "quality_files_unchanged": true,
+    "quality_file_sha256": {
+      "quality_inputs.json": "e331b964aa5b05f2531749cae45d5e2ff4fcb57e0333fcf40cef4bc1a7d1ffa6",
+      "quality_comparison.json": "cbc2c6ae476155bfd631f6390fc5a2f494eb57e224af27e62c702272d862942a",
+      "validation-bf16/quality/quality_inputs.json": "558ff991742354bc77dfecfa45c6d3fcd2e870ed5dd692d36cc39dc663a073b4",
+      "validation-bf16/quality/quality_raw.jsonl": "5af1acbb5a92bd160dd6fbc32307264fa9401cd59896b1afed675feb10be9a12",
+      "validation-bf16/quality/quality_report.json": "555dcc9b28d452b2540fd3997c0b5a6cf6f1c0812aeea5cd0754eeba7d01b946",
+      "validation-awq/quality/quality_inputs.json": "558ff991742354bc77dfecfa45c6d3fcd2e870ed5dd692d36cc39dc663a073b4",
+      "validation-awq/quality/quality_raw.jsonl": "aab1a1e913cc80dae15216e6852db710e8b1b9f77cea6a6a24d4a32b46f06e18",
+      "validation-awq/quality/quality_report.json": "833c7002305ff752681136ca14a1cd084e84063296bde57e7ea8354fe2ee31bf"
+    },
+    "execution_choice_unchanged": true,
+    "method": "byte hashes compared against previously audited first-round snapshot and final archive manifest; scoring not rerun",
+    "issues": []
+  }
+}

@@ -1,0 +1,9 @@
+W4_REFERENCE {"event": "reference_load_started", "device": "cpu", "dtype": "float32"}
+[transformers] `torch_dtype` is deprecated! Use `dtype` instead!
+Loading weights:   0%|          | 0/338 [00:00<?, ?it/s]Loading weights:   0%|          | 1/338 [00:00<00:40,  8.30it/s]Loading weights:  51%|█████     | 172/338 [00:00<00:00, 921.78it/s]Loading weights:  80%|████████  | 272/338 [00:00<00:00, 908.95it/s]Loading weights: 100%|██████████| 338/338 [00:00<00:00, 805.17it/s]
+W4_REFERENCE {"event": "reference_load_completed"}
+W4_REFERENCE {"event": "reference_backend_configured", "backend": "onednn_linear_cpu_fp32", "linear_count": 197, "converted_linear_count": 197, "mkldnn_matmul_fp32_precision": "ieee", "backend_fallback_reason": null, "tensor_validation": {"parameter_tensors": 58, "buffer_tensors": 396, "mkldnn_buffer_tensors": 394}}
+W4_REFERENCE {"event": "reference_case_started", "case_index": 0, "cases": 1, "prompt_tokens": 32, "generated_tokens": 8}
+W4_REFERENCE {"event": "reference_case_completed", "case_index": 0, "passed": true}
+W4_REFERENCE {"event": "reference_report_saving", "status": "passed"}
+W4_REFERENCE {"event": "reference_report_saved", "status": "passed"}

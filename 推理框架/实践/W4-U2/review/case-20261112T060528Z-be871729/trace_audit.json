@@ -1,0 +1,1401 @@
+{
+  "schema_version": 1,
+  "audit_type": "static_read_only_trace_inspection",
+  "created_at_utc": "2026-11-12T06:51:44.507906+00:00",
+  "source": {
+    "archive_path": "/root/workspace/learning/PlanA/case-20261112T060528Z-be871729-d8c74b.zip",
+    "archive_sha256": "a64d59315d129fe1fa753eb1849b715b0afce46f315aa2d020e73f499df38a86",
+    "archive_bytes": 4246618,
+    "rank0_zip_member": "case-20261112T060528Z-be871729/profile-budget-2048/traces/rank0.1794464973025665107.pt.trace.json.gz",
+    "rank0_gzip_sha256": "8d039d56e300fea930694657f87d090a7ae8dafe1e2d1ba6def0dc58a772e899",
+    "rank0_gzip_bytes": 1570532,
+    "rank0_json_sha256": "1b5179bd4cb2337d865de0fc71cc6ecd5a50429281f896adb4ed976302a2b2e8",
+    "rank0_json_bytes": 34234824,
+    "decompression_limit_bytes": 268435456,
+    "package_code_executed": false,
+    "source_archive_modified": false
+  },
+  "trace_metadata": {
+    "schemaVersion": 1,
+    "displayTimeUnit": "ms",
+    "baseTimeNanoseconds": 1790857026000000000,
+    "hip_driver_version": 70253211,
+    "hip_runtime_version": 70253211,
+    "roctracer_version": 4.1,
+    "profile_memory": 1,
+    "record_shapes": 1,
+    "distributedInfo": {
+      "backend": "nccl",
+      "rank": 0,
+      "world_size": 1,
+      "pg_count": 13,
+      "pg_config": [
+        {
+          "pg_name": "0",
+          "pg_desc": "default_pg",
+          "backend_config": "cuda:nccl",
+          "pg_size": 1,
+          "ranks": [
+            0
+          ]
+        },
+        {
+          "pg_name": "1",
+          "pg_desc": "undefined",
+          "backend_config": "cuda:nccl",
+          "pg_size": 1,
+          "ranks": [
+            0
+          ]
+        },
+        {
+          "pg_name": "2",
+          "pg_desc": "undefined",
+          "backend_config": "cpu:gloo,cuda:gloo",
+          "pg_size": 1,
+          "ranks": [
+            0
+          ]
+        },
+        {
+          "pg_name": "3",
+          "pg_desc": "undefined",
+          "backend_config": "cuda:nccl",
+          "pg_size": 1,
+          "ranks": [
+            0
+          ]
+        },
+        {
+          "pg_name": "4",
+          "pg_desc": "undefined",
+          "backend_config": "cpu:gloo,cuda:gloo",
+          "pg_size": 1,
+          "ranks": [
+            0
+          ]
+        },
+        {
+          "pg_name": "5",
+          "pg_desc": "undefined",
+          "backend_config": "cuda:nccl",
+          "pg_size": 1,
+          "ranks": [
+            0
+          ]
+        },
+        {
+          "pg_name": "6",
+          "pg_desc": "undefined",
+          "backend_config": "cpu:gloo,cuda:gloo",
+          "pg_size": 1,
+          "ranks": [
+            0
+          ]
+        },
+        {
+          "pg_name": "7",
+          "pg_desc": "undefined",
+          "backend_config": "cuda:nccl",
+          "pg_size": 1,
+          "ranks": [
+            0
+          ]
+        },
+        {
+          "pg_name": "8",
+          "pg_desc": "undefined",
+          "backend_config": "cpu:gloo,cuda:gloo",
+          "pg_size": 1,
+          "ranks": [
+            0
+          ]
+        },
+        {
+          "pg_name": "9",
+          "pg_desc": "undefined",
+          "backend_config": "cuda:nccl",
+          "pg_size": 1,
+          "ranks": [
+            0
+          ]
+        },
+        {
+          "pg_name": "10",
+          "pg_desc": "undefined",
+          "backend_config": "cpu:gloo,cuda:gloo",
+          "pg_size": 1,
+          "ranks": [
+            0
+          ]
+        },
+        {
+          "pg_name": "11",
+          "pg_desc": "undefined",
+          "backend_config": "cuda:nccl",
+          "pg_size": 1,
+          "ranks": [
+            0
+          ]
+        },
+        {
+          "pg_name": "12",
+          "pg_desc": "undefined",
+          "backend_config": "cpu:gloo,cuda:gloo",
+          "pg_size": 1,
+          "ranks": [
+            0
+          ]
+        }
+      ],
+      "nccl_version": "2.27.7"
+    }
+  },
+  "trace_span": {
+    "raw_trace_span_event": {
+      "ph": "X",
+      "cat": "Trace",
+      "ts": 3607945829145.841,
+      "dur": 720151.278,
+      "pid": "Spans",
+      "tid": "PyTorch Profiler",
+      "name": "PyTorch Profiler (0)",
+      "args": {
+        "Op count": 0
+      }
+    },
+    "utc_start": "2026-11-12T06:29:31.829146+00:00",
+    "utc_end": "2026-11-12T06:29:32.549297+00:00",
+    "first_kernel_ts_us": 3607945837777.51,
+    "last_kernel_end_ts_us": 3607946546347.885
+  },
+  "event_count": 91465,
+  "category_counts": {
+    "user_annotation": 147,
+    "cpu_op": 45615,
+    "cpu_instant_event": 10830,
+    "cuda_runtime": 10460,
+    "ac2g": 17395,
+    "gpu_memcpy": 95,
+    "kernel": 6840,
+    "gpu_user_annotation": 20,
+    "": 62,
+    "Trace": 1
+  },
+  "phase_counts": {
+    "X": 63178,
+    "i": 10832,
+    "f": 10458,
+    "s": 6937,
+    "M": 60
+  },
+  "annotation_counts": {
+    "host_execute_scope_count": 21,
+    "gpu_execute_scope_count": 20,
+    "host_nonempty_execute_scope_count": 20,
+    "host_empty_execute_scope_count": 1,
+    "gpu_empty_execute_scope_count": 0,
+    "host_batch_types": {
+      "context_only": 1,
+      "mixed": 4,
+      "generation_only": 15,
+      "empty": 1
+    },
+    "total_context_scheduled_tokens": 6656,
+    "total_generation_scheduled_tokens": 60,
+    "scheduled_token_histogram": {
+      "256": 1,
+      "2048": 3,
+      "264": 1,
+      "4": 11,
+      "3": 2,
+      "1": 2,
+      "0": 1
+    }
+  },
+  "batch_annotation_format": {
+    "observed_regex": "execute_context_(\\d+)\\((\\d+)\\)_generation_(\\d+)\\((\\d+)\\)",
+    "effective_detailed_trace_annotation": false,
+    "effective_scheduled_token_budget": 2048,
+    "host_batch_relative_origin_ts_us": 3607945836383.315,
+    "host_batches": [
+      {
+        "host_sequence": 1,
+        "name": "execute_context_1(256)_generation_0(0)",
+        "context_requests": 1,
+        "context_scheduled_tokens": 256,
+        "generation_requests": 0,
+        "generation_scheduled_tokens": 0,
+        "total_scheduled_tokens": 256,
+        "batch_type": "context_only",
+        "host_external_id": 4,
+        "host_ts_us": 3607945836383.315,
+        "host_dur_us": 21489.129,
+        "host_relative_ms": 0.0,
+        "gpu_annotation_count": 1,
+        "gpu_annotation_events": [
+          {
+            "ph": "X",
+            "cat": "gpu_user_annotation",
+            "name": "execute_context_1(256)_generation_0(0)",
+            "pid": 2,
+            "tid": 0,
+            "ts": 3607945837765.109,
+            "dur": 29437.759,
+            "args": {
+              "External id": 4
+            }
+          }
+        ]
+      },
+      {
+        "host_sequence": 2,
+        "name": "execute_context_1(2047)_generation_1(1)",
+        "context_requests": 1,
+        "context_scheduled_tokens": 2047,
+        "generation_requests": 1,
+        "generation_scheduled_tokens": 1,
+        "total_scheduled_tokens": 2048,
+        "batch_type": "mixed",
+        "host_external_id": 2555,
+        "host_ts_us": 3607945868249.331,
+        "host_dur_us": 18614.363,
+        "host_relative_ms": 31.86601611328125,
+        "gpu_annotation_count": 1,
+        "gpu_annotation_events": [
+          {
+            "ph": "X",
+            "cat": "gpu_user_annotation",
+            "name": "execute_context_1(2047)_generation_1(1)",
+            "pid": 2,
+            "tid": 0,
+            "ts": 3607945868546.766,
+            "dur": 125330.069,
+            "args": {
+              "External id": 2555
+            }
+          }
+        ]
+      },
+      {
+        "host_sequence": 3,
+        "name": "execute_context_3(2047)_generation_1(1)",
+        "context_requests": 3,
+        "context_scheduled_tokens": 2047,
+        "generation_requests": 1,
+        "generation_scheduled_tokens": 1,
+        "total_scheduled_tokens": 2048,
+        "batch_type": "mixed",
+        "host_external_id": 5106,
+        "host_ts_us": 3607945995201.054,
+        "host_dur_us": 19697.779,
+        "host_relative_ms": 158.8177392578125,
+        "gpu_annotation_count": 1,
+        "gpu_annotation_events": [
+          {
+            "ph": "X",
+            "cat": "gpu_user_annotation",
+            "name": "execute_context_3(2047)_generation_1(1)",
+            "pid": 2,
+            "tid": 0,
+            "ts": 3607945995634.054,
+            "dur": 143307.918,
+            "args": {
+              "External id": 5106
+            }
+          }
+        ]
+      },
+      {
+        "host_sequence": 4,
+        "name": "execute_context_1(2045)_generation_3(3)",
+        "context_requests": 1,
+        "context_scheduled_tokens": 2045,
+        "generation_requests": 3,
+        "generation_scheduled_tokens": 3,
+        "total_scheduled_tokens": 2048,
+        "batch_type": "mixed",
+        "host_external_id": 7663,
+        "host_ts_us": 3607946140705.272,
+        "host_dur_us": 19307.991,
+        "host_relative_ms": 304.32195703125,
+        "gpu_annotation_count": 1,
+        "gpu_annotation_events": [
+          {
+            "ph": "X",
+            "cat": "gpu_user_annotation",
+            "name": "execute_context_1(2045)_generation_3(3)",
+            "pid": 2,
+            "tid": 0,
+            "ts": 3607946141179.936,
+            "dur": 146599.4,
+            "args": {
+              "External id": 7663
+            }
+          }
+        ]
+      },
+      {
+        "host_sequence": 5,
+        "name": "execute_context_1(261)_generation_3(3)",
+        "context_requests": 1,
+        "context_scheduled_tokens": 261,
+        "generation_requests": 3,
+        "generation_scheduled_tokens": 3,
+        "total_scheduled_tokens": 264,
+        "batch_type": "mixed",
+        "host_external_id": 10166,
+        "host_ts_us": 3607946289114.335,
+        "host_dur_us": 19099.492,
+        "host_relative_ms": 452.73102001953123,
+        "gpu_annotation_count": 1,
+        "gpu_annotation_events": [
+          {
+            "ph": "X",
+            "cat": "gpu_user_annotation",
+            "name": "execute_context_1(261)_generation_3(3)",
+            "pid": 2,
+            "tid": 0,
+            "ts": 3607946289565.016,
+            "dur": 69904.9,
+            "args": {
+              "External id": 10166
+            }
+          }
+        ]
+      },
+      {
+        "host_sequence": 6,
+        "name": "execute_context_0(0)_generation_4(4)",
+        "context_requests": 0,
+        "context_scheduled_tokens": 0,
+        "generation_requests": 4,
+        "generation_scheduled_tokens": 4,
+        "total_scheduled_tokens": 4,
+        "batch_type": "generation_only",
+        "host_external_id": 12670,
+        "host_ts_us": 3607946360680.346,
+        "host_dur_us": 13154.032,
+        "host_relative_ms": 524.29703125,
+        "gpu_annotation_count": 1,
+        "gpu_annotation_events": [
+          {
+            "ph": "X",
+            "cat": "gpu_user_annotation",
+            "name": "execute_context_0(0)_generation_4(4)",
+            "pid": 2,
+            "tid": 0,
+            "ts": 3607946361082.835,
+            "dur": 12791.934,
+            "args": {
+              "External id": 12670
+            }
+          }
+        ]
+      },
+      {
+        "host_sequence": 7,
+        "name": "execute_context_0(0)_generation_4(4)",
+        "context_requests": 0,
+        "context_scheduled_tokens": 0,
+        "generation_requests": 4,
+        "generation_scheduled_tokens": 4,
+        "total_scheduled_tokens": 4,
+        "batch_type": "generation_only",
+        "host_external_id": 14888,
+        "host_ts_us": 3607946374910.262,
+        "host_dur_us": 10576.005,
+        "host_relative_ms": 538.526947265625,
+        "gpu_annotation_count": 1,
+        "gpu_annotation_events": [
+          {
+            "ph": "X",
+            "cat": "gpu_user_annotation",
+            "name": "execute_context_0(0)_generation_4(4)",
+            "pid": 2,
+            "tid": 0,
+            "ts": 3607946375228.797,
+            "dur": 10307.979,
+            "args": {
+              "External id": 14888
+            }
+          }
+        ]
+      },
+      {
+        "host_sequence": 8,
+        "name": "execute_context_0(0)_generation_4(4)",
+        "context_requests": 0,
+        "context_scheduled_tokens": 0,
+        "generation_requests": 4,
+        "generation_scheduled_tokens": 4,
+        "total_scheduled_tokens": 4,
+        "batch_type": "generation_only",
+        "host_external_id": 17092,
+        "host_ts_us": 3607946386533.732,
+        "host_dur_us": 10258.157,
+        "host_relative_ms": 550.1504169921875,
+        "gpu_annotation_count": 1,
+        "gpu_annotation_events": [
+          {
+            "ph": "X",
+            "cat": "gpu_user_annotation",
+            "name": "execute_context_0(0)_generation_4(4)",
+            "pid": 2,
+            "tid": 0,
+            "ts": 3607946386866.923,
+            "dur": 9972.717,
+            "args": {
+              "External id": 17092
+            }
+          }
+        ]
+      },
+      {
+        "host_sequence": 9,
+        "name": "execute_context_0(0)_generation_4(4)",
+        "context_requests": 0,
+        "context_scheduled_tokens": 0,
+        "generation_requests": 4,
+        "generation_scheduled_tokens": 4,
+        "total_scheduled_tokens": 4,
+        "batch_type": "generation_only",
+        "host_external_id": 19296,
+        "host_ts_us": 3607946397825.214,
+        "host_dur_us": 12380.776,
+        "host_relative_ms": 561.4418989257813,
+        "gpu_annotation_count": 1,
+        "gpu_annotation_events": [
+          {
+            "ph": "X",
+            "cat": "gpu_user_annotation",
+            "name": "execute_context_0(0)_generation_4(4)",
+            "pid": 2,
+            "tid": 0,
+            "ts": 3607946398175.867,
+            "dur": 12070.43,
+            "args": {
+              "External id": 19296
+            }
+          }
+        ]
+      },
+      {
+        "host_sequence": 10,
+        "name": "execute_context_0(0)_generation_4(4)",
+        "context_requests": 0,
+        "context_scheduled_tokens": 0,
+        "generation_requests": 4,
+        "generation_scheduled_tokens": 4,
+        "total_scheduled_tokens": 4,
+        "batch_type": "generation_only",
+        "host_external_id": 21500,
+        "host_ts_us": 3607946411258.544,
+        "host_dur_us": 10551.376,
+        "host_relative_ms": 574.8752290039063,
+        "gpu_annotation_count": 1,
+        "gpu_annotation_events": [
+          {
+            "ph": "X",
+            "cat": "gpu_user_annotation",
+            "name": "execute_context_0(0)_generation_4(4)",
+            "pid": 2,
+            "tid": 0,
+            "ts": 3607946411583.665,
+            "dur": 10274.228,
+            "args": {
+              "External id": 21500
+            }
+          }
+        ]
+      },
+      {
+        "host_sequence": 11,
+        "name": "execute_context_0(0)_generation_4(4)",
+        "context_requests": 0,
+        "context_scheduled_tokens": 0,
+        "generation_requests": 4,
+        "generation_scheduled_tokens": 4,
+        "total_scheduled_tokens": 4,
+        "batch_type": "generation_only",
+        "host_external_id": 23704,
+        "host_ts_us": 3607946422847.944,
+        "host_dur_us": 11224.542,
+        "host_relative_ms": 586.46462890625,
+        "gpu_annotation_count": 1,
+        "gpu_annotation_events": [
+          {
+            "ph": "X",
+            "cat": "gpu_user_annotation",
+            "name": "execute_context_0(0)_generation_4(4)",
+            "pid": 2,
+            "tid": 0,
+            "ts": 3607946423181.842,
+            "dur": 10937.202,
+            "args": {
+              "External id": 23704
+            }
+          }
+        ]
+      },
+      {
+        "host_sequence": 12,
+        "name": "execute_context_0(0)_generation_4(4)",
+        "context_requests": 0,
+        "context_scheduled_tokens": 0,
+        "generation_requests": 4,
+        "generation_scheduled_tokens": 4,
+        "total_scheduled_tokens": 4,
+        "batch_type": "generation_only",
+        "host_external_id": 25908,
+        "host_ts_us": 3607946435130.691,
+        "host_dur_us": 12213.537,
+        "host_relative_ms": 598.7473759765625,
+        "gpu_annotation_count": 1,
+        "gpu_annotation_events": [
+          {
+            "ph": "X",
+            "cat": "gpu_user_annotation",
+            "name": "execute_context_0(0)_generation_4(4)",
+            "pid": 2,
+            "tid": 0,
+            "ts": 3607946435449.371,
+            "dur": 11940.749,
+            "args": {
+              "External id": 25908
+            }
+          }
+        ]
+      },
+      {
+        "host_sequence": 13,
+        "name": "execute_context_0(0)_generation_4(4)",
+        "context_requests": 0,
+        "context_scheduled_tokens": 0,
+        "generation_requests": 4,
+        "generation_scheduled_tokens": 4,
+        "total_scheduled_tokens": 4,
+        "batch_type": "generation_only",
+        "host_external_id": 28112,
+        "host_ts_us": 3607946448383.452,
+        "host_dur_us": 10487.446,
+        "host_relative_ms": 612.0001372070312,
+        "gpu_annotation_count": 1,
+        "gpu_annotation_events": [
+          {
+            "ph": "X",
+            "cat": "gpu_user_annotation",
+            "name": "execute_context_0(0)_generation_4(4)",
+            "pid": 2,
+            "tid": 0,
+            "ts": 3607946448713.808,
+            "dur": 10204.818,
+            "args": {
+              "External id": 28112
+            }
+          }
+        ]
+      },
+      {
+        "host_sequence": 14,
+        "name": "execute_context_0(0)_generation_4(4)",
+        "context_requests": 0,
+        "context_scheduled_tokens": 0,
+        "generation_requests": 4,
+        "generation_scheduled_tokens": 4,
+        "total_scheduled_tokens": 4,
+        "batch_type": "generation_only",
+        "host_external_id": 30316,
+        "host_ts_us": 3607946459917.463,
+        "host_dur_us": 10180.187,
+        "host_relative_ms": 623.5341479492188,
+        "gpu_annotation_count": 1,
+        "gpu_annotation_events": [
+          {
+            "ph": "X",
+            "cat": "gpu_user_annotation",
+            "name": "execute_context_0(0)_generation_4(4)",
+            "pid": 2,
+            "tid": 0,
+            "ts": 3607946460244.153,
+            "dur": 9903.426,
+            "args": {
+              "External id": 30316
+            }
+          }
+        ]
+      },
+      {
+        "host_sequence": 15,
+        "name": "execute_context_0(0)_generation_4(4)",
+        "context_requests": 0,
+        "context_scheduled_tokens": 0,
+        "generation_requests": 4,
+        "generation_scheduled_tokens": 4,
+        "total_scheduled_tokens": 4,
+        "batch_type": "generation_only",
+        "host_external_id": 32520,
+        "host_ts_us": 3607946471127.405,
+        "host_dur_us": 12259.756,
+        "host_relative_ms": 634.74408984375,
+        "gpu_annotation_count": 1,
+        "gpu_annotation_events": [
+          {
+            "ph": "X",
+            "cat": "gpu_user_annotation",
+            "name": "execute_context_0(0)_generation_4(4)",
+            "pid": 2,
+            "tid": 0,
+            "ts": 3607946471468.327,
+            "dur": 11965.229,
+            "args": {
+              "External id": 32520
+            }
+          }
+        ]
+      },
+      {
+        "host_sequence": 16,
+        "name": "execute_context_0(0)_generation_4(4)",
+        "context_requests": 0,
+        "context_scheduled_tokens": 0,
+        "generation_requests": 4,
+        "generation_scheduled_tokens": 4,
+        "total_scheduled_tokens": 4,
+        "batch_type": "generation_only",
+        "host_external_id": 34724,
+        "host_ts_us": 3607946484423.236,
+        "host_dur_us": 10450.186,
+        "host_relative_ms": 648.0399208984375,
+        "gpu_annotation_count": 1,
+        "gpu_annotation_events": [
+          {
+            "ph": "X",
+            "cat": "gpu_user_annotation",
+            "name": "execute_context_0(0)_generation_4(4)",
+            "pid": 2,
+            "tid": 0,
+            "ts": 3607946484758.634,
+            "dur": 10158.947,
+            "args": {
+              "External id": 34724
+            }
+          }
+        ]
+      },
+      {
+        "host_sequence": 17,
+        "name": "execute_context_0(0)_generation_3(3)",
+        "context_requests": 0,
+        "context_scheduled_tokens": 0,
+        "generation_requests": 3,
+        "generation_scheduled_tokens": 3,
+        "total_scheduled_tokens": 3,
+        "batch_type": "generation_only",
+        "host_external_id": 36927,
+        "host_ts_us": 3607946495930.317,
+        "host_dur_us": 10273.096,
+        "host_relative_ms": 659.547001953125,
+        "gpu_annotation_count": 1,
+        "gpu_annotation_events": [
+          {
+            "ph": "X",
+            "cat": "gpu_user_annotation",
+            "name": "execute_context_0(0)_generation_3(3)",
+            "pid": 2,
+            "tid": 0,
+            "ts": 3607946496253.459,
+            "dur": 9974.178,
+            "args": {
+              "External id": 36927
+            }
+          }
+        ]
+      },
+      {
+        "host_sequence": 18,
+        "name": "execute_context_0(0)_generation_3(3)",
+        "context_requests": 0,
+        "context_scheduled_tokens": 0,
+        "generation_requests": 3,
+        "generation_scheduled_tokens": 3,
+        "total_scheduled_tokens": 3,
+        "batch_type": "generation_only",
+        "host_external_id": 39130,
+        "host_ts_us": 3607946507211.418,
+        "host_dur_us": 13072.083,
+        "host_relative_ms": 670.8281030273438,
+        "gpu_annotation_count": 1,
+        "gpu_annotation_events": [
+          {
+            "ph": "X",
+            "cat": "gpu_user_annotation",
+            "name": "execute_context_0(0)_generation_3(3)",
+            "pid": 2,
+            "tid": 0,
+            "ts": 3607946507568.444,
+            "dur": 12759.866,
+            "args": {
+              "External id": 39130
+            }
+          }
+        ]
+      },
+      {
+        "host_sequence": 19,
+        "name": "execute_context_0(0)_generation_1(1)",
+        "context_requests": 0,
+        "context_scheduled_tokens": 0,
+        "generation_requests": 1,
+        "generation_scheduled_tokens": 1,
+        "total_scheduled_tokens": 1,
+        "batch_type": "generation_only",
+        "host_external_id": 41331,
+        "host_ts_us": 3607946521319.165,
+        "host_dur_us": 11504.131,
+        "host_relative_ms": 684.9358500976563,
+        "gpu_annotation_count": 1,
+        "gpu_annotation_events": [
+          {
+            "ph": "X",
+            "cat": "gpu_user_annotation",
+            "name": "execute_context_0(0)_generation_1(1)",
+            "pid": 2,
+            "tid": 0,
+            "ts": 3607946521650.678,
+            "dur": 11207.147,
+            "args": {
+              "External id": 41331
+            }
+          }
+        ]
+      },
+      {
+        "host_sequence": 20,
+        "name": "execute_context_0(0)_generation_1(1)",
+        "context_requests": 0,
+        "context_scheduled_tokens": 0,
+        "generation_requests": 1,
+        "generation_scheduled_tokens": 1,
+        "total_scheduled_tokens": 1,
+        "batch_type": "generation_only",
+        "host_external_id": 43532,
+        "host_ts_us": 3607946533754.851,
+        "host_dur_us": 11842.179,
+        "host_relative_ms": 697.3715361328125,
+        "gpu_annotation_count": 1,
+        "gpu_annotation_events": [
+          {
+            "ph": "X",
+            "cat": "gpu_user_annotation",
+            "name": "execute_context_0(0)_generation_1(1)",
+            "pid": 2,
+            "tid": 0,
+            "ts": 3607946533952.961,
+            "dur": 11675.1,
+            "args": {
+              "External id": 43532
+            }
+          }
+        ]
+      },
+      {
+        "host_sequence": 21,
+        "name": "execute_context_0(0)_generation_0(0)",
+        "context_requests": 0,
+        "context_scheduled_tokens": 0,
+        "generation_requests": 0,
+        "generation_scheduled_tokens": 0,
+        "total_scheduled_tokens": 0,
+        "batch_type": "empty",
+        "host_external_id": 45732,
+        "host_ts_us": 3607946546561.595,
+        "host_dur_us": 139.499,
+        "host_relative_ms": 710.1782802734375,
+        "gpu_annotation_count": 0,
+        "gpu_annotation_events": []
+      }
+    ]
+  },
+  "derived_index_observations": {
+    "source_index_zip_member": "case-20261112T060528Z-be871729/profile-budget-2048/trace_index.json",
+    "index_batch_entries": 41,
+    "name_matched_raw_annotations": 41,
+    "positional_pid_tid_ts_dur_mismatch_count": 0,
+    "index_host_entries": 21,
+    "index_gpu_entries": 20,
+    "source_analyzer_zip_member": "case-20261112T060528Z-be871729/source/run.py",
+    "source_analyzer_lines": [
+      588,
+      589,
+      590,
+      591,
+      592,
+      593,
+      594
+    ],
+    "source_analyzer_category_filter_present": false,
+    "gpu_duration_written_under_field": "host_scope_dur_us"
+  },
+  "correlation_audit": {
+    "runtime_event_count": 10460,
+    "runtime_missing_correlation_count": 0,
+    "runtime_unique_correlation_count": 10460,
+    "runtime_duplicate_correlation_count": 0,
+    "gpu_kernel_and_copy_event_count": 6935,
+    "gpu_missing_correlation_count": 0,
+    "gpu_unique_correlation_count": 6935,
+    "gpu_duplicate_correlation_count": 0,
+    "gpu_to_runtime_match_count_histogram": {
+      "1": 6935
+    },
+    "launch_or_copy_runtime_to_gpu_match_count_histogram": {
+      "1": 6935
+    },
+    "matched_runtime_names": {
+      "hipMemcpyAsync": 95,
+      "hipModuleLaunchKernel": 300,
+      "hipLaunchKernel": 5980,
+      "hipExtModuleLaunchKernel": 560
+    },
+    "gpu_start_before_runtime_start_count": 0,
+    "gpu_with_external_id_count": 6775,
+    "gpu_missing_external_id_count": 160,
+    "gpu_missing_external_id_names": {
+      "_apply_write_kernel": 15,
+      "_prepare_prefill_inputs_kernel": 5,
+      "_prepare_pos_seq_lens_kernel": 20,
+      "_combine_sampled_and_draft_tokens_kernel": 20,
+      "_gather_block_tables_kernel": 20,
+      "_compute_slot_mappings_kernel": 20,
+      "_gumbel_sample_kernel": 20,
+      "_get_num_sampled_and_rejected_kernel": 20,
+      "_post_update_kernel": 20
+    },
+    "gpu_runtime_external_id_mismatch_count": 0,
+    "runtime_with_external_id_count": 9014,
+    "runtime_external_id_to_cpu_scope_match_histogram": {
+      "1": 9014
+    },
+    "gpu_annotation_to_host_scope_match_histogram": {
+      "1": 20
+    },
+    "ac2g_event_count": 17395,
+    "ac2g_unique_id_count": 10460,
+    "gpu_flow_exact_endpoint_mismatch_count": 0,
+    "single_start_flow_ids": [
+      88,
+      109
+    ],
+    "single_start_flow_runtime_names": {
+      "hipMalloc": 2
+    },
+    "single_end_flow_count": 3523,
+    "single_end_flow_runtime_names": {
+      "hipStreamIsCapturing": 97,
+      "hipEventRecord": 135,
+      "hipPointerGetAttribute": 2610,
+      "hipPointerGetAttributes": 40,
+      "hipGetDevicePropertiesR0600": 560,
+      "hipStreamWaitEvent": 20,
+      "hipEventDestroy": 40,
+      "hipEventSynchronize": 20,
+      "hipDeviceSynchronize": 1
+    }
+  },
+  "memory_and_copy_observations": {
+    "memory_events": [
+      {
+        "device_type": 0,
+        "device_id": -1,
+        "event_count": 40,
+        "positive_bytes_events": 20,
+        "negative_bytes_events": 20,
+        "min_total_allocated_bytes": 0,
+        "max_total_allocated_bytes": 4,
+        "observed_total_reserved_bytes": [
+          0
+        ]
+      },
+      {
+        "device_type": 1,
+        "device_id": 0,
+        "event_count": 10790,
+        "positive_bytes_events": 5395,
+        "negative_bytes_events": 5395,
+        "min_total_allocated_bytes": 35685465600,
+        "max_total_allocated_bytes": 35821876736,
+        "observed_total_reserved_bytes": [
+          35991322624,
+          35993419776,
+          35995516928
+        ]
+      }
+    ],
+    "allocator_runtime_events": [
+      {
+        "ph": "X",
+        "cat": "cuda_runtime",
+        "name": "hipMalloc",
+        "pid": 12210,
+        "tid": 12210,
+        "ts": 3607945839363.19,
+        "dur": 117.909,
+        "args": {
+          "External id": 182,
+          "bytes": 2097152,
+          "cid": 108,
+          "correlation": 88,
+          "ptr": "0xbda12f684bda1000"
+        }
+      },
+      {
+        "ph": "X",
+        "cat": "cuda_runtime",
+        "name": "hipMalloc",
+        "pid": 12210,
+        "tid": 12210,
+        "ts": 3607945840041.746,
+        "dur": 66.26,
+        "args": {
+          "External id": 235,
+          "bytes": 2097152,
+          "cid": 108,
+          "correlation": 109,
+          "ptr": "0x7ffda96c1101"
+        }
+      }
+    ],
+    "gpu_copy_name_counts": {
+      "Memcpy DtoD (Device -> Device)": 95
+    },
+    "gpu_copy_total_bytes": 30768,
+    "copy_direction_labels_are_raw_exported_values": true,
+    "named_collective_event_count": 0,
+    "named_collective_search_regex": "nccl|rccl|gloo|all.?reduce|all.?gather|reduce.?scatter"
+  },
+  "warnings": [
+    {
+      "file": "case-20261112T060528Z-be871729/profile-budget-2048/server.log",
+      "line": 120,
+      "raw_line": "ERROR: External init callback must run in same thread as registerClient (-2081425856 != -684724224)",
+      "phase_in_log": "profiler_initialization",
+      "nearby_lines": [
+        {
+          "line": 116,
+          "text": "(APIServer pid=11943) INFO 11-12 06:29:31 [api_router.py:23] Starting profiler..."
+        },
+        {
+          "line": 117,
+          "text": "(EngineCore pid=12210) INFO 11-12 06:29:31 [wrapper.py:174] Torch profiling enabled. Traces will be saved to: /workspace/W4-U2/runs/case-20261112T060528Z-be871729/profile-budget-2048/traces"
+        },
+        {
+          "line": 118,
+          "text": "(APIServer pid=11943) /usr/local/lib/python3.12/dist-packages/torch/profiler/profiler.py:224: UserWarning: Warning: Profiler clears events at the end of each cycle.Only events from the current cycle will be reported.To keep events across cycles, set acc_events=True."
+        },
+        {
+          "line": 119,
+          "text": "(APIServer pid=11943)   _warn_once("
+        },
+        {
+          "line": 120,
+          "text": "ERROR: External init callback must run in same thread as registerClient (-2081425856 != -684724224)"
+        },
+        {
+          "line": 121,
+          "text": "(EngineCore pid=12210) /usr/local/lib/python3.12/dist-packages/torch/profiler/profiler.py:224: UserWarning: Warning: Profiler clears events at the end of each cycle.Only events from the current cycle will be reported.To keep events across cycles, set acc_events=True."
+        },
+        {
+          "line": 122,
+          "text": "(EngineCore pid=12210)   _warn_once("
+        },
+        {
+          "line": 123,
+          "text": "(APIServer pid=11943) INFO 11-12 06:29:31 [api_router.py:25] Profiler started."
+        },
+        {
+          "line": 124,
+          "text": "(APIServer pid=11943) INFO:     127.0.0.1:53228 - \"POST /start_profile HTTP/1.1\" 200 OK"
+        }
+      ]
+    },
+    {
+      "file": "case-20261112T060528Z-be871729/profile-budget-2048/server.log",
+      "line": 130,
+      "raw_line": "[rank0]:[W1112 06:29:32.245641197 collection.cpp:1148] Warning: ROCTracer produced duplicate flow start: 2 (function operator())",
+      "phase_in_log": "profiler_stop_or_export",
+      "nearby_lines": [
+        {
+          "line": 126,
+          "text": "(APIServer pid=11943) INFO:     127.0.0.1:53246 - \"POST /v1/completions HTTP/1.1\" 200 OK"
+        },
+        {
+          "line": 127,
+          "text": "(APIServer pid=11943) INFO:     127.0.0.1:53248 - \"POST /v1/completions HTTP/1.1\" 200 OK"
+        },
+        {
+          "line": 128,
+          "text": "(APIServer pid=11943) INFO:     127.0.0.1:53258 - \"POST /v1/completions HTTP/1.1\" 200 OK"
+        },
+        {
+          "line": 129,
+          "text": "(APIServer pid=11943) INFO 11-12 06:29:32 [api_router.py:31] Stopping profiler..."
+        },
+        {
+          "line": 130,
+          "text": "[rank0]:[W1112 06:29:32.245641197 collection.cpp:1148] Warning: ROCTracer produced duplicate flow start: 2 (function operator())"
+        },
+        {
+          "line": 131,
+          "text": "(EngineCore pid=12210) -------------------------------------------------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  "
+        },
+        {
+          "line": 132,
+          "text": "(EngineCore pid=12210)                                                    Name    Self CPU %      Self CPU   CPU total %     CPU total  CPU time avg     Self CUDA   Self CUDA %    CUDA total  CUDA time avg       CPU Mem  Self CPU Mem      CUDA Mem  Self CUDA Mem    # of Calls  "
+        },
+        {
+          "line": 133,
+          "text": "(EngineCore pid=12210) -------------------------------------------------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  ------------  "
+        },
+        {
+          "line": 134,
+          "text": "(EngineCore pid=12210)                                                aten::mm         1.11%       7.739ms         1.43%       9.985ms      23.773us     269.942ms        45.92%     269.942ms     642.719us           0 B           0 B       7.30 GB       7.30 GB           420  "
+        }
+      ]
+    }
+  ],
+  "warning_scope_observations": {
+    "callback_error_phase": "between profiler Starting and Profiler started",
+    "rank0_export_present": true,
+    "process_exit": {
+      "returncode": 0,
+      "stopped_at": "2026-11-12T06:29:38.075870+00:00"
+    },
+    "runtime_gpu_pairing_checked_by_correlation_and_flow_endpoints": true,
+    "missing_gpu_external_ids_observed": true,
+    "http_request_kernel_mapping_present": false,
+    "warning_cause_inferred": false
+  },
+  "profile_separation": {
+    "measure_rounds": [
+      {
+        "command_file": "case-20261112T060528Z-be871729/round-01-budget-512/command.json",
+        "profiler_run": false,
+        "custom_scopes": "0",
+        "profiler_config_argument_present": false,
+        "started_at": "2026-11-12T06:12:18.712302+00:00"
+      },
+      {
+        "command_file": "case-20261112T060528Z-be871729/round-02-budget-2048/command.json",
+        "profiler_run": false,
+        "custom_scopes": "0",
+        "profiler_config_argument_present": false,
+        "started_at": "2026-11-12T06:18:50.312752+00:00"
+      },
+      {
+        "command_file": "case-20261112T060528Z-be871729/round-03-budget-2048/command.json",
+        "profiler_run": false,
+        "custom_scopes": "0",
+        "profiler_config_argument_present": false,
+        "started_at": "2026-11-12T06:25:26.402025+00:00"
+      },
+      {
+        "command_file": "case-20261112T060528Z-be871729/round-04-budget-512/command.json",
+        "profiler_run": false,
+        "custom_scopes": "0",
+        "profiler_config_argument_present": false,
+        "started_at": "2026-11-12T06:26:18.340020+00:00"
+      },
+      {
+        "command_file": "case-20261112T060528Z-be871729/round-05-budget-512/command.json",
+        "profiler_run": false,
+        "custom_scopes": "0",
+        "profiler_config_argument_present": false,
+        "started_at": "2026-11-12T06:27:14.986979+00:00"
+      },
+      {
+        "command_file": "case-20261112T060528Z-be871729/round-06-budget-2048/command.json",
+        "profiler_run": false,
+        "custom_scopes": "0",
+        "profiler_config_argument_present": false,
+        "started_at": "2026-11-12T06:28:09.158786+00:00"
+      }
+    ],
+    "performance_round_ids": [
+      "round-01-budget-512",
+      "round-02-budget-2048",
+      "round-03-budget-2048",
+      "round-04-budget-512",
+      "round-05-budget-512",
+      "round-06-budget-2048"
+    ],
+    "profile_command": {
+      "argv": [
+        "/usr/bin/python3",
+        "-m",
+        "vllm.entrypoints.cli.main",
+        "serve",
+        "/workspace/W4-U2/cache/989aa7980e4cf806f80c7fef2b1adb7bc71aa306",
+        "--served-model-name",
+        "w4-u2-qwen-bf16",
+        "--host",
+        "127.0.0.1",
+        "--port",
+        "34163",
+        "--dtype",
+        "bfloat16",
+        "--tensor-parallel-size",
+        "1",
+        "--pipeline-parallel-size",
+        "1",
+        "--max-model-len",
+        "4096",
+        "--max-num-seqs",
+        "16",
+        "--max-num-batched-tokens",
+        "2048",
+        "--gpu-memory-utilization",
+        "0.70",
+        "--enable-chunked-prefill",
+        "--no-enable-prefix-caching",
+        "--no-async-scheduling",
+        "--enforce-eager",
+        "--generation-config",
+        "vllm",
+        "--seed",
+        "20261112",
+        "--no-enable-log-requests",
+        "--logprobs-mode",
+        "raw_logprobs",
+        "--profiler-config",
+        "{\"profiler\": \"torch\", \"torch_profiler_dir\": \"/workspace/W4-U2/runs/case-20261112T060528Z-be871729/profile-budget-2048/traces\", \"torch_profiler_with_stack\": false, \"torch_profiler_use_gzip\": true, \"torch_profiler_record_shapes\": true, \"torch_profiler_with_memory\": true}"
+      ],
+      "environment_overrides": {
+        "VLLM_SERVER_DEV_MODE": "1",
+        "VLLM_CUSTOM_SCOPES_FOR_PROFILING": "1",
+        "HF_HUB_OFFLINE": "1",
+        "TRANSFORMERS_OFFLINE": "1"
+      },
+      "started_at": "2026-11-12T06:29:00.091681+00:00",
+      "profiler_run": true,
+      "VLLM_API_KEY_in_child": "unset"
+    },
+    "capture_start": {
+      "utc": "2026-11-12T06:29:31.825243+00:00",
+      "monotonic_s": 955631.33169581,
+      "result": {
+        "http_status": 200
+      }
+    },
+    "capture_stop": {
+      "utc": "2026-11-12T06:29:32.548079+00:00",
+      "monotonic_s": 955632.054527614,
+      "result": {
+        "http_status": 200
+      }
+    },
+    "client_window_seconds": 0.7151205239351839,
+    "client_phase": "profile",
+    "client_request_count": 4,
+    "client_success_count": 4,
+    "client_max_concurrency": 4,
+    "request_summaries": [
+      {
+        "request_id": "profile-work-000",
+        "request_index": 0,
+        "phase": "profile",
+        "prompt_tokens": 256,
+        "actual_output_tokens": 16,
+        "usage": {
+          "prompt_tokens": 256,
+          "total_tokens": 272,
+          "completion_tokens": 16
+        },
+        "success": true
+      },
+      {
+        "request_id": "profile-work-001",
+        "request_index": 1,
+        "phase": "profile",
+        "prompt_tokens": 3072,
+        "actual_output_tokens": 16,
+        "usage": {
+          "prompt_tokens": 3072,
+          "total_tokens": 3088,
+          "completion_tokens": 16
+        },
+        "success": true
+      },
+      {
+        "request_id": "profile-work-002",
+        "request_index": 2,
+        "phase": "profile",
+        "prompt_tokens": 256,
+        "actual_output_tokens": 16,
+        "usage": {
+          "prompt_tokens": 256,
+          "total_tokens": 272,
+          "completion_tokens": 16
+        },
+        "success": true
+      },
+      {
+        "request_id": "profile-work-003",
+        "request_index": 3,
+        "phase": "profile",
+        "prompt_tokens": 3072,
+        "actual_output_tokens": 16,
+        "usage": {
+          "prompt_tokens": 3072,
+          "total_tokens": 3088,
+          "completion_tokens": 16
+        },
+        "success": true
+      }
+    ]
+  },
+  "selected_raw_fragment": {
+    "source_zip_member": "case-20261112T060528Z-be871729/profile-budget-2048/traces/rank0.1794464973025665107.pt.trace.json.gz",
+    "relative_origin_ts_us": 3607945868249.331,
+    "relative_time_unit": "ms",
+    "relative_time_formula": "(raw_event.ts - relative_origin_ts_us) / 1000",
+    "raw_event_ts_and_dur_unit": "us",
+    "events": [
+      {
+        "relative_start_ms": 0.0,
+        "relative_end_ms": 18.61436279296875,
+        "raw_event": {
+          "ph": "X",
+          "cat": "user_annotation",
+          "name": "execute_context_1(2047)_generation_1(1)",
+          "pid": 12210,
+          "tid": 12210,
+          "ts": 3607945868249.331,
+          "dur": 18614.363,
+          "args": {
+            "External id": 2555,
+            "Record function id": 0,
+            "Ev Idx": 2554
+          }
+        }
+      },
+      {
+        "relative_start_ms": 0.29743505859375,
+        "relative_end_ms": 125.62750390625,
+        "raw_event": {
+          "ph": "X",
+          "cat": "gpu_user_annotation",
+          "name": "execute_context_1(2047)_generation_1(1)",
+          "pid": 2,
+          "tid": 0,
+          "ts": 3607945868546.766,
+          "dur": 125330.069,
+          "args": {
+            "External id": 2555
+          }
+        }
+      },
+      {
+        "relative_start_ms": 4.36922705078125,
+        "relative_end_ms": 4.3739970703125,
+        "raw_event": {
+          "ph": "X",
+          "cat": "cuda_runtime",
+          "name": "hipLaunchKernel",
+          "pid": 12210,
+          "tid": 12210,
+          "ts": 3607945872618.558,
+          "dur": 4.77,
+          "args": {
+            "External id": 3107,
+            "kernel": "void paged_attention_ll4mi_QKV_mfma16_kernel<__hip_bfloat16, __hip_bfloat16, (vllm::Fp8KVCacheDataType)0, __hip_bfloat16, 16, 128, 256, false, 6, (MFMAType)0>(__hip_bfloat16 const*, __hip_bfloat16 const*, __hip_bfloat16 const*, int, float, int const*, int const*, int const*, int, float const*, int, int, int, float*, float*, __hip_bfloat16*, __hip_bfloat16*, int, float const*, float const*)",
+            "cid": 107,
+            "correlation": 1135,
+            "grid": [
+              2,
+              8,
+              2
+            ],
+            "block": [
+              256,
+              1,
+              1
+            ],
+            "shared memory": 0
+          }
+        }
+      },
+      {
+        "relative_start_ms": 19.2153798828125,
+        "relative_end_ms": 126.32693701171875,
+        "raw_event": {
+          "ph": "X",
+          "cat": "cuda_runtime",
+          "name": "hipEventSynchronize",
+          "pid": 12210,
+          "tid": 12210,
+          "ts": 3607945887464.711,
+          "dur": 107111.557,
+          "args": {
+            "cid": 60,
+            "correlation": 1831
+          }
+        }
+      },
+      {
+        "relative_start_ms": 20.913337890625,
+        "relative_end_ms": 20.92705712890625,
+        "raw_event": {
+          "ph": "X",
+          "cat": "kernel",
+          "name": "void paged_attention_ll4mi_QKV_mfma16_kernel<__hip_bfloat16, __hip_bfloat16, (vllm::Fp8KVCacheDataType)0, __hip_bfloat16, 16, 128, 256, false, 6, (MFMAType)0>(__hip_bfloat16 const*, __hip_bfloat16 const*, __hip_bfloat16 const*, int, float, int const*, int const*, int const*, int, float const*, int, int, int, float*, float*, __hip_bfloat16*, __hip_bfloat16*, int, float const*, float const*)",
+          "pid": 2,
+          "tid": 0,
+          "ts": 3607945889162.669,
+          "dur": 13.719,
+          "args": {
+            "External id": 3107,
+            "device": 2,
+            "stream": 0,
+            "correlation": 1135,
+            "kind": "Dispatch Kernel",
+            "grid": [
+              2,
+              8,
+              2
+            ],
+            "block": [
+              256,
+              1,
+              1
+            ]
+          }
+        }
+      },
+      {
+        "relative_start_ms": 126.95172314453124,
+        "relative_end_ms": 146.649501953125,
+        "raw_event": {
+          "ph": "X",
+          "cat": "user_annotation",
+          "name": "execute_context_3(2047)_generation_1(1)",
+          "pid": 12210,
+          "tid": 12210,
+          "ts": 3607945995201.054,
+          "dur": 19697.779,
+          "args": {
+            "External id": 5106,
+            "Record function id": 0,
+            "Ev Idx": 5105
+          }
+        }
+      }
+    ],
+    "selection_identifiers": {
+      "host_and_gpu_scope_external_id": 2555,
+      "launch_and_kernel_correlation": 1135,
+      "launch_and_kernel_external_id": 3107,
+      "synchronization_runtime_correlation": 1831
+    }
+  }
+}

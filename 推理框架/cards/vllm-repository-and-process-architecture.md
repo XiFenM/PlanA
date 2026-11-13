@@ -5,8 +5,8 @@
     "id": "markji",
     "profile": "plana-markji"
   },
-  "artifact_set_sha256": "b5e2d0fee5826b9f94d48e8b70fc85e4d9f6cfdf092065b460e32e18db84f4d2",
-  "candidate_sha256": "7b259e7c5054650f8069f0c82b237fb5d038cf35d5b4e3ab74202cfc4308897f",
+  "artifact_set_sha256": "0a072791ad1e1fecf831c47d183015cf30847d3e910e3b804bd506613558a798",
+  "candidate_sha256": "57b3eb1795b378fb9142152e11500f43e5b43bfc47c9f839696a4f809960c120",
   "cards": [
     {
       "content_sha256": "272c69d72e00ab121a6bed609c3b5be66cca31707eaa71cbe48991bfdd07e76e",
@@ -189,7 +189,7 @@
       "template_version": "1.1.0"
     },
     {
-      "content_sha256": "bcd6245b097e740311f56ff3aca72f60dd81271dd608b9bd34cfe939e395f9a9",
+      "content_sha256": "497ad8e82f58520bddae2dc452d8d45f242284d61b69d991e1cd392b9f832056",
       "content_summary": "B理由：理解固定实现的选路启发式与局限，具体权重属于低频版本细节。",
       "dependency_content_sha256": {},
       "depends_on": [],
@@ -219,12 +219,12 @@
       "template_version": "1.1.0"
     },
     {
-      "content_sha256": "3c44b120bf5c23d009013e423943524ea0fbd401a093b07955b005a732998d19",
+      "content_sha256": "e83353a043ad309934afcc7caa3b30478a922351a8baa10e490615a699cf33c7",
       "content_summary": "A理由：防止只迁移ID或重做prefill便声称实现等价请求迁移，遗漏采样与输出状态。",
       "dependency_content_sha256": {
         "mc-0231ee421ef176e4361b8092": "741dba1dc0eca30dbfcd0d384868b5bde2c9bb757989d310557c1112b32914e1",
         "mc-6ecc1a209cfc46dfdedd5775": "1ab47cf369be27adf32c4947379f647abd1345b07e5c9aa7a3b31c14144cf08e",
-        "mc-e7291be4ff573e99f0b21531": "bcd6245b097e740311f56ff3aca72f60dd81271dd608b9bd34cfe939e395f9a9",
+        "mc-e7291be4ff573e99f0b21531": "497ad8e82f58520bddae2dc452d8d45f242284d61b69d991e1cd392b9f832056",
         "mc-ff2bbe335a098a1d6b3715af": "0f30ba6847d526cf21bda4e5a3ee42f0fb105892682ba20fc9f1b6e98b5b56b8"
       },
       "depends_on": [
@@ -252,7 +252,7 @@
       "priority": 5,
       "quality": "A",
       "review_resolution": {
-        "summary": "2026-11-03已对照修订后的前端、Core与Worker/Runner子卡复核：请求迁移仍须衔接调度进度、物理KV与采样状态、输出和取消路由；版本前置与职责说明未改变该判断，未新增迁移实测结论。"
+        "summary": "2026-11-07已对照修订后的 DPLB 子卡及固定版本源码复核：本地负载估计在每次自动选定实例后、发送前更新，仅澄清新请求选路的常规记账行为；执行中请求迁移仍须衔接调度进度、物理 KV 与采样状态、输出和取消路由，原题答保持成立。"
       },
       "source_ids": [
         "vllm-repository-process-article"
@@ -499,11 +499,11 @@
     }
   ],
   "managed_body_sha256": "1de59d3fa3611caa064adc7e8ce0e59dec35550930a0324f099bc0b16fb68b82",
-  "manifest_payload_sha256": "7351c7d0cbdc05b8e2e6cae34ae431d41530174233590e9de4407bcd56a0e908",
+  "manifest_payload_sha256": "ff02ad69ae4e43d076192f2b9c6b986d857d2c72d8b7e2c06aebd0ca2f49f06c",
   "schema": "memo-cards.artifact/v2",
   "sidecars": [
     {
-      "byte_size": 16302,
+      "byte_size": 16514,
       "columns": [
         "问题",
         "答案",
@@ -545,12 +545,12 @@
           "row_sha256": "7d0491b2cfa3a937c75e55c98d7e69a8b6ef9a80c7612e26589fd905180265ea"
         },
         {
-          "content_sha256": "bcd6245b097e740311f56ff3aca72f60dd81271dd608b9bd34cfe939e395f9a9",
+          "content_sha256": "497ad8e82f58520bddae2dc452d8d45f242284d61b69d991e1cd392b9f832056",
           "logical_id": "mc-e7291be4ff573e99f0b21531",
-          "row_sha256": "eae869b25d1d2a3e455a600f62df8b9a02e8f04beb348292586c2d94c40a4c49"
+          "row_sha256": "78cf0bda688082b6408c2a5aec9883fb6a592c91d3975fea4ac849612cce6f16"
         },
         {
-          "content_sha256": "3c44b120bf5c23d009013e423943524ea0fbd401a093b07955b005a732998d19",
+          "content_sha256": "e83353a043ad309934afcc7caa3b30478a922351a8baa10e490615a699cf33c7",
           "logical_id": "mc-3c06179493ab5a7e28f8814c",
           "row_sha256": "1137eb73bc22d2b39e1a0b106ed9920b49c821103cd05f9492171e3d5d4cafe0"
         },
@@ -585,9 +585,9 @@
           "row_sha256": "4f10f83a2e65ff4c28b2ef9ef10ed3496fbcd14b72330ebad1c62aa3c1dc6632"
         }
       ],
-      "sha256": "219c9e4b54194cd0504ccb78c2d2cecd44d1bcb5b140fe04d65a3fc428d412a5",
+      "sha256": "5ecf4a01ed621ba916ea675f6c19a5e20053bddbbe3065606c7e815b090c51ca",
       "sheet_name": "cards",
-      "table_sha256": "10c6927a4621d3593fe6634e4979e7f67305a73feaedee44bd0391edadf46967",
+      "table_sha256": "d23468523c88a0312c306de55277251814d07e0d25e3a3957ce4d034c0400c15",
       "template_id": "technical-qa",
       "template_version": "1.1.0"
     },

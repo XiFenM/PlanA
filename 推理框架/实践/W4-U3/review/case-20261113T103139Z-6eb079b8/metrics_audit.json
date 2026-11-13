@@ -1,0 +1,602 @@
+{
+  "archive": "case-20261113T103139Z-6eb079b8-1eb4d4.zip",
+  "archive_sha256": "60ed10eb5641b2d809835b5b2871e47c842166099776f12b463dd95899401501",
+  "entry_hashes_verified": 148,
+  "status": "passed",
+  "numeric_checks": 38643,
+  "request_count": 288,
+  "failed_requests": 0,
+  "rounds": [
+    {
+      "round_id": "round-01-bf16",
+      "variant": "bf16",
+      "success_count": 48,
+      "generated_tokens": 6144,
+      "raw_itl_count": 6096,
+      "nonempty_text_events": 6144,
+      "tokens_per_text_event_range": [
+        1,
+        1
+      ],
+      "max_observed_inflight_requests": 8,
+      "window_seconds": 16.981793159618974,
+      "summary": {
+        "request_ttft_ms": {
+          "count": 48,
+          "mean": 352.8034248932575,
+          "min": 45.3189592808485,
+          "max": 1061.4148005843163,
+          "p50": 299.35556650161743,
+          "p99": 951.0029824450614
+        },
+        "request_tpot_ms": {
+          "count": 48,
+          "mean": 19.419829729942023,
+          "min": 14.062653640358468,
+          "max": 21.902365639336466,
+          "p50": 19.77826290448585,
+          "p99": 21.833107561518357
+        },
+        "request_e2el_ms": {
+          "count": 48,
+          "mean": 2819.1218005958945,
+          "min": 2048.2767913490534,
+          "max": 3479.984052479267,
+          "p50": 2812.194187194109,
+          "p99": 3341.8236677721147
+        },
+        "pooled_raw_itl_ms": {
+          "count": 6096,
+          "mean": 19.419829729942023,
+          "min": 4.737382754683495,
+          "max": 170.8356160670519,
+          "p50": 14.072704128921032,
+          "p99": 147.97876765951517
+        },
+        "queue_wait_ms": {
+          "count": 48,
+          "mean": 7292.1018115011975,
+          "min": 0.22001191973686218,
+          "max": 14932.161571457982,
+          "p50": 7365.513913333416,
+          "p99": 14810.749107152224
+        },
+        "output_tokens_per_second": 361.7992483037554
+      }
+    },
+    {
+      "round_id": "round-02-awq",
+      "variant": "awq",
+      "success_count": 48,
+      "generated_tokens": 6144,
+      "raw_itl_count": 6096,
+      "nonempty_text_events": 6144,
+      "tokens_per_text_event_range": [
+        1,
+        1
+      ],
+      "max_observed_inflight_requests": 8,
+      "window_seconds": 20.541302232071757,
+      "summary": {
+        "request_ttft_ms": {
+          "count": 48,
+          "mean": 309.01534820441157,
+          "min": 34.79508310556412,
+          "max": 884.6229054033756,
+          "p50": 287.15568874031305,
+          "p99": 788.3714741468432
+        },
+        "request_tpot_ms": {
+          "count": 48,
+          "mean": 24.370365372792943,
+          "min": 20.569199476185744,
+          "max": 26.710717374180245,
+          "p50": 24.49226990987466,
+          "p99": 26.541913440524358
+        },
+        "request_e2el_ms": {
+          "count": 48,
+          "mean": 3404.0517505491152,
+          "min": 2925.920257344842,
+          "max": 3859.8673921078444,
+          "p50": 3400.6755938753486,
+          "p99": 3747.109826486558
+        },
+        "pooled_raw_itl_ms": {
+          "count": 6096,
+          "mean": 24.370365372792943,
+          "min": 11.850768700242043,
+          "max": 144.81033757328987,
+          "p50": 20.099387504160404,
+          "p99": 123.86727426201111
+        },
+        "queue_wait_ms": {
+          "count": 48,
+          "mean": 8656.56484104693,
+          "min": 0.25670044124126434,
+          "max": 17613.278759643435,
+          "p50": 8698.295995593071,
+          "p99": 17504.45779517293
+        },
+        "output_tokens_per_second": 299.10469796832973
+      }
+    },
+    {
+      "round_id": "round-03-awq",
+      "variant": "awq",
+      "success_count": 48,
+      "generated_tokens": 6144,
+      "raw_itl_count": 6096,
+      "nonempty_text_events": 6144,
+      "tokens_per_text_event_range": [
+        1,
+        1
+      ],
+      "max_observed_inflight_requests": 8,
+      "window_seconds": 20.675417467951775,
+      "summary": {
+        "request_ttft_ms": {
+          "count": 48,
+          "mean": 307.51105037052184,
+          "min": 45.28975673019886,
+          "max": 893.7579412013292,
+          "p50": 284.25656259059906,
+          "p99": 798.9202421903613
+        },
+        "request_tpot_ms": {
+          "count": 48,
+          "mean": 24.546290902430655,
+          "min": 20.972780707314257,
+          "max": 26.685263228228713,
+          "p50": 24.60244868508005,
+          "p99": 26.613855916625404
+        },
+        "request_e2el_ms": {
+          "count": 48,
+          "mean": 3424.8899949792153,
+          "min": 2902.304822579026,
+          "max": 3984.2247553169727,
+          "p50": 3403.675557114184,
+          "p99": 3874.5495744980876
+        },
+        "pooled_raw_itl_ms": {
+          "count": 6096,
+          "mean": 24.546290902430655,
+          "min": 10.834483429789543,
+          "max": 147.16806262731552,
+          "p50": 20.098501816391945,
+          "p99": 123.8809071481228
+        },
+        "queue_wait_ms": {
+          "count": 48,
+          "mean": 8739.095819182694,
+          "min": 0.4329681396484375,
+          "max": 17771.14644832909,
+          "p50": 8802.204403094947,
+          "p99": 17669.204316604882
+        },
+        "output_tokens_per_second": 297.16449544603364
+      }
+    },
+    {
+      "round_id": "round-04-bf16",
+      "variant": "bf16",
+      "success_count": 48,
+      "generated_tokens": 6144,
+      "raw_itl_count": 6096,
+      "nonempty_text_events": 6144,
+      "tokens_per_text_event_range": [
+        1,
+        1
+      ],
+      "max_observed_inflight_requests": 8,
+      "window_seconds": 17.0742152556777,
+      "summary": {
+        "request_ttft_ms": {
+          "count": 48,
+          "mean": 371.59934756346047,
+          "min": 47.9212012141943,
+          "max": 1044.1230796277523,
+          "p50": 320.41677460074425,
+          "p99": 931.7920054309072
+        },
+        "request_tpot_ms": {
+          "count": 48,
+          "mean": 19.394437250805886,
+          "min": 14.082783613148637,
+          "max": 22.18844765049266,
+          "p50": 19.641819116696126,
+          "p99": 22.167527163181248
+        },
+        "request_e2el_ms": {
+          "count": 48,
+          "mean": 2834.692878415808,
+          "min": 2151.2934248894453,
+          "max": 3398.123139515519,
+          "p50": 2833.9144475758076,
+          "p99": 3302.422748990357
+        },
+        "pooled_raw_itl_ms": {
+          "count": 6096,
+          "mean": 19.394437250805886,
+          "min": 4.6203527599573135,
+          "max": 234.24096405506134,
+          "p50": 14.14620690047741,
+          "p99": 152.22752429544926
+        },
+        "queue_wait_ms": {
+          "count": 48,
+          "mean": 7298.921607201919,
+          "min": 0.17930008471012115,
+          "max": 14921.186642721295,
+          "p50": 7343.18395331502,
+          "p99": 14849.608385395259
+        },
+        "output_tokens_per_second": 359.8408423460007
+      }
+    },
+    {
+      "round_id": "round-05-bf16",
+      "variant": "bf16",
+      "success_count": 48,
+      "generated_tokens": 6144,
+      "raw_itl_count": 6096,
+      "nonempty_text_events": 6144,
+      "tokens_per_text_event_range": [
+        1,
+        1
+      ],
+      "max_observed_inflight_requests": 8,
+      "window_seconds": 17.074333867058158,
+      "summary": {
+        "request_ttft_ms": {
+          "count": 48,
+          "mean": 344.8277811985463,
+          "min": 49.31923933327198,
+          "max": 1078.9099801331758,
+          "p50": 291.40387661755085,
+          "p99": 963.4669574163856
+        },
+        "request_tpot_ms": {
+          "count": 48,
+          "mean": 19.6047721793044,
+          "min": 13.936447404970334,
+          "max": 22.088971590315264,
+          "p50": 19.783532312946527,
+          "p99": 22.077488925483987
+        },
+        "request_e2el_ms": {
+          "count": 48,
+          "mean": 2834.633847970205,
+          "min": 2133.7444242089987,
+          "max": 3423.5404152423143,
+          "p50": 2820.5642849206924,
+          "p99": 3288.5514540411536
+        },
+        "pooled_raw_itl_ms": {
+          "count": 6096,
+          "mean": 19.6047721793044,
+          "min": 4.896584898233414,
+          "max": 168.46480034291744,
+          "p50": 14.173533767461777,
+          "p99": 146.06640851125124
+        },
+        "queue_wait_ms": {
+          "count": 48,
+          "mean": 7320.594611461274,
+          "min": 0.17374753952026367,
+          "max": 14938.858434557915,
+          "p50": 7380.895525217056,
+          "p99": 14812.763565890491
+        },
+        "output_tokens_per_second": 359.8383426163253
+      }
+    },
+    {
+      "round_id": "round-06-awq",
+      "variant": "awq",
+      "success_count": 48,
+      "generated_tokens": 6144,
+      "raw_itl_count": 6096,
+      "nonempty_text_events": 6144,
+      "tokens_per_text_event_range": [
+        1,
+        1
+      ],
+      "max_observed_inflight_requests": 8,
+      "window_seconds": 20.735446762293577,
+      "summary": {
+        "request_ttft_ms": {
+          "count": 48,
+          "mean": 304.0798472551008,
+          "min": 56.63972720503807,
+          "max": 841.2425760179758,
+          "p50": 264.1579248011112,
+          "p99": 840.9216096438468
+        },
+        "request_tpot_ms": {
+          "count": 48,
+          "mean": 24.670841997328,
+          "min": 20.655159259170997,
+          "max": 26.973275321088437,
+          "p50": 24.813008399342927,
+          "p99": 26.71509078535156
+        },
+        "request_e2el_ms": {
+          "count": 48,
+          "mean": 3437.276780915757,
+          "min": 2942.9196137934923,
+          "max": 3883.555529639125,
+          "p50": 3429.5125054195523,
+          "p99": 3882.787024434656
+        },
+        "pooled_raw_itl_ms": {
+          "count": 6096,
+          "mean": 24.670841997328,
+          "min": 12.365881353616714,
+          "max": 137.6790776848793,
+          "p50": 20.25037258863449,
+          "p99": 125.94121741130951
+        },
+        "queue_wait_ms": {
+          "count": 48,
+          "mean": 8729.231642015899,
+          "min": 0.32674893736839294,
+          "max": 17790.53930938244,
+          "p50": 8749.35524072498,
+          "p99": 17726.10836835578
+        },
+        "output_tokens_per_second": 296.3042017099227
+      }
+    }
+  ],
+  "by_variant": {
+    "bf16": {
+      "output_tokens_per_second": {
+        "values_by_round": [
+          361.7992483037554,
+          359.8408423460007,
+          359.8383426163253
+        ],
+        "median_of_round_statistics": 359.8408423460007,
+        "min": 359.8383426163253,
+        "max": 361.7992483037554
+      },
+      "request_ttft_ms.p50": {
+        "values_by_round": [
+          299.35556650161743,
+          320.41677460074425,
+          291.40387661755085
+        ],
+        "median_of_round_statistics": 299.35556650161743,
+        "min": 291.40387661755085,
+        "max": 320.41677460074425
+      },
+      "request_ttft_ms.p99": {
+        "values_by_round": [
+          951.0029824450614,
+          931.7920054309072,
+          963.4669574163856
+        ],
+        "median_of_round_statistics": 951.0029824450614,
+        "min": 931.7920054309072,
+        "max": 963.4669574163856
+      },
+      "request_tpot_ms.p50": {
+        "values_by_round": [
+          19.77826290448585,
+          19.641819116696126,
+          19.783532312946527
+        ],
+        "median_of_round_statistics": 19.77826290448585,
+        "min": 19.641819116696126,
+        "max": 19.783532312946527
+      },
+      "request_tpot_ms.p99": {
+        "values_by_round": [
+          21.833107561518357,
+          22.167527163181248,
+          22.077488925483987
+        ],
+        "median_of_round_statistics": 22.077488925483987,
+        "min": 21.833107561518357,
+        "max": 22.167527163181248
+      },
+      "request_e2el_ms.p50": {
+        "values_by_round": [
+          2812.194187194109,
+          2833.9144475758076,
+          2820.5642849206924
+        ],
+        "median_of_round_statistics": 2820.5642849206924,
+        "min": 2812.194187194109,
+        "max": 2833.9144475758076
+      },
+      "request_e2el_ms.p99": {
+        "values_by_round": [
+          3341.8236677721147,
+          3302.422748990357,
+          3288.5514540411536
+        ],
+        "median_of_round_statistics": 3302.422748990357,
+        "min": 3288.5514540411536,
+        "max": 3341.8236677721147
+      },
+      "pooled_raw_itl_ms.p50": {
+        "values_by_round": [
+          14.072704128921032,
+          14.14620690047741,
+          14.173533767461777
+        ],
+        "median_of_round_statistics": 14.14620690047741,
+        "min": 14.072704128921032,
+        "max": 14.173533767461777
+      },
+      "pooled_raw_itl_ms.p99": {
+        "values_by_round": [
+          147.97876765951517,
+          152.22752429544926,
+          146.06640851125124
+        ],
+        "median_of_round_statistics": 147.97876765951517,
+        "min": 146.06640851125124,
+        "max": 152.22752429544926
+      }
+    },
+    "awq": {
+      "output_tokens_per_second": {
+        "values_by_round": [
+          299.10469796832973,
+          297.16449544603364,
+          296.3042017099227
+        ],
+        "median_of_round_statistics": 297.16449544603364,
+        "min": 296.3042017099227,
+        "max": 299.10469796832973
+      },
+      "request_ttft_ms.p50": {
+        "values_by_round": [
+          287.15568874031305,
+          284.25656259059906,
+          264.1579248011112
+        ],
+        "median_of_round_statistics": 284.25656259059906,
+        "min": 264.1579248011112,
+        "max": 287.15568874031305
+      },
+      "request_ttft_ms.p99": {
+        "values_by_round": [
+          788.3714741468432,
+          798.9202421903613,
+          840.9216096438468
+        ],
+        "median_of_round_statistics": 798.9202421903613,
+        "min": 788.3714741468432,
+        "max": 840.9216096438468
+      },
+      "request_tpot_ms.p50": {
+        "values_by_round": [
+          24.49226990987466,
+          24.60244868508005,
+          24.813008399342927
+        ],
+        "median_of_round_statistics": 24.60244868508005,
+        "min": 24.49226990987466,
+        "max": 24.813008399342927
+      },
+      "request_tpot_ms.p99": {
+        "values_by_round": [
+          26.541913440524358,
+          26.613855916625404,
+          26.71509078535156
+        ],
+        "median_of_round_statistics": 26.613855916625404,
+        "min": 26.541913440524358,
+        "max": 26.71509078535156
+      },
+      "request_e2el_ms.p50": {
+        "values_by_round": [
+          3400.6755938753486,
+          3403.675557114184,
+          3429.5125054195523
+        ],
+        "median_of_round_statistics": 3403.675557114184,
+        "min": 3400.6755938753486,
+        "max": 3429.5125054195523
+      },
+      "request_e2el_ms.p99": {
+        "values_by_round": [
+          3747.109826486558,
+          3874.5495744980876,
+          3882.787024434656
+        ],
+        "median_of_round_statistics": 3874.5495744980876,
+        "min": 3747.109826486558,
+        "max": 3882.787024434656
+      },
+      "pooled_raw_itl_ms.p50": {
+        "values_by_round": [
+          20.099387504160404,
+          20.098501816391945,
+          20.25037258863449
+        ],
+        "median_of_round_statistics": 20.099387504160404,
+        "min": 20.098501816391945,
+        "max": 20.25037258863449
+      },
+      "pooled_raw_itl_ms.p99": {
+        "values_by_round": [
+          123.86727426201111,
+          123.8809071481228,
+          125.94121741130951
+        ],
+        "median_of_round_statistics": 123.8809071481228,
+        "min": 123.86727426201111,
+        "max": 125.94121741130951
+      }
+    }
+  },
+  "relative_change_percent_of_round_medians": {
+    "output_tokens_per_second": -17.41779684911403,
+    "request_ttft_ms.p50": -5.043836026659221,
+    "request_ttft_ms.p99": -15.991825794666825,
+    "request_tpot_ms.p50": 24.391352283521517,
+    "request_tpot_ms.p99": 20.547477144944224,
+    "request_e2el_ms.p50": 20.67356788536685,
+    "request_e2el_ms.p99": 17.324457496625655,
+    "pooled_raw_itl_ms.p50": 42.08322870975461,
+    "pooled_raw_itl_ms.p99": -16.284674411425847
+  },
+  "effective_config_differences": [
+    {
+      "field": "model.model",
+      "values": {
+        "round-01-bf16": "/workspace/W4-U3/cache/bf16/989aa7980e4cf806f80c7fef2b1adb7bc71aa306",
+        "round-02-awq": "/workspace/W4-U3/cache/awq/3ecffa0ceb27851800f45519bab9c457a04405e1",
+        "round-03-awq": "/workspace/W4-U3/cache/awq/3ecffa0ceb27851800f45519bab9c457a04405e1",
+        "round-04-bf16": "/workspace/W4-U3/cache/bf16/989aa7980e4cf806f80c7fef2b1adb7bc71aa306",
+        "round-05-bf16": "/workspace/W4-U3/cache/bf16/989aa7980e4cf806f80c7fef2b1adb7bc71aa306",
+        "round-06-awq": "/workspace/W4-U3/cache/awq/3ecffa0ceb27851800f45519bab9c457a04405e1"
+      }
+    },
+    {
+      "field": "model.dtype",
+      "values": {
+        "round-01-bf16": "torch.bfloat16",
+        "round-02-awq": "torch.float16",
+        "round-03-awq": "torch.float16",
+        "round-04-bf16": "torch.bfloat16",
+        "round-05-bf16": "torch.bfloat16",
+        "round-06-awq": "torch.float16"
+      }
+    },
+    {
+      "field": "model.quantization",
+      "values": {
+        "round-01-bf16": null,
+        "round-02-awq": "auto_awq",
+        "round-03-awq": "auto_awq",
+        "round-04-bf16": null,
+        "round-05-bf16": null,
+        "round-06-awq": "auto_awq"
+      }
+    },
+    {
+      "field": "cache.num_gpu_blocks",
+      "values": {
+        "round-01-bf16": 70922,
+        "round-02-awq": 75287,
+        "round-03-awq": 75287,
+        "round-04-bf16": 70922,
+        "round-05-bf16": 70922,
+        "round-06-awq": 75287
+      }
+    }
+  ],
+  "limits": [
+    "Statistics recomputed from JSONL with independent arithmetic, not client.summarize.",
+    "Window end is a recorded summary observation, checked against all request ends; JSONL does not independently reconstruct cleanup time.",
+    "Per-round quantiles aggregated by median; P99 exploratory, not a production SLO result.",
+    "AWQ uses FP16; official checkpoint exact common source revision is unproven."
+  ]
+}

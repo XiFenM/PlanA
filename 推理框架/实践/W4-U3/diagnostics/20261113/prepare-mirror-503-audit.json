@@ -1,0 +1,70 @@
+{
+  "source_archive": "case-20261113T093050Z-8dc1b16c-6571e3.zip",
+  "source_sha256": "b262c905baa756405e7a6c093b2650f3221647244333c3c9afb9ae2fdaaf6c4b",
+  "all_26_entry_hashes_match": true,
+  "source_matches_package": "2026-11-13.2",
+  "method_matches": true,
+  "environment_passed": true,
+  "vllm_version": "0.33.0+rocm72",
+  "bf16_verification": {
+    "model_id": "Qwen/Qwen2.5-1.5B-Instruct",
+    "revision": "989aa7980e4cf806f80c7fef2b1adb7bc71aa306",
+    "files": [
+      {
+        "name": "LICENSE",
+        "bytes": 11343,
+        "git_blob_sha1": "6634c8cc3133b3848ec74b9f275acaaa1ea618ab",
+        "verified": true
+      },
+      {
+        "name": "config.json",
+        "bytes": 660,
+        "git_blob_sha1": "f81ead14ab072d65a07817f83a3ee0e5a1890d10",
+        "verified": true
+      },
+      {
+        "name": "generation_config.json",
+        "bytes": 242,
+        "git_blob_sha1": "dfc11073787daf1b0f9c0f1499487ab5f4c93738",
+        "verified": true
+      },
+      {
+        "name": "merges.txt",
+        "bytes": 1671839,
+        "git_blob_sha1": "20024bfe7c83998e9aeaf98a0cd6a2ce6306c2f0",
+        "verified": true
+      },
+      {
+        "name": "model.safetensors",
+        "bytes": 3087467144,
+        "sha256": "dd924a11b4c220f385b51ffa522daea7c9f3d850e31b162bb5661df483c6d3ee",
+        "verified": true
+      },
+      {
+        "name": "tokenizer.json",
+        "bytes": 7031645,
+        "git_blob_sha1": "443909a61d429dff23010e5bddd28ff530edda00",
+        "verified": true
+      },
+      {
+        "name": "tokenizer_config.json",
+        "bytes": 7305,
+        "git_blob_sha1": "07bfe0640cb5a0037f9322287fbfc682806cf672",
+        "verified": true
+      },
+      {
+        "name": "vocab.json",
+        "bytes": 2776833,
+        "git_blob_sha1": "4783fe10ac3adce15ac8f358ef5462739852c569",
+        "verified": true
+      }
+    ],
+    "verified_at": "2026-11-13T09:31:43.266220+00:00"
+  },
+  "failure": {
+    "type": "HfHubHTTPError",
+    "message": "Server error '503 Service Unavailable' for url 'https://hf-mirror.com/api/resolve-cache/models/Qwen/Qwen2.5-1.5B-Instruct-AWQ/3ecffa0ceb27851800f45519bab9c457a04405e1/LICENSE?%2FQwen%2FQwen2.5-1.5B-Instruct-AWQ%2Fresolve%2F3ecffa0ceb27851800f45519bab9c457a04405e1%2FLICENSE=&etag=%226634c8cc3133b3848ec74b9f275acaaa1ea618ab%22'\nFor more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/503",
+    "at": "2026-11-13T09:32:52.224313+00:00"
+  },
+  "scope": "Only the returned hash reports and source identity were checked locally; model weights are not in this ZIP. No AWQ validation, prediction, task score or performance exists."
+}

@@ -1,0 +1,23 @@
+{
+  "archive": "case-20261113T100153Z-80b65c49-38541e.zip",
+  "archive_sha256": "ac581fd87f1505144b396e710bc8ec9eaf0b24afc43d1682428e79dedbac0d79",
+  "entry_hashes_verified": 46,
+  "source_matches": ".4",
+  "prediction_matches_original": true,
+  "prediction_saved_at": "2026-11-13T10:24:49.740791+00:00",
+  "original_status": {
+    "phase": "run_failed",
+    "updated_at": "2026-11-13T10:25:22.959860+00:00",
+    "completed_rounds": 0,
+    "performance_file_exists": false
+  },
+  "original_exception": "at 108:22:\n        masks_s = masks_sk[:, None] & masks_sn[None, :]\n        scales_ptrs = scales_ptr + offsets_s\n        scales = tl.load(scales_ptrs, mask=masks_s, other=0.0)\n        scales = tl.broadcast_to(scales, (BLOCK_SIZE_K, BLOCK_SIZE_N))\n\n        b = (b >> shifts) & 0xF\n        zeros = (zeros >> shifts) & 0xF\n        b = (b - zeros) * scales\n        b = b.to(c_ptr.type.element_ty)\n\n        # Accumulate results.\n        accumulator = tl.dot(a, b, accumulator, out_dtype=accumulator_dtype)\n                      ^\nout_dtype=bfloat16 is unsupported. Please use out_dtype=float32/float16 and cast with `.to(tl.bfloat16)`",
+  "new_classifier_result": {
+    "status": "unsupported",
+    "failure_kind": "compatibility",
+    "stage": "production_apply",
+    "exception_type": "triton.compiler.errors.CompilationError",
+    "message": "at 108:22:\n        masks_s = masks_sk[:, None] & masks_sn[None, :]\n        scales_ptrs = scales_ptr + offsets_s\n        scales = tl.load(scales_ptrs, mask=masks_s, other=0.0)\n        scales = tl.broadcast_to(scales, (BLOCK_SIZE_K, BLOCK_SIZE_N))\n\n        b = (b >> shifts) & 0xF\n        zeros = (zeros >> shifts) & 0xF\n        b = (b - zeros) * scales\n        b = b.to(c_ptr.type.element_ty)\n\n        # Accumulate results.\n        accumulator = tl.dot(a, b, accumulator, out_dtype=accumulator_dtype)\n                      ^\nout_dtype=bfloat16 is unsupported. Please use out_dtype=float32/float16 and cast with `.to(tl.bfloat16)`"
+  },
+  "scope": "Static classification replay, not a new numerical result; original failed ZIP unchanged."
+}

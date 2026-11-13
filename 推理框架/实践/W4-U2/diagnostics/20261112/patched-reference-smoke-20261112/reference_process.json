@@ -1,0 +1,18 @@
+{
+  "command": [
+    "/usr/bin/python3",
+    "-u",
+    "-c",
+    "import json,sys; from correctness import evaluate_records; evaluate_records(sys.argv[1],json.load(open(sys.argv[2])),sys.argv[3],threads=8,progress=True)",
+    "/workspace/W4-U2/cache/989aa7980e4cf806f80c7fef2b1adb7bc71aa306",
+    "/workspace/W4-U2/diagnostics/patched-reference-smoke-20261112/correctness_inputs.json",
+    "/workspace/W4-U2/diagnostics/patched-reference-smoke-20261112/correctness.json"
+  ],
+  "returncode": 0,
+  "log_file": "/workspace/W4-U2/diagnostics/patched-reference-smoke-20261112/reference.log",
+  "elapsed_seconds": 8.003092280006967,
+  "environment_overrides": {
+    "HF_HUB_OFFLINE": "1",
+    "TRANSFORMERS_OFFLINE": "1"
+  }
+}

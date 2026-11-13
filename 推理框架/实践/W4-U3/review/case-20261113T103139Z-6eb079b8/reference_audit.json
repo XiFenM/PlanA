@@ -1,0 +1,1294 @@
+{
+  "schema_version": 1,
+  "audit_kind": "reference_report_and_configuration_snapshot_review",
+  "created_at": "2026-11-13T10:45:38.059506+00:00",
+  "status": "passed_with_scope_limits",
+  "snapshot": {
+    "path": "/root/workspace/learning/PlanA/推理框架/实践/W4-U3/review/case-20261113T103139Z-6eb079b8/snapshots/case-20261113T103139Z-6eb079b8-f1fe41.zip",
+    "sha256": "36bdb05fecdf3473712c900a03755eb49f8f3b67943f3da0d28a31fb4e736fcc",
+    "bytes": 697398,
+    "case_id": "case-20261113T103139Z-6eb079b8",
+    "status_record": {
+      "phase": "running",
+      "updated_at": "2026-11-13T10:36:16.060707+00:00",
+      "finished_rounds": 1
+    }
+  },
+  "execution_boundary": {
+    "archived_code_executed": false,
+    "gpu_executed": false,
+    "ssh_used": false,
+    "model_weights_downloaded": false,
+    "tensor_errors_independently_recomputed": false,
+    "comparison_basis": "Only reported metrics, scalar threshold arithmetic, archived source text/hashes, verification reports and effective configuration records were audited."
+  },
+  "prediction": {
+    "text_sha256": "44f7e14a2fa568536c36e25e57e8370bd77add63fa4a24fbfc45007633608aaf",
+    "expected_text_sha256": "44f7e14a2fa568536c36e25e57e8370bd77add63fa4a24fbfc45007633608aaf",
+    "prediction_json_sha256": "64254c603e98de28c8d316d36422d092946b25346e9e8dc5f2e115c73579c511",
+    "original_text_preserved": true,
+    "saved_at": "2026-11-13T10:33:14.831871+00:00"
+  },
+  "runtime_source_identity": {
+    "reference_script_sha256": "495e48c1f1fc372f634b5a3c1d496cd7fa7baddd77283627f838b0fe91935f8d",
+    "official_vllm_version": "0.33.0",
+    "official_vllm_source_commit": "4ba787ec9959e566d3b587a796dff07673324da5",
+    "observed_apply_source_sha256": "811938afb44cb5cfbc2bba80f7a602fa567a54e7993b591431c0e6b24be5fe96",
+    "official_apply_source_sha256": "811938afb44cb5cfbc2bba80f7a602fa567a54e7993b591431c0e6b24be5fe96",
+    "whole_installed_vllm_or_triton_package_hash_verified": false
+  },
+  "fallback": {
+    "bf16_m1": "Explicit Triton out_dtype=bfloat16 compatibility exception; no numerical result produced",
+    "bf16_m256": "Reported scalar metrics pass unchanged BF16 gates",
+    "selected_dtype": "float16",
+    "fp16_m1_and_m256": "Reported scalar metrics pass unchanged FP16 gates",
+    "activation_dtype_matches_baseline": false,
+    "full_model_cpu_reference": false
+  },
+  "original_tolerances": {
+    "float16": {
+      "relative_l2": 0.01,
+      "atol": 0.001,
+      "max_abs_rms_factor": 0.05
+    },
+    "bfloat16": {
+      "relative_l2": 0.04,
+      "atol": 0.001,
+      "max_abs_rms_factor": 0.2
+    }
+  },
+  "scalar_threshold_rechecks": [
+    {
+      "dtype": "bfloat16",
+      "m": 256,
+      "reported_relative_l2": 0.0019208328230534263,
+      "relative_l2_limit": 0.04,
+      "reported_max_abs_error": 0.11967086791992188,
+      "reported_reference_rms": 2.8703336339178,
+      "recalculated_max_abs_limit": 0.5750667267835601,
+      "reported_finite": true,
+      "reported_scalar_gate_passed": true,
+      "tensor_errors_independently_recomputed": false
+    },
+    {
+      "dtype": "float16",
+      "m": 1,
+      "reported_relative_l2": 0.00032750167038392736,
+      "relative_l2_limit": 0.01,
+      "reported_max_abs_error": 0.008176803588867188,
+      "reported_reference_rms": 2.751492935621211,
+      "recalculated_max_abs_limit": 0.13857464678106055,
+      "reported_finite": true,
+      "reported_scalar_gate_passed": true,
+      "tensor_errors_independently_recomputed": false
+    },
+    {
+      "dtype": "float16",
+      "m": 256,
+      "reported_relative_l2": 0.0002415575161746093,
+      "relative_l2_limit": 0.01,
+      "reported_max_abs_error": 0.016262054443359375,
+      "reported_reference_rms": 2.870338500616667,
+      "recalculated_max_abs_limit": 0.14451692503083335,
+      "reported_finite": true,
+      "reported_scalar_gate_passed": true,
+      "tensor_errors_independently_recomputed": false
+    }
+  ],
+  "models": {
+    "bf16": {
+      "model_id": "Qwen/Qwen2.5-1.5B-Instruct",
+      "revision": "989aa7980e4cf806f80c7fef2b1adb7bc71aa306",
+      "reported_model_file": {
+        "name": "model.safetensors",
+        "bytes": 3087467144,
+        "sha256": "dd924a11b4c220f385b51ffa522daea7c9f3d850e31b162bb5661df483c6d3ee"
+      },
+      "checks": [
+        {
+          "report": "bf16_verification.json",
+          "verified_at": "2026-11-13T10:31:59.705575+00:00",
+          "matches_pinned_manifest": true
+        },
+        {
+          "report": "bf16_reverification.json",
+          "verified_at": "2026-11-13T10:33:31.237596+00:00",
+          "matches_pinned_manifest": true
+        }
+      ],
+      "weight_payload_rehashed_in_this_audit": false
+    },
+    "awq": {
+      "model_id": "Qwen/Qwen2.5-1.5B-Instruct-AWQ",
+      "revision": "3ecffa0ceb27851800f45519bab9c457a04405e1",
+      "reported_model_file": {
+        "name": "model.safetensors",
+        "bytes": 1614553840,
+        "sha256": "5b29ed6f80e422c3ae7d40dc76fd8983501bbd7489cf84a72a5c5fe20bcf2813"
+      },
+      "checks": [
+        {
+          "report": "awq_verification.json",
+          "verified_at": "2026-11-13T10:32:02.885764+00:00",
+          "matches_pinned_manifest": true
+        },
+        {
+          "report": "awq_reverification.json",
+          "verified_at": "2026-11-13T10:33:32.393509+00:00",
+          "matches_pinned_manifest": true
+        }
+      ],
+      "weight_payload_rehashed_in_this_audit": false
+    }
+  },
+  "effective_configurations": {
+    "validation-bf16": {
+      "dtype": "torch.bfloat16",
+      "quantization": null,
+      "model": "/workspace/W4-U3/cache/bf16/989aa7980e4cf806f80c7fef2b1adb7bc71aa306",
+      "num_gpu_blocks": 70922,
+      "kv_cache_dtype_setting": "auto",
+      "contract_invariants_match": true
+    },
+    "validation-awq": {
+      "dtype": "torch.float16",
+      "quantization": "auto_awq",
+      "model": "/workspace/W4-U3/cache/awq/3ecffa0ceb27851800f45519bab9c457a04405e1",
+      "num_gpu_blocks": 75287,
+      "kv_cache_dtype_setting": "auto",
+      "contract_invariants_match": true
+    },
+    "round-01-bf16": {
+      "dtype": "torch.bfloat16",
+      "quantization": null,
+      "model": "/workspace/W4-U3/cache/bf16/989aa7980e4cf806f80c7fef2b1adb7bc71aa306",
+      "num_gpu_blocks": 70922,
+      "kv_cache_dtype_setting": "auto",
+      "contract_invariants_match": true
+    }
+  },
+  "checks": [
+    {
+      "name": "unique_snapshot_entries",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "unique_final_entries",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "source_manifest:run.py",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "source_manifest:client.py",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "source_manifest:configuration.py",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "source_manifest:quality.py",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "source_manifest:quant_reference.py",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "source_manifest:memory.py",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "source_manifest:compatibility.py",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "source_manifest:test_driver.py",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "source_manifest:test_client.py",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "source_manifest:test_configuration.py",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "source_manifest:test_quality.py",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "source_manifest:test_quant_reference.py",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "source_manifest:test_memory.py",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "source_manifest:test_compatibility.py",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "source_manifest:test_download.py",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "source_manifest:models_manifest.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "source_manifest:source_provenance.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "source_manifest:README.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "snapshot_manifest:method.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "snapshot_manifest:prediction.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "snapshot_manifest:prepared_data_manifest.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "snapshot_manifest:model_locations.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "snapshot_manifest:pair_verification.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "snapshot_manifest:awq_verification.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "snapshot_manifest:awq_reverification.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "snapshot_manifest:bf16_verification.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "snapshot_manifest:bf16_reverification.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "snapshot_manifest:gpu_reference/bfloat16.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "snapshot_manifest:gpu_reference/float16.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "snapshot_manifest:gpu_reference/bfloat16_process.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "snapshot_manifest:gpu_reference/float16_process.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "snapshot_manifest:gpu_reference/selection.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "snapshot_manifest:execution_choice.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "snapshot_manifest:validation-bf16/effective_config.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "snapshot_manifest:validation-awq/effective_config.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "snapshot_manifest:round-01-bf16/effective_config.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "snapshot_manifest:validation-bf16/command.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "snapshot_manifest:validation-awq/command.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "snapshot_manifest:round-01-bf16/command.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "snapshot_manifest:run_started.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "snapshot_manifest:source_manifest.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "snapshot_manifest:source/run.py",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "snapshot_manifest:source/client.py",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "snapshot_manifest:source/configuration.py",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "snapshot_manifest:source/quality.py",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "snapshot_manifest:source/quant_reference.py",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "snapshot_manifest:source/memory.py",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "snapshot_manifest:source/compatibility.py",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "snapshot_manifest:source/test_driver.py",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "snapshot_manifest:source/test_client.py",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "snapshot_manifest:source/test_configuration.py",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "snapshot_manifest:source/test_quality.py",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "snapshot_manifest:source/test_quant_reference.py",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "snapshot_manifest:source/test_memory.py",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "snapshot_manifest:source/test_compatibility.py",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "snapshot_manifest:source/test_download.py",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "snapshot_manifest:source/models_manifest.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "snapshot_manifest:source/source_provenance.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "snapshot_manifest:source/README.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "prepared_manifest:method.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "prepared_manifest:inputs.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "prepared_manifest:model_locations.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "prepared_manifest:pair_verification.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "original_prediction_text_hash",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "prediction_before_reference",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "original_tolerances_in_archived_source",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "independent_awq_shifts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "fixed_projection_in_archived_source",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "policy_same_in_method_and_reports",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "original_tolerances_in_policy",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "reference_script_identity",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "runtime_apply_hash_matches_official_function",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "method_profile_pinned",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "environment:bfloat16",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "process:bfloat16",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "case_coverage:bfloat16",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "runtime_parameters:bfloat16",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "checkpoint_quant_config:bfloat16",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "op_path_shape:bfloat16:1",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "op_path_shape:bfloat16:256",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "reported_metric_gate:bfloat16:256",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "environment:float16",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "process:float16",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "case_coverage:float16",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "runtime_parameters:float16",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "checkpoint_quant_config:float16",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "op_path_shape:float16:1",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "reported_metric_gate:float16:1",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "op_path_shape:float16:256",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "reported_metric_gate:float16:256",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "same_checkpoint_across_dtype_attempts",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "explicit_bf16_compatibility_failure",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "fp16_report_passed",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "selection_execution_choice",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "source_boundary_preserved",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "model_report_manifest:bf16:verification",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "model_report_manifest:bf16:reverification",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "model_report_manifest:awq:verification",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "model_report_manifest:awq:reverification",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "tokenizer_pair_report_consistent",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "effective_config:validation-bf16",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "effective_config:validation-awq",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "effective_config:round-01-bf16",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "bf16_validation_equals_first_round",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "final_archive_sha256",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "final_member_unchanged:awq_reverification.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "final_member_unchanged:awq_verification.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "final_member_unchanged:bf16_reverification.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "final_member_unchanged:bf16_verification.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "final_member_unchanged:execution_choice.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "final_member_unchanged:gpu_reference/bfloat16.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "final_member_unchanged:gpu_reference/bfloat16.log",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "final_member_unchanged:gpu_reference/bfloat16_process.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "final_member_unchanged:gpu_reference/float16.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "final_member_unchanged:gpu_reference/float16.log",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "final_member_unchanged:gpu_reference/float16_process.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "final_member_unchanged:gpu_reference/selection.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "final_member_unchanged:method.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "final_member_unchanged:model_locations.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "final_member_unchanged:pair_verification.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "final_member_unchanged:prediction.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "final_member_unchanged:prepared_data_manifest.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "final_member_unchanged:quality_comparison.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "final_member_unchanged:quality_inputs.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "final_member_unchanged:round-01-bf16/command.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "final_member_unchanged:round-01-bf16/effective_config.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "final_member_unchanged:run_started.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "final_member_unchanged:source/README.md",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "final_member_unchanged:source/client.py",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "final_member_unchanged:source/compatibility.py",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "final_member_unchanged:source/configuration.py",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "final_member_unchanged:source/memory.py",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "final_member_unchanged:source/models_manifest.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "final_member_unchanged:source/quality.py",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "final_member_unchanged:source/quant_reference.py",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "final_member_unchanged:source/run.py",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "final_member_unchanged:source/source_provenance.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "final_member_unchanged:source/test_client.py",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "final_member_unchanged:source/test_compatibility.py",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "final_member_unchanged:source/test_configuration.py",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "final_member_unchanged:source/test_download.py",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "final_member_unchanged:source/test_driver.py",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "final_member_unchanged:source/test_memory.py",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "final_member_unchanged:source/test_quality.py",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "final_member_unchanged:source/test_quant_reference.py",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "final_member_unchanged:source_manifest.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "final_member_unchanged:validation-awq/command.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "final_member_unchanged:validation-awq/effective_config.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "final_member_unchanged:validation-awq/quality/quality_inputs.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "final_member_unchanged:validation-awq/quality/quality_raw.jsonl",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "final_member_unchanged:validation-awq/quality/quality_report.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "final_member_unchanged:validation-bf16/command.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "final_member_unchanged:validation-bf16/effective_config.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "final_member_unchanged:validation-bf16/quality/quality_inputs.json",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "final_member_unchanged:validation-bf16/quality/quality_raw.jsonl",
+      "passed": true,
+      "detail": null
+    },
+    {
+      "name": "final_member_unchanged:validation-bf16/quality/quality_report.json",
+      "passed": true,
+      "detail": null
+    }
+  ],
+  "scoped_snapshot_member_sha256": {
+    "method.json": "be3ee54423ef19b3391dfc24a3ee8746d8069eb640022a4c6fa40ffda66c989b",
+    "prediction.json": "64254c603e98de28c8d316d36422d092946b25346e9e8dc5f2e115c73579c511",
+    "prepared_data_manifest.json": "d6ef7e35acc87cf42a78d962280302a73a2f693ad34bcf4d8ff85d076ec03348",
+    "model_locations.json": "d34245bea5655c5af51c5caed1e3c3cd52956f1cd898a812a33e9e559b3af9e0",
+    "pair_verification.json": "2273a3589a38139eae53078d71923db47a012ace75850dd3d1f535fe2bf90e27",
+    "awq_verification.json": "6ff436c3b5dfa98e30c79d2e8780063692106f31ba3151935b68a8336fc6aaad",
+    "awq_reverification.json": "22491d4e4fb0d4be0ad04286465718a23c50e773b5f4564e268b77b94501d029",
+    "bf16_verification.json": "0e80895b837613d669dd2987fb2b0497b0bffccb49c6769ffb62327d770c895c",
+    "bf16_reverification.json": "c00629a38ff2c60b173c016861fe4a3ad064bcf76e5e2f8dd4fbcfd2fe2745dd",
+    "gpu_reference/bfloat16.json": "4825184def1edaa072e8024805c5f082dae3fe264e811be74bd90e58fdb69ed9",
+    "gpu_reference/float16.json": "5a352b78b434cc61624b5e07562fbbab764cc44758f3b77a822d373531e2b95b",
+    "gpu_reference/bfloat16_process.json": "a11b551a914da4804226303c9a4b02eef69a014cc8dbcdbbf5c76831c110ec81",
+    "gpu_reference/float16_process.json": "43a8d4ad9b57033d6519a5d4f04883059f6333c723334076ff4c8e621f5e1211",
+    "gpu_reference/selection.json": "cbbd928276f4d7b8178d92a522876eb6e848862a4e36fe8a1d29805419b074e6",
+    "execution_choice.json": "c49a4a0ff4eda434bda3a3966d095d0cb06a2712ebeb437f0d70a1775f3ddbac",
+    "validation-bf16/effective_config.json": "d6f5cbc72cd97f587f9ed14ecadaefc26e7094587d6b9dae59dfdb950da199e0",
+    "validation-awq/effective_config.json": "d75a89ebecea431a9e79592d91302dc16e5df1f0065228bbea4c77a8b6d83bb0",
+    "round-01-bf16/effective_config.json": "d6f5cbc72cd97f587f9ed14ecadaefc26e7094587d6b9dae59dfdb950da199e0",
+    "validation-bf16/command.json": "638c6963be3dd53ea6dca063e9a36c639e91facf006c244b80e1679b207f1377",
+    "validation-awq/command.json": "db9389ed51f39125be3ee1f5c229f8e1a813c4f7decbe8a1a8d019a3e4ac6111",
+    "round-01-bf16/command.json": "6c0b06db93bbf6358a996f30125654af2271d428896f345b142f58bceda81657",
+    "run_started.json": "fc0c1827b2eef2842d732b5a441b65d7601648a17cfc395fa7990f8fd77f6066",
+    "source_manifest.json": "37afa1ee85c227259b293feb3786be0222c8c085500ec47c45d330f12f42d2ba",
+    "source/run.py": "327bfec733a30fdf6b9581da80f5f4257c812a770538aa55580597cdaa250bc3",
+    "source/client.py": "97eb3e7e26acbeb31be9e78296245d29c086b9a959ef303cc74bf69af7fc25d6",
+    "source/configuration.py": "38379aab31ac93959c3df026ea3e94e9cb0a25be29c83e476de4496e3e469688",
+    "source/quality.py": "d416a842d02173808c67d2504a1f3972267c27876acdd89715007044df01f947",
+    "source/quant_reference.py": "495e48c1f1fc372f634b5a3c1d496cd7fa7baddd77283627f838b0fe91935f8d",
+    "source/memory.py": "31e089f58a8169ea5f437ca66c1816dbb11a0b4c57b14a14ff1abcddf1d39c09",
+    "source/compatibility.py": "4063083dba3054cfcf94fd5688384658bfef414dde3ac4769509152989693d4f",
+    "source/test_driver.py": "6e02cefa241214cdeec82ae9628db5c4fd29b0382edbe2c147523467af362395",
+    "source/test_client.py": "47343716b0a851d53b92c7d8188a8339aaf08d0183941e35c44dc2563e190bbd",
+    "source/test_configuration.py": "2e213ec8e6ad5c350ab72392bb4bd8905b7e90d9fd88e5be36e31eb793babe99",
+    "source/test_quality.py": "8b4e5194b1f605e00698f26b16655f8e09b06e1ee9470bf58909e8ce0d89e908",
+    "source/test_quant_reference.py": "7442f8fa3690523a8a58f124f8961049cd513bfd6b0fa6b32087051fd4a67403",
+    "source/test_memory.py": "ecf8ad23fbd48b78d615c8dac967de46cd70cde032c9275a6ae31493f9230a4b",
+    "source/test_compatibility.py": "93456d5e5a9870a2d8359d36971b32ad465ae38674d8d99f7a3c982d7cc23c66",
+    "source/test_download.py": "9d473d17985ef5b992e76419bc1b5fb8311f63046febe908db70fc4d13af101f",
+    "source/models_manifest.json": "119c55f66e53037d1a64911f342911d979120cabe78ba4f4d76abe382e564c58",
+    "source/source_provenance.json": "21709a8686fd69875edf7d16ebf4c208c0bc37240b1f84b013f2158a494af094",
+    "source/README.md": "ce45551211718effd4ee01d53f14d95481d2f7877246b683691bbe83f2a2bb85"
+  },
+  "final_alignment": {
+    "path": "/root/workspace/learning/PlanA/推理框架/实践/W4-U3/review/case-20261113T103139Z-6eb079b8/case-20261113T103139Z-6eb079b8-1eb4d4.zip",
+    "expected_sha256": "60ed10eb5641b2d809835b5b2871e47c842166099776f12b463dd95899401501",
+    "sha256": "60ed10eb5641b2d809835b5b2871e47c842166099776f12b463dd95899401501",
+    "status_record": {
+      "phase": "measured",
+      "updated_at": "2026-11-13T10:40:31.625844+00:00",
+      "performance_valid": true,
+      "quality_evaluated": true,
+      "memory_evidence_complete": true,
+      "full_model_cpu_reference": false,
+      "learner_interpretation": "pending",
+      "course_completion": "not asserted"
+    },
+    "kind": "byte identity only; no repeat numeric audit",
+    "members": {
+      "awq_reverification.json": {
+        "snapshot_sha256": "22491d4e4fb0d4be0ad04286465718a23c50e773b5f4564e268b77b94501d029",
+        "final_sha256": "22491d4e4fb0d4be0ad04286465718a23c50e773b5f4564e268b77b94501d029",
+        "unchanged": true
+      },
+      "awq_verification.json": {
+        "snapshot_sha256": "6ff436c3b5dfa98e30c79d2e8780063692106f31ba3151935b68a8336fc6aaad",
+        "final_sha256": "6ff436c3b5dfa98e30c79d2e8780063692106f31ba3151935b68a8336fc6aaad",
+        "unchanged": true
+      },
+      "bf16_reverification.json": {
+        "snapshot_sha256": "c00629a38ff2c60b173c016861fe4a3ad064bcf76e5e2f8dd4fbcfd2fe2745dd",
+        "final_sha256": "c00629a38ff2c60b173c016861fe4a3ad064bcf76e5e2f8dd4fbcfd2fe2745dd",
+        "unchanged": true
+      },
+      "bf16_verification.json": {
+        "snapshot_sha256": "0e80895b837613d669dd2987fb2b0497b0bffccb49c6769ffb62327d770c895c",
+        "final_sha256": "0e80895b837613d669dd2987fb2b0497b0bffccb49c6769ffb62327d770c895c",
+        "unchanged": true
+      },
+      "execution_choice.json": {
+        "snapshot_sha256": "c49a4a0ff4eda434bda3a3966d095d0cb06a2712ebeb437f0d70a1775f3ddbac",
+        "final_sha256": "c49a4a0ff4eda434bda3a3966d095d0cb06a2712ebeb437f0d70a1775f3ddbac",
+        "unchanged": true
+      },
+      "gpu_reference/bfloat16.json": {
+        "snapshot_sha256": "4825184def1edaa072e8024805c5f082dae3fe264e811be74bd90e58fdb69ed9",
+        "final_sha256": "4825184def1edaa072e8024805c5f082dae3fe264e811be74bd90e58fdb69ed9",
+        "unchanged": true
+      },
+      "gpu_reference/bfloat16.log": {
+        "snapshot_sha256": "514286f5ea0e4bd95880dd0a2e775ffddc8c96afec027c8866e2551d9440d0c0",
+        "final_sha256": "514286f5ea0e4bd95880dd0a2e775ffddc8c96afec027c8866e2551d9440d0c0",
+        "unchanged": true
+      },
+      "gpu_reference/bfloat16_process.json": {
+        "snapshot_sha256": "a11b551a914da4804226303c9a4b02eef69a014cc8dbcdbbf5c76831c110ec81",
+        "final_sha256": "a11b551a914da4804226303c9a4b02eef69a014cc8dbcdbbf5c76831c110ec81",
+        "unchanged": true
+      },
+      "gpu_reference/float16.json": {
+        "snapshot_sha256": "5a352b78b434cc61624b5e07562fbbab764cc44758f3b77a822d373531e2b95b",
+        "final_sha256": "5a352b78b434cc61624b5e07562fbbab764cc44758f3b77a822d373531e2b95b",
+        "unchanged": true
+      },
+      "gpu_reference/float16.log": {
+        "snapshot_sha256": "d26c68a9167d955a8d1ebaa5710bc8f2436f52bdecb6ce0e39517b2568694614",
+        "final_sha256": "d26c68a9167d955a8d1ebaa5710bc8f2436f52bdecb6ce0e39517b2568694614",
+        "unchanged": true
+      },
+      "gpu_reference/float16_process.json": {
+        "snapshot_sha256": "43a8d4ad9b57033d6519a5d4f04883059f6333c723334076ff4c8e621f5e1211",
+        "final_sha256": "43a8d4ad9b57033d6519a5d4f04883059f6333c723334076ff4c8e621f5e1211",
+        "unchanged": true
+      },
+      "gpu_reference/selection.json": {
+        "snapshot_sha256": "cbbd928276f4d7b8178d92a522876eb6e848862a4e36fe8a1d29805419b074e6",
+        "final_sha256": "cbbd928276f4d7b8178d92a522876eb6e848862a4e36fe8a1d29805419b074e6",
+        "unchanged": true
+      },
+      "method.json": {
+        "snapshot_sha256": "be3ee54423ef19b3391dfc24a3ee8746d8069eb640022a4c6fa40ffda66c989b",
+        "final_sha256": "be3ee54423ef19b3391dfc24a3ee8746d8069eb640022a4c6fa40ffda66c989b",
+        "unchanged": true
+      },
+      "model_locations.json": {
+        "snapshot_sha256": "d34245bea5655c5af51c5caed1e3c3cd52956f1cd898a812a33e9e559b3af9e0",
+        "final_sha256": "d34245bea5655c5af51c5caed1e3c3cd52956f1cd898a812a33e9e559b3af9e0",
+        "unchanged": true
+      },
+      "pair_verification.json": {
+        "snapshot_sha256": "2273a3589a38139eae53078d71923db47a012ace75850dd3d1f535fe2bf90e27",
+        "final_sha256": "2273a3589a38139eae53078d71923db47a012ace75850dd3d1f535fe2bf90e27",
+        "unchanged": true
+      },
+      "prediction.json": {
+        "snapshot_sha256": "64254c603e98de28c8d316d36422d092946b25346e9e8dc5f2e115c73579c511",
+        "final_sha256": "64254c603e98de28c8d316d36422d092946b25346e9e8dc5f2e115c73579c511",
+        "unchanged": true
+      },
+      "prepared_data_manifest.json": {
+        "snapshot_sha256": "d6ef7e35acc87cf42a78d962280302a73a2f693ad34bcf4d8ff85d076ec03348",
+        "final_sha256": "d6ef7e35acc87cf42a78d962280302a73a2f693ad34bcf4d8ff85d076ec03348",
+        "unchanged": true
+      },
+      "quality_comparison.json": {
+        "snapshot_sha256": "cbc2c6ae476155bfd631f6390fc5a2f494eb57e224af27e62c702272d862942a",
+        "final_sha256": "cbc2c6ae476155bfd631f6390fc5a2f494eb57e224af27e62c702272d862942a",
+        "unchanged": true
+      },
+      "quality_inputs.json": {
+        "snapshot_sha256": "e331b964aa5b05f2531749cae45d5e2ff4fcb57e0333fcf40cef4bc1a7d1ffa6",
+        "final_sha256": "e331b964aa5b05f2531749cae45d5e2ff4fcb57e0333fcf40cef4bc1a7d1ffa6",
+        "unchanged": true
+      },
+      "round-01-bf16/command.json": {
+        "snapshot_sha256": "6c0b06db93bbf6358a996f30125654af2271d428896f345b142f58bceda81657",
+        "final_sha256": "6c0b06db93bbf6358a996f30125654af2271d428896f345b142f58bceda81657",
+        "unchanged": true
+      },
+      "round-01-bf16/effective_config.json": {
+        "snapshot_sha256": "d6f5cbc72cd97f587f9ed14ecadaefc26e7094587d6b9dae59dfdb950da199e0",
+        "final_sha256": "d6f5cbc72cd97f587f9ed14ecadaefc26e7094587d6b9dae59dfdb950da199e0",
+        "unchanged": true
+      },
+      "run_started.json": {
+        "snapshot_sha256": "fc0c1827b2eef2842d732b5a441b65d7601648a17cfc395fa7990f8fd77f6066",
+        "final_sha256": "fc0c1827b2eef2842d732b5a441b65d7601648a17cfc395fa7990f8fd77f6066",
+        "unchanged": true
+      },
+      "source/README.md": {
+        "snapshot_sha256": "ce45551211718effd4ee01d53f14d95481d2f7877246b683691bbe83f2a2bb85",
+        "final_sha256": "ce45551211718effd4ee01d53f14d95481d2f7877246b683691bbe83f2a2bb85",
+        "unchanged": true
+      },
+      "source/client.py": {
+        "snapshot_sha256": "97eb3e7e26acbeb31be9e78296245d29c086b9a959ef303cc74bf69af7fc25d6",
+        "final_sha256": "97eb3e7e26acbeb31be9e78296245d29c086b9a959ef303cc74bf69af7fc25d6",
+        "unchanged": true
+      },
+      "source/compatibility.py": {
+        "snapshot_sha256": "4063083dba3054cfcf94fd5688384658bfef414dde3ac4769509152989693d4f",
+        "final_sha256": "4063083dba3054cfcf94fd5688384658bfef414dde3ac4769509152989693d4f",
+        "unchanged": true
+      },
+      "source/configuration.py": {
+        "snapshot_sha256": "38379aab31ac93959c3df026ea3e94e9cb0a25be29c83e476de4496e3e469688",
+        "final_sha256": "38379aab31ac93959c3df026ea3e94e9cb0a25be29c83e476de4496e3e469688",
+        "unchanged": true
+      },
+      "source/memory.py": {
+        "snapshot_sha256": "31e089f58a8169ea5f437ca66c1816dbb11a0b4c57b14a14ff1abcddf1d39c09",
+        "final_sha256": "31e089f58a8169ea5f437ca66c1816dbb11a0b4c57b14a14ff1abcddf1d39c09",
+        "unchanged": true
+      },
+      "source/models_manifest.json": {
+        "snapshot_sha256": "119c55f66e53037d1a64911f342911d979120cabe78ba4f4d76abe382e564c58",
+        "final_sha256": "119c55f66e53037d1a64911f342911d979120cabe78ba4f4d76abe382e564c58",
+        "unchanged": true
+      },
+      "source/quality.py": {
+        "snapshot_sha256": "d416a842d02173808c67d2504a1f3972267c27876acdd89715007044df01f947",
+        "final_sha256": "d416a842d02173808c67d2504a1f3972267c27876acdd89715007044df01f947",
+        "unchanged": true
+      },
+      "source/quant_reference.py": {
+        "snapshot_sha256": "495e48c1f1fc372f634b5a3c1d496cd7fa7baddd77283627f838b0fe91935f8d",
+        "final_sha256": "495e48c1f1fc372f634b5a3c1d496cd7fa7baddd77283627f838b0fe91935f8d",
+        "unchanged": true
+      },
+      "source/run.py": {
+        "snapshot_sha256": "327bfec733a30fdf6b9581da80f5f4257c812a770538aa55580597cdaa250bc3",
+        "final_sha256": "327bfec733a30fdf6b9581da80f5f4257c812a770538aa55580597cdaa250bc3",
+        "unchanged": true
+      },
+      "source/source_provenance.json": {
+        "snapshot_sha256": "21709a8686fd69875edf7d16ebf4c208c0bc37240b1f84b013f2158a494af094",
+        "final_sha256": "21709a8686fd69875edf7d16ebf4c208c0bc37240b1f84b013f2158a494af094",
+        "unchanged": true
+      },
+      "source/test_client.py": {
+        "snapshot_sha256": "47343716b0a851d53b92c7d8188a8339aaf08d0183941e35c44dc2563e190bbd",
+        "final_sha256": "47343716b0a851d53b92c7d8188a8339aaf08d0183941e35c44dc2563e190bbd",
+        "unchanged": true
+      },
+      "source/test_compatibility.py": {
+        "snapshot_sha256": "93456d5e5a9870a2d8359d36971b32ad465ae38674d8d99f7a3c982d7cc23c66",
+        "final_sha256": "93456d5e5a9870a2d8359d36971b32ad465ae38674d8d99f7a3c982d7cc23c66",
+        "unchanged": true
+      },
+      "source/test_configuration.py": {
+        "snapshot_sha256": "2e213ec8e6ad5c350ab72392bb4bd8905b7e90d9fd88e5be36e31eb793babe99",
+        "final_sha256": "2e213ec8e6ad5c350ab72392bb4bd8905b7e90d9fd88e5be36e31eb793babe99",
+        "unchanged": true
+      },
+      "source/test_download.py": {
+        "snapshot_sha256": "9d473d17985ef5b992e76419bc1b5fb8311f63046febe908db70fc4d13af101f",
+        "final_sha256": "9d473d17985ef5b992e76419bc1b5fb8311f63046febe908db70fc4d13af101f",
+        "unchanged": true
+      },
+      "source/test_driver.py": {
+        "snapshot_sha256": "6e02cefa241214cdeec82ae9628db5c4fd29b0382edbe2c147523467af362395",
+        "final_sha256": "6e02cefa241214cdeec82ae9628db5c4fd29b0382edbe2c147523467af362395",
+        "unchanged": true
+      },
+      "source/test_memory.py": {
+        "snapshot_sha256": "ecf8ad23fbd48b78d615c8dac967de46cd70cde032c9275a6ae31493f9230a4b",
+        "final_sha256": "ecf8ad23fbd48b78d615c8dac967de46cd70cde032c9275a6ae31493f9230a4b",
+        "unchanged": true
+      },
+      "source/test_quality.py": {
+        "snapshot_sha256": "8b4e5194b1f605e00698f26b16655f8e09b06e1ee9470bf58909e8ce0d89e908",
+        "final_sha256": "8b4e5194b1f605e00698f26b16655f8e09b06e1ee9470bf58909e8ce0d89e908",
+        "unchanged": true
+      },
+      "source/test_quant_reference.py": {
+        "snapshot_sha256": "7442f8fa3690523a8a58f124f8961049cd513bfd6b0fa6b32087051fd4a67403",
+        "final_sha256": "7442f8fa3690523a8a58f124f8961049cd513bfd6b0fa6b32087051fd4a67403",
+        "unchanged": true
+      },
+      "source_manifest.json": {
+        "snapshot_sha256": "37afa1ee85c227259b293feb3786be0222c8c085500ec47c45d330f12f42d2ba",
+        "final_sha256": "37afa1ee85c227259b293feb3786be0222c8c085500ec47c45d330f12f42d2ba",
+        "unchanged": true
+      },
+      "validation-awq/command.json": {
+        "snapshot_sha256": "db9389ed51f39125be3ee1f5c229f8e1a813c4f7decbe8a1a8d019a3e4ac6111",
+        "final_sha256": "db9389ed51f39125be3ee1f5c229f8e1a813c4f7decbe8a1a8d019a3e4ac6111",
+        "unchanged": true
+      },
+      "validation-awq/effective_config.json": {
+        "snapshot_sha256": "d75a89ebecea431a9e79592d91302dc16e5df1f0065228bbea4c77a8b6d83bb0",
+        "final_sha256": "d75a89ebecea431a9e79592d91302dc16e5df1f0065228bbea4c77a8b6d83bb0",
+        "unchanged": true
+      },
+      "validation-awq/quality/quality_inputs.json": {
+        "snapshot_sha256": "558ff991742354bc77dfecfa45c6d3fcd2e870ed5dd692d36cc39dc663a073b4",
+        "final_sha256": "558ff991742354bc77dfecfa45c6d3fcd2e870ed5dd692d36cc39dc663a073b4",
+        "unchanged": true
+      },
+      "validation-awq/quality/quality_raw.jsonl": {
+        "snapshot_sha256": "aab1a1e913cc80dae15216e6852db710e8b1b9f77cea6a6a24d4a32b46f06e18",
+        "final_sha256": "aab1a1e913cc80dae15216e6852db710e8b1b9f77cea6a6a24d4a32b46f06e18",
+        "unchanged": true
+      },
+      "validation-awq/quality/quality_report.json": {
+        "snapshot_sha256": "833c7002305ff752681136ca14a1cd084e84063296bde57e7ea8354fe2ee31bf",
+        "final_sha256": "833c7002305ff752681136ca14a1cd084e84063296bde57e7ea8354fe2ee31bf",
+        "unchanged": true
+      },
+      "validation-bf16/command.json": {
+        "snapshot_sha256": "638c6963be3dd53ea6dca063e9a36c639e91facf006c244b80e1679b207f1377",
+        "final_sha256": "638c6963be3dd53ea6dca063e9a36c639e91facf006c244b80e1679b207f1377",
+        "unchanged": true
+      },
+      "validation-bf16/effective_config.json": {
+        "snapshot_sha256": "d6f5cbc72cd97f587f9ed14ecadaefc26e7094587d6b9dae59dfdb950da199e0",
+        "final_sha256": "d6f5cbc72cd97f587f9ed14ecadaefc26e7094587d6b9dae59dfdb950da199e0",
+        "unchanged": true
+      },
+      "validation-bf16/quality/quality_inputs.json": {
+        "snapshot_sha256": "558ff991742354bc77dfecfa45c6d3fcd2e870ed5dd692d36cc39dc663a073b4",
+        "final_sha256": "558ff991742354bc77dfecfa45c6d3fcd2e870ed5dd692d36cc39dc663a073b4",
+        "unchanged": true
+      },
+      "validation-bf16/quality/quality_raw.jsonl": {
+        "snapshot_sha256": "5af1acbb5a92bd160dd6fbc32307264fa9401cd59896b1afed675feb10be9a12",
+        "final_sha256": "5af1acbb5a92bd160dd6fbc32307264fa9401cd59896b1afed675feb10be9a12",
+        "unchanged": true
+      },
+      "validation-bf16/quality/quality_report.json": {
+        "snapshot_sha256": "555dcc9b28d452b2540fd3997c0b5a6cf6f1c0812aeea5cd0754eeba7d01b946",
+        "final_sha256": "555dcc9b28d452b2540fd3997c0b5a6cf6f1c0812aeea5cd0754eeba7d01b946",
+        "unchanged": true
+      }
+    },
+    "all_checked_members_unchanged": true
+  },
+  "limitations": [
+    "Numerical/configuration review was based on the first-round snapshot. Final alignment only confirms unchanged audited files; timing results and full experiment completion were not independently audited here.",
+    "Input/output/reference tensors are not saved in the archive; numerical errors and finite-value observations were not independently recomputed. Only reported scalar values were tested against original thresholds.",
+    "Full model weights are not in the archive. Verification reports match the pinned manifest, but model/tensor payload hashes were not recomputed locally.",
+    "The installed apply-function hash matches the pinned official function; this does not authenticate the complete installed vLLM/Triton stack or build-specific package.",
+    "This compares fixed BF16 and AWQ-FP16 deployments. The exact original weight revision used to produce AWQ remains unproven. Both KV dtype settings are auto; this is not evidence of equal resolved KV numeric dtypes.",
+    "Quality-file byte identities were aligned with the final archive, but quality scoring/results were not reassessed in this audit."
+  ],
+  "conclusion": {
+    "reference_reporting_consistent": true,
+    "fallback_policy_consistent": true,
+    "original_numeric_gates_preserved": true,
+    "full_experiment_completion_audited": false,
+    "must_fix_findings": []
+  }
+}

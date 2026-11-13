@@ -1,0 +1,2717 @@
+{
+  "schema_version": 1,
+  "case_id": "case-20261113T103139Z-6eb079b8",
+  "audit_stage": "all_six_rounds_final_archive",
+  "audit_status": "passed_with_explicit_scope",
+  "archive": {
+    "path": "推理框架/实践/W4-U3/review/case-20261113T103139Z-6eb079b8/case-20261113T103139Z-6eb079b8-1eb4d4.zip",
+    "bytes": 2759439,
+    "sha256": "60ed10eb5641b2d809835b5b2871e47c842166099776f12b463dd95899401501",
+    "archive_status": {
+      "phase": "measured",
+      "updated_at": "2026-11-13T10:40:31.625844+00:00",
+      "performance_valid": true,
+      "quality_evaluated": true,
+      "memory_evidence_complete": true,
+      "full_model_cpu_reference": false,
+      "learner_interpretation": "pending",
+      "course_completion": "not asserted"
+    }
+  },
+  "initial_snapshot_consistency": {
+    "archive": {
+      "path": "推理框架/实践/W4-U3/review/case-20261113T103139Z-6eb079b8/snapshots/case-20261113T103139Z-6eb079b8-f1fe41.zip",
+      "bytes": 697398,
+      "sha256": "36bdb05fecdf3473712c900a03755eb49f8f3b67943f3da0d28a31fb4e736fcc",
+      "archive_status": {
+        "phase": "running",
+        "updated_at": "2026-11-13T10:36:16.060707+00:00",
+        "finished_rounds": 1
+      }
+    },
+    "matched_source_entries": 14,
+    "changed_source_entries": []
+  },
+  "completed_rounds_in_archive": 6,
+  "expected_rounds": 6,
+  "all_six_rounds_audited": true,
+  "raw_device_sample_count": 116,
+  "memory_evidence_complete_recomputed": true,
+  "runtime_device": {
+    "index": 0,
+    "name": "",
+    "total_memory_bytes": 51522830336,
+    "free_memory_bytes": 51432652800,
+    "reported_total_bytes": 51522830336,
+    "gcn_arch": "gfx1100",
+    "uuid": "39356634-3565-3531-3834-663862353062",
+    "pci_bus_id": "0000:e3:00.0"
+  },
+  "software": {
+    "vllm": "0.33.0+rocm72",
+    "torch": "2.13.0+git733fca1",
+    "transformers": "5.20.2",
+    "huggingface_hub": "2.4.0",
+    "safetensors": "0.8.0",
+    "tokenizers": "0.23.3",
+    "numpy": "2.3.5"
+  },
+  "memory_sampler_runtime_mapping": {
+    "sysfs_card_ids": [
+      "card8"
+    ],
+    "pci_bdf": "0000:e3:00.0",
+    "backend": "amdgpu_sysfs",
+    "scope": "matched_pci_bdf"
+  },
+  "startup_reports": {
+    "validation-bf16": {
+      "model_loading_gib": 2.98,
+      "kv_available_gib": 30.3,
+      "kv_capacity_tokens": 1134752,
+      "dtype": "torch.bfloat16",
+      "quantization": null,
+      "num_gpu_blocks": 70922,
+      "block_size_tokens": 16,
+      "gpu_memory_utilization": 0.7,
+      "kv_cache_memory_bytes": null,
+      "cache_dtype": "auto",
+      "log_matches": [
+        {
+          "field": "model_loading_gib",
+          "line_number": 34,
+          "literal": "2.98"
+        },
+        {
+          "field": "kv_available_gib",
+          "line_number": 37,
+          "literal": "30.3"
+        },
+        {
+          "field": "kv_capacity_tokens",
+          "line_number": 38,
+          "literal": "1,134,752"
+        }
+      ],
+      "scope": "初始化加载器报告、自动KV可用预算与池token容量；非正式性能窗口的动态使用量"
+    },
+    "validation-awq": {
+      "model_loading_gib": 1.1,
+      "kv_available_gib": 32.17,
+      "kv_capacity_tokens": 1204592,
+      "dtype": "torch.float16",
+      "quantization": "auto_awq",
+      "num_gpu_blocks": 75287,
+      "block_size_tokens": 16,
+      "gpu_memory_utilization": 0.7,
+      "kv_cache_memory_bytes": null,
+      "cache_dtype": "auto",
+      "log_matches": [
+        {
+          "field": "model_loading_gib",
+          "line_number": 33,
+          "literal": "1.1"
+        },
+        {
+          "field": "kv_available_gib",
+          "line_number": 36,
+          "literal": "32.17"
+        },
+        {
+          "field": "kv_capacity_tokens",
+          "line_number": 37,
+          "literal": "1,204,592"
+        }
+      ],
+      "scope": "初始化加载器报告、自动KV可用预算与池token容量；非正式性能窗口的动态使用量"
+    },
+    "round-01-bf16": {
+      "model_loading_gib": 2.98,
+      "kv_available_gib": 30.3,
+      "kv_capacity_tokens": 1134752,
+      "dtype": "torch.bfloat16",
+      "quantization": null,
+      "num_gpu_blocks": 70922,
+      "block_size_tokens": 16,
+      "gpu_memory_utilization": 0.7,
+      "kv_cache_memory_bytes": null,
+      "cache_dtype": "auto",
+      "log_matches": [
+        {
+          "field": "model_loading_gib",
+          "line_number": 34,
+          "literal": "2.98"
+        },
+        {
+          "field": "kv_available_gib",
+          "line_number": 37,
+          "literal": "30.3"
+        },
+        {
+          "field": "kv_capacity_tokens",
+          "line_number": 38,
+          "literal": "1,134,752"
+        }
+      ],
+      "scope": "初始化加载器报告、自动KV可用预算与池token容量；非正式性能窗口的动态使用量"
+    },
+    "round-02-awq": {
+      "model_loading_gib": 1.1,
+      "kv_available_gib": 32.17,
+      "kv_capacity_tokens": 1204592,
+      "dtype": "torch.float16",
+      "quantization": "auto_awq",
+      "num_gpu_blocks": 75287,
+      "block_size_tokens": 16,
+      "gpu_memory_utilization": 0.7,
+      "kv_cache_memory_bytes": null,
+      "cache_dtype": "auto",
+      "log_matches": [
+        {
+          "field": "model_loading_gib",
+          "line_number": 33,
+          "literal": "1.1"
+        },
+        {
+          "field": "kv_available_gib",
+          "line_number": 36,
+          "literal": "32.17"
+        },
+        {
+          "field": "kv_capacity_tokens",
+          "line_number": 37,
+          "literal": "1,204,592"
+        }
+      ],
+      "scope": "初始化加载器报告、自动KV可用预算与池token容量；非正式性能窗口的动态使用量"
+    },
+    "round-03-awq": {
+      "model_loading_gib": 1.1,
+      "kv_available_gib": 32.17,
+      "kv_capacity_tokens": 1204592,
+      "dtype": "torch.float16",
+      "quantization": "auto_awq",
+      "num_gpu_blocks": 75287,
+      "block_size_tokens": 16,
+      "gpu_memory_utilization": 0.7,
+      "kv_cache_memory_bytes": null,
+      "cache_dtype": "auto",
+      "log_matches": [
+        {
+          "field": "model_loading_gib",
+          "line_number": 33,
+          "literal": "1.1"
+        },
+        {
+          "field": "kv_available_gib",
+          "line_number": 36,
+          "literal": "32.17"
+        },
+        {
+          "field": "kv_capacity_tokens",
+          "line_number": 37,
+          "literal": "1,204,592"
+        }
+      ],
+      "scope": "初始化加载器报告、自动KV可用预算与池token容量；非正式性能窗口的动态使用量"
+    },
+    "round-04-bf16": {
+      "model_loading_gib": 2.98,
+      "kv_available_gib": 30.3,
+      "kv_capacity_tokens": 1134752,
+      "dtype": "torch.bfloat16",
+      "quantization": null,
+      "num_gpu_blocks": 70922,
+      "block_size_tokens": 16,
+      "gpu_memory_utilization": 0.7,
+      "kv_cache_memory_bytes": null,
+      "cache_dtype": "auto",
+      "log_matches": [
+        {
+          "field": "model_loading_gib",
+          "line_number": 34,
+          "literal": "2.98"
+        },
+        {
+          "field": "kv_available_gib",
+          "line_number": 37,
+          "literal": "30.3"
+        },
+        {
+          "field": "kv_capacity_tokens",
+          "line_number": 38,
+          "literal": "1,134,752"
+        }
+      ],
+      "scope": "初始化加载器报告、自动KV可用预算与池token容量；非正式性能窗口的动态使用量"
+    },
+    "round-05-bf16": {
+      "model_loading_gib": 2.98,
+      "kv_available_gib": 30.3,
+      "kv_capacity_tokens": 1134752,
+      "dtype": "torch.bfloat16",
+      "quantization": null,
+      "num_gpu_blocks": 70922,
+      "block_size_tokens": 16,
+      "gpu_memory_utilization": 0.7,
+      "kv_cache_memory_bytes": null,
+      "cache_dtype": "auto",
+      "log_matches": [
+        {
+          "field": "model_loading_gib",
+          "line_number": 34,
+          "literal": "2.98"
+        },
+        {
+          "field": "kv_available_gib",
+          "line_number": 37,
+          "literal": "30.3"
+        },
+        {
+          "field": "kv_capacity_tokens",
+          "line_number": 38,
+          "literal": "1,134,752"
+        }
+      ],
+      "scope": "初始化加载器报告、自动KV可用预算与池token容量；非正式性能窗口的动态使用量"
+    },
+    "round-06-awq": {
+      "model_loading_gib": 1.1,
+      "kv_available_gib": 32.17,
+      "kv_capacity_tokens": 1204592,
+      "dtype": "torch.float16",
+      "quantization": "auto_awq",
+      "num_gpu_blocks": 75287,
+      "block_size_tokens": 16,
+      "gpu_memory_utilization": 0.7,
+      "kv_cache_memory_bytes": null,
+      "cache_dtype": "auto",
+      "log_matches": [
+        {
+          "field": "model_loading_gib",
+          "line_number": 33,
+          "literal": "1.1"
+        },
+        {
+          "field": "kv_available_gib",
+          "line_number": 36,
+          "literal": "32.17"
+        },
+        {
+          "field": "kv_capacity_tokens",
+          "line_number": 37,
+          "literal": "1,204,592"
+        }
+      ],
+      "scope": "初始化加载器报告、自动KV可用预算与池token容量；非正式性能窗口的动态使用量"
+    }
+  },
+  "rounds": [
+    {
+      "round_id": "round-01-bf16",
+      "variant": "bf16",
+      "dtype": "torch.bfloat16",
+      "raw_recomputed": {
+        "sample_count": 17,
+        "valid_samples": 17,
+        "failed_samples": 0,
+        "first_used_bytes": 36829331456,
+        "last_used_bytes": 36829331456,
+        "min_used_bytes": 36829331456,
+        "sampled_max_used_bytes": 36829331456,
+        "total_bytes_values": [
+          51522830336
+        ],
+        "max_observed_sample_gap_seconds": 1.0001433286815882
+      },
+      "scope": "matched_pci_bdf",
+      "backend": "amdgpu_sysfs",
+      "memory_evidence_complete_recomputed": true,
+      "sampled_max_used_gib": 34.29998779296875,
+      "sampled_max_fraction_of_device_total": 0.714815766444155,
+      "sampled_values_constant": true,
+      "within_window_sampled_change_bytes": 0,
+      "sampler_started_at": "2026-11-13T10:35:57.875842+00:00",
+      "sampler_stopped_at": "2026-11-13T10:36:14.880114+00:00",
+      "sampler_duration_seconds": 17.00429248251021,
+      "performance_window_seconds": 16.981793159618974,
+      "sampler_duration_minus_performance_window_seconds": 0.02249932289123535,
+      "first_sample_at": "2026-11-13T10:35:57.884220+00:00",
+      "last_sample_at": "2026-11-13T10:36:13.876304+00:00",
+      "first_sample_elapsed_seconds": 0.008377015590667725,
+      "last_sample_to_sampler_stop_seconds": 1.0038305427879095,
+      "requested_interval_seconds": 1.0,
+      "max_query_duration_seconds": 0.008223308250308037,
+      "max_utc_vs_relative_monotonic_delta_seconds": 1.2738987207328023e-06,
+      "startup": {
+        "model_loading_gib": 2.98,
+        "kv_available_gib": 30.3,
+        "kv_capacity_tokens": 1134752,
+        "dtype": "torch.bfloat16",
+        "quantization": null,
+        "num_gpu_blocks": 70922,
+        "block_size_tokens": 16,
+        "gpu_memory_utilization": 0.7,
+        "kv_cache_memory_bytes": null,
+        "cache_dtype": "auto",
+        "log_matches": [
+          {
+            "field": "model_loading_gib",
+            "line_number": 34,
+            "literal": "2.98"
+          },
+          {
+            "field": "kv_available_gib",
+            "line_number": 37,
+            "literal": "30.3"
+          },
+          {
+            "field": "kv_capacity_tokens",
+            "line_number": 38,
+            "literal": "1,134,752"
+          }
+        ],
+        "scope": "初始化加载器报告、自动KV可用预算与池token容量；非正式性能窗口的动态使用量"
+      }
+    },
+    {
+      "round_id": "round-02-awq",
+      "variant": "awq",
+      "dtype": "torch.float16",
+      "raw_recomputed": {
+        "sample_count": 21,
+        "valid_samples": 21,
+        "failed_samples": 0,
+        "first_used_bytes": 36897460224,
+        "last_used_bytes": 36897460224,
+        "min_used_bytes": 36897460224,
+        "sampled_max_used_bytes": 36897460224,
+        "total_bytes_values": [
+          51522830336
+        ],
+        "max_observed_sample_gap_seconds": 1.0003877077251673
+      },
+      "scope": "matched_pci_bdf",
+      "backend": "amdgpu_sysfs",
+      "memory_evidence_complete_recomputed": true,
+      "sampled_max_used_gib": 34.36343765258789,
+      "sampled_max_fraction_of_device_total": 0.7161380689565695,
+      "sampled_values_constant": true,
+      "within_window_sampled_change_bytes": 0,
+      "sampler_started_at": "2026-11-13T10:36:47.939552+00:00",
+      "sampler_stopped_at": "2026-11-13T10:37:08.507548+00:00",
+      "sampler_duration_seconds": 20.56801980920136,
+      "performance_window_seconds": 20.541302232071757,
+      "sampler_duration_minus_performance_window_seconds": 0.026717577129602432,
+      "first_sample_at": "2026-11-13T10:36:47.947071+00:00",
+      "last_sample_at": "2026-11-13T10:37:07.939884+00:00",
+      "first_sample_elapsed_seconds": 0.007520299404859543,
+      "last_sample_to_sampler_stop_seconds": 0.5676885936409235,
+      "requested_interval_seconds": 1.0,
+      "max_query_duration_seconds": 0.007318079471588135,
+      "max_utc_vs_relative_monotonic_delta_seconds": 2.3469551795329835e-06,
+      "startup": {
+        "model_loading_gib": 1.1,
+        "kv_available_gib": 32.17,
+        "kv_capacity_tokens": 1204592,
+        "dtype": "torch.float16",
+        "quantization": "auto_awq",
+        "num_gpu_blocks": 75287,
+        "block_size_tokens": 16,
+        "gpu_memory_utilization": 0.7,
+        "kv_cache_memory_bytes": null,
+        "cache_dtype": "auto",
+        "log_matches": [
+          {
+            "field": "model_loading_gib",
+            "line_number": 33,
+            "literal": "1.1"
+          },
+          {
+            "field": "kv_available_gib",
+            "line_number": 36,
+            "literal": "32.17"
+          },
+          {
+            "field": "kv_capacity_tokens",
+            "line_number": 37,
+            "literal": "1,204,592"
+          }
+        ],
+        "scope": "初始化加载器报告、自动KV可用预算与池token容量；非正式性能窗口的动态使用量"
+      }
+    },
+    {
+      "round_id": "round-03-awq",
+      "variant": "awq",
+      "dtype": "torch.float16",
+      "raw_recomputed": {
+        "sample_count": 21,
+        "valid_samples": 21,
+        "failed_samples": 0,
+        "first_used_bytes": 37024829440,
+        "last_used_bytes": 37029023744,
+        "min_used_bytes": 37024829440,
+        "sampled_max_used_bytes": 37029023744,
+        "total_bytes_values": [
+          51522830336
+        ],
+        "max_observed_sample_gap_seconds": 1.0010312478989363
+      },
+      "scope": "matched_pci_bdf",
+      "backend": "amdgpu_sysfs",
+      "memory_evidence_complete_recomputed": true,
+      "sampled_max_used_gib": 34.485965728759766,
+      "sampled_max_fraction_of_device_total": 0.7186915684274259,
+      "sampled_values_constant": false,
+      "within_window_sampled_change_bytes": 4194304,
+      "sampler_started_at": "2026-11-13T10:37:40.654349+00:00",
+      "sampler_stopped_at": "2026-11-13T10:38:01.348838+00:00",
+      "sampler_duration_seconds": 20.694512639194727,
+      "performance_window_seconds": 20.675417467951775,
+      "sampler_duration_minus_performance_window_seconds": 0.019095171242952347,
+      "first_sample_at": "2026-11-13T10:37:40.661379+00:00",
+      "last_sample_at": "2026-11-13T10:38:00.654673+00:00",
+      "first_sample_elapsed_seconds": 0.007029140368103981,
+      "last_sample_to_sampler_stop_seconds": 0.694187531247735,
+      "requested_interval_seconds": 1.0,
+      "max_query_duration_seconds": 0.006793750450015068,
+      "max_utc_vs_relative_monotonic_delta_seconds": 1.7471324205153849e-06,
+      "startup": {
+        "model_loading_gib": 1.1,
+        "kv_available_gib": 32.17,
+        "kv_capacity_tokens": 1204592,
+        "dtype": "torch.float16",
+        "quantization": "auto_awq",
+        "num_gpu_blocks": 75287,
+        "block_size_tokens": 16,
+        "gpu_memory_utilization": 0.7,
+        "kv_cache_memory_bytes": null,
+        "cache_dtype": "auto",
+        "log_matches": [
+          {
+            "field": "model_loading_gib",
+            "line_number": 33,
+            "literal": "1.1"
+          },
+          {
+            "field": "kv_available_gib",
+            "line_number": 36,
+            "literal": "32.17"
+          },
+          {
+            "field": "kv_capacity_tokens",
+            "line_number": 37,
+            "literal": "1,204,592"
+          }
+        ],
+        "scope": "初始化加载器报告、自动KV可用预算与池token容量；非正式性能窗口的动态使用量"
+      }
+    },
+    {
+      "round_id": "round-04-bf16",
+      "variant": "bf16",
+      "dtype": "torch.bfloat16",
+      "raw_recomputed": {
+        "sample_count": 18,
+        "valid_samples": 18,
+        "failed_samples": 0,
+        "first_used_bytes": 36829327360,
+        "last_used_bytes": 36829327360,
+        "min_used_bytes": 36829327360,
+        "sampled_max_used_bytes": 36829327360,
+        "total_bytes_values": [
+          51522830336
+        ],
+        "max_observed_sample_gap_seconds": 1.0000798795372248
+      },
+      "scope": "matched_pci_bdf",
+      "backend": "amdgpu_sysfs",
+      "memory_evidence_complete_recomputed": true,
+      "sampled_max_used_gib": 34.299983978271484,
+      "sampled_max_fraction_of_device_total": 0.7148156869454168,
+      "sampled_values_constant": true,
+      "within_window_sampled_change_bytes": 0,
+      "sampler_started_at": "2026-11-13T10:38:32.138477+00:00",
+      "sampler_stopped_at": "2026-11-13T10:38:49.232019+00:00",
+      "sampler_duration_seconds": 17.093562003225088,
+      "performance_window_seconds": 17.0742152556777,
+      "sampler_duration_minus_performance_window_seconds": 0.019346747547388077,
+      "first_sample_at": "2026-11-13T10:38:32.146157+00:00",
+      "last_sample_at": "2026-11-13T10:38:49.138774+00:00",
+      "first_sample_elapsed_seconds": 0.007682608440518379,
+      "last_sample_to_sampler_stop_seconds": 0.0932652372866869,
+      "requested_interval_seconds": 1.0,
+      "max_query_duration_seconds": 0.00750533863902092,
+      "max_utc_vs_relative_monotonic_delta_seconds": 2.608440518379017e-06,
+      "startup": {
+        "model_loading_gib": 2.98,
+        "kv_available_gib": 30.3,
+        "kv_capacity_tokens": 1134752,
+        "dtype": "torch.bfloat16",
+        "quantization": null,
+        "num_gpu_blocks": 70922,
+        "block_size_tokens": 16,
+        "gpu_memory_utilization": 0.7,
+        "kv_cache_memory_bytes": null,
+        "cache_dtype": "auto",
+        "log_matches": [
+          {
+            "field": "model_loading_gib",
+            "line_number": 34,
+            "literal": "2.98"
+          },
+          {
+            "field": "kv_available_gib",
+            "line_number": 37,
+            "literal": "30.3"
+          },
+          {
+            "field": "kv_capacity_tokens",
+            "line_number": 38,
+            "literal": "1,134,752"
+          }
+        ],
+        "scope": "初始化加载器报告、自动KV可用预算与池token容量；非正式性能窗口的动态使用量"
+      }
+    },
+    {
+      "round_id": "round-05-bf16",
+      "variant": "bf16",
+      "dtype": "torch.bfloat16",
+      "raw_recomputed": {
+        "sample_count": 18,
+        "valid_samples": 18,
+        "failed_samples": 0,
+        "first_used_bytes": 36870684672,
+        "last_used_bytes": 36870684672,
+        "min_used_bytes": 36870684672,
+        "sampled_max_used_bytes": 36870684672,
+        "total_bytes_values": [
+          51522830336
+        ],
+        "max_observed_sample_gap_seconds": 1.00008912011981
+      },
+      "scope": "matched_pci_bdf",
+      "backend": "amdgpu_sysfs",
+      "memory_evidence_complete_recomputed": true,
+      "sampled_max_used_gib": 34.3385009765625,
+      "sampled_max_fraction_of_device_total": 0.715618385704982,
+      "sampled_values_constant": true,
+      "within_window_sampled_change_bytes": 0,
+      "sampler_started_at": "2026-11-13T10:39:19.984732+00:00",
+      "sampler_stopped_at": "2026-11-13T10:39:37.079122+00:00",
+      "sampler_duration_seconds": 17.094409756362438,
+      "performance_window_seconds": 17.074333867058158,
+      "sampler_duration_minus_performance_window_seconds": 0.02007588930428028,
+      "first_sample_at": "2026-11-13T10:39:19.992371+00:00",
+      "last_sample_at": "2026-11-13T10:39:36.985000+00:00",
+      "first_sample_elapsed_seconds": 0.007639417424798012,
+      "last_sample_to_sampler_stop_seconds": 0.09414117783308029,
+      "requested_interval_seconds": 1.0,
+      "max_query_duration_seconds": 0.007480556145310402,
+      "max_utc_vs_relative_monotonic_delta_seconds": 9.796617028712262e-07,
+      "startup": {
+        "model_loading_gib": 2.98,
+        "kv_available_gib": 30.3,
+        "kv_capacity_tokens": 1134752,
+        "dtype": "torch.bfloat16",
+        "quantization": null,
+        "num_gpu_blocks": 70922,
+        "block_size_tokens": 16,
+        "gpu_memory_utilization": 0.7,
+        "kv_cache_memory_bytes": null,
+        "cache_dtype": "auto",
+        "log_matches": [
+          {
+            "field": "model_loading_gib",
+            "line_number": 34,
+            "literal": "2.98"
+          },
+          {
+            "field": "kv_available_gib",
+            "line_number": 37,
+            "literal": "30.3"
+          },
+          {
+            "field": "kv_capacity_tokens",
+            "line_number": 38,
+            "literal": "1,134,752"
+          }
+        ],
+        "scope": "初始化加载器报告、自动KV可用预算与池token容量；非正式性能窗口的动态使用量"
+      }
+    },
+    {
+      "round_id": "round-06-awq",
+      "variant": "awq",
+      "dtype": "torch.float16",
+      "raw_recomputed": {
+        "sample_count": 21,
+        "valid_samples": 21,
+        "failed_samples": 0,
+        "first_used_bytes": 36923441152,
+        "last_used_bytes": 36923441152,
+        "min_used_bytes": 36923441152,
+        "sampled_max_used_bytes": 36923441152,
+        "total_bytes_values": [
+          51522830336
+        ],
+        "max_observed_sample_gap_seconds": 1.000526949763298
+      },
+      "scope": "matched_pci_bdf",
+      "backend": "amdgpu_sysfs",
+      "memory_evidence_complete_recomputed": true,
+      "sampled_max_used_gib": 34.38763427734375,
+      "sampled_max_fraction_of_device_total": 0.7166423294529469,
+      "sampled_values_constant": true,
+      "within_window_sampled_change_bytes": 0,
+      "sampler_started_at": "2026-11-13T10:40:09.228809+00:00",
+      "sampler_stopped_at": "2026-11-13T10:40:29.984270+00:00",
+      "sampler_duration_seconds": 20.755479460582137,
+      "performance_window_seconds": 20.735446762293577,
+      "sampler_duration_minus_performance_window_seconds": 0.020032698288559914,
+      "first_sample_at": "2026-11-13T10:40:09.235442+00:00",
+      "last_sample_at": "2026-11-13T10:40:29.229177+00:00",
+      "first_sample_elapsed_seconds": 0.006635159254074097,
+      "last_sample_to_sampler_stop_seconds": 0.755111375823617,
+      "requested_interval_seconds": 1.0,
+      "max_query_duration_seconds": 0.0065290071070194244,
+      "max_utc_vs_relative_monotonic_delta_seconds": 2.1592540740966726e-06,
+      "startup": {
+        "model_loading_gib": 1.1,
+        "kv_available_gib": 32.17,
+        "kv_capacity_tokens": 1204592,
+        "dtype": "torch.float16",
+        "quantization": "auto_awq",
+        "num_gpu_blocks": 75287,
+        "block_size_tokens": 16,
+        "gpu_memory_utilization": 0.7,
+        "kv_cache_memory_bytes": null,
+        "cache_dtype": "auto",
+        "log_matches": [
+          {
+            "field": "model_loading_gib",
+            "line_number": 33,
+            "literal": "1.1"
+          },
+          {
+            "field": "kv_available_gib",
+            "line_number": 36,
+            "literal": "32.17"
+          },
+          {
+            "field": "kv_capacity_tokens",
+            "line_number": 37,
+            "literal": "1,204,592"
+          }
+        ],
+        "scope": "初始化加载器报告、自动KV可用预算与池token容量；非正式性能窗口的动态使用量"
+      }
+    }
+  ],
+  "by_variant": {
+    "bf16": {
+      "round_ids": [
+        "round-01-bf16",
+        "round-04-bf16",
+        "round-05-bf16"
+      ],
+      "sample_counts": [
+        17,
+        18,
+        18
+      ],
+      "sampled_max_used_bytes_by_round": [
+        36829331456,
+        36829327360,
+        36870684672
+      ],
+      "median_of_round_sampled_max_bytes": 36829331456,
+      "round_sampled_max_range_bytes": [
+        36829327360,
+        36870684672
+      ],
+      "sampled_max_used_gib_by_round": [
+        34.29998779296875,
+        34.299983978271484,
+        34.3385009765625
+      ],
+      "median_of_round_sampled_max_gib": 34.29998779296875,
+      "round_sampled_max_range_gib": [
+        34.299983978271484,
+        34.3385009765625
+      ],
+      "startup_values_by_field": {
+        "model_loading_gib": [
+          2.98
+        ],
+        "kv_available_gib": [
+          30.3
+        ],
+        "kv_capacity_tokens": [
+          1134752
+        ],
+        "num_gpu_blocks": [
+          70922
+        ],
+        "block_size_tokens": [
+          16
+        ],
+        "gpu_memory_utilization": [
+          0.7
+        ],
+        "kv_cache_memory_bytes": [
+          null
+        ],
+        "cache_dtype": [
+          "auto"
+        ],
+        "dtype": [
+          "torch.bfloat16"
+        ]
+      }
+    },
+    "awq": {
+      "round_ids": [
+        "round-02-awq",
+        "round-03-awq",
+        "round-06-awq"
+      ],
+      "sample_counts": [
+        21,
+        21,
+        21
+      ],
+      "sampled_max_used_bytes_by_round": [
+        36897460224,
+        37029023744,
+        36923441152
+      ],
+      "median_of_round_sampled_max_bytes": 36923441152,
+      "round_sampled_max_range_bytes": [
+        36897460224,
+        37029023744
+      ],
+      "sampled_max_used_gib_by_round": [
+        34.36343765258789,
+        34.485965728759766,
+        34.38763427734375
+      ],
+      "median_of_round_sampled_max_gib": 34.38763427734375,
+      "round_sampled_max_range_gib": [
+        34.36343765258789,
+        34.485965728759766
+      ],
+      "startup_values_by_field": {
+        "model_loading_gib": [
+          1.1
+        ],
+        "kv_available_gib": [
+          32.17
+        ],
+        "kv_capacity_tokens": [
+          1204592
+        ],
+        "num_gpu_blocks": [
+          75287
+        ],
+        "block_size_tokens": [
+          16
+        ],
+        "gpu_memory_utilization": [
+          0.7
+        ],
+        "kv_cache_memory_bytes": [
+          null
+        ],
+        "cache_dtype": [
+          "auto"
+        ],
+        "dtype": [
+          "torch.float16"
+        ]
+      }
+    }
+  },
+  "table_rows": [
+    {
+      "variant": "bf16",
+      "activation_dtype": "torch.bfloat16",
+      "round_sampled_max_median_gib": 34.29998779296875,
+      "round_sampled_max_min_gib": 34.299983978271484,
+      "round_sampled_max_max_gib": 34.3385009765625,
+      "reported_model_loading_gib": 2.98,
+      "reported_available_kv_gib": 30.3,
+      "num_gpu_blocks": 70922,
+      "block_size_tokens": 16,
+      "kv_capacity_tokens": 1134752
+    },
+    {
+      "variant": "awq",
+      "activation_dtype": "torch.float16",
+      "round_sampled_max_median_gib": 34.38763427734375,
+      "round_sampled_max_min_gib": 34.36343765258789,
+      "round_sampled_max_max_gib": 34.485965728759766,
+      "reported_model_loading_gib": 1.1,
+      "reported_available_kv_gib": 32.17,
+      "num_gpu_blocks": 75287,
+      "block_size_tokens": 16,
+      "kv_capacity_tokens": 1204592
+    }
+  ],
+  "pair_differences": {
+    "reported_model_loading_gib_awq_minus_bf16": -1.88,
+    "reported_available_kv_gib_awq_minus_bf16": 1.87,
+    "kv_blocks_awq_minus_bf16": 4365,
+    "kv_capacity_tokens_awq_minus_bf16": 69840,
+    "median_sampled_max_gib_awq_minus_bf16": 0.087646484375
+  },
+  "cross_round_observations": {
+    "largest_observed_sample_gap_seconds": 1.0010312478989363,
+    "device_total_bytes_values": [
+      51522830336
+    ],
+    "nonconstant_sample_windows": [
+      "round-03-awq"
+    ],
+    "minimum_sampler_wrapper_extra_seconds": 0.019095171242952347,
+    "maximum_sampler_wrapper_extra_seconds": 0.026717577129602432
+  },
+  "checks": [
+    {
+      "check": "zip_entry_names_unique",
+      "passed": true
+    },
+    {
+      "check": "archive_manifest_hashes_match",
+      "passed": true,
+      "detail": {
+        "verified_entries": 148,
+        "mismatches": []
+      }
+    },
+    {
+      "check": "runtime_single_device",
+      "passed": true
+    },
+    {
+      "check": "final_case_status",
+      "passed": true
+    },
+    {
+      "check": "six_rounds_in_agreed_order",
+      "passed": true
+    },
+    {
+      "check": "validation-bf16:model_loading_gib:unique_log_value",
+      "passed": true
+    },
+    {
+      "check": "validation-bf16:model_loading_gib:saved_report_matches",
+      "passed": true
+    },
+    {
+      "check": "validation-bf16:kv_available_gib:unique_log_value",
+      "passed": true
+    },
+    {
+      "check": "validation-bf16:kv_available_gib:saved_report_matches",
+      "passed": true
+    },
+    {
+      "check": "validation-bf16:kv_capacity_tokens:unique_log_value",
+      "passed": true
+    },
+    {
+      "check": "validation-bf16:kv_capacity_tokens:saved_report_matches",
+      "passed": true
+    },
+    {
+      "check": "validation-bf16:blocks_times_size_matches_token_capacity",
+      "passed": true
+    },
+    {
+      "check": "validation-bf16:automatic_kv_budget",
+      "passed": true
+    },
+    {
+      "check": "validation-bf16:fixed_cache_conditions",
+      "passed": true
+    },
+    {
+      "check": "validation-awq:model_loading_gib:unique_log_value",
+      "passed": true
+    },
+    {
+      "check": "validation-awq:model_loading_gib:saved_report_matches",
+      "passed": true
+    },
+    {
+      "check": "validation-awq:kv_available_gib:unique_log_value",
+      "passed": true
+    },
+    {
+      "check": "validation-awq:kv_available_gib:saved_report_matches",
+      "passed": true
+    },
+    {
+      "check": "validation-awq:kv_capacity_tokens:unique_log_value",
+      "passed": true
+    },
+    {
+      "check": "validation-awq:kv_capacity_tokens:saved_report_matches",
+      "passed": true
+    },
+    {
+      "check": "validation-awq:blocks_times_size_matches_token_capacity",
+      "passed": true
+    },
+    {
+      "check": "validation-awq:automatic_kv_budget",
+      "passed": true
+    },
+    {
+      "check": "validation-awq:fixed_cache_conditions",
+      "passed": true
+    },
+    {
+      "check": "round-01-bf16:model_loading_gib:unique_log_value",
+      "passed": true
+    },
+    {
+      "check": "round-01-bf16:model_loading_gib:saved_report_matches",
+      "passed": true
+    },
+    {
+      "check": "round-01-bf16:kv_available_gib:unique_log_value",
+      "passed": true
+    },
+    {
+      "check": "round-01-bf16:kv_available_gib:saved_report_matches",
+      "passed": true
+    },
+    {
+      "check": "round-01-bf16:kv_capacity_tokens:unique_log_value",
+      "passed": true
+    },
+    {
+      "check": "round-01-bf16:kv_capacity_tokens:saved_report_matches",
+      "passed": true
+    },
+    {
+      "check": "round-01-bf16:blocks_times_size_matches_token_capacity",
+      "passed": true
+    },
+    {
+      "check": "round-01-bf16:automatic_kv_budget",
+      "passed": true
+    },
+    {
+      "check": "round-01-bf16:fixed_cache_conditions",
+      "passed": true
+    },
+    {
+      "check": "round-02-awq:model_loading_gib:unique_log_value",
+      "passed": true
+    },
+    {
+      "check": "round-02-awq:model_loading_gib:saved_report_matches",
+      "passed": true
+    },
+    {
+      "check": "round-02-awq:kv_available_gib:unique_log_value",
+      "passed": true
+    },
+    {
+      "check": "round-02-awq:kv_available_gib:saved_report_matches",
+      "passed": true
+    },
+    {
+      "check": "round-02-awq:kv_capacity_tokens:unique_log_value",
+      "passed": true
+    },
+    {
+      "check": "round-02-awq:kv_capacity_tokens:saved_report_matches",
+      "passed": true
+    },
+    {
+      "check": "round-02-awq:blocks_times_size_matches_token_capacity",
+      "passed": true
+    },
+    {
+      "check": "round-02-awq:automatic_kv_budget",
+      "passed": true
+    },
+    {
+      "check": "round-02-awq:fixed_cache_conditions",
+      "passed": true
+    },
+    {
+      "check": "round-03-awq:model_loading_gib:unique_log_value",
+      "passed": true
+    },
+    {
+      "check": "round-03-awq:model_loading_gib:saved_report_matches",
+      "passed": true
+    },
+    {
+      "check": "round-03-awq:kv_available_gib:unique_log_value",
+      "passed": true
+    },
+    {
+      "check": "round-03-awq:kv_available_gib:saved_report_matches",
+      "passed": true
+    },
+    {
+      "check": "round-03-awq:kv_capacity_tokens:unique_log_value",
+      "passed": true
+    },
+    {
+      "check": "round-03-awq:kv_capacity_tokens:saved_report_matches",
+      "passed": true
+    },
+    {
+      "check": "round-03-awq:blocks_times_size_matches_token_capacity",
+      "passed": true
+    },
+    {
+      "check": "round-03-awq:automatic_kv_budget",
+      "passed": true
+    },
+    {
+      "check": "round-03-awq:fixed_cache_conditions",
+      "passed": true
+    },
+    {
+      "check": "round-04-bf16:model_loading_gib:unique_log_value",
+      "passed": true
+    },
+    {
+      "check": "round-04-bf16:model_loading_gib:saved_report_matches",
+      "passed": true
+    },
+    {
+      "check": "round-04-bf16:kv_available_gib:unique_log_value",
+      "passed": true
+    },
+    {
+      "check": "round-04-bf16:kv_available_gib:saved_report_matches",
+      "passed": true
+    },
+    {
+      "check": "round-04-bf16:kv_capacity_tokens:unique_log_value",
+      "passed": true
+    },
+    {
+      "check": "round-04-bf16:kv_capacity_tokens:saved_report_matches",
+      "passed": true
+    },
+    {
+      "check": "round-04-bf16:blocks_times_size_matches_token_capacity",
+      "passed": true
+    },
+    {
+      "check": "round-04-bf16:automatic_kv_budget",
+      "passed": true
+    },
+    {
+      "check": "round-04-bf16:fixed_cache_conditions",
+      "passed": true
+    },
+    {
+      "check": "round-05-bf16:model_loading_gib:unique_log_value",
+      "passed": true
+    },
+    {
+      "check": "round-05-bf16:model_loading_gib:saved_report_matches",
+      "passed": true
+    },
+    {
+      "check": "round-05-bf16:kv_available_gib:unique_log_value",
+      "passed": true
+    },
+    {
+      "check": "round-05-bf16:kv_available_gib:saved_report_matches",
+      "passed": true
+    },
+    {
+      "check": "round-05-bf16:kv_capacity_tokens:unique_log_value",
+      "passed": true
+    },
+    {
+      "check": "round-05-bf16:kv_capacity_tokens:saved_report_matches",
+      "passed": true
+    },
+    {
+      "check": "round-05-bf16:blocks_times_size_matches_token_capacity",
+      "passed": true
+    },
+    {
+      "check": "round-05-bf16:automatic_kv_budget",
+      "passed": true
+    },
+    {
+      "check": "round-05-bf16:fixed_cache_conditions",
+      "passed": true
+    },
+    {
+      "check": "round-06-awq:model_loading_gib:unique_log_value",
+      "passed": true
+    },
+    {
+      "check": "round-06-awq:model_loading_gib:saved_report_matches",
+      "passed": true
+    },
+    {
+      "check": "round-06-awq:kv_available_gib:unique_log_value",
+      "passed": true
+    },
+    {
+      "check": "round-06-awq:kv_available_gib:saved_report_matches",
+      "passed": true
+    },
+    {
+      "check": "round-06-awq:kv_capacity_tokens:unique_log_value",
+      "passed": true
+    },
+    {
+      "check": "round-06-awq:kv_capacity_tokens:saved_report_matches",
+      "passed": true
+    },
+    {
+      "check": "round-06-awq:blocks_times_size_matches_token_capacity",
+      "passed": true
+    },
+    {
+      "check": "round-06-awq:automatic_kv_budget",
+      "passed": true
+    },
+    {
+      "check": "round-06-awq:fixed_cache_conditions",
+      "passed": true
+    },
+    {
+      "check": "captured_source_samples_around_measure_batch",
+      "passed": true
+    },
+    {
+      "check": "round-01-bf16:rows_exist",
+      "passed": true
+    },
+    {
+      "check": "round-01-bf16:sample_0:mapped_without_error",
+      "passed": true
+    },
+    {
+      "check": "round-01-bf16:sample_0:runtime_bdf_and_bytes",
+      "passed": true
+    },
+    {
+      "check": "round-01-bf16:sample_1:mapped_without_error",
+      "passed": true
+    },
+    {
+      "check": "round-01-bf16:sample_1:runtime_bdf_and_bytes",
+      "passed": true
+    },
+    {
+      "check": "round-01-bf16:sample_2:mapped_without_error",
+      "passed": true
+    },
+    {
+      "check": "round-01-bf16:sample_2:runtime_bdf_and_bytes",
+      "passed": true
+    },
+    {
+      "check": "round-01-bf16:sample_3:mapped_without_error",
+      "passed": true
+    },
+    {
+      "check": "round-01-bf16:sample_3:runtime_bdf_and_bytes",
+      "passed": true
+    },
+    {
+      "check": "round-01-bf16:sample_4:mapped_without_error",
+      "passed": true
+    },
+    {
+      "check": "round-01-bf16:sample_4:runtime_bdf_and_bytes",
+      "passed": true
+    },
+    {
+      "check": "round-01-bf16:sample_5:mapped_without_error",
+      "passed": true
+    },
+    {
+      "check": "round-01-bf16:sample_5:runtime_bdf_and_bytes",
+      "passed": true
+    },
+    {
+      "check": "round-01-bf16:sample_6:mapped_without_error",
+      "passed": true
+    },
+    {
+      "check": "round-01-bf16:sample_6:runtime_bdf_and_bytes",
+      "passed": true
+    },
+    {
+      "check": "round-01-bf16:sample_7:mapped_without_error",
+      "passed": true
+    },
+    {
+      "check": "round-01-bf16:sample_7:runtime_bdf_and_bytes",
+      "passed": true
+    },
+    {
+      "check": "round-01-bf16:sample_8:mapped_without_error",
+      "passed": true
+    },
+    {
+      "check": "round-01-bf16:sample_8:runtime_bdf_and_bytes",
+      "passed": true
+    },
+    {
+      "check": "round-01-bf16:sample_9:mapped_without_error",
+      "passed": true
+    },
+    {
+      "check": "round-01-bf16:sample_9:runtime_bdf_and_bytes",
+      "passed": true
+    },
+    {
+      "check": "round-01-bf16:sample_10:mapped_without_error",
+      "passed": true
+    },
+    {
+      "check": "round-01-bf16:sample_10:runtime_bdf_and_bytes",
+      "passed": true
+    },
+    {
+      "check": "round-01-bf16:sample_11:mapped_without_error",
+      "passed": true
+    },
+    {
+      "check": "round-01-bf16:sample_11:runtime_bdf_and_bytes",
+      "passed": true
+    },
+    {
+      "check": "round-01-bf16:sample_12:mapped_without_error",
+      "passed": true
+    },
+    {
+      "check": "round-01-bf16:sample_12:runtime_bdf_and_bytes",
+      "passed": true
+    },
+    {
+      "check": "round-01-bf16:sample_13:mapped_without_error",
+      "passed": true
+    },
+    {
+      "check": "round-01-bf16:sample_13:runtime_bdf_and_bytes",
+      "passed": true
+    },
+    {
+      "check": "round-01-bf16:sample_14:mapped_without_error",
+      "passed": true
+    },
+    {
+      "check": "round-01-bf16:sample_14:runtime_bdf_and_bytes",
+      "passed": true
+    },
+    {
+      "check": "round-01-bf16:sample_15:mapped_without_error",
+      "passed": true
+    },
+    {
+      "check": "round-01-bf16:sample_15:runtime_bdf_and_bytes",
+      "passed": true
+    },
+    {
+      "check": "round-01-bf16:sample_16:mapped_without_error",
+      "passed": true
+    },
+    {
+      "check": "round-01-bf16:sample_16:runtime_bdf_and_bytes",
+      "passed": true
+    },
+    {
+      "check": "round-01-bf16:one_summary_device",
+      "passed": true
+    },
+    {
+      "check": "round-01-bf16:recomputed_valid_samples",
+      "passed": true
+    },
+    {
+      "check": "round-01-bf16:recomputed_failed_samples",
+      "passed": true
+    },
+    {
+      "check": "round-01-bf16:recomputed_first_used_bytes",
+      "passed": true
+    },
+    {
+      "check": "round-01-bf16:recomputed_last_used_bytes",
+      "passed": true
+    },
+    {
+      "check": "round-01-bf16:recomputed_min_used_bytes",
+      "passed": true
+    },
+    {
+      "check": "round-01-bf16:recomputed_sampled_max_used_bytes",
+      "passed": true
+    },
+    {
+      "check": "round-01-bf16:recomputed_total_bytes_values",
+      "passed": true
+    },
+    {
+      "check": "round-01-bf16:recomputed_sample_count",
+      "passed": true
+    },
+    {
+      "check": "round-01-bf16:monotonic_sequences",
+      "passed": true
+    },
+    {
+      "check": "round-01-bf16:sample_gap_matches",
+      "passed": true
+    },
+    {
+      "check": "round-01-bf16:device_total_matches_runtime",
+      "passed": true
+    },
+    {
+      "check": "round-01-bf16:memory_evidence_complete_recomputed",
+      "passed": true
+    },
+    {
+      "check": "round-01-bf16:samples_within_sampler_window",
+      "passed": true
+    },
+    {
+      "check": "round-01-bf16:sample_utc_within_sampler_window",
+      "passed": true
+    },
+    {
+      "check": "round-01-bf16:sampler_span_encloses_duration_of_measure_batch",
+      "passed": true
+    },
+    {
+      "check": "round-01-bf16:dtype_for_variant",
+      "passed": true
+    },
+    {
+      "check": "round-02-awq:rows_exist",
+      "passed": true
+    },
+    {
+      "check": "round-02-awq:sample_0:mapped_without_error",
+      "passed": true
+    },
+    {
+      "check": "round-02-awq:sample_0:runtime_bdf_and_bytes",
+      "passed": true
+    },
+    {
+      "check": "round-02-awq:sample_1:mapped_without_error",
+      "passed": true
+    },
+    {
+      "check": "round-02-awq:sample_1:runtime_bdf_and_bytes",
+      "passed": true
+    },
+    {
+      "check": "round-02-awq:sample_2:mapped_without_error",
+      "passed": true
+    },
+    {
+      "check": "round-02-awq:sample_2:runtime_bdf_and_bytes",
+      "passed": true
+    },
+    {
+      "check": "round-02-awq:sample_3:mapped_without_error",
+      "passed": true
+    },
+    {
+      "check": "round-02-awq:sample_3:runtime_bdf_and_bytes",
+      "passed": true
+    },
+    {
+      "check": "round-02-awq:sample_4:mapped_without_error",
+      "passed": true
+    },
+    {
+      "check": "round-02-awq:sample_4:runtime_bdf_and_bytes",
+      "passed": true
+    },
+    {
+      "check": "round-02-awq:sample_5:mapped_without_error",
+      "passed": true
+    },
+    {
+      "check": "round-02-awq:sample_5:runtime_bdf_and_bytes",
+      "passed": true
+    },
+    {
+      "check": "round-02-awq:sample_6:mapped_without_error",
+      "passed": true
+    },
+    {
+      "check": "round-02-awq:sample_6:runtime_bdf_and_bytes",
+      "passed": true
+    },
+    {
+      "check": "round-02-awq:sample_7:mapped_without_error",
+      "passed": true
+    },
+    {
+      "check": "round-02-awq:sample_7:runtime_bdf_and_bytes",
+      "passed": true
+    },
+    {
+      "check": "round-02-awq:sample_8:mapped_without_error",
+      "passed": true
+    },
+    {
+      "check": "round-02-awq:sample_8:runtime_bdf_and_bytes",
+      "passed": true
+    },
+    {
+      "check": "round-02-awq:sample_9:mapped_without_error",
+      "passed": true
+    },
+    {
+      "check": "round-02-awq:sample_9:runtime_bdf_and_bytes",
+      "passed": true
+    },
+    {
+      "check": "round-02-awq:sample_10:mapped_without_error",
+      "passed": true
+    },
+    {
+      "check": "round-02-awq:sample_10:runtime_bdf_and_bytes",
+      "passed": true
+    },
+    {
+      "check": "round-02-awq:sample_11:mapped_without_error",
+      "passed": true
+    },
+    {
+      "check": "round-02-awq:sample_11:runtime_bdf_and_bytes",
+      "passed": true
+    },
+    {
+      "check": "round-02-awq:sample_12:mapped_without_error",
+      "passed": true
+    },
+    {
+      "check": "round-02-awq:sample_12:runtime_bdf_and_bytes",
+      "passed": true
+    },
+    {
+      "check": "round-02-awq:sample_13:mapped_without_error",
+      "passed": true
+    },
+    {
+      "check": "round-02-awq:sample_13:runtime_bdf_and_bytes",
+      "passed": true
+    },
+    {
+      "check": "round-02-awq:sample_14:mapped_without_error",
+      "passed": true
+    },
+    {
+      "check": "round-02-awq:sample_14:runtime_bdf_and_bytes",
+      "passed": true
+    },
+    {
+      "check": "round-02-awq:sample_15:mapped_without_error",
+      "passed": true
+    },
+    {
+      "check": "round-02-awq:sample_15:runtime_bdf_and_bytes",
+      "passed": true
+    },
+    {
+      "check": "round-02-awq:sample_16:mapped_without_error",
+      "passed": true
+    },
+    {
+      "check": "round-02-awq:sample_16:runtime_bdf_and_bytes",
+      "passed": true
+    },
+    {
+      "check": "round-02-awq:sample_17:mapped_without_error",
+      "passed": true
+    },
+    {
+      "check": "round-02-awq:sample_17:runtime_bdf_and_bytes",
+      "passed": true
+    },
+    {
+      "check": "round-02-awq:sample_18:mapped_without_error",
+      "passed": true
+    },
+    {
+      "check": "round-02-awq:sample_18:runtime_bdf_and_bytes",
+      "passed": true
+    },
+    {
+      "check": "round-02-awq:sample_19:mapped_without_error",
+      "passed": true
+    },
+    {
+      "check": "round-02-awq:sample_19:runtime_bdf_and_bytes",
+      "passed": true
+    },
+    {
+      "check": "round-02-awq:sample_20:mapped_without_error",
+      "passed": true
+    },
+    {
+      "check": "round-02-awq:sample_20:runtime_bdf_and_bytes",
+      "passed": true
+    },
+    {
+      "check": "round-02-awq:one_summary_device",
+      "passed": true
+    },
+    {
+      "check": "round-02-awq:recomputed_valid_samples",
+      "passed": true
+    },
+    {
+      "check": "round-02-awq:recomputed_failed_samples",
+      "passed": true
+    },
+    {
+      "check": "round-02-awq:recomputed_first_used_bytes",
+      "passed": true
+    },
+    {
+      "check": "round-02-awq:recomputed_last_used_bytes",
+      "passed": true
+    },
+    {
+      "check": "round-02-awq:recomputed_min_used_bytes",
+      "passed": true
+    },
+    {
+      "check": "round-02-awq:recomputed_sampled_max_used_bytes",
+      "passed": true
+    },
+    {
+      "check": "round-02-awq:recomputed_total_bytes_values",
+      "passed": true
+    },
+    {
+      "check": "round-02-awq:recomputed_sample_count",
+      "passed": true
+    },
+    {
+      "check": "round-02-awq:monotonic_sequences",
+      "passed": true
+    },
+    {
+      "check": "round-02-awq:sample_gap_matches",
+      "passed": true
+    },
+    {
+      "check": "round-02-awq:device_total_matches_runtime",
+      "passed": true
+    },
+    {
+      "check": "round-02-awq:memory_evidence_complete_recomputed",
+      "passed": true
+    },
+    {
+      "check": "round-02-awq:samples_within_sampler_window",
+      "passed": true
+    },
+    {
+      "check": "round-02-awq:sample_utc_within_sampler_window",
+      "passed": true
+    },
+    {
+      "check": "round-02-awq:sampler_span_encloses_duration_of_measure_batch",
+      "passed": true
+    },
+    {
+      "check": "round-02-awq:dtype_for_variant",
+      "passed": true
+    },
+    {
+      "check": "round-03-awq:rows_exist",
+      "passed": true
+    },
+    {
+      "check": "round-03-awq:sample_0:mapped_without_error",
+      "passed": true
+    },
+    {
+      "check": "round-03-awq:sample_0:runtime_bdf_and_bytes",
+      "passed": true
+    },
+    {
+      "check": "round-03-awq:sample_1:mapped_without_error",
+      "passed": true
+    },
+    {
+      "check": "round-03-awq:sample_1:runtime_bdf_and_bytes",
+      "passed": true
+    },
+    {
+      "check": "round-03-awq:sample_2:mapped_without_error",
+      "passed": true
+    },
+    {
+      "check": "round-03-awq:sample_2:runtime_bdf_and_bytes",
+      "passed": true
+    },
+    {
+      "check": "round-03-awq:sample_3:mapped_without_error",
+      "passed": true
+    },
+    {
+      "check": "round-03-awq:sample_3:runtime_bdf_and_bytes",
+      "passed": true
+    },
+    {
+      "check": "round-03-awq:sample_4:mapped_without_error",
+      "passed": true
+    },
+    {
+      "check": "round-03-awq:sample_4:runtime_bdf_and_bytes",
+      "passed": true
+    },
+    {
+      "check": "round-03-awq:sample_5:mapped_without_error",
+      "passed": true
+    },
+    {
+      "check": "round-03-awq:sample_5:runtime_bdf_and_bytes",
+      "passed": true
+    },
+    {
+      "check": "round-03-awq:sample_6:mapped_without_error",
+      "passed": true
+    },
+    {
+      "check": "round-03-awq:sample_6:runtime_bdf_and_bytes",
+      "passed": true
+    },
+    {
+      "check": "round-03-awq:sample_7:mapped_without_error",
+      "passed": true
+    },
+    {
+      "check": "round-03-awq:sample_7:runtime_bdf_and_bytes",
+      "passed": true
+    },
+    {
+      "check": "round-03-awq:sample_8:mapped_without_error",
+      "passed": true
+    },
+    {
+      "check": "round-03-awq:sample_8:runtime_bdf_and_bytes",
+      "passed": true
+    },
+    {
+      "check": "round-03-awq:sample_9:mapped_without_error",
+      "passed": true
+    },
+    {
+      "check": "round-03-awq:sample_9:runtime_bdf_and_bytes",
+      "passed": true
+    },
+    {
+      "check": "round-03-awq:sample_10:mapped_without_error",
+      "passed": true
+    },
+    {
+      "check": "round-03-awq:sample_10:runtime_bdf_and_bytes",
+      "passed": true
+    },
+    {
+      "check": "round-03-awq:sample_11:mapped_without_error",
+      "passed": true
+    },
+    {
+      "check": "round-03-awq:sample_11:runtime_bdf_and_bytes",
+      "passed": true
+    },
+    {
+      "check": "round-03-awq:sample_12:mapped_without_error",
+      "passed": true
+    },
+    {
+      "check": "round-03-awq:sample_12:runtime_bdf_and_bytes",
+      "passed": true
+    },
+    {
+      "check": "round-03-awq:sample_13:mapped_without_error",
+      "passed": true
+    },
+    {
+      "check": "round-03-awq:sample_13:runtime_bdf_and_bytes",
+      "passed": true
+    },
+    {
+      "check": "round-03-awq:sample_14:mapped_without_error",
+      "passed": true
+    },
+    {
+      "check": "round-03-awq:sample_14:runtime_bdf_and_bytes",
+      "passed": true
+    },
+    {
+      "check": "round-03-awq:sample_15:mapped_without_error",
+      "passed": true
+    },
+    {
+      "check": "round-03-awq:sample_15:runtime_bdf_and_bytes",
+      "passed": true
+    },
+    {
+      "check": "round-03-awq:sample_16:mapped_without_error",
+      "passed": true
+    },
+    {
+      "check": "round-03-awq:sample_16:runtime_bdf_and_bytes",
+      "passed": true
+    },
+    {
+      "check": "round-03-awq:sample_17:mapped_without_error",
+      "passed": true
+    },
+    {
+      "check": "round-03-awq:sample_17:runtime_bdf_and_bytes",
+      "passed": true
+    },
+    {
+      "check": "round-03-awq:sample_18:mapped_without_error",
+      "passed": true
+    },
+    {
+      "check": "round-03-awq:sample_18:runtime_bdf_and_bytes",
+      "passed": true
+    },
+    {
+      "check": "round-03-awq:sample_19:mapped_without_error",
+      "passed": true
+    },
+    {
+      "check": "round-03-awq:sample_19:runtime_bdf_and_bytes",
+      "passed": true
+    },
+    {
+      "check": "round-03-awq:sample_20:mapped_without_error",
+      "passed": true
+    },
+    {
+      "check": "round-03-awq:sample_20:runtime_bdf_and_bytes",
+      "passed": true
+    },
+    {
+      "check": "round-03-awq:one_summary_device",
+      "passed": true
+    },
+    {
+      "check": "round-03-awq:recomputed_valid_samples",
+      "passed": true
+    },
+    {
+      "check": "round-03-awq:recomputed_failed_samples",
+      "passed": true
+    },
+    {
+      "check": "round-03-awq:recomputed_first_used_bytes",
+      "passed": true
+    },
+    {
+      "check": "round-03-awq:recomputed_last_used_bytes",
+      "passed": true
+    },
+    {
+      "check": "round-03-awq:recomputed_min_used_bytes",
+      "passed": true
+    },
+    {
+      "check": "round-03-awq:recomputed_sampled_max_used_bytes",
+      "passed": true
+    },
+    {
+      "check": "round-03-awq:recomputed_total_bytes_values",
+      "passed": true
+    },
+    {
+      "check": "round-03-awq:recomputed_sample_count",
+      "passed": true
+    },
+    {
+      "check": "round-03-awq:monotonic_sequences",
+      "passed": true
+    },
+    {
+      "check": "round-03-awq:sample_gap_matches",
+      "passed": true
+    },
+    {
+      "check": "round-03-awq:device_total_matches_runtime",
+      "passed": true
+    },
+    {
+      "check": "round-03-awq:memory_evidence_complete_recomputed",
+      "passed": true
+    },
+    {
+      "check": "round-03-awq:samples_within_sampler_window",
+      "passed": true
+    },
+    {
+      "check": "round-03-awq:sample_utc_within_sampler_window",
+      "passed": true
+    },
+    {
+      "check": "round-03-awq:sampler_span_encloses_duration_of_measure_batch",
+      "passed": true
+    },
+    {
+      "check": "round-03-awq:dtype_for_variant",
+      "passed": true
+    },
+    {
+      "check": "round-04-bf16:rows_exist",
+      "passed": true
+    },
+    {
+      "check": "round-04-bf16:sample_0:mapped_without_error",
+      "passed": true
+    },
+    {
+      "check": "round-04-bf16:sample_0:runtime_bdf_and_bytes",
+      "passed": true
+    },
+    {
+      "check": "round-04-bf16:sample_1:mapped_without_error",
+      "passed": true
+    },
+    {
+      "check": "round-04-bf16:sample_1:runtime_bdf_and_bytes",
+      "passed": true
+    },
+    {
+      "check": "round-04-bf16:sample_2:mapped_without_error",
+      "passed": true
+    },
+    {
+      "check": "round-04-bf16:sample_2:runtime_bdf_and_bytes",
+      "passed": true
+    },
+    {
+      "check": "round-04-bf16:sample_3:mapped_without_error",
+      "passed": true
+    },
+    {
+      "check": "round-04-bf16:sample_3:runtime_bdf_and_bytes",
+      "passed": true
+    },
+    {
+      "check": "round-04-bf16:sample_4:mapped_without_error",
+      "passed": true
+    },
+    {
+      "check": "round-04-bf16:sample_4:runtime_bdf_and_bytes",
+      "passed": true
+    },
+    {
+      "check": "round-04-bf16:sample_5:mapped_without_error",
+      "passed": true
+    },
+    {
+      "check": "round-04-bf16:sample_5:runtime_bdf_and_bytes",
+      "passed": true
+    },
+    {
+      "check": "round-04-bf16:sample_6:mapped_without_error",
+      "passed": true
+    },
+    {
+      "check": "round-04-bf16:sample_6:runtime_bdf_and_bytes",
+      "passed": true
+    },
+    {
+      "check": "round-04-bf16:sample_7:mapped_without_error",
+      "passed": true
+    },
+    {
+      "check": "round-04-bf16:sample_7:runtime_bdf_and_bytes",
+      "passed": true
+    },
+    {
+      "check": "round-04-bf16:sample_8:mapped_without_error",
+      "passed": true
+    },
+    {
+      "check": "round-04-bf16:sample_8:runtime_bdf_and_bytes",
+      "passed": true
+    },
+    {
+      "check": "round-04-bf16:sample_9:mapped_without_error",
+      "passed": true
+    },
+    {
+      "check": "round-04-bf16:sample_9:runtime_bdf_and_bytes",
+      "passed": true
+    },
+    {
+      "check": "round-04-bf16:sample_10:mapped_without_error",
+      "passed": true
+    },
+    {
+      "check": "round-04-bf16:sample_10:runtime_bdf_and_bytes",
+      "passed": true
+    },
+    {
+      "check": "round-04-bf16:sample_11:mapped_without_error",
+      "passed": true
+    },
+    {
+      "check": "round-04-bf16:sample_11:runtime_bdf_and_bytes",
+      "passed": true
+    },
+    {
+      "check": "round-04-bf16:sample_12:mapped_without_error",
+      "passed": true
+    },
+    {
+      "check": "round-04-bf16:sample_12:runtime_bdf_and_bytes",
+      "passed": true
+    },
+    {
+      "check": "round-04-bf16:sample_13:mapped_without_error",
+      "passed": true
+    },
+    {
+      "check": "round-04-bf16:sample_13:runtime_bdf_and_bytes",
+      "passed": true
+    },
+    {
+      "check": "round-04-bf16:sample_14:mapped_without_error",
+      "passed": true
+    },
+    {
+      "check": "round-04-bf16:sample_14:runtime_bdf_and_bytes",
+      "passed": true
+    },
+    {
+      "check": "round-04-bf16:sample_15:mapped_without_error",
+      "passed": true
+    },
+    {
+      "check": "round-04-bf16:sample_15:runtime_bdf_and_bytes",
+      "passed": true
+    },
+    {
+      "check": "round-04-bf16:sample_16:mapped_without_error",
+      "passed": true
+    },
+    {
+      "check": "round-04-bf16:sample_16:runtime_bdf_and_bytes",
+      "passed": true
+    },
+    {
+      "check": "round-04-bf16:sample_17:mapped_without_error",
+      "passed": true
+    },
+    {
+      "check": "round-04-bf16:sample_17:runtime_bdf_and_bytes",
+      "passed": true
+    },
+    {
+      "check": "round-04-bf16:one_summary_device",
+      "passed": true
+    },
+    {
+      "check": "round-04-bf16:recomputed_valid_samples",
+      "passed": true
+    },
+    {
+      "check": "round-04-bf16:recomputed_failed_samples",
+      "passed": true
+    },
+    {
+      "check": "round-04-bf16:recomputed_first_used_bytes",
+      "passed": true
+    },
+    {
+      "check": "round-04-bf16:recomputed_last_used_bytes",
+      "passed": true
+    },
+    {
+      "check": "round-04-bf16:recomputed_min_used_bytes",
+      "passed": true
+    },
+    {
+      "check": "round-04-bf16:recomputed_sampled_max_used_bytes",
+      "passed": true
+    },
+    {
+      "check": "round-04-bf16:recomputed_total_bytes_values",
+      "passed": true
+    },
+    {
+      "check": "round-04-bf16:recomputed_sample_count",
+      "passed": true
+    },
+    {
+      "check": "round-04-bf16:monotonic_sequences",
+      "passed": true
+    },
+    {
+      "check": "round-04-bf16:sample_gap_matches",
+      "passed": true
+    },
+    {
+      "check": "round-04-bf16:device_total_matches_runtime",
+      "passed": true
+    },
+    {
+      "check": "round-04-bf16:memory_evidence_complete_recomputed",
+      "passed": true
+    },
+    {
+      "check": "round-04-bf16:samples_within_sampler_window",
+      "passed": true
+    },
+    {
+      "check": "round-04-bf16:sample_utc_within_sampler_window",
+      "passed": true
+    },
+    {
+      "check": "round-04-bf16:sampler_span_encloses_duration_of_measure_batch",
+      "passed": true
+    },
+    {
+      "check": "round-04-bf16:dtype_for_variant",
+      "passed": true
+    },
+    {
+      "check": "round-05-bf16:rows_exist",
+      "passed": true
+    },
+    {
+      "check": "round-05-bf16:sample_0:mapped_without_error",
+      "passed": true
+    },
+    {
+      "check": "round-05-bf16:sample_0:runtime_bdf_and_bytes",
+      "passed": true
+    },
+    {
+      "check": "round-05-bf16:sample_1:mapped_without_error",
+      "passed": true
+    },
+    {
+      "check": "round-05-bf16:sample_1:runtime_bdf_and_bytes",
+      "passed": true
+    },
+    {
+      "check": "round-05-bf16:sample_2:mapped_without_error",
+      "passed": true
+    },
+    {
+      "check": "round-05-bf16:sample_2:runtime_bdf_and_bytes",
+      "passed": true
+    },
+    {
+      "check": "round-05-bf16:sample_3:mapped_without_error",
+      "passed": true
+    },
+    {
+      "check": "round-05-bf16:sample_3:runtime_bdf_and_bytes",
+      "passed": true
+    },
+    {
+      "check": "round-05-bf16:sample_4:mapped_without_error",
+      "passed": true
+    },
+    {
+      "check": "round-05-bf16:sample_4:runtime_bdf_and_bytes",
+      "passed": true
+    },
+    {
+      "check": "round-05-bf16:sample_5:mapped_without_error",
+      "passed": true
+    },
+    {
+      "check": "round-05-bf16:sample_5:runtime_bdf_and_bytes",
+      "passed": true
+    },
+    {
+      "check": "round-05-bf16:sample_6:mapped_without_error",
+      "passed": true
+    },
+    {
+      "check": "round-05-bf16:sample_6:runtime_bdf_and_bytes",
+      "passed": true
+    },
+    {
+      "check": "round-05-bf16:sample_7:mapped_without_error",
+      "passed": true
+    },
+    {
+      "check": "round-05-bf16:sample_7:runtime_bdf_and_bytes",
+      "passed": true
+    },
+    {
+      "check": "round-05-bf16:sample_8:mapped_without_error",
+      "passed": true
+    },
+    {
+      "check": "round-05-bf16:sample_8:runtime_bdf_and_bytes",
+      "passed": true
+    },
+    {
+      "check": "round-05-bf16:sample_9:mapped_without_error",
+      "passed": true
+    },
+    {
+      "check": "round-05-bf16:sample_9:runtime_bdf_and_bytes",
+      "passed": true
+    },
+    {
+      "check": "round-05-bf16:sample_10:mapped_without_error",
+      "passed": true
+    },
+    {
+      "check": "round-05-bf16:sample_10:runtime_bdf_and_bytes",
+      "passed": true
+    },
+    {
+      "check": "round-05-bf16:sample_11:mapped_without_error",
+      "passed": true
+    },
+    {
+      "check": "round-05-bf16:sample_11:runtime_bdf_and_bytes",
+      "passed": true
+    },
+    {
+      "check": "round-05-bf16:sample_12:mapped_without_error",
+      "passed": true
+    },
+    {
+      "check": "round-05-bf16:sample_12:runtime_bdf_and_bytes",
+      "passed": true
+    },
+    {
+      "check": "round-05-bf16:sample_13:mapped_without_error",
+      "passed": true
+    },
+    {
+      "check": "round-05-bf16:sample_13:runtime_bdf_and_bytes",
+      "passed": true
+    },
+    {
+      "check": "round-05-bf16:sample_14:mapped_without_error",
+      "passed": true
+    },
+    {
+      "check": "round-05-bf16:sample_14:runtime_bdf_and_bytes",
+      "passed": true
+    },
+    {
+      "check": "round-05-bf16:sample_15:mapped_without_error",
+      "passed": true
+    },
+    {
+      "check": "round-05-bf16:sample_15:runtime_bdf_and_bytes",
+      "passed": true
+    },
+    {
+      "check": "round-05-bf16:sample_16:mapped_without_error",
+      "passed": true
+    },
+    {
+      "check": "round-05-bf16:sample_16:runtime_bdf_and_bytes",
+      "passed": true
+    },
+    {
+      "check": "round-05-bf16:sample_17:mapped_without_error",
+      "passed": true
+    },
+    {
+      "check": "round-05-bf16:sample_17:runtime_bdf_and_bytes",
+      "passed": true
+    },
+    {
+      "check": "round-05-bf16:one_summary_device",
+      "passed": true
+    },
+    {
+      "check": "round-05-bf16:recomputed_valid_samples",
+      "passed": true
+    },
+    {
+      "check": "round-05-bf16:recomputed_failed_samples",
+      "passed": true
+    },
+    {
+      "check": "round-05-bf16:recomputed_first_used_bytes",
+      "passed": true
+    },
+    {
+      "check": "round-05-bf16:recomputed_last_used_bytes",
+      "passed": true
+    },
+    {
+      "check": "round-05-bf16:recomputed_min_used_bytes",
+      "passed": true
+    },
+    {
+      "check": "round-05-bf16:recomputed_sampled_max_used_bytes",
+      "passed": true
+    },
+    {
+      "check": "round-05-bf16:recomputed_total_bytes_values",
+      "passed": true
+    },
+    {
+      "check": "round-05-bf16:recomputed_sample_count",
+      "passed": true
+    },
+    {
+      "check": "round-05-bf16:monotonic_sequences",
+      "passed": true
+    },
+    {
+      "check": "round-05-bf16:sample_gap_matches",
+      "passed": true
+    },
+    {
+      "check": "round-05-bf16:device_total_matches_runtime",
+      "passed": true
+    },
+    {
+      "check": "round-05-bf16:memory_evidence_complete_recomputed",
+      "passed": true
+    },
+    {
+      "check": "round-05-bf16:samples_within_sampler_window",
+      "passed": true
+    },
+    {
+      "check": "round-05-bf16:sample_utc_within_sampler_window",
+      "passed": true
+    },
+    {
+      "check": "round-05-bf16:sampler_span_encloses_duration_of_measure_batch",
+      "passed": true
+    },
+    {
+      "check": "round-05-bf16:dtype_for_variant",
+      "passed": true
+    },
+    {
+      "check": "round-06-awq:rows_exist",
+      "passed": true
+    },
+    {
+      "check": "round-06-awq:sample_0:mapped_without_error",
+      "passed": true
+    },
+    {
+      "check": "round-06-awq:sample_0:runtime_bdf_and_bytes",
+      "passed": true
+    },
+    {
+      "check": "round-06-awq:sample_1:mapped_without_error",
+      "passed": true
+    },
+    {
+      "check": "round-06-awq:sample_1:runtime_bdf_and_bytes",
+      "passed": true
+    },
+    {
+      "check": "round-06-awq:sample_2:mapped_without_error",
+      "passed": true
+    },
+    {
+      "check": "round-06-awq:sample_2:runtime_bdf_and_bytes",
+      "passed": true
+    },
+    {
+      "check": "round-06-awq:sample_3:mapped_without_error",
+      "passed": true
+    },
+    {
+      "check": "round-06-awq:sample_3:runtime_bdf_and_bytes",
+      "passed": true
+    },
+    {
+      "check": "round-06-awq:sample_4:mapped_without_error",
+      "passed": true
+    },
+    {
+      "check": "round-06-awq:sample_4:runtime_bdf_and_bytes",
+      "passed": true
+    },
+    {
+      "check": "round-06-awq:sample_5:mapped_without_error",
+      "passed": true
+    },
+    {
+      "check": "round-06-awq:sample_5:runtime_bdf_and_bytes",
+      "passed": true
+    },
+    {
+      "check": "round-06-awq:sample_6:mapped_without_error",
+      "passed": true
+    },
+    {
+      "check": "round-06-awq:sample_6:runtime_bdf_and_bytes",
+      "passed": true
+    },
+    {
+      "check": "round-06-awq:sample_7:mapped_without_error",
+      "passed": true
+    },
+    {
+      "check": "round-06-awq:sample_7:runtime_bdf_and_bytes",
+      "passed": true
+    },
+    {
+      "check": "round-06-awq:sample_8:mapped_without_error",
+      "passed": true
+    },
+    {
+      "check": "round-06-awq:sample_8:runtime_bdf_and_bytes",
+      "passed": true
+    },
+    {
+      "check": "round-06-awq:sample_9:mapped_without_error",
+      "passed": true
+    },
+    {
+      "check": "round-06-awq:sample_9:runtime_bdf_and_bytes",
+      "passed": true
+    },
+    {
+      "check": "round-06-awq:sample_10:mapped_without_error",
+      "passed": true
+    },
+    {
+      "check": "round-06-awq:sample_10:runtime_bdf_and_bytes",
+      "passed": true
+    },
+    {
+      "check": "round-06-awq:sample_11:mapped_without_error",
+      "passed": true
+    },
+    {
+      "check": "round-06-awq:sample_11:runtime_bdf_and_bytes",
+      "passed": true
+    },
+    {
+      "check": "round-06-awq:sample_12:mapped_without_error",
+      "passed": true
+    },
+    {
+      "check": "round-06-awq:sample_12:runtime_bdf_and_bytes",
+      "passed": true
+    },
+    {
+      "check": "round-06-awq:sample_13:mapped_without_error",
+      "passed": true
+    },
+    {
+      "check": "round-06-awq:sample_13:runtime_bdf_and_bytes",
+      "passed": true
+    },
+    {
+      "check": "round-06-awq:sample_14:mapped_without_error",
+      "passed": true
+    },
+    {
+      "check": "round-06-awq:sample_14:runtime_bdf_and_bytes",
+      "passed": true
+    },
+    {
+      "check": "round-06-awq:sample_15:mapped_without_error",
+      "passed": true
+    },
+    {
+      "check": "round-06-awq:sample_15:runtime_bdf_and_bytes",
+      "passed": true
+    },
+    {
+      "check": "round-06-awq:sample_16:mapped_without_error",
+      "passed": true
+    },
+    {
+      "check": "round-06-awq:sample_16:runtime_bdf_and_bytes",
+      "passed": true
+    },
+    {
+      "check": "round-06-awq:sample_17:mapped_without_error",
+      "passed": true
+    },
+    {
+      "check": "round-06-awq:sample_17:runtime_bdf_and_bytes",
+      "passed": true
+    },
+    {
+      "check": "round-06-awq:sample_18:mapped_without_error",
+      "passed": true
+    },
+    {
+      "check": "round-06-awq:sample_18:runtime_bdf_and_bytes",
+      "passed": true
+    },
+    {
+      "check": "round-06-awq:sample_19:mapped_without_error",
+      "passed": true
+    },
+    {
+      "check": "round-06-awq:sample_19:runtime_bdf_and_bytes",
+      "passed": true
+    },
+    {
+      "check": "round-06-awq:sample_20:mapped_without_error",
+      "passed": true
+    },
+    {
+      "check": "round-06-awq:sample_20:runtime_bdf_and_bytes",
+      "passed": true
+    },
+    {
+      "check": "round-06-awq:one_summary_device",
+      "passed": true
+    },
+    {
+      "check": "round-06-awq:recomputed_valid_samples",
+      "passed": true
+    },
+    {
+      "check": "round-06-awq:recomputed_failed_samples",
+      "passed": true
+    },
+    {
+      "check": "round-06-awq:recomputed_first_used_bytes",
+      "passed": true
+    },
+    {
+      "check": "round-06-awq:recomputed_last_used_bytes",
+      "passed": true
+    },
+    {
+      "check": "round-06-awq:recomputed_min_used_bytes",
+      "passed": true
+    },
+    {
+      "check": "round-06-awq:recomputed_sampled_max_used_bytes",
+      "passed": true
+    },
+    {
+      "check": "round-06-awq:recomputed_total_bytes_values",
+      "passed": true
+    },
+    {
+      "check": "round-06-awq:recomputed_sample_count",
+      "passed": true
+    },
+    {
+      "check": "round-06-awq:monotonic_sequences",
+      "passed": true
+    },
+    {
+      "check": "round-06-awq:sample_gap_matches",
+      "passed": true
+    },
+    {
+      "check": "round-06-awq:device_total_matches_runtime",
+      "passed": true
+    },
+    {
+      "check": "round-06-awq:memory_evidence_complete_recomputed",
+      "passed": true
+    },
+    {
+      "check": "round-06-awq:samples_within_sampler_window",
+      "passed": true
+    },
+    {
+      "check": "round-06-awq:sample_utc_within_sampler_window",
+      "passed": true
+    },
+    {
+      "check": "round-06-awq:sampler_span_encloses_duration_of_measure_batch",
+      "passed": true
+    },
+    {
+      "check": "round-06-awq:dtype_for_variant",
+      "passed": true
+    },
+    {
+      "check": "sampler_round_windows_do_not_overlap",
+      "passed": true
+    },
+    {
+      "check": "client_monotonic_round_starts_increase",
+      "passed": true
+    },
+    {
+      "check": "all_samples_same_device_total",
+      "passed": true
+    },
+    {
+      "check": "bf16:three_rounds",
+      "passed": true
+    },
+    {
+      "check": "bf16:stable_model_loading_gib",
+      "passed": true
+    },
+    {
+      "check": "bf16:stable_kv_available_gib",
+      "passed": true
+    },
+    {
+      "check": "bf16:stable_kv_capacity_tokens",
+      "passed": true
+    },
+    {
+      "check": "bf16:stable_num_gpu_blocks",
+      "passed": true
+    },
+    {
+      "check": "bf16:stable_block_size_tokens",
+      "passed": true
+    },
+    {
+      "check": "bf16:stable_gpu_memory_utilization",
+      "passed": true
+    },
+    {
+      "check": "bf16:stable_kv_cache_memory_bytes",
+      "passed": true
+    },
+    {
+      "check": "bf16:stable_cache_dtype",
+      "passed": true
+    },
+    {
+      "check": "bf16:stable_dtype",
+      "passed": true
+    },
+    {
+      "check": "awq:three_rounds",
+      "passed": true
+    },
+    {
+      "check": "awq:stable_model_loading_gib",
+      "passed": true
+    },
+    {
+      "check": "awq:stable_kv_available_gib",
+      "passed": true
+    },
+    {
+      "check": "awq:stable_kv_capacity_tokens",
+      "passed": true
+    },
+    {
+      "check": "awq:stable_num_gpu_blocks",
+      "passed": true
+    },
+    {
+      "check": "awq:stable_block_size_tokens",
+      "passed": true
+    },
+    {
+      "check": "awq:stable_gpu_memory_utilization",
+      "passed": true
+    },
+    {
+      "check": "awq:stable_kv_cache_memory_bytes",
+      "passed": true
+    },
+    {
+      "check": "awq:stable_cache_dtype",
+      "passed": true
+    },
+    {
+      "check": "awq:stable_dtype",
+      "passed": true
+    },
+    {
+      "check": "first_snapshot_memory_related_sources_unchanged",
+      "passed": true,
+      "detail": {
+        "checked_entries": 14,
+        "changed": []
+      }
+    }
+  ],
+  "source_sha256": {
+    "status.json": "6fef318f05cb5d505ebf71e74b892078bdae91f3adef8ac2c91746225b8021f3",
+    "environment_run/environment.json": "01e6d61677cf30b433075939cd96a33f797168374504e710cc2429f8f879f34a",
+    "validation-bf16/server.log": "59f5442dc5eb9ce853f7a46f772cf0605e7c1e8b89d74e54acb504ad68894652",
+    "validation-bf16/server_memory.json": "991056df56ca10841105cd1c0a7269e4c523ad33befd8fe095518175bfd06aeb",
+    "validation-bf16/effective_config.json": "d6f5cbc72cd97f587f9ed14ecadaefc26e7094587d6b9dae59dfdb950da199e0",
+    "validation-awq/server.log": "ebce48c3a261dbfab2dfc8aa13712145339a26fe95d712af61b3631fa63fb746",
+    "validation-awq/server_memory.json": "25feff2fb8ac15663807470ef077b8f2d0e330632938d24b765e25a4a05ec130",
+    "validation-awq/effective_config.json": "d75a89ebecea431a9e79592d91302dc16e5df1f0065228bbea4c77a8b6d83bb0",
+    "round-01-bf16/server.log": "113eb8982b0e010cba127363e1d86207bf2147b52f33141a04dccb8982aa03ba",
+    "round-01-bf16/server_memory.json": "07429f5df38c1d5ea1cec9e0abb818a77a176fb85669768a468f44aa1d974204",
+    "round-01-bf16/effective_config.json": "d6f5cbc72cd97f587f9ed14ecadaefc26e7094587d6b9dae59dfdb950da199e0",
+    "round-02-awq/server.log": "3268ee8eff80ae9187c42f868c4c2a00b001fa1433190b0ebfb92e1be94130b8",
+    "round-02-awq/server_memory.json": "d9e318b1d52e88b71b0ccc05114e371290056f0fc7804f04d4c7c2d62f3408cc",
+    "round-02-awq/effective_config.json": "d75a89ebecea431a9e79592d91302dc16e5df1f0065228bbea4c77a8b6d83bb0",
+    "round-03-awq/server.log": "6dfe610ec9ffe0aa3b76ed82f5bc257e95371800897c487d453bc8e2ec17da38",
+    "round-03-awq/server_memory.json": "b26ee738aa37979296a67ad5981fd2e4beb25d54d6e71120bfe885e12e31ac61",
+    "round-03-awq/effective_config.json": "d75a89ebecea431a9e79592d91302dc16e5df1f0065228bbea4c77a8b6d83bb0",
+    "round-04-bf16/server.log": "1ecb664bcf2b150f970edb000e8adc33ebb964bb22d9356db8f318ee54895747",
+    "round-04-bf16/server_memory.json": "216839e55df9fcab7c24ab5b01ea155cc444f43dedb4fa01eeac2178e0bf2e5f",
+    "round-04-bf16/effective_config.json": "d6f5cbc72cd97f587f9ed14ecadaefc26e7094587d6b9dae59dfdb950da199e0",
+    "round-05-bf16/server.log": "11d03bd49d08fbb63ea2642ac32f3d970223c85abcfa91fa8d30408223f1603a",
+    "round-05-bf16/server_memory.json": "129a0ea0f092acc233339cf8babfc3f0118e8839bd5bb6b7bf98f0ea07f3c05c",
+    "round-05-bf16/effective_config.json": "d6f5cbc72cd97f587f9ed14ecadaefc26e7094587d6b9dae59dfdb950da199e0",
+    "round-06-awq/server.log": "e76c678bc15cacdea42e29b41510f066da5e0dadaad1805b5fda6d63d7bf1cdc",
+    "round-06-awq/server_memory.json": "f39291b1bdfec0d098fb74847bd3bbcd136667b3fbe1782e4135c13e5cb03694",
+    "round-06-awq/effective_config.json": "d75a89ebecea431a9e79592d91302dc16e5df1f0065228bbea4c77a8b6d83bb0",
+    "source/run.py": "327bfec733a30fdf6b9581da80f5f4257c812a770538aa55580597cdaa250bc3",
+    "round-01-bf16/memory/memory_samples.jsonl": "91576ee8bb6c8aa23084869cbdeb54ef5c65139b52941faf667b97fa083716dc",
+    "round-01-bf16/memory/memory_summary.json": "ab42c92bc4c904a7302bdf6e5da1d50e35feac8fa49775e2a1b917712818634c",
+    "round-01-bf16/summary.json": "269ab3a9bbb199923cd086ec07d565ab05609c43e10382f2b03e1e7f10060934",
+    "round-02-awq/memory/memory_samples.jsonl": "4b01347678ec6f18b180c04bd992bb56f9c6fa82e009d47f2b129c612505c02a",
+    "round-02-awq/memory/memory_summary.json": "5b131303de5f62aa583669eec5b629adc520659afffa1de35f9e652b7efbdf4f",
+    "round-02-awq/summary.json": "517b16b02ce89cc764933c38d49c865d4e8d454180ab2c4307874435a102d459",
+    "round-03-awq/memory/memory_samples.jsonl": "5fbe069ee496e00c57f1f596f4633a978a6de6275d54bd51669cc73d28e352d2",
+    "round-03-awq/memory/memory_summary.json": "c9aef710be1eea2180115ab0e2a1ccaf5cb7c62f9da718adfd7689ea2419b777",
+    "round-03-awq/summary.json": "16818cc60b11e7df347c799a102f9081428363849c9543b464bfac839d3f6472",
+    "round-04-bf16/memory/memory_samples.jsonl": "a6c074c066f2c54d08a337a2c5d503461575ccce208fe55ba241f4e3fb01b1e3",
+    "round-04-bf16/memory/memory_summary.json": "ccb80293740806282b5d159b71a74d739e1547671b9f397ae96cd14315348e08",
+    "round-04-bf16/summary.json": "7bd5efb2e3b2be9f35d5ede7350ae55a6f2b5cb60932439f5946c8344cf77e83",
+    "round-05-bf16/memory/memory_samples.jsonl": "692b7c1ba83f8498e4724459705c9109862cf092c42d22512dda3182940a3310",
+    "round-05-bf16/memory/memory_summary.json": "e53686b18bdab368407e8e4ea61da188017a00ccaf1aea398f782e012321daa1",
+    "round-05-bf16/summary.json": "1e2845bb2b0817c3e54fa36b8bb5afd243984d4982a78f681a2d460fcc8558f6",
+    "round-06-awq/memory/memory_samples.jsonl": "964a8398d65f380a8f85b2c51a135d63d6bc1faa9c72319d6e4f148ab0e101f1",
+    "round-06-awq/memory/memory_summary.json": "42ef91978cefc6540e697668a2bcb354ea3d6d1809f2c9d44816f54461d852a2",
+    "round-06-awq/summary.json": "32aa77ba0d6fc3318556ca99f829e562e70e4639669c2d63f9ac258a9db3a293"
+  },
+  "scope_notes": [
+    "设备读数为PCI设备级VRAM，包含同卡其他进程；不证明物理卡独占，也不是worker独占内存。",
+    "每轮约1秒采样，样本最大值可能遗漏瞬时峰值；三轮sampled max的中位数/范围不是所有时刻峰值或置信区间。",
+    "归档源码显示采样器包裹正式run_batch，启动、quality和预热在该窗口外；其启停窗口较客户端完整窗口约多19–27ms。",
+    "记录未保存采样器起点的绝对monotonic值，因此不把显存样本逐请求/逐token精确对齐，也不保证每个边界样本都落在客户端窗口内。",
+    "模型加载GiB与KV可用GiB来自舍入后的启动日志，不是精确权重张量字节数或实际已分配KV字节数。",
+    "BF16与AWQ使用相同0.70自动预算，AWQ池容量更大且激活dtype为FP16而非BF16；这是两份固定发布物部署对照，非严格仅改变权重的实验。",
+    "KV token容量由当前num_gpu_blocks×block_size复核，不等于已测可同时服务的请求数；没有据此证明更长上下文或更高并发吞吐。",
+    "设备采样占用未随模型加载占用下降而下降，与自动KV预算及其他运行内存并存相容；本数据不单独证明每个差值的唯一原因。"
+  ],
+  "next_action": "由主代理结合性能、独立参考与任务质量审计，交给学习者解释证据范围。"
+}

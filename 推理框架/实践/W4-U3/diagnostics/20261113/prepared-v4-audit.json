@@ -1,0 +1,27 @@
+{
+  "archive": "case-20261113T100153Z-80b65c49-57ffbf.zip",
+  "archive_sha256": "e75d33605d70c9223a3008c451852a187cb860b15d43f448d3553cbae0315b9c",
+  "entry_hashes_verified": 34,
+  "source_revision": "2026-11-13.4",
+  "status": {
+    "phase": "prepared",
+    "updated_at": "2026-11-13T10:02:21.914070+00:00"
+  },
+  "method_and_data_seals_match": true,
+  "models_reported_verified": [
+    "bf16",
+    "awq"
+  ],
+  "performance_requests": 48,
+  "performance_input_sha256": "2bb27f98ca5e5bf03e9a35c09d4141a5859ec9d3d9afa42910eb87d32095a684",
+  "performance_inputs_unchanged": true,
+  "quality_tasks": 32,
+  "quality_input_sha256": "a24e13b6b451bdf6834b74040d5eb9ce0c1e22228f714e214a758b2cc198bdc7",
+  "quality_prompt_length_range": [
+    226,
+    321
+  ],
+  "prediction_present": false,
+  "performance_present": false,
+  "scope": "Prepared artifact and tokenization audit only; no full-model inference or performance measured."
+}

@@ -1,0 +1,27 @@
+{
+  "base_package": "W4-U2 2026-11-12.3",
+  "base_is_read_only": true,
+  "files": {
+    "run.py": {
+      "source": "../W4-U2/run.py",
+      "sha256": "5ba67972b046a6078f8489402079fc76372f91ee4a35be3ed577c2879eedbe4f"
+    },
+    "client.py": {
+      "source": "../W4-U2/client.py",
+      "sha256": "a81ed5cda8a23e55fc9b26d5de722fe17071291c3d3faa6ea5ad60415726cc2d"
+    },
+    "test_client.py": {
+      "source": "../W4-U2/test_client.py",
+      "sha256": "82cc76626e3af935fb69f088206f59eb5527f5c3e2a2babf797b25a644cdb39a"
+    },
+    "configuration.py": {
+      "source": "../W4-U2/configuration.py",
+      "sha256": "1838f9409a07c5b14129d41412ffe77037b8768c582225d4fc667461764937d4"
+    },
+    "test_configuration.py": {
+      "source": "../W4-U2/test_configuration.py",
+      "sha256": "afb7242817e64bf6dfc2269c1f023091d598a7d084e3841535a7f2ebd002b6ed"
+    }
+  },
+  "adaptation": "U3 carries local copies; no runtime dependency on U2. No full-model CPU reference or profiler code is copied."
+}

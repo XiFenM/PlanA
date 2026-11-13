@@ -1,0 +1,10 @@
+{
+  "transformers": "5.20.2",
+  "tokenizer": "Qwen2Tokenizer",
+  "api_default_return_dict": true,
+  "explicit_return_dict": false,
+  "tasks": 32,
+  "all_token_ids_equal_to_dict_input_ids": true,
+  "input_sha256": "a24e13b6b451bdf6834b74040d5eb9ce0c1e22228f714e214a758b2cc198bdc7",
+  "scope": "tokenization only; no CPU or GPU model inference"
+}
