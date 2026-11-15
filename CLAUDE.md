@@ -41,7 +41,7 @@ The canonical Skill source is the pinned `.agent-skills` submodule. `.agent-skil
 | Research or compare learning resources | `resource-planning`; research remains conversational unless an exact brief target is separately authorized |
 | Add or annotate one or two researched resources in a module's `学习指引.md` | `resource-planning` light `adopt` path: one-slot diff via `slot-edit`, current confirmation, no registry write |
 | Save a research brief, persistent source refresh, or curriculum review | `resource-planning`; use its managed context, exact prepare preview, current confirmation, publish, and verify. Configuration alone grants neither network access nor writes. |
-| 技术文章诊断 / 改写 / 起草 / 口播 / 更口语化、减少教材腔 | `vivid-tech-writing` — 写作与表达层，也提供教学、课程网页和卡片的共享语言规范；无受管配置，不读写学习状态 |
+| 技术文章诊断 / 改写 / 起草 / 口播 / 更口语化、减少教材腔；或任何面向用户的回复需要更像人说话 | `vivid-language` — 语言层：所有输出（对话反馈、教学、页面、卡片、文章、口播、工程书面）都按“场合 × 模式”讲人话；无受管配置，不读写学习状态 |
 | Browser automation | `playwright-cli` — tool Skill; outside the learning-state pipeline |
 
 How the skills chain into the study pipeline:
