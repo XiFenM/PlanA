@@ -13,7 +13,7 @@
 | [vLLM V1 异步 H2D 精度修复](vLLM-V1-async-H2D-project.md) | 正确性缺陷排查与修复；已完成根因定位、框架／后端修复和现场请求集回归 | [H2D 核心案例](vLLM-V1-async-H2D-project.md#vllm-v1-async-h2d-case-card-v1)，含 2026-11-01 确认的修复层级和回归条件 |
 | [异步 D2H 实现与调度验证](async-d2h-project.md) | PyTorch 后端新能力实现；已有本人代码与 2026-11-02 A/B/C 回归、有限端到端 A/B 验证；生产接入和长期性能验收不由本档案结论代替 | [验证结果](async-d2h-project.md#async-d2h-validation-20261102)、职责边界与正负性能结果 |
 | [多模态适配与 Conv3D](multimodal-inference-project.md) | 多模型框架适配及布局优化；已有受限算子与模型测试证据，不能推定所有型号、图片和视频都完成同等验证 | [Conv3D 核心案例](multimodal-inference-project.md#project1-conv3d-case-card-v1)，区分模型、输入、参考路径和联合收益 |
-| [ECG 部署与权重预排布](ECG-project.md) | 客户模型适配与交付；性能口径及 Transformers 运行栈已确认，布局调用范围与正确性有后续补充 | [ECG Layout 核心案例](ECG-project.md#ecg-layout-case-card-v1)，含 2026-09-29 与 2026-11-01 校准 |
+| [ECG 部署与权重预排布](ECG-project.md) | 客户模型适配与交付；性能口径、Transformers 运行栈、布局调用范围与正确性已有确认，另补充固定 512 bytes 布局块与 bank 冲突机制 | [ECG Layout 核心案例](ECG-project.md#ecg-layout-case-card-v1)，含 2026-09-29、2026-11-01 校准及 [2026-11-16 bank 机制补充](ECG-project.md#ecg-layout-bank-confirmed-20261116) |
 | [DeepSpeed、Megatron-LM 与通信后端适配](DeepSpeed-Megatron-project.md) | 早期训练适配中的测试调试和单 Stream 方案；两套框架完整交付范围、Loss 与性能数字仍待核 | 档案中的个人职责及待核字段；[2026-09-29 已确认口径](../Claim-evidence矩阵.md#claim-wording-decisions-20260929) |
 | [项目模板](project-template.md) | 空白模板，不计作已有项目或能力证据 | 新建档案后登记本索引，不凭模板字段补造事实 |
 
@@ -29,7 +29,7 @@
 | 异步 H2D 精度修复 | 本人补齐 CPU Padding、H2D 提交、设备完成到消费的依赖；修复在框架／后端层，Runtime 无需修改。恢复原异步配置并撤掉临时阻塞后，168 条现场请求 ×5 轮未复现原异常 | 准确版本、开关与并发配置、首分叉原始记录、提交位置及修复前同条件统计仍待恢复；840 次执行不等于 840 个独立场景或所有输入零故障 |
 | 异步 D2H 实现 | 本人负责 PyTorch 侧异步 D2H 编排、内存与完成契约、开关／回退及测试；A/B/C 回归和生命周期测试通过；Qwen3-32B BF16 TP4 的有限 A/B 请求完成 | 同配置三轮中位数中，并发 8 吞吐约 +3.0%，单并发约 −8.2%，两者都保留。未证明稳定跨负载收益、A/B 生成内容一致或 DMA/compute 设备并行；内部数字的对外披露另按原项目约束 |
 | 多模态／Conv3D | 本人负责模型侧定位、布局与接口，专用算子由算子团队实现；Qwen2.5-VL-32B 的 10 个图片测例与 CPU Conv3D 路径输出 Token 一致，平均 TTFT 从分钟级到 5 秒以内 | 32B 视频原先 OOM，没有优化前 TTFT；没有视频模型级精度回归。精确版本、原始输入标识、物理峰值与联合收益拆分仍待核；不沿用旧稿 40% |
-| ECG | 本人负责 Profile、Host／小 Shape 调整、Tensor 扩展、加载期权重预排布与回归；Transformers 栈下单请求端到端从 30–40 秒到 20 秒以内，前后均 10 次平均、含图像预处理和完整输出 | 运行栈与起止时延已确认，不再泛列为未知；具体 revision、Shape/dtype、回归覆盖、Roofline 现场参数及重复输出问题的细节仍可补充。不能把阶段收益全归于布局，也不能断言已证实 bank conflict |
+| ECG | 本人负责 Profile、Host／小 Shape 调整、Tensor 扩展、加载期权重预排布与回归；Transformers 栈下单请求端到端从 30–40 秒到 20 秒以内，前后均 10 次平均、含图像预处理和完整输出；512 bytes 布局块与 HBM → 片上读取的 bank conflict 根因已于 2026-11-16 补充确认，根因由硬件同事确认 | BF16 权重与计算块示例已给出，完整热点配置、revision、回归覆盖、Roofline 现场参数及重复输出问题仍可补充。实际带宽未提供，不把阶段收益全归于布局，不由八通道参与推导固定加速倍数或所有访存限制消除 |
 | 训练通信适配 | 基于 DeepSpeed／Megatron-LM 测试调试通信后端；通过 Profile 定位多 Stream 调度开销，修改 PyTorch 适配层和通信库，实现可回退单 Stream 方案并验证 | 两套框架实际范围、并行组合、Loss 对齐、具体性能数字、Work／异常传播与多 Collective 回归仍待核；不能声称独立负责完整训练系统或通信 Kernel |
 
 ## 3. H2D 与 D2H 是两个项目
