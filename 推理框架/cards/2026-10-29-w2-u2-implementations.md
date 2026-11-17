@@ -5,11 +5,11 @@
     "id": "markji",
     "profile": "plana-markji"
   },
-  "artifact_set_sha256": "185fc51845691838bea25a0fe8f431d782b2ca0dc0cfc867a83d7ef675bbd678",
-  "candidate_sha256": "46067d8be09cb4f84f04d1f324fb7729f8112e1a2ad90e43329dde8519b094fe",
+  "artifact_set_sha256": "6665f9cfb2128bb944f735c692f02b2212ee4c8aaec00f4b6535a405c184691e",
+  "candidate_sha256": "cd50e54635006d11c7f6688e855202ef48d5added699ca4e441d73399a9dcefa",
   "cards": [
     {
-      "content_sha256": "87c311f0365befcc4cdcef77a10188ebe9e26823c38a59755387bea941eaf187",
+      "content_sha256": "a79ab4991fee64f6a9731641acaec9a0afecaa2b6d51d414201592272daf8a84",
       "content_summary": "追踪Qwen3 MoE未量化modular路径的路由到通信计算主链；材料：课程网页 synthesis §一；Change Card 02 §1–2；框架节点检查；固定源码核验：vLLM@d7ada3aace051fecec553c185225db2259c2ac6a: vllm/model_executor/models/qwen3_moe.py:203–232；fused_moe/runner/moe_runner.py:598–643、904–936；fused_moe/routed_experts.py:1369–1404；fused_moe/unquantized_fused_moe_method.py:276–315；fused_moe/modular_kernel.py:1525–1581；证据为固定源码的调用与条件，不是设备运行或性能实测。；A理由：回答面试中“从模型入口讲清真实MoE执行主链”，防止仅列通信库和GEMM名称而无法连接调用关系。",
       "dependency_content_sha256": {},
       "depends_on": [],
@@ -40,7 +40,7 @@
       "template_version": "1.1.0"
     },
     {
-      "content_sha256": "ab0e724b395f04f2d8a6a438dddbb1bd5258ad375d08db86acbeff8528fe2948",
+      "content_sha256": "57049ed9b763d801cd985a772106c9c9c0282defee8c1094541bd1fef74640c4",
       "content_summary": "解释并行通信与Experts选择怎样共同决定modular实现；材料：Change Card 02 §1、§4；课程网页 comparison 表A；框架节点检查；固定源码核验：vLLM@d7ada3aace051fecec553c185225db2259c2ac6a: vllm/model_executor/layers/fused_moe/config.py:1034–1038；all2all_utils.py:182–230、453；oracle/unquantized.py:253–261、283–317、518–551；modular_kernel.py:1739–1747；证据为固定源码的调用与条件，不是设备运行或性能实测。；A理由：防止把后端配置名当成实际执行路径，误判未进入目标通信实现或不兼容的Experts组合。",
       "dependency_content_sha256": {},
       "depends_on": [],
@@ -71,7 +71,7 @@
       "template_version": "1.1.0"
     },
     {
-      "content_sha256": "94797291e359a5ab5e7e810dfa1172b7a0e860f18ff9cd019f1a8b276676618f",
+      "content_sha256": "57474bb3aa43492a9f8d42328155624f8831cd0a8992d41ddfbadb2fcce34bbf",
       "content_summary": "明确OOT注册之后建立未量化modular内核的责任；材料：Change Card 02 §4 OOT 子类责任；固定源码核验：vLLM@d7ada3aace051fecec553c185225db2259c2ac6a: vllm/model_executor/custom_op.py:107–126、167–170、326–340；fused_moe/oracle/unquantized.py:231–232；fused_moe/unquantized_fused_moe_method.py:200–232、294–315；证据为固定源码的调用与条件，不是设备运行或性能实测。",
       "dependency_content_sha256": {},
       "depends_on": [],
@@ -100,7 +100,7 @@
       "template_version": "1.1.0"
     },
     {
-      "content_sha256": "be092a0592abaf4cad73a6b4e9c523fb6c010836128053eced7d60f484f01ad8",
+      "content_sha256": "55f8aaff9495cefa31d56c8d7b95a8a6fb0ff5c61a7f0b95733167709d65c1ad",
       "content_summary": "按vLLM激活布局解释专家计数与逐行路由的不同职责；材料：Change Card 02 §2；课程网页 synthesis“路由信息分两类”；固定源码核验：vLLM@d7ada3aace051fecec553c185225db2259c2ac6a: vllm/model_executor/layers/fused_moe/modular_kernel.py:157–163、286–319、1293–1297；prepare_finalize/deepep_ll.py:324–338；prepare_finalize/no_dp_ep.py:63–84；experts/fused_batched_moe.py:923–925；prepare_finalize/mori.py:121–130；证据为固定源码的调用与条件，不是设备运行或性能实测。",
       "dependency_content_sha256": {},
       "depends_on": [],
@@ -130,7 +130,7 @@
       "template_version": "1.1.0"
     },
     {
-      "content_sha256": "c1e8bcd4950233b182538ca0f4cddb4f1909675177ad3c1616ba5ed5b4b637b5",
+      "content_sha256": "4f1d8898adcaef5bc5c9c3be0d2e71dfd693e43e47a935798f5be3a28cb9866c",
       "content_summary": "按Experts输出与P/F能力选择topk加权归约契约；材料：Change Card 02 §2；框架节点检查中的接口补差；固定源码核验：vLLM@d7ada3aace051fecec553c185225db2259c2ac6a: vllm/model_executor/layers/fused_moe/topk_weight_and_reduce.py:11–118；prepare_finalize/deepep_ht.py:383–394；prepare_finalize/deepep_ll.py:278–284、378–403；experts/fused_batched_moe.py:861–863；证据为固定源码的调用与条件，不是设备运行或性能实测。；A理由：防止适配时选择错误的加权归约契约、重复乘路由权重或对不匹配布局执行归约。",
       "dependency_content_sha256": {},
       "depends_on": [],
@@ -160,7 +160,7 @@
       "template_version": "1.1.0"
     },
     {
-      "content_sha256": "b0ae9bc4c4bdb6464ab50b920e5ae5ca7c243fa904c6bac6dc9a1737c1be3d86",
+      "content_sha256": "1c951d59fe8eb471d8b1488093df0cb1cdf3adb20d350587b5b584f4c8468a50",
       "content_summary": "正确解释output_is_reduced与runner条件性all-reduce；材料：Change Card 02 §2；同日源码审稿补正；固定源码核验：vLLM@d7ada3aace051fecec553c185225db2259c2ac6a: vllm/model_executor/layers/fused_moe/modular_kernel.py:249–252、1749–1753；prepare_finalize/no_dp_ep.py:60–61；runner/moe_runner.py:453–515；证据为固定源码的调用与条件，不是设备运行或性能实测。",
       "dependency_content_sha256": {},
       "depends_on": [],
@@ -190,7 +190,7 @@
       "template_version": "1.1.0"
     },
     {
-      "content_sha256": "2e51771c228bbc896b6741bf3339c91d8fe9ed1608362dd2944bdfc059782b7b",
+      "content_sha256": "f430b82f4c529cc0d7b7850541dae886c9f848b2a51d5127ff093839f1f33981",
       "content_summary": "覆盖o1：V2 GPU ModelRunner普通DP协作、idle与graph一致性。材料：框架节点检查节点3、讲义AgRs基线。源码d7ada3a：vllm/v1/worker/gpu_worker.py:1442-1448；v1/worker/gpu/model_runner.py:918-925、1806-1824、1855-1859；v1/worker/gpu/dp_utils.py:64-81、148-198。限定非DBO、无投机且decode_query_len=1；A理由：防止空闲rank跳过集体调用或各rank自行选择不兼容的执行模式。",
       "dependency_content_sha256": {},
       "depends_on": [],
@@ -220,7 +220,7 @@
       "template_version": "1.1.0"
     },
     {
-      "content_sha256": "7e855300773b8a43bd1b5b6318ec5f70a3156b7b4d2615aa0a810dbd7267178d",
+      "content_sha256": "de131f36dd9c18557e8e504108eaab3bad34ac94a55c5140a8eefa33e8bdedb2",
       "content_summary": "定位modular内部共享专家计算与异步combine的实际窗口；材料：Change Card 02 §8；课程网页 comparison 表A；源码审稿补正；固定源码核验：vLLM@d7ada3aace051fecec553c185225db2259c2ac6a: vllm/model_executor/layers/fused_moe/modular_kernel.py:1255–1291、1435–1465、1714–1718；runner/shared_experts.py:79–121；证据为固定源码的调用与条件，不是设备运行或性能实测。",
       "dependency_content_sha256": {},
       "depends_on": [],
@@ -251,7 +251,7 @@
       "template_version": "1.1.0"
     },
     {
-      "content_sha256": "82f26a1c82dc9040dd9a46bb3d73276fbaa980e85e7868a06751ef7918ca3cef",
+      "content_sha256": "cf8c40c1d53d0737d7e84d9ecd3ec03239cc3a1ce68d1334c1348444cf3139e8",
       "content_summary": "追踪SGLang普通MoE的dispatcher到runner再到combine链路；材料：课程网页 synthesis §一SGLang代码地图、comparison表A；框架节点检查；固定源码核验：SGLang@43a3f956cb0c9fe9b7b7a042af8d8743176b9dba: python/sglang/srt/layers/moe/fused_moe_triton/layer.py:1597–1682；layers/quantization/unquant.py:1185–1218；layers/moe/moe_runner/runner.py:195–269；证据为固定源码的调用与条件，不是设备运行或性能实测。",
       "dependency_content_sha256": {},
       "depends_on": [],
@@ -281,7 +281,7 @@
       "template_version": "1.1.0"
     },
     {
-      "content_sha256": "8b4b86293ad0f868b8e4080f7e8a18e428db884f4848493377bfaeaca2470022",
+      "content_sha256": "8a36ac7556d0fd6e434e0f8d943e9824e5d256122f48643115ae34775cb84501",
       "content_summary": "按格式与runner双向键完成普通转换路径接入；材料：框架节点检查：SGLang新格式复查；课程网页 synthesis §一、comparison表A；固定源码核验：SGLang@43a3f956cb0c9fe9b7b7a042af8d8743176b9dba: python/sglang/srt/layers/moe/moe_runner/runner.py:239–269；layers/moe/moe_runner/base.py:210–292；证据为固定源码的调用与条件，不是设备运行或性能实测。",
       "dependency_content_sha256": {},
       "depends_on": [],
@@ -311,7 +311,7 @@
       "template_version": "1.1.0"
     },
     {
-      "content_sha256": "09290e3de04d9643f971faecb1ad930ec7633775ca82cba509e1aac7a99bd5f7",
+      "content_sha256": "52b06dd04c5fb650f1860fcd2985bf01cb45260294cfa4b64458b721590f0eda",
       "content_summary": "覆盖o1：attention-DP同步约束DeepEP auto、decode图与TBO。材料：框架节点检查节点4、讲义comparison。源码43a3f95：python/sglang/srt/managers/scheduler_components/dp_attn.py:286-294、355-380、630-682；layers/moe/utils.py:254-272；token_dispatcher/deepep.py:1097-1105；batch_overlap/two_batch_overlap.py:404-416、455-499；schedule_batch.py:3597-3607。题面限定正常同步、非DWDP、TBO开启及普通EXTEND/DECODE混合。",
       "dependency_content_sha256": {},
       "depends_on": [],
@@ -341,7 +341,7 @@
       "template_version": "1.1.0"
     },
     {
-      "content_sha256": "d6942bc4d26e7b33b3ee9456c3f47a9b41b5595690cc2ea26eadbeb0433995f2",
+      "content_sha256": "870fb9923e45fd137d8105823188aed4764dc9da0c969320b51b2788445f38fd",
       "content_summary": "区分SGLang的双微批阶段交错与单批内部重叠；材料：课程网页 comparison表A；框架节点检查：TBO／SBO；固定源码核验：SGLang@43a3f956cb0c9fe9b7b7a042af8d8743176b9dba: python/sglang/srt/batch_overlap/two_batch_overlap.py:949–1009；batch_overlap/single_batch_overlap.py:28–59、81–144；models/deepseek_v2.py:1529–1535、1572–1615；证据为固定源码的调用与条件，不是设备运行或性能实测。；追加限定：DeepEP LL为compute_overlap_args所需的三维专家槽位布局；single_batch_overlap.py:32–52要求SBO启用并按runner及Blackwell分支选择机制，models/deepseek_v2.py:1530排除NextN。",
       "dependency_content_sha256": {},
       "depends_on": [],
@@ -400,7 +400,7 @@
       "template_version": "1.1.0"
     },
     {
-      "content_sha256": "111db85fa4d8251b8b6c655ab01dbcad017199db26dbe94ef8c325892b2eff39",
+      "content_sha256": "0a691b198bac7043fb00591d9cc66e1e0a6cdae22b6bec1fd1b78efe56334a3e",
       "content_summary": "覆盖o2/o4：P/F容量接口与Experts工作区。材料：ChangeCard02§5容量映射。源码d7ada3a oracle/unquantized.py:533-546；experts/fused_batched_moe.py:865-885；all2all_utils.py:251-270。A理由：防止总容量被再次乘dispatcher数量，造成通信输出与计算workspace契约不一致。",
       "dependency_content_sha256": {},
       "depends_on": [],
@@ -429,7 +429,7 @@
       "template_version": "1.1.0"
     },
     {
-      "content_sha256": "d28a3ef291772924bedaa4888a9541963d290a50b72fca8d9c0ff8b5d8245846",
+      "content_sha256": "7437c4def8a6bd861159d1ce97481495dee2f732f27caf16dcf612d4cb8eb14d",
       "content_summary": "覆盖o1/o4：输入加权分支的源码补正。材料：ChangeCard02§2与§3加权责任，审稿记录。源码d7ada3a prepare_finalize/deepep_ll.py:278-284、378-403；modular_kernel.py:286-307、375-396。A理由：避免已在输入端施权后combine再次乘原权重，改变输出数值。",
       "dependency_content_sha256": {},
       "depends_on": [],
@@ -459,7 +459,7 @@
       "template_version": "1.1.0"
     },
     {
-      "content_sha256": "ea049b24a42af9338c022d843da9f1d004b15c28135fc30af2b1fc538a3da5c1",
+      "content_sha256": "76eae507975e65eb8a100ae664382bbc941ad9da7699e7bf9af168e90d799f64",
       "content_summary": "B理由：回答拓扑感知通信为何采用两级转发。材料：讲义 synthesis/comparison；验收记录§路线节点5。源码 d4f41e4：deep_ep/buffers/legacy.py:334-337；csrc/kernels/legacy/internode.cu:628-677、968-993、2079-2129。",
       "dependency_content_sha256": {},
       "depends_on": [],
@@ -489,7 +489,7 @@
       "template_version": "1.1.0"
     },
     {
-      "content_sha256": "d1ffabd84e434341c8b19e99b80ed64a609001fab5a692a642de6f463961fb38",
+      "content_sha256": "c403e0548d90081a60447284843eed561bb18b41512990a35b366de1edf89739",
       "content_summary": "B理由：避免把HT主机同步写成无例外通则。材料：讲义HT步骤及验收6参考；验收记录节点5、验收6。源码 d4f41e4：deep_ep/buffers/legacy.py:293-319、354-355、377-401；csrc/legacy/buffer.hpp:532-539、549-603、1084-1108。",
       "dependency_content_sha256": {},
       "depends_on": [],
@@ -519,7 +519,7 @@
       "template_version": "1.1.0"
     },
     {
-      "content_sha256": "1e16582507581de087ec1283e2509560979d27f43e97bca8d5c0f4f1a4a8b923",
+      "content_sha256": "6505d8d2232eaf5c1ebdf80b974b6c9999be48e8b0724503f7acd1956879d9c4",
       "content_summary": "B理由：补齐实际接口中的两类路由载体。材料：讲义add-10-1及布局表；ChangeCard§2。源码 d4f41e4：csrc/kernels/legacy/intranode.cu:362-392；deep_ep/buffers/legacy.py:388-405、408-455。",
       "dependency_content_sha256": {},
       "depends_on": [],
@@ -549,7 +549,7 @@
       "template_version": "1.1.0"
     },
     {
-      "content_sha256": "061616d52974efba347b142e0b94956dc899b0e9f0907344500de63bf41c3ec1",
+      "content_sha256": "3424bf77de9b7db0c91c51d8fb189837e785d2d72282dd8413b6b3c65d5a46b8",
       "content_summary": "B理由：解释HT与LL的消息量和布局差异。材料：讲义LL步骤、布局表及两类路由补充；验收记录节点6。源码 d4f41e4：csrc/kernels/legacy/internode_ll.cu:209、253-277；csrc/legacy/config.hpp:134-166；csrc/legacy/buffer.hpp:1516-1521。",
       "dependency_content_sha256": {},
       "depends_on": [],
@@ -579,7 +579,7 @@
       "template_version": "1.1.0"
     },
     {
-      "content_sha256": "509ba81be753ca5d8f2c40995145055c55c6816bafe4090424c10cd2c38114e3",
+      "content_sha256": "9b86372d05820fd357dcd526dd2ef2341a36bd68668dbde3e809eba866662ecd",
       "content_summary": "B理由：准确区分分段kernel和网卡推进。材料：讲义LL步骤；ChangeCard§3、§5。源码 d4f41e4：csrc/legacy/buffer.hpp:1507-1513、1577-1592；csrc/kernels/legacy/internode_ll.cu:263-271、323-338、379-407。；2026-11-03复核：主目标保留为分段提交与完成协议下的重叠窗口；零行信号编码标为延伸，不要求与窗口边界同时独立回忆。",
       "dependency_content_sha256": {},
       "depends_on": [],
@@ -609,7 +609,7 @@
       "template_version": "1.1.0"
     },
     {
-      "content_sha256": "97a14542a4a971eba76ec65a7e3601cd9ced60a40ca6b81b334e87ea23a17cd9",
+      "content_sha256": "d731945b043a9dd8f5644568f175078a4f270b5233b37c2c629514c1dbad81ef",
       "content_summary": "B理由：纠正普通输出与内部发送视图的混淆。材料：ChangeCard§5；讲义两类路由补充。源码 d4f41e4：csrc/legacy/buffer.hpp:1516-1521、1655-1663、1717-1728；csrc/kernels/legacy/internode_ll.cu:408-436；deep_ep/buffers/legacy.py:610-621、646-652。",
       "dependency_content_sha256": {},
       "depends_on": [],
@@ -639,7 +639,7 @@
       "template_version": "1.1.0"
     },
     {
-      "content_sha256": "ba08ab8caa263057a4a8afba0243c539225820c8c59f352d04e07a0e1efee1f2",
+      "content_sha256": "0813d40feb5337c54c74538ede7edfe1516a072d951771948c856ef771105b3d",
       "content_summary": "A理由：防止固定容量输出的无效尾部污染真实路由和结果。材料：讲义V2步骤及计数表；验收记录节点7。源码 d4f41e4：deep_ep/buffers/elastic.py:758-764；csrc/elastic/buffer.hpp:977-1050；deep_ep/include/deep_ep/impls/dispatch_copy_epilogue.cuh:57-80、102-116。；2026-11-03复核：沿原输出容量目标补明最坏路由与平均实收不同，避免把满批输入等同于上界全部有效；来自既有节点检查与已固定分配分支，不加入性能推断。",
       "dependency_content_sha256": {},
       "depends_on": [],
@@ -669,7 +669,7 @@
       "template_version": "1.1.0"
     },
     {
-      "content_sha256": "5da9dda329e2e056d10c9cc3f0935c653d6865817c7bf8c265718b85817bcad4",
+      "content_sha256": "dadf3c45612c5820b553dd8665e1cf26b0df0780d3557d159aecfa16adf91a8b",
       "content_summary": "B理由：解释V2与HT先等计数再发送的不同流水。材料：讲义V2步骤；验收记录节点7-8。源码 d4f41e4：deep_ep/include/deep_ep/impls/dispatch.cuh:78-105、150-157、246-262、330-384、391-402；csrc/kernels/elastic/dispatch.hpp:126-151；impls/dispatch_copy_epilogue.cuh:57-80、111-116。",
       "dependency_content_sha256": {},
       "depends_on": [],
@@ -729,7 +729,7 @@
       "template_version": "1.1.0"
     },
     {
-      "content_sha256": "23876f01e99d4cc4de67169e6fab32ea7fb92430fbe619b3b420c331abbd98ee",
+      "content_sha256": "d332e6d1558af6bda047e7c8abd97ecfc33b9c1a9adb722bbda17962cfafac5d",
       "content_summary": "B理由：说明共享池在真实实现中的分配粒度与代价。材料：讲义MORI步骤；验收记录节点8。源码 2d4c3e2：src/ops/dispatch_combine/intranode.hpp:121-165、167-214；include/mori/ops/dispatch_combine/dispatch_combine.hpp:160-169。",
       "dependency_content_sha256": {},
       "depends_on": [],
@@ -789,7 +789,7 @@
       "template_version": "1.1.0"
     },
     {
-      "content_sha256": "13a31e4624f182bb957a8f011d02eb6f024744f92f5c997a513a0c194fdf03bf",
+      "content_sha256": "fa7c0f9aeb1a98678baa67a13de90d805d789a6344e5d20cb49bdfb09e8e15ee",
       "content_summary": "A理由：定位真实后端的micro-batch交错污染，而非只做一般生命周期提醒。材料：讲义两类路由补充及验收2；验收记录验收2；ChangeCard§2、§3。源码 2d4c3e2：python/mori/ops/dispatch_combine.py:992-1013、1100-1130、1184-1212、1361-1400、1509-1513、1784-1805；src/ops/dispatch_combine/intranode.hpp:188-190、578-588。",
       "dependency_content_sha256": {},
       "depends_on": [],
@@ -850,7 +850,7 @@
       "template_version": "1.1.0"
     },
     {
-      "content_sha256": "e13e7e7e4703fc0d476e6fddba59926175a2282d2ff74057ea278890d099c745",
+      "content_sha256": "e2f195e1deef82a4f790fb51cc4f36b62cff86a473fb86d45b47d239d3035fc7",
       "content_summary": "B：具有跨库迁移价值，可区分控制信息与实际载荷。材料：课程HTML synthesis、comparison，W2历史o3场景表。源码4e890fd：csrc/hybrid_ep/hybrid_ep.cu:136-170；csrc/hybrid_ep/executor/executor.cu:23-72、158-198；deep_ep/hybrid_ep_buffer.py:599-651、668-717；docs/Hybrid-EP_Implementation.md:352-363、418-459。",
       "dependency_content_sha256": {},
       "depends_on": [],
@@ -880,7 +880,7 @@
       "template_version": "1.1.0"
     },
     {
-      "content_sha256": "ba39b82f6f1125934a997e14936a643229d7dfd6d30bd3438b2bc7a8666ad43e",
+      "content_sha256": "8d2d2fe8e14cbe85579b761cafad9cd1a28a7b5f1ca7549ddca87d8aae2ed3e5",
       "content_summary": "B：用于迁移分析通信路径和硬件依赖，不要求背诵warp数量。材料：课程HTML synthesis第七节、comparison传输行。源码4e890fd：docs/Hybrid-EP_Implementation.md:465-501、507-519；csrc/hybrid_ep/executor/executor.cu:255-295；csrc/hybrid_ep/backend/hybrid_ep_backend.cuh:126-135、1364-1402、1665-1682。",
       "dependency_content_sha256": {},
       "depends_on": [],
@@ -910,7 +910,7 @@
       "template_version": "1.1.0"
     },
     {
-      "content_sha256": "7d22b922293c5b58209c81fed2dbe058313d09d2ef4f5cde139c097271c97898",
+      "content_sha256": "4aba86a571962a1b94f34044da01bef58b0366a64dd02cafca3934d6c4c37fd7",
       "content_summary": "B：可迁移到ragged collective的统一形状设计。材料：W2历史记录o3 prefill②、导师对空行通信的更正；课程HTML参数对照。源码4e890fd：deep_ep/hybrid_ep_buffer.py:165-232、368-374；csrc/hybrid_ep/executor/executor.cu:32-60；docs/Hybrid-EP_Implementation.md:235-248。",
       "dependency_content_sha256": {},
       "depends_on": [],
@@ -940,7 +940,7 @@
       "template_version": "1.1.0"
     },
     {
-      "content_sha256": "396ca917a3718843b9c43455487169d5408a5790227a555f0b11c8e4f9031b3d",
+      "content_sha256": "3848d9f2a6b672134df0766e0354014df7add3c9c40484cfe04e48ea2a180939",
       "content_summary": "A理由：防止前后向间复用失效通信状态，导致错误结果或无法完成的等待。材料：W2历史o3训练①、prefill①；课程HTML完成与复用。源码4e890fd：deep_ep/hybrid_ep_buffer.py:191-209、390-426、611-630；csrc/hybrid_ep/hybrid_ep.cu:109-133；tests/test_ragged_hybrid_ep.py:274-297、452-494。",
       "dependency_content_sha256": {},
       "depends_on": [],
@@ -970,7 +970,7 @@
       "template_version": "1.1.0"
     },
     {
-      "content_sha256": "a7a2c5a35ea4e33a9f53ecb349fa09ffaad99ecbc3c49b77b7b8b0adbf409e63",
+      "content_sha256": "83918c56c3c701ba6400ce96fff58b0bfc1ddc0181d908ac173feed4f0c21b01",
       "content_summary": "A理由：防止将能录图误当作无丢弃，以及忽略逐专家padding造成容量不足。材料：W2历史o3 decode①、padding更正；课程HTML计数与接收空间。源码4e890fd：deep_ep/hybrid_ep_buffer.py:515-538、576-581；csrc/hybrid_ep/executor/executor.cu:171-198；csrc/hybrid_ep/hybrid_ep.cu:333-340；csrc/hybrid_ep/backend/hybrid_ep_backend.cuh:5370-5408。保守上界按题设由源码布局推导，不是实测建议。",
       "dependency_content_sha256": {},
       "depends_on": [],
@@ -1000,7 +1000,7 @@
       "template_version": "1.1.0"
     },
     {
-      "content_sha256": "5bafc7ef286d7f447883c2a1fa525d57619d44b674bf07e0d885b48d0e235667",
+      "content_sha256": "a6140ab94198f234bdb96a211d190243c715904d87a3a300c568055cfdd7f25d",
       "content_summary": "A理由：防止把实现层容量保护当作模型语义，静默改变输出。材料：W2历史o3训练②；课程HTML计数与接收空间。源码4e890fd：csrc/hybrid_ep/executor/executor.cu:158-169；csrc/hybrid_ep/jit/compiler.cu:315-329（调用端传入enable_permute）；csrc/hybrid_ep/backend/hybrid_ep_backend.cuh:5380-5411、5646-5650；deep_ep/hybrid_ep_buffer.py:268-269、534。",
       "dependency_content_sha256": {},
       "depends_on": [],
@@ -1030,7 +1030,7 @@
       "template_version": "1.1.0"
     },
     {
-      "content_sha256": "fa6cd052574c61f518be0d423ad9c3a0cf921770e86649eec21ef650bad991e7",
+      "content_sha256": "89adbf68ee791eccd37d75db6de0c75181ab964c5198d6b61a0cd5514b7d7695",
       "content_summary": "A理由：防止把返回新张量误推为通信内部状态可以任意并发复用。材料：W2历史o3训练③；课程HTML完成与复用。源码4e890fd：csrc/hybrid_ep/buffer/intranode.cu:204-212；csrc/hybrid_ep/hybrid_ep.cu:333-340；csrc/hybrid_ep/executor/executor.cu:396-408、461-467、491-493；docs/Hybrid-EP_Implementation.md:320-324。",
       "dependency_content_sha256": {},
       "depends_on": [],
@@ -1060,7 +1060,7 @@
       "template_version": "1.1.0"
     },
     {
-      "content_sha256": "7e1f013a460e124a4bddcb4d39cd20abc2cb9fbba9ce34a3d95803f8a97e1ffe",
+      "content_sha256": "cc1084a3769288aca80c57f4a0f8c3d47c1af13a89110c208fa88b83ef33cc48",
       "content_summary": "B：避免把容量参数与每步工作量混为一谈，可迁移到其他预分配通信库。材料：W2历史o3 prefill①、decode②；课程HTML参数对照。源码4e890fd：deep_ep/hybrid_ep_buffer.py:308-315、587-609；csrc/hybrid_ep/buffer/intranode.cu:126-130、198-201；csrc/hybrid_ep/executor/executor.cu:32-60、103-149；csrc/hybrid_ep/hybrid_ep.cu:333-340。",
       "dependency_content_sha256": {},
       "depends_on": [],
@@ -1090,14 +1090,14 @@
       "template_version": "1.1.0"
     },
     {
-      "content_sha256": "dcba8e37dea3d6b8df842f3159191b40bbc7344ccaa83a90e8bccbf971b9c349",
+      "content_sha256": "03a658ee39ea20cfff741a0ba56af1c4b5495e0c69e3f99e9ed88796701c6510",
       "content_summary": "覆盖o1/o4，组合本请求5张已核验框架子卡；不增加子卡以外的实现结论。A理由：支撑面试中完整解释两套真实框架接入边界，避免只列组件名称。",
       "dependency_content_sha256": {
-        "mc-7315df9206599ae11b928dd1": "be092a0592abaf4cad73a6b4e9c523fb6c010836128053eced7d60f484f01ad8",
-        "mc-76597101ebd26c3464b19ade": "82f26a1c82dc9040dd9a46bb3d73276fbaa980e85e7868a06751ef7918ca3cef",
-        "mc-a0f44f7d2979c0475db2464d": "87c311f0365befcc4cdcef77a10188ebe9e26823c38a59755387bea941eaf187",
-        "mc-a0f7983e098e635a1ee52dd6": "ab0e724b395f04f2d8a6a438dddbb1bd5258ad375d08db86acbeff8528fe2948",
-        "mc-d653cd227e78ceea04297406": "8b4b86293ad0f868b8e4080f7e8a18e428db884f4848493377bfaeaca2470022"
+        "mc-7315df9206599ae11b928dd1": "55f8aaff9495cefa31d56c8d7b95a8a6fb0ff5c61a7f0b95733167709d65c1ad",
+        "mc-76597101ebd26c3464b19ade": "cf8c40c1d53d0737d7e84d9ecd3ec03239cc3a1ce68d1334c1348444cf3139e8",
+        "mc-a0f44f7d2979c0475db2464d": "a79ab4991fee64f6a9731641acaec9a0afecaa2b6d51d414201592272daf8a84",
+        "mc-a0f7983e098e635a1ee52dd6": "57049ed9b763d801cd985a772106c9c9c0282defee8c1094541bd1fef74640c4",
+        "mc-d653cd227e78ceea04297406": "8a36ac7556d0fd6e434e0f8d943e9824e5d256122f48643115ae34775cb84501"
       },
       "depends_on": [
         "mc-7315df9206599ae11b928dd1",
@@ -1123,6 +1123,9 @@
       "misconception_of": null,
       "priority": 5,
       "quality": "A",
+      "review_resolution": {
+        "summary": "2026-11-16 已按语言改写后的依赖卡逐项复核本卡的结论、适用条件与评分锚点；独立语言审查通过，仍覆盖原考查目标，不改变固定版本与实证边界。"
+      },
       "source_ids": [
         "w2-card",
         "w2-ledger",
@@ -1133,14 +1136,14 @@
       "template_version": "1.1.0"
     },
     {
-      "content_sha256": "82fa273dce8b3cdcfd50ede5936534340ff5351644a7a6f481845a7201f34265",
+      "content_sha256": "469c44460c38279a5bba92e0c84c4ac6cd2bfe51a81741c0c5034abf524312d4",
       "content_summary": "覆盖o2/o4，组合5张同请求已核验实现卡；不承诺跨平台性能排名。A理由：回答面试中的四路径取舍问题，防止把容量、计数与有效布局混为同一种机制。",
       "dependency_content_sha256": {
-        "mc-50a37c7580427893d3cfc1cd": "23876f01e99d4cc4de67169e6fab32ea7fb92430fbe619b3b420c331abbd98ee",
+        "mc-50a37c7580427893d3cfc1cd": "d332e6d1558af6bda047e7c8abd97ecfc33b9c1a9adb722bbda17962cfafac5d",
         "mc-b7df7e939424aa7a39a58e6b": "35fd59e0b901602511e677453d924f60e2d3b57d5a10e0b1a83b478db1f52b7c",
-        "mc-dd81e7bc1ccbdb327767771c": "ba08ab8caa263057a4a8afba0243c539225820c8c59f352d04e07a0e1efee1f2",
-        "mc-f1e42d2cf27978369eac0de5": "061616d52974efba347b142e0b94956dc899b0e9f0907344500de63bf41c3ec1",
-        "mc-f7bfdcbb6d618ea751a629d9": "d1ffabd84e434341c8b19e99b80ed64a609001fab5a692a642de6f463961fb38"
+        "mc-dd81e7bc1ccbdb327767771c": "0813d40feb5337c54c74538ede7edfe1516a072d951771948c856ef771105b3d",
+        "mc-f1e42d2cf27978369eac0de5": "3424bf77de9b7db0c91c51d8fb189837e785d2d72282dd8413b6b3c65d5a46b8",
+        "mc-f7bfdcbb6d618ea751a629d9": "c403e0548d90081a60447284843eed561bb18b41512990a35b366de1edf89739"
       },
       "depends_on": [
         "mc-50a37c7580427893d3cfc1cd",
@@ -1167,7 +1170,7 @@
       "priority": 5,
       "quality": "A",
       "review_resolution": {
-        "summary": "2026-11-03已对照修订后的V2同步与展开卡、MORI完成与有效行数卡复核四路径口述；参考回答只比较计数时点、空间分配和有效行含义。V2新增上界理由支持既有容量判断，MORI专家路由延伸不进入评分。四个评分锚点均由同请求五张已核验active子卡支撑，未增加性能或实测结论。"
+        "summary": "2026-11-16 已按语言改写后的依赖卡逐项复核本卡的结论、适用条件与评分锚点；独立语言审查通过，仍覆盖原考查目标，不改变固定版本与实证边界。"
       },
       "source_ids": [
         "w2-card",
@@ -1179,14 +1182,14 @@
       "template_version": "1.1.0"
     },
     {
-      "content_sha256": "bc41d792ff5576b070785701901f03bae9aecc9ebf850367339c78fd2cfe0f49",
+      "content_sha256": "475685370b2e76887dce6a3561deb594eb930cfa38d3c500bb051b44cb071fbe",
       "content_summary": "覆盖o3/o4，组合5张同请求Hybrid-EP快照子卡。A理由：支撑训练/prefill/decode迁移面试题，并防止将设计推导包装成生产性能证据。",
       "dependency_content_sha256": {
-        "mc-2979889096ce057fe64b86ab": "a7a2c5a35ea4e33a9f53ecb349fa09ffaad99ecbc3c49b77b7b8b0adbf409e63",
-        "mc-3dba932d0ea7abc437c403c9": "fa6cd052574c61f518be0d423ad9c3a0cf921770e86649eec21ef650bad991e7",
-        "mc-9fc4d8a4a246584f1ee0ba8f": "396ca917a3718843b9c43455487169d5408a5790227a555f0b11c8e4f9031b3d",
-        "mc-ee164f717c744408ef1f3e7c": "e13e7e7e4703fc0d476e6fddba59926175a2282d2ff74057ea278890d099c745",
-        "mc-f80ff5e3939e02b6104c7662": "7d22b922293c5b58209c81fed2dbe058313d09d2ef4f5cde139c097271c97898"
+        "mc-2979889096ce057fe64b86ab": "83918c56c3c701ba6400ce96fff58b0bfc1ddc0181d908ac173feed4f0c21b01",
+        "mc-3dba932d0ea7abc437c403c9": "89adbf68ee791eccd37d75db6de0c75181ab964c5198d6b61a0cd5514b7d7695",
+        "mc-9fc4d8a4a246584f1ee0ba8f": "3848d9f2a6b672134df0766e0354014df7add3c9c40484cfe04e48ea2a180939",
+        "mc-ee164f717c744408ef1f3e7c": "e2f195e1deef82a4f790fb51cc4f36b62cff86a473fb86d45b47d239d3035fc7",
+        "mc-f80ff5e3939e02b6104c7662": "4aba86a571962a1b94f34044da01bef58b0366a64dd02cafca3934d6c4c37fd7"
       },
       "depends_on": [
         "mc-2979889096ce057fe64b86ab",
@@ -1212,6 +1215,9 @@
       "misconception_of": null,
       "priority": 5,
       "quality": "A",
+      "review_resolution": {
+        "summary": "2026-11-16 已按语言改写后的依赖卡逐项复核本卡的结论、适用条件与评分锚点；独立语言审查通过，仍覆盖原考查目标，不改变固定版本与实证边界。"
+      },
       "source_ids": [
         "w2-card",
         "w2-ledger",
@@ -1222,7 +1228,7 @@
       "template_version": "1.1.0"
     },
     {
-      "content_sha256": "a392b0e302a2586d8310dfbd7045c08d3a62b08ea581be811cc903dad2fb3844",
+      "content_sha256": "36d468b88f9fa96027aaa33fb52ce02994861f601529f27ac666b293f8c3ef3c",
       "content_summary": "A理由：防止把双缓冲索引轮换当成自动忙闲检测，提前复用慢rank仍在读取的槽位或清掉未消费信号。已对照课程页add-10-2、ChangeCard02§5及DeepEP d4f41e4固定源码：internode_ll.cu:286–295、329–338、379–407、776–785、915–976；buffer.hpp:1504–1505、1577–1592、1644–1645、1696–1711。固定源码因果解释，不是实测轨迹。",
       "dependency_content_sha256": {},
       "depends_on": [],
@@ -1280,11 +1286,11 @@
     }
   ],
   "managed_body_sha256": "d5dab95939f7564308d06d138b63be03ef100e5217afc6a2248262330e794382",
-  "manifest_payload_sha256": "59d00f9832851fb31b6e3fd0f8eb4652acd87756bdd286a13020eca89f059ed5",
+  "manifest_payload_sha256": "0b9b5a8bf0f438eccf98beb7fb8207a56ca73c9d8bd26d42721b8f38ac2ed849",
   "schema": "memo-cards.artifact/v2",
   "sidecars": [
     {
-      "byte_size": 62438,
+      "byte_size": 63470,
       "columns": [
         "问题",
         "答案",
@@ -1296,64 +1302,64 @@
       "row_count": 38,
       "rows": [
         {
-          "content_sha256": "87c311f0365befcc4cdcef77a10188ebe9e26823c38a59755387bea941eaf187",
+          "content_sha256": "a79ab4991fee64f6a9731641acaec9a0afecaa2b6d51d414201592272daf8a84",
           "logical_id": "mc-a0f44f7d2979c0475db2464d",
-          "row_sha256": "a84248e8c8c482f597000528bbedbe67b232b5e262c5c969e533da763d4221c7"
+          "row_sha256": "aee0d241930ec1b031f421d77968660cfd9262c8bb57116b741a3c416394c705"
         },
         {
-          "content_sha256": "ab0e724b395f04f2d8a6a438dddbb1bd5258ad375d08db86acbeff8528fe2948",
+          "content_sha256": "57049ed9b763d801cd985a772106c9c9c0282defee8c1094541bd1fef74640c4",
           "logical_id": "mc-a0f7983e098e635a1ee52dd6",
-          "row_sha256": "58224a57bc21937989c2bd540574e48712064e64f640fa6094bbbad8887035d4"
+          "row_sha256": "9fc74df3b854c8925a4deac30dcc40fbd8b63ed48a758c7b548dc46fec2be3cc"
         },
         {
-          "content_sha256": "94797291e359a5ab5e7e810dfa1172b7a0e860f18ff9cd019f1a8b276676618f",
+          "content_sha256": "57474bb3aa43492a9f8d42328155624f8831cd0a8992d41ddfbadb2fcce34bbf",
           "logical_id": "mc-c08c9e1e782b5f1fca6126a2",
-          "row_sha256": "47550eff7b71a88eb291ba0ffd66e50815edd69ca9bd5882fb0c55c7f8eb21eb"
+          "row_sha256": "50041a596a2d1e2bc77aa4f9b65da964950806b65d61d6121b0b6f1b88e20d43"
         },
         {
-          "content_sha256": "be092a0592abaf4cad73a6b4e9c523fb6c010836128053eced7d60f484f01ad8",
+          "content_sha256": "55f8aaff9495cefa31d56c8d7b95a8a6fb0ff5c61a7f0b95733167709d65c1ad",
           "logical_id": "mc-7315df9206599ae11b928dd1",
-          "row_sha256": "5ae9d58c82a90eafa2ac182cc3a79de2515d24b4d874a6b87a5d0eae7130f635"
+          "row_sha256": "dea5a113ab1853475142e3ec8f12d05505d12cd6203c9bc9ad695fcbd969b5bc"
         },
         {
-          "content_sha256": "c1e8bcd4950233b182538ca0f4cddb4f1909675177ad3c1616ba5ed5b4b637b5",
+          "content_sha256": "4f1d8898adcaef5bc5c9c3be0d2e71dfd693e43e47a935798f5be3a28cb9866c",
           "logical_id": "mc-486a27f672d2edbf1836e411",
-          "row_sha256": "6175a2410a0eff52328154a5bec83e6febc1f4e3e88e4a6410ddc13e2c87b53f"
+          "row_sha256": "a61905f028c3c7db5427ab6bbd2843a18535d0af7c398a7dcc6d6023133858ad"
         },
         {
-          "content_sha256": "b0ae9bc4c4bdb6464ab50b920e5ae5ca7c243fa904c6bac6dc9a1737c1be3d86",
+          "content_sha256": "1c951d59fe8eb471d8b1488093df0cb1cdf3adb20d350587b5b584f4c8468a50",
           "logical_id": "mc-eb769bec52690bea988517de",
-          "row_sha256": "84d964ca70d3943d6352c93f6dde3f18701c8aaf13dbf98ad43d76f406d0f677"
+          "row_sha256": "61a3e349a3dae1fe083a8ae9f3bbe0132f9774ffaab0c6cef0d31e9ef668aa6b"
         },
         {
-          "content_sha256": "2e51771c228bbc896b6741bf3339c91d8fe9ed1608362dd2944bdfc059782b7b",
+          "content_sha256": "f430b82f4c529cc0d7b7850541dae886c9f848b2a51d5127ff093839f1f33981",
           "logical_id": "mc-99fe51c2ea71d50056eaf79f",
-          "row_sha256": "b7f00ee0c5960847b59f4ffdac6eb8fb5d7d898b622b6fa54fe784e256ec8d2e"
+          "row_sha256": "3c5ed4ff16d3f017d8ba760ac4bbcd51e1dc4bc63109aafc47684e9ed0196c5d"
         },
         {
-          "content_sha256": "7e855300773b8a43bd1b5b6318ec5f70a3156b7b4d2615aa0a810dbd7267178d",
+          "content_sha256": "de131f36dd9c18557e8e504108eaab3bad34ac94a55c5140a8eefa33e8bdedb2",
           "logical_id": "mc-a4baf65139adf754752ce42e",
-          "row_sha256": "45fe396dec4b0fdbb45aedfeafc3346f9a39f6263f98270726e6cc9bc1cb17fd"
+          "row_sha256": "001c7ffa390e2a48b1bb20768a29f4d70198796c662736e773928832a4db547b"
         },
         {
-          "content_sha256": "82f26a1c82dc9040dd9a46bb3d73276fbaa980e85e7868a06751ef7918ca3cef",
+          "content_sha256": "cf8c40c1d53d0737d7e84d9ecd3ec03239cc3a1ce68d1334c1348444cf3139e8",
           "logical_id": "mc-76597101ebd26c3464b19ade",
-          "row_sha256": "c02918b3499f8d3c9559a1c20580eadae0344c1c0ed1cf8f6e351d952eec74b9"
+          "row_sha256": "70c68e7a9d8b1adb7150ce806109164a319f12b07e6d978d491da1bb9a9c8740"
         },
         {
-          "content_sha256": "8b4b86293ad0f868b8e4080f7e8a18e428db884f4848493377bfaeaca2470022",
+          "content_sha256": "8a36ac7556d0fd6e434e0f8d943e9824e5d256122f48643115ae34775cb84501",
           "logical_id": "mc-d653cd227e78ceea04297406",
-          "row_sha256": "e332de3c443f021b554c13083ca84a03a2408d02c19bdf2bb6ed256f189bd4e1"
+          "row_sha256": "87eabe827017d4746a65087e4296c796a42c71a0485c6a1cbeca3753b9d5de4e"
         },
         {
-          "content_sha256": "09290e3de04d9643f971faecb1ad930ec7633775ca82cba509e1aac7a99bd5f7",
+          "content_sha256": "52b06dd04c5fb650f1860fcd2985bf01cb45260294cfa4b64458b721590f0eda",
           "logical_id": "mc-763557e86a5e94c61a29de1f",
-          "row_sha256": "e53b6787b2a15bb43b90add6469d406775663a9334d7586ce2aa69c4ea8a3f89"
+          "row_sha256": "6470405dad72b59acdcf33f4bf5efe17cc8e0d7901a094c02349726712b55450"
         },
         {
-          "content_sha256": "d6942bc4d26e7b33b3ee9456c3f47a9b41b5595690cc2ea26eadbeb0433995f2",
+          "content_sha256": "870fb9923e45fd137d8105823188aed4764dc9da0c969320b51b2788445f38fd",
           "logical_id": "mc-3d93d2812715fe3dfd3076f6",
-          "row_sha256": "1752442554a6846e0b34fc666c275d9a214c22e3459399f7bbaa5b4e670e5dd1"
+          "row_sha256": "6adcfa56d75d65a882926c471f52e877586427306803e00f663959a25e060881"
         },
         {
           "content_sha256": "108ecbbec31163b0e88e0e1185340a3d06633617f3ecd9fead2c8e116a927cac",
@@ -1361,54 +1367,54 @@
           "row_sha256": "ecaa71532a8952281a1e5f0667ddbbdb239282be8a42656b10bdc29c05459d38"
         },
         {
-          "content_sha256": "111db85fa4d8251b8b6c655ab01dbcad017199db26dbe94ef8c325892b2eff39",
+          "content_sha256": "0a691b198bac7043fb00591d9cc66e1e0a6cdae22b6bec1fd1b78efe56334a3e",
           "logical_id": "mc-411cf42c374113d7e64eab2f",
-          "row_sha256": "c579cd4d3fcd0bee48fb4fd13bf10c25aaf80f02eaad5205b12c5a48242c6b35"
+          "row_sha256": "4cd0b9501a82f5eb9aa8791d26b1749eca76e08da068e614dd788d147b6ae7e4"
         },
         {
-          "content_sha256": "d28a3ef291772924bedaa4888a9541963d290a50b72fca8d9c0ff8b5d8245846",
+          "content_sha256": "7437c4def8a6bd861159d1ce97481495dee2f732f27caf16dcf612d4cb8eb14d",
           "logical_id": "mc-38c959e8575cba3ebb9ffe21",
-          "row_sha256": "420224d92599d457910e8f5a34ef4c7ae9a514a0289be94baa9bcd243eac3e6b"
+          "row_sha256": "7923e80b8a272392f90cfaff2a7aba1f44b4b5f9d1c0e6ebb238996ba744fe95"
         },
         {
-          "content_sha256": "ea049b24a42af9338c022d843da9f1d004b15c28135fc30af2b1fc538a3da5c1",
+          "content_sha256": "76eae507975e65eb8a100ae664382bbc941ad9da7699e7bf9af168e90d799f64",
           "logical_id": "mc-87d6421dfb26070f1ff6946e",
-          "row_sha256": "326e1639f8aa1407356e572de88c0879b5b174e97e7ba41e988ae5104cd01fc3"
+          "row_sha256": "af735cc2f13748bbbb3d9d01a1bb9a36331d36b3f4cfc1e1b17300e22db16805"
         },
         {
-          "content_sha256": "d1ffabd84e434341c8b19e99b80ed64a609001fab5a692a642de6f463961fb38",
+          "content_sha256": "c403e0548d90081a60447284843eed561bb18b41512990a35b366de1edf89739",
           "logical_id": "mc-f7bfdcbb6d618ea751a629d9",
-          "row_sha256": "1535ee855296316f1ef18e99a345d275f7e3eef2e5f55d940c06b4dd7649474f"
+          "row_sha256": "953682766310ca5868999d93988b972587c109be5ea9d965337aa1331d3a2908"
         },
         {
-          "content_sha256": "1e16582507581de087ec1283e2509560979d27f43e97bca8d5c0f4f1a4a8b923",
+          "content_sha256": "6505d8d2232eaf5c1ebdf80b974b6c9999be48e8b0724503f7acd1956879d9c4",
           "logical_id": "mc-03e1c8c25f1c0cd418456715",
-          "row_sha256": "c1c6d5ee4952c2341f343dc0f7135dcf8aa8e7779e3de17bb18567dc3dd12023"
+          "row_sha256": "24318553cfde8b37567e1fa69e18ef75b5bb5adb482b8b8132442f813e05226c"
         },
         {
-          "content_sha256": "061616d52974efba347b142e0b94956dc899b0e9f0907344500de63bf41c3ec1",
+          "content_sha256": "3424bf77de9b7db0c91c51d8fb189837e785d2d72282dd8413b6b3c65d5a46b8",
           "logical_id": "mc-f1e42d2cf27978369eac0de5",
-          "row_sha256": "88be032922a714112e29f4cd0b67743eb7c734a4e12307ce40dee6edba9de078"
+          "row_sha256": "2af60b9b230ab7af11d0dcba6dbb2865108a414cacbd5c928b17727d9965af6b"
         },
         {
-          "content_sha256": "509ba81be753ca5d8f2c40995145055c55c6816bafe4090424c10cd2c38114e3",
+          "content_sha256": "9b86372d05820fd357dcd526dd2ef2341a36bd68668dbde3e809eba866662ecd",
           "logical_id": "mc-d1cc666d10bc507528e4e265",
-          "row_sha256": "4688809c80517afea743fdbb527712f63ffef058269a0b9fbb71afdd5843ff02"
+          "row_sha256": "4872a19875aadb665bf922b10fda63cd9d467213eeb5278e074637493d8b1278"
         },
         {
-          "content_sha256": "97a14542a4a971eba76ec65a7e3601cd9ced60a40ca6b81b334e87ea23a17cd9",
+          "content_sha256": "d731945b043a9dd8f5644568f175078a4f270b5233b37c2c629514c1dbad81ef",
           "logical_id": "mc-07791d48c6f05d757be79c51",
-          "row_sha256": "9cbc2726b0bd1942756eea856020b25bd50fa277a649b6e7f7a7416b1d339953"
+          "row_sha256": "9377828a3544d7ff1a3042a049989c4190db7abadee7ed8c3096051d2de6718d"
         },
         {
-          "content_sha256": "ba08ab8caa263057a4a8afba0243c539225820c8c59f352d04e07a0e1efee1f2",
+          "content_sha256": "0813d40feb5337c54c74538ede7edfe1516a072d951771948c856ef771105b3d",
           "logical_id": "mc-dd81e7bc1ccbdb327767771c",
-          "row_sha256": "412cdb49772cc26ae87ea0e1abbafa28f838cfcf8e1fc61ed83c1065f87955e2"
+          "row_sha256": "98682f9fb3f02584488e2eec4a5414d3f34e11eef1a03f35887b05400ba9d3a5"
         },
         {
-          "content_sha256": "5da9dda329e2e056d10c9cc3f0935c653d6865817c7bf8c265718b85817bcad4",
+          "content_sha256": "dadf3c45612c5820b553dd8665e1cf26b0df0780d3557d159aecfa16adf91a8b",
           "logical_id": "mc-20e69924a14dc55b64e6d647",
-          "row_sha256": "3afdbad363ed90cd6d49a9f31c4c4aad9444e5f8378efd8c4d5433f80114d544"
+          "row_sha256": "d6a76ef6824d314df02947788c00f608f93b8cd285dd1b558ad7f663e14dca3a"
         },
         {
           "content_sha256": "0b6c007724aa4a8601f5a7dff493147ed4bc416de22da782645151bc71e73ea0",
@@ -1416,9 +1422,9 @@
           "row_sha256": "a52e0c5549f3772e2d4beb7ff4a30ad7f758d42dca1336564527620bcb15bb55"
         },
         {
-          "content_sha256": "23876f01e99d4cc4de67169e6fab32ea7fb92430fbe619b3b420c331abbd98ee",
+          "content_sha256": "d332e6d1558af6bda047e7c8abd97ecfc33b9c1a9adb722bbda17962cfafac5d",
           "logical_id": "mc-50a37c7580427893d3cfc1cd",
-          "row_sha256": "9ab10793f0ec893ae5c1b1f99b49e5bfc693d8feddd2c3683fb56d4557f90504"
+          "row_sha256": "1e102a8d8fa75d26b6980737773ec330890d7c7bb4ca0c665e61fb4fe8617a8d"
         },
         {
           "content_sha256": "35fd59e0b901602511e677453d924f60e2d3b57d5a10e0b1a83b478db1f52b7c",
@@ -1426,9 +1432,9 @@
           "row_sha256": "33e789e89666ae30d3a220364c7af13d71df4bb7cfb3c359d7e530a27d7d79c3"
         },
         {
-          "content_sha256": "13a31e4624f182bb957a8f011d02eb6f024744f92f5c997a513a0c194fdf03bf",
+          "content_sha256": "fa7c0f9aeb1a98678baa67a13de90d805d789a6344e5d20cb49bdfb09e8e15ee",
           "logical_id": "mc-35c9c361d6e1758a42f5fe10",
-          "row_sha256": "4b20246f16cd3244e4616c66e9b4c8b0fee6b85316c1bbc5a6b8ece82f20a5fe"
+          "row_sha256": "726d39622f664faa1fe5fa3819f6f9dbeb7494b724a70930196787d28e5954c3"
         },
         {
           "content_sha256": "704f10c10aa6e21f85d809a9946ad4b4c0439e1c12b236516b48fdb42bc44811",
@@ -1436,49 +1442,49 @@
           "row_sha256": "33e2b69841fb25fcdb8c2aa85323006be23629fae99a7e201905722762d5fb49"
         },
         {
-          "content_sha256": "e13e7e7e4703fc0d476e6fddba59926175a2282d2ff74057ea278890d099c745",
+          "content_sha256": "e2f195e1deef82a4f790fb51cc4f36b62cff86a473fb86d45b47d239d3035fc7",
           "logical_id": "mc-ee164f717c744408ef1f3e7c",
-          "row_sha256": "acedf1cff287461254f99926078309c0cebec6497e61f966518496159316ea08"
+          "row_sha256": "1802e119246dcb9ea4bbe9a7fa4c47467c138152d35b491f07c5ff6092c01675"
         },
         {
-          "content_sha256": "ba39b82f6f1125934a997e14936a643229d7dfd6d30bd3438b2bc7a8666ad43e",
+          "content_sha256": "8d2d2fe8e14cbe85579b761cafad9cd1a28a7b5f1ca7549ddca87d8aae2ed3e5",
           "logical_id": "mc-50ea6c480c0d43fe0a0508a4",
-          "row_sha256": "1d3354e115a2dbbf1cb1549407bf9de2cd649d7209dba061fd0e4525e2a4a902"
+          "row_sha256": "eb20de4b22ca838e96b0687d4815d528e42b05c0a3004f938af0077f78cecf9e"
         },
         {
-          "content_sha256": "7d22b922293c5b58209c81fed2dbe058313d09d2ef4f5cde139c097271c97898",
+          "content_sha256": "4aba86a571962a1b94f34044da01bef58b0366a64dd02cafca3934d6c4c37fd7",
           "logical_id": "mc-f80ff5e3939e02b6104c7662",
-          "row_sha256": "0ef62a60fc3c038e71976a7f3b8a59396d431cf776c709d5a37b3596d08a6d6e"
+          "row_sha256": "b2868324c6c93269f616162a04d340642d12a62322977043ffe9286798ad058f"
         },
         {
-          "content_sha256": "396ca917a3718843b9c43455487169d5408a5790227a555f0b11c8e4f9031b3d",
+          "content_sha256": "3848d9f2a6b672134df0766e0354014df7add3c9c40484cfe04e48ea2a180939",
           "logical_id": "mc-9fc4d8a4a246584f1ee0ba8f",
-          "row_sha256": "78a84985a61ee7d27aa7b5ba2f876710b03c2ebf5fc8a1c5429d8aa7c7e0fa2c"
+          "row_sha256": "ba26b03ab660edcf7e8af4f0d11b578b2d92311d160cf739fc4ae4315e4e4b17"
         },
         {
-          "content_sha256": "a7a2c5a35ea4e33a9f53ecb349fa09ffaad99ecbc3c49b77b7b8b0adbf409e63",
+          "content_sha256": "83918c56c3c701ba6400ce96fff58b0bfc1ddc0181d908ac173feed4f0c21b01",
           "logical_id": "mc-2979889096ce057fe64b86ab",
-          "row_sha256": "af99f547cc0fc2cae1acd95ff3c5f4809659d83a4f4e59354c879d65493d465e"
+          "row_sha256": "b54ca2a6a98beb48c1364a000787d3c4c1eb14d95a995c111de7088339ce7083"
         },
         {
-          "content_sha256": "5bafc7ef286d7f447883c2a1fa525d57619d44b674bf07e0d885b48d0e235667",
+          "content_sha256": "a6140ab94198f234bdb96a211d190243c715904d87a3a300c568055cfdd7f25d",
           "logical_id": "mc-9ddb96841d288103a24cf440",
-          "row_sha256": "07760ed40719979c7798c5eb0a299f6c29512548d7933d8d529591c2f96397fd"
+          "row_sha256": "8d649287e20537bb6e8dc03fe76ffd36cbf51f4efec228922665485a3d2f3d19"
         },
         {
-          "content_sha256": "fa6cd052574c61f518be0d423ad9c3a0cf921770e86649eec21ef650bad991e7",
+          "content_sha256": "89adbf68ee791eccd37d75db6de0c75181ab964c5198d6b61a0cd5514b7d7695",
           "logical_id": "mc-3dba932d0ea7abc437c403c9",
-          "row_sha256": "f014b7963a0db7206eaf112a1b429a0125ba1019988a51e6508f54622dc6ce01"
+          "row_sha256": "3f37fb30230f568fee582a3973e475c686be82f22aa16cc891929304024dc750"
         },
         {
-          "content_sha256": "7e1f013a460e124a4bddcb4d39cd20abc2cb9fbba9ce34a3d95803f8a97e1ffe",
+          "content_sha256": "cc1084a3769288aca80c57f4a0f8c3d47c1af13a89110c208fa88b83ef33cc48",
           "logical_id": "mc-a66576e8728d34795904a60a",
-          "row_sha256": "83ea8bb8a1ff1ef49333db93aa53bb68c205e860b3f88c11e31b4003c53ed90a"
+          "row_sha256": "17e23697c3f577075a5fd595a1bddaefde250879f5298f3dc39f1cf06afef2bd"
         },
         {
-          "content_sha256": "a392b0e302a2586d8310dfbd7045c08d3a62b08ea581be811cc903dad2fb3844",
+          "content_sha256": "36d468b88f9fa96027aaa33fb52ce02994861f601529f27ac666b293f8c3ef3c",
           "logical_id": "mc-467846640b25015ee66a6a1f",
-          "row_sha256": "895bae192352c3f36586997a77cebe4445fffd76363c31b6af8ebe4cb292e014"
+          "row_sha256": "ab4d15157800257329852bcdc9b3b0352e55194fd088de967968238debefb5de"
         },
         {
           "content_sha256": "b9a2a2661eff5d3c5822427925d445f573f7c2016f4276b4617f53192fddd341",
@@ -1486,14 +1492,14 @@
           "row_sha256": "b44968b9c8f48b3fcd365af791b16d5317012283037ccc44c03c1d66f09ad08a"
         }
       ],
-      "sha256": "4b5c0650ad5965d82500de0752100735eabb160afec674245eaab1bc9c985766",
+      "sha256": "e9103e0edb8ad2fe6648cd9876f23036b2f3bb99e0b8960af60a8da97f3217f6",
       "sheet_name": "cards",
-      "table_sha256": "d27d4466bd6c33d07f2c8f3672d331a140a39b8be2d3156aeb6b7af65061c4e0",
+      "table_sha256": "3a7c586c159cad8d48169a1f256ba015cc279f44fafec4e89a893a4686024804",
       "template_id": "technical-qa",
       "template_version": "1.1.0"
     },
     {
-      "byte_size": 7267,
+      "byte_size": 7456,
       "columns": [
         "问题",
         "参考回答",
@@ -1505,42 +1511,42 @@
       "row_count": 3,
       "rows": [
         {
-          "content_sha256": "dcba8e37dea3d6b8df842f3159191b40bbc7344ccaa83a90e8bccbf971b9c349",
+          "content_sha256": "03a658ee39ea20cfff741a0ba56af1c4b5495e0c69e3f99e9ed88796701c6510",
           "logical_id": "mc-2d6e4a350130076b75a27605",
-          "row_sha256": "9d30c398ce7479fd4499ae154ce7404c1404f80ff9c26600690d1b35d2eb05ec"
+          "row_sha256": "aa67031cf6e5b760547076d83dfaf3b3296796272e2f9a196b93261671ce1d88"
         },
         {
-          "content_sha256": "82fa273dce8b3cdcfd50ede5936534340ff5351644a7a6f481845a7201f34265",
+          "content_sha256": "469c44460c38279a5bba92e0c84c4ac6cd2bfe51a81741c0c5034abf524312d4",
           "logical_id": "mc-2f3f4b0d53d2559dfc94b6e1",
-          "row_sha256": "9fa449a49911d470340311d4fd2ac8730d2a39dd3313866ccc451e06959d5de9"
+          "row_sha256": "d6aaad8ce597ca301cb12e6d9882985d692b4f329670874aa0e0785b3a47ebc6"
         },
         {
-          "content_sha256": "bc41d792ff5576b070785701901f03bae9aecc9ebf850367339c78fd2cfe0f49",
+          "content_sha256": "475685370b2e76887dce6a3561deb594eb930cfa38d3c500bb051b44cb071fbe",
           "logical_id": "mc-5f8607e9b42c31251fcaf076",
-          "row_sha256": "2623be7add37350e128029dc5687f40beff71c4ba8db3970442e02244f7f9a8a"
+          "row_sha256": "0e9c586b3cc95476724956fe47b9aa19ffd8c9eb9a0952e4644e672da3722ff7"
         }
       ],
-      "sha256": "9e356c6c758cf764c6a3125adaa9afa60b9fe8cec130ab924a1c8881dc5655ce",
+      "sha256": "58f0defaf8a6e386c535592ef282d1758ede5665da5a2c39bb832046edfccaa6",
       "sheet_name": "cards",
-      "table_sha256": "09fb6d4fd4f78daed438ea32c58c397ecfd92fbd9b9127cb906405142eda27c7",
+      "table_sha256": "2b0e7303b735b69779723ee57cb4b057c69ee1777da79a71458d5b2fb21535eb",
       "template_id": "oral",
       "template_version": "1.1.0"
     }
   ],
-  "source_fingerprint": "41ab62583c180d1c63d437c101a0cd6fc1e7aa796042a0201e64591f23a1768d",
+  "source_fingerprint": "83a09d4e5e02b8620543f0e3a9459175670490aa3825a7b1b6f715a63f496170",
   "sources": [
     {
       "collection": "inference-w2-u2-evidence",
       "id": "w2-card",
-      "path": "面试准备/自我准备/ChangeCard-02-MoE-EP-dispatch-combine.md",
-      "sha256": "9b9a02a5d8b00a348e0403a251004430c028f04e8a0e566b33b8d24ba9b840c3",
+      "path": "面试准备/自我准备/学习设计/ChangeCard-02-MoE-EP-dispatch-combine.md",
+      "sha256": "d0a2d2c7917b5717d8da9189c4e53f84f4c2aef363054dd0397a6cdfc732f0b0",
       "summary": "已审核的接入契约与源码纠正；只采用公开固定源码事实，不将用户芯片说明或待验证结果转为确定实现。"
     },
     {
       "collection": "inference-w2-u2-evidence",
       "id": "w2-ledger",
       "path": "计划/八周冲刺进度/历史记录/W2-学习验收记录.md",
-      "sha256": "445d31cece716ed0a594b32fdbea5cb08d9422d2f0b3d02bdcf0426e1b9055a2",
+      "sha256": "e8e8092a426fff22872f1b4f9a57aaccc8d31015e5859dcb05f1bb43a1b890e9",
       "summary": "单元二固定源码基线、节点检查及已确认的Hybrid-EP场景表；用于确定学习范围和来源锚点，不将mastery状态当知识事实。"
     },
     {

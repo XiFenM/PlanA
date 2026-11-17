@@ -5,8 +5,8 @@
     "id": "markji",
     "profile": "plana-markji"
   },
-  "artifact_set_sha256": "d4566bd8893b52dd680808885cc4d5be8a5dc2012af3428588fbd40d8b1feda3",
-  "candidate_sha256": "004bd7f92713a26c34cf46899ff67431e0c73a39c573d1ca80d4f826956b6fd4",
+  "artifact_set_sha256": "4e1e3442603eb95011085d106d4f0bbe227ebfacc800b5462245f0e80439c2ac",
+  "candidate_sha256": "1109d4efba06aa826558598d2262cf38e5e64ed617938ded0285a0a98443d260",
   "cards": [
     {
       "content_sha256": "6fba62c5bd23eb7a827aba92e3941ff6597528b84d86b7951c7417b6d6eac859",
@@ -39,7 +39,7 @@
       "template_version": "1.1.0"
     },
     {
-      "content_sha256": "abc3570524b29f68ceb70deec430121e8d7b74e36a690e7b755421d4f4dff0b3",
+      "content_sha256": "e0cfe8f2eeff5483d9401d25a9eca9788a4854a9a36e6a845d6f47216ccac5ed",
       "content_summary": "A理由：防止对显式指定的无效后端误期待静默 fallback，定位选择阶段的实际报错路径。",
       "dependency_content_sha256": {},
       "depends_on": [],
@@ -69,7 +69,7 @@
       "template_version": "1.1.0"
     },
     {
-      "content_sha256": "1409ca669b31a4c3cf7fa2564c65e0d46c73d96dadcf1eb9496c0c02bbc1215b",
+      "content_sha256": "1a68cc0707ad4c800a23b464ec59ddb93f3d29fa06f5af6430919f219ddd3822",
       "content_summary": "A理由：防止以配置或选择函数成功宣称 Runner／kernel 已运行，限定设备能力与验收证据。",
       "dependency_content_sha256": {},
       "depends_on": [],
@@ -241,7 +241,7 @@
     }
   ],
   "managed_body_sha256": "55c582ddbfa23fecf9d96feb8ae53d6e0c3cfa4ea155c8774bfd1a84f244569a",
-  "manifest_payload_sha256": "8c60a1018a7088a0bf7c7b8c5b71cf2f1d043391bbdc1748b4bf00da64fd4fad",
+  "manifest_payload_sha256": "9422ec9cbcb68405f0cde5451de636f17c622b92276e3a58c14b0fe3f4aad81b",
   "schema": "memo-cards.artifact/v2",
   "sidecars": [
     {
@@ -280,7 +280,7 @@
       "template_version": "1.1.0"
     },
     {
-      "byte_size": 5761,
+      "byte_size": 5762,
       "columns": [
         "问题",
         "答案",
@@ -297,14 +297,14 @@
           "row_sha256": "81090df9c0c3d0ec4828a51aaac64d8e15d9b872def7cd4678ac6f12dc381fd8"
         },
         {
-          "content_sha256": "abc3570524b29f68ceb70deec430121e8d7b74e36a690e7b755421d4f4dff0b3",
+          "content_sha256": "e0cfe8f2eeff5483d9401d25a9eca9788a4854a9a36e6a845d6f47216ccac5ed",
           "logical_id": "mc-3122aaa3b9ce689446c681bc",
-          "row_sha256": "7a305b5fe277c64db486a567f57410c029856856b59dd74b75ec182b4cb17b0a"
+          "row_sha256": "828f8dee8ba435c1f92709208ab485be35acc3fe2c0fe16c1deb97198f5d0867"
         },
         {
-          "content_sha256": "1409ca669b31a4c3cf7fa2564c65e0d46c73d96dadcf1eb9496c0c02bbc1215b",
+          "content_sha256": "1a68cc0707ad4c800a23b464ec59ddb93f3d29fa06f5af6430919f219ddd3822",
           "logical_id": "mc-02e87b1438f73bdf09911e42",
-          "row_sha256": "7a3bcb4f7b80397ddb7dc9fb126f936c431b50ba777be1a42c5ebd036399ff9e"
+          "row_sha256": "cc9af00adf5805b4659484e7696d5f80f5515020c41b34ede5ea7ee05e99dadc"
         },
         {
           "content_sha256": "c147b5c7b8030e4fccc6952a86d491b1b9bc963f312f66f0d228829b8b82e2d5",
@@ -312,9 +312,9 @@
           "row_sha256": "9a2c080df7c8e636c59f8b2f7b28a44ab364bd355641d75a2b08ae03539dfadd"
         }
       ],
-      "sha256": "51b1a6b8cb26d0fa8f23111fc3b81e1d5dcabd1ab504b3cc5bab8a3d2da6676e",
+      "sha256": "e58100836c5c99517a701f156707a3e99a506549446c124729d51fff962a5199",
       "sheet_name": "cards",
-      "table_sha256": "2a202f5ca304f8cbb803defe2f40caa955f4f2b78044e4530b6bb6b01b7551d1",
+      "table_sha256": "cfa21afad97056745a23e0debdd97642820148aff67675e1efd60dfe578a1650",
       "template_id": "technical-qa",
       "template_version": "1.1.0"
     }

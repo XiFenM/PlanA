@@ -78,6 +78,16 @@
       "patterns": [
         "PyTorch/深入学习理解PyTorch/1-Internal-Overview.md"
       ]
+    },
+    {
+      "id": "interview-reviewed-material",
+      "kind": "question-bank",
+      "patterns": [
+        "面试准备/面试问题经验/复盘回答/寒武纪-日期未确认.md",
+        "面试准备/面试问题经验/复盘回答/鲲云科技-2026-11-09.md",
+        "面试准备/面试问题经验/复盘回答/安霸半导体-日期未确认.md",
+        "面试准备/面试问题经验/复盘回答/进迭时空-日期未确认.md"
+      ]
     }
   ],
   "output_collections": [
@@ -114,6 +124,19 @@
       ],
       "inventory_patterns": [
         "PyTorch/cards/*.md"
+      ],
+      "soft_target": {
+        "minimum": 4,
+        "maximum": 15
+      }
+    },
+    {
+      "id": "interview-review-cards",
+      "patterns": [
+        "面试准备/面试问题经验/复盘记忆卡/*.md"
+      ],
+      "inventory_patterns": [
+        "面试准备/面试问题经验/复盘记忆卡/*.md"
       ],
       "soft_target": {
         "minimum": 4,

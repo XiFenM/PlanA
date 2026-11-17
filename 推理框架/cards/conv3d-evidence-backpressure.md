@@ -5,11 +5,11 @@
     "id": "markji",
     "profile": "plana-markji"
   },
-  "artifact_set_sha256": "84e3cae6f246f74496e004e4fcdc4240720b3a28e0eec8b8aa97d522bac2a0e4",
-  "candidate_sha256": "13caee445e0fa60908a7b294665da8a135b325ccdb995e12ad4ac38a52186ed1",
+  "artifact_set_sha256": "b0c199d89c44cad04a690fbc589fe1e09b4896ba01721a3abb4e32b5c028c59d",
+  "candidate_sha256": "7261c5f009ddc35f1b01c819c9ef52a495b57b796fbf2093a98971d4119d5bc5",
   "cards": [
     {
-      "content_sha256": "6cdac87324ffdf61e6d68f073849c4febba8b070d94fcdbcf08cdf6a48874124",
+      "content_sha256": "d14e995aa0969a35435a55aa73919ca50a60ede4c5c9ff9cda8dc44c042f2630",
       "content_summary": "A理由：防止以逻辑元素数估算真实显存，遗漏布局、padding 或同时存活缓冲导致 OOM。",
       "dependency_content_sha256": {},
       "depends_on": [],
@@ -36,7 +36,7 @@
       "template_version": "1.1.0"
     },
     {
-      "content_sha256": "b9ba6633f31c8f203bde910d7329957317f7f4d5bde1250b03520b9666f7abbb",
+      "content_sha256": "cdcf6b0cd965344d916f5fcf0f084df4159d11b4a26587f02b749bfb104434c5",
       "content_summary": "B理由：区分合法 view 与需要物化的重排，为显存分析提供前置概念，不将基础 API 定义一律列为 A。",
       "dependency_content_sha256": {},
       "depends_on": [],
@@ -146,7 +146,7 @@
       "template_version": "1.1.0"
     },
     {
-      "content_sha256": "20cfaecb337b29df2a8e01557be3c457b7658817bebf68c755cfa49a1ff02c6c",
+      "content_sha256": "0c7a59887a51a6f8360419b3b142182ffdea01e37174023e9defb78f5ba1e033",
       "content_summary": "A理由：防止把各自接近参考误推为新旧实现彼此满足同一容差，避免错误验收数值结果。",
       "dependency_content_sha256": {},
       "depends_on": [],
@@ -173,7 +173,7 @@
       "template_version": "1.1.0"
     },
     {
-      "content_sha256": "34af2b2d2f09c82b08012273b8138de2063cf06b854af8b8e1b1c962e5a37be5",
+      "content_sha256": "f85caa862644201df3d2c52b049ba2a331f459ca04bbc7b2a2a9e47ec09e801e",
       "content_summary": "B理由：掌握容差组合与参考幅值的关系，辅助正确性核对；不把公式定义本身列为最高优先级。",
       "dependency_content_sha256": {},
       "depends_on": [],
@@ -363,11 +363,11 @@
     }
   ],
   "managed_body_sha256": "53ba9d2053a1f6a1d39035c631d2e6385b0e9cb93f88b717264c4df1c12ef975",
-  "manifest_payload_sha256": "c44b1b2484f8c47e537dec466ad99dbc998d92faf4d1048c99878dd33c795b7b",
+  "manifest_payload_sha256": "ba987e384d02a24e841476e7a5d065787afb6e90c9c85cc9fb491b3e9e679009",
   "schema": "memo-cards.artifact/v2",
   "sidecars": [
     {
-      "byte_size": 13215,
+      "byte_size": 13856,
       "columns": [
         "问题",
         "答案",
@@ -379,14 +379,14 @@
       "row_count": 13,
       "rows": [
         {
-          "content_sha256": "6cdac87324ffdf61e6d68f073849c4febba8b070d94fcdbcf08cdf6a48874124",
+          "content_sha256": "d14e995aa0969a35435a55aa73919ca50a60ede4c5c9ff9cda8dc44c042f2630",
           "logical_id": "mc-31f34dc0ef5606ecabd0d4f5",
-          "row_sha256": "e05b25391655bb0a3bb77178d2df7f2ba73172f77fc463217f8df31f2f638fce"
+          "row_sha256": "6ec1938852aa1a7eef603526f94688def3760e0d67768a42172af6f7291b502e"
         },
         {
-          "content_sha256": "b9ba6633f31c8f203bde910d7329957317f7f4d5bde1250b03520b9666f7abbb",
+          "content_sha256": "cdcf6b0cd965344d916f5fcf0f084df4159d11b4a26587f02b749bfb104434c5",
           "logical_id": "mc-e1599ccdbe7715208e0cace9",
-          "row_sha256": "52f00d478c8e10e5909f751f503e5922b918576835109601d6fa419b94e22b87"
+          "row_sha256": "fac55cc60c78b8707169906b8630670307740579c571ea811d2d21ca76559aff"
         },
         {
           "content_sha256": "578c7edd3971a806b66ceb17634483d578c60c1fb520d2a75d899014e5dd1b6d",
@@ -404,14 +404,14 @@
           "row_sha256": "afa73a46e5ce195a51c5b9a72624a2805b44d8955849ebc71a706efead33a181"
         },
         {
-          "content_sha256": "20cfaecb337b29df2a8e01557be3c457b7658817bebf68c755cfa49a1ff02c6c",
+          "content_sha256": "0c7a59887a51a6f8360419b3b142182ffdea01e37174023e9defb78f5ba1e033",
           "logical_id": "mc-38cf43cc32de055505f36689",
-          "row_sha256": "464c442481d70b0311dc807e62de4f4560d05f64415087a473ecda085e6002c3"
+          "row_sha256": "0c857f707aa03ca3b76677fe057fcd55ac8b693cc56e8dcb506fbd69db2974d6"
         },
         {
-          "content_sha256": "34af2b2d2f09c82b08012273b8138de2063cf06b854af8b8e1b1c962e5a37be5",
+          "content_sha256": "f85caa862644201df3d2c52b049ba2a331f459ca04bbc7b2a2a9e47ec09e801e",
           "logical_id": "mc-2250a5c1dd8bc69f5a45085d",
-          "row_sha256": "46d6fa7c34737c2d47100d96b49c2080c1aec45b516943d72360d9336e8567d4"
+          "row_sha256": "5dd2c34d04657b39513dbcc99aa74dfbae61258b4d07787bb7d93093f0cac6f6"
         },
         {
           "content_sha256": "2be66d7480f02634efba8fbe929ffb87770e4eb5c8d23487623229e34d3e7564",
@@ -444,20 +444,20 @@
           "row_sha256": "598015dc22ae0761bc9001ed6bd2452e52326345e3321a3b9b5678ad21ef2843"
         }
       ],
-      "sha256": "4162ef17376d0bd64dd451802c5e441defd266b04edb8d37eb37f32655de24eb",
+      "sha256": "5516b3501713c0e8bd9eba14cd2cc85daef54439206f2d1ba8e1e385d356b497",
       "sheet_name": "cards",
-      "table_sha256": "713997ce47d567cec393928f47c3455f70b8806fc0418e7a090f18c646382ddf",
+      "table_sha256": "5f4ae0e91e9c2c40c5b833150ce5952c751ce65db2741890cf5397489d371c5b",
       "template_id": "technical-qa",
       "template_version": "1.1.0"
     }
   ],
-  "source_fingerprint": "c7a2333a1951893f6ee11eeb7397ad7fb7f7f36e0c27b441c094662f8f12c51e",
+  "source_fingerprint": "13cca709630cc5e1a265a751ddffe95f5cd3a5934bbc1996ce3cd0521f6afa45",
   "sources": [
     {
       "collection": "inference-study-logs",
       "id": "case-log",
       "path": "推理框架/log/2026-09-15-conv3d-claim-backpressure.md",
-      "sha256": "aea089067369aa07fd985fd4634fe47b1ae279ebdea00201c6b219e6ca5aa9d6",
+      "sha256": "72868b00b394512ae3cb07d231b3a68ba33c2d01c6e91deeef228a16823e4915",
       "summary": "Conv3D 通用布局、正确性与性能证据、反压边界；私有参数与待核内容不制卡。"
     }
   ],

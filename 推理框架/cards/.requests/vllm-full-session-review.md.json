@@ -8,7 +8,7 @@
       "collection": "inference-study-logs",
       "id": "full-session-structured",
       "path": "推理框架/log/2026-09-08-vllm-full-session-review.md",
-      "sha256": "af2c4e701fe66c829232e5bf3f5d6e6e0da7be9d70cf53e91d326d1b71f021a0",
+      "sha256": "e6b49c6bd21684fe222eb31b289d34e422f4070bb0b573494717927474308ded",
       "summary": "全根会话324条可见消息的结构化复盘；含真实用户纠错、导师纠偏归因、固定版本知识与未验证边界。"
     }
   ],
@@ -57,7 +57,7 @@
               "parts": [
                 {
                   "type": "text",
-                  "text": "hook 的可观测范围须按具体接口确认；此卡固定 PyTorch v2.11.0。"
+                  "text": "此卡只说明 PyTorch v2.11.0 可用 register_hook 观察指定 Tensor 的梯度，不据此推断任意内部节点都能这样观察。"
                 }
               ]
             }
@@ -194,7 +194,7 @@
       "fields": {
         "意图": "batch 重排后若 slot_mapping 没有同步更新，它首先会破坏哪个 KV 访问步骤，为什么？",
         "场景": "vLLM v0.26.0 的 MRV1；一次 batch 重排后，检查每个请求的新 KV 与历史 KV 的映射。",
-        "正确": "定位本步新 KV 的写入槽位；历史 KV 读取还依赖 block table。",
+        "正确": "首先可能把本步新 KV 写到错误槽位；历史 KV 的块定位则依赖 block table。",
         "错误": "否则会取到错误的历史kv cache",
         "说明": {
           "blocks": [
@@ -203,7 +203,7 @@
               "parts": [
                 {
                   "type": "text",
-                  "text": "原答正确要求同步重排，但混合了写入定位与读取上下文的直接职责。"
+                  "text": "slot_mapping 把本步 token 指向新 KV 的写入槽位。Batch 已重排却沿用旧映射，就可能把新 KV 写到别的槽位。原答要求同步重排是对的，但把新 KV 写入定位与历史 KV 读取的直接职责混在了一起。"
                 }
               ],
               "label": "原因"
@@ -414,7 +414,7 @@
       "fields": {
         "意图": "最终结果交付期间，RequestState 与 Collector 各自需要存活到何时，由谁继续持有 Collector？",
         "场景": "vLLM v0.26.0；最终 RequestOutput 已写入 Collector，AsyncLLM.generate 尚未消费它。",
-        "正确": "最终结果入 Collector 后即可注销；generate 仍持有 Collector 并可继续消费。",
+        "正确": "最终结果写入 Collector 后，可注销 RequestState；AsyncLLM.generate 仍持有 Collector，并能继续消费最终结果。",
         "错误": "再将RequestState和Collector销毁删除",
         "说明": {
           "blocks": [
@@ -467,7 +467,7 @@
       "fields": {
         "意图": "请求结束时，谁负责解除 KV 引用，ModelRunner 收到结束通知后负责什么？",
         "场景": "vLLM v0.26.0；请求 R 结束、请求 S 仍引用同一 KV 块，需要处理结束通知与共享块账本。",
-        "正确": "不应再次扣减；调度侧已解除引用，Runner 只清自己的请求和 batch 状态。",
+        "正确": "调度侧负责解除 KV 引用；ModelRunner 收到结束通知后只清理自己的请求和 batch 状态，不再次扣减共享块引用。",
         "错误": "然后减少引用计数",
         "说明": {
           "blocks": [
@@ -642,7 +642,7 @@
               "parts": [
                 {
                   "type": "text",
-                  "text": "局部倍率只描述特定物化布局的数据，不代表模型的总占用。"
+                  "text": "只有发生该布局变换的那部分存储，才按局部 padding 倍率变大。模型总显存还要把其他占用逐项加起来，不能给总账直接乘这个倍率。"
                 }
               ]
             },
@@ -667,7 +667,7 @@
             }
           ]
         },
-        "锚点": "局部物化量",
+        "锚点": "局部变大，总账分项算",
         "来源": "全会话复盘 E05；通用原理"
       },
       "depends_on": []
@@ -796,7 +796,27 @@
               "parts": [
                 {
                   "type": "text",
-                  "text": "需先确认存储层级、地址映射和相应观测证据。"
+                  "text": "先确认访问发生在哪个带 bank 的存储层级，再检查地址如何映射到 bank，最后把冲突变化与性能变化用证据连起来。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "label": "访问关系",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "按该平台的规则，核对同时访问的线程或访问单元分别落在哪些 bank；不能只看布局更连续就认定冲突更少。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "label": "观测与对照",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "使用平台可提供的冲突观测或对应控制实验，核对地址映射改变后，相应访问阶段是否改善。"
                 }
               ]
             },
@@ -805,7 +825,7 @@
               "parts": [
                 {
                   "type": "text",
-                  "text": "访存变慢或布局相似只是线索，不能直接确定为 bank conflict。"
+                  "text": "访存快慢或布局相似只是线索；没有对应层级的证据时，应把 bank conflict 缓解保留为候选解释。"
                 }
               ]
             }
@@ -844,7 +864,7 @@
               "parts": [
                 {
                   "type": "text",
-                  "text": "它去掉采样选择中的随机性。"
+                  "text": "temperature=0 去掉的是采样选择中的随机性。若执行过程仍产生不同的模型结果，后续确定性选择也可能选出不同 token。"
                 }
               ]
             },
@@ -884,7 +904,7 @@
       ],
       "content_summary": "A 级理由：防止把加入 dump 后不复现当成正确性修复，忽略观测对异步时序的影响。",
       "fields": {
-        "问题": "加入 tensor dump 后异常消失，应怎样解读？",
+        "问题": "为检查数据而导出 Tensor（tensor dump）后，原先的异常消失了。应怎样解释这个现象，它能支持什么判断？",
         "答案": {
           "blocks": [
             {
@@ -907,7 +927,7 @@
             }
           ]
         },
-        "锚点": "观察者效应",
+        "锚点": "加了 dump，也可能改了时序",
         "来源": "全会话复盘 E08；通用原理"
       },
       "depends_on": []
@@ -971,7 +991,7 @@
       ],
       "content_summary": "A 级理由：防止仅等设备流便消费尚未完成 CPU 准备或提交的 H2D 数据。",
       "fields": {
-        "问题": "Host padding 未完成时，流等待为何不能保证 H2D 完成？",
+        "问题": "CPU 侧的输入补齐（Host padding）还没完成，此时等待负责 H2D（Host 到设备复制）的 stream，为什么不能据此确认所需 H2D 已完成？",
         "答案": {
           "blocks": [
             {
@@ -979,7 +999,7 @@
               "parts": [
                 {
                   "type": "text",
-                  "text": "等待设备流时，前置 CPU 准备或 H2D 提交可能尚未完成。"
+                  "text": "CPU 还没准备好数据，相应 H2D 也可能尚未提交。等待设备流中已有的工作，不会替未来才提交的复制等待完成。"
                 }
               ]
             },
@@ -1037,7 +1057,7 @@
               "parts": [
                 {
                   "type": "text",
-                  "text": "设备 stream 与 CPU 线程不是一一对应关系。"
+                  "text": "一个 CPU 线程可以向多个设备 stream 提交工作；CPU 线程切换则属于主机调度。两者没有一一对应关系，所以不能用 stream 数推算线程切换次数。"
                 }
               ]
             },
@@ -1147,6 +1167,16 @@
               ]
             },
             {
+              "type": "point",
+              "label": "假设算例",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "若同一任务从 100 ms 降到 50 ms，加速比为 100/50=2；耗时降幅为 (100−50)/100=50%。两种数都正确，但含义不同。"
+                }
+              ]
+            },
+            {
               "type": "boundary",
               "parts": [
                 {
@@ -1157,7 +1187,7 @@
             }
           ]
         },
-        "锚点": "比值与减少比例",
+        "锚点": "100 ms 变 50 ms：2 倍加速，耗时下降 50%",
         "来源": "全会话复盘 E14；通用原理"
       },
       "depends_on": []
@@ -1190,7 +1220,36 @@
               "parts": [
                 {
                   "type": "text",
-                  "text": "按层的切分规则分片，某些参数或状态仍可能复制。"
+                  "text": "按层和状态逐项分账：真正均分的项才能除以 2，复制项要在每个 rank 各计一份，再求各 rank 的实际字节数。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "label": "分片项",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "先查该层沿哪个维度切分、各 rank 实际持有什么；只有满足均分条件的部分，才按 TP=2 分摊。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "label": "复制项",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "未被切分的参数或状态仍可能完整复制，不能与分片项一起机械除以 2。"
+                }
+              ]
+            },
+            {
+              "type": "boundary",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "这里讨论模型存储的分片与复制；实际设备总显存还包含其他资源，不能直接等同于模型参数字节。"
                 }
               ]
             }
@@ -1359,7 +1418,7 @@
       ],
       "content_summary": "A 级理由：防止把 grammar 就绪当成资源准入成功，跳过 token 预算与 KV 容量约束。",
       "fields": {
-        "问题": "vLLM v0.26.0 中，grammar 就绪后，还需通过哪些调度检查？",
+        "问题": "vLLM v0.26.0 中，结构化输出的 grammar 已准备就绪，请求为什么还不一定马上获得执行机会？还需检查哪些资源？",
         "答案": {
           "blocks": [
             {
@@ -1367,7 +1426,7 @@
               "parts": [
                 {
                   "type": "text",
-                  "text": "仍需通过 token budget 和 KV 资源检查。"
+                  "text": "Grammar 就绪只解除语法准备这道等待；请求还要获得本步 token 预算，并满足 KV 资源检查。"
                 }
               ]
             },
@@ -1528,7 +1587,7 @@
               "parts": [
                 {
                   "type": "text",
-                  "text": "不能；所学路径在执行前按调度计划推进计数。"
+                  "text": "该版本 Scheduler 在调度返回前调用 _update_after_schedule，先按计划推进 num_computed_tokens。设备尚未执行完，因此计数增长不是 KV 已完成的凭据。"
                 }
               ]
             },
@@ -1537,7 +1596,7 @@
               "parts": [
                 {
                   "type": "text",
-                  "text": "还需结合实际执行与结果回写判断完成。"
+                  "text": "这是调度后的预更新路径；判断实际完成，还要结合执行进度与结果更新，不能把任意时刻的字段值都当成设备完成量。"
                 }
               ]
             }
@@ -1627,7 +1686,17 @@
               "parts": [
                 {
                   "type": "text",
-                  "text": "开关允许按可用 token 预算拆分；若整个 prompt 能放进本步预算，它仍可一次处理完。"
+                  "text": "开关允许按可用 token 预算拆分；如果整个 prompt 放得下，它仍可一次处理完。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "label": "假设算例",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "Prompt 只有 10 个 token，本步实际可分给它的预算为 16，其他准入限制均不触发，就可以一次处理全部 10 个输入位置。"
                 }
               ]
             },
@@ -1636,7 +1705,7 @@
               "parts": [
                 {
                   "type": "text",
-                  "text": "启用某项能力，不等于每个请求都必然经过多次分块。"
+                  "text": "这是能力开关与实际安排的区别，不是默认参数或性能推荐；启用分块不要求每个请求都拆成多块。"
                 }
               ]
             }
@@ -1772,7 +1841,7 @@
       ],
       "content_summary": "A 级理由：防止因请求退出 InputBatch 就删除仍需恢复的缓存状态，或把残留块号误当所有权。",
       "fields": {
-        "问题": "vLLM v0.26.0 中，MRV1：退出本步 InputBatch 后还可保留什么状态？",
+        "问题": "vLLM v0.26.0 的 ModelRunner V1（MRV1）中，一个尚未结束的请求被移出本步 InputBatch 后，仍可保留哪些本地状态？",
         "答案": {
           "blocks": [
             {
@@ -1879,7 +1948,7 @@
               "parts": [
                 {
                   "type": "text",
-                  "text": "先用 floor(p/B) 找逻辑块对应的物理块 ID，再加上块内偏移 p mod B。"
+                  "text": "先查 T[floor(p/B)] 得到物理块 ID，乘 B 得到该块的起始槽位，再加块内偏移 p mod B。"
                 }
               ]
             },
@@ -2103,7 +2172,7 @@
               "parts": [
                 {
                   "type": "text",
-                  "text": "不能仅凭 shape 判断；内容必须对应本步请求、长度和 KV 映射。"
+                  "text": "不能只看 shape。存储缓冲若满足安全复用条件可以继续使用，但其中的请求顺序、长度与 KV 映射必须按本步检查并更新。"
                 }
               ]
             },
@@ -2154,7 +2223,7 @@
               "parts": [
                 {
                   "type": "text",
-                  "text": "从统一入口继续核对所选 backend、运行条件、布局和底层绑定。"
+                  "text": "先确认当前配置选中的 backend，再沿运行条件、metadata 和布局对应的分支向下追，最后核对底层绑定到哪个 kernel 入口。统一 custom op 只是起点。"
                 }
               ]
             },
@@ -2205,7 +2274,17 @@
               "parts": [
                 {
                   "type": "text",
-                  "text": "不能仅据此删除；它可表达 KV 更新先于 Attention 读取的编译依赖。"
+                  "text": "先检查它是否在图中连接了“KV 更新 → Attention 读取”。在这条 MRV1 路径中，kv_cache_dummy_dep 虽不参与数值计算，却让 torch.compile 保留两步的先后依赖。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "label": "与设备同步的区别",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "这里传递的是图中的依赖关系，不等于直接发出设备 Event/Wait；不能把这个参数当作通用 stream 同步接口。"
                 }
               ]
             },
@@ -2214,7 +2293,7 @@
               "parts": [
                 {
                   "type": "text",
-                  "text": "所学具体路径；不是通用设备 event 或 stream 同步接口。"
+                  "text": "结论限定 vLLM v0.26.0 的这条 KV 更新与 Attention 调用路径；不能仅因函数内不读取参数数值，就认定删除它不会改变执行顺序。"
                 }
               ]
             }
@@ -2281,7 +2360,7 @@
             }
           ]
         },
-        "锚点": "阶段结果尚未完成",
+        "锚点": "先算并暂存 logits，后应用约束并采样",
         "来源": "全会话复盘 D10；vLLM v0.26.0"
       },
       "depends_on": []
@@ -2470,7 +2549,7 @@
               "parts": [
                 {
                   "type": "text",
-                  "text": "在 check_and_update_config 中设置 parallel_config.worker_cls。"
+                  "text": "Platform 在 check_and_update_config 中设置 parallel_config.worker_cls，决定使用哪个 Worker；被选中的 Worker 再构造对应 Runner。"
                 }
               ]
             },
@@ -2479,7 +2558,7 @@
               "parts": [
                 {
                   "type": "text",
-                  "text": "Runner 再由 Worker 构造；这是 v0.26.0 的接入方式。"
+                  "text": "这是 vLLM v0.26.0 的接入关系；配置 Worker 的入口与 Worker 内部如何构造 Runner，是两层责任。"
                 }
               ]
             }
@@ -2521,7 +2600,27 @@
               "parts": [
                 {
                   "type": "text",
-                  "text": "Attention backend 选择和 Worker 类配置使用不同入口；替换其中一项不会自动完成另一项替换。"
+                  "text": "Attention backend 与 Worker 类走不同选择入口，换掉其中一个不会自动换掉另一个。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "label": "Attention",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "Attention selector 调用当前 Platform 的 get_attn_backend_cls 来选择后端类。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "label": "Worker",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "Platform 的 check_and_update_config 设置 parallel_config.worker_cls；Worker 随后构造 Runner。"
                 }
               ]
             },
@@ -2530,7 +2629,7 @@
               "parts": [
                 {
                   "type": "text",
-                  "text": "是否需要同时替换由目标设备的接口需求决定，不能仅按名称把两项配置视为一个开关。"
+                  "text": "这些入口按 vLLM v0.26.0（568afb3）核对。目标设备是否需要同时替换两项，仍由各自接口需求决定。"
                 }
               ]
             }
@@ -2663,7 +2762,7 @@
       ],
       "content_summary": "A 级理由：防止只测 world 组掩盖跨组归约错误，为 collective 正确性设计反例。",
       "fields": {
-        "问题": "collective 为何需要多个独立子组测试？",
+        "问题": "验证 collective 的通信组隔离时，为什么只测试一个等于 world 的组还不够？请用两个独立子组的 SUM AllReduce 说明。",
         "答案": {
           "blocks": [
             {
@@ -2680,7 +2779,7 @@
               "parts": [
                 {
                   "type": "text",
-                  "text": "两组输入分别为 1、2 与 10、20；正确组内和应为 3、3、30、30。"
+                  "text": "以 SUM AllReduce 为例：一组两个 rank 输入 1、2，另一组输入 10、20。正确输出应分别是 3、3 和 30、30；若错误跨组求和，就会暴露分组实现的问题。"
                 }
               ],
               "label": "反例"
@@ -2828,7 +2927,7 @@
               "parts": [
                 {
                   "type": "text",
-                  "text": "两份 K/V 乘 KV head 数 Hkv、head 维度 D 和每元素字节数 s。"
+                  "text": "一份 K 加一份 V，所以是 2×Hkv×D×s 字节：分别计入 KV head 数、每个 head 的维度和每元素字节数。"
                 }
               ]
             },
@@ -2885,26 +2984,36 @@
               "parts": [
                 {
                   "type": "text",
-                  "text": "末块空槽属于逻辑块未填满；物理 padding 属于布局或页跨度的额外占用。"
+                  "text": "末块空槽是逻辑块还没填满；物理 padding 是为了布局或页跨度额外留出的字节。两者要分开记账。"
                 }
               ]
             },
             {
               "type": "point",
+              "label": "给定算例",
               "parts": [
                 {
                   "type": "text",
-                  "text": "35 tokens、B=16、3 KiB/token、64 KiB/单层页：有效数据 105 KiB，空槽 39 KiB，padding 48 KiB。"
+                  "text": "单层请求有 35 个 token，每块容纳 B=16 个 token，每 token 的有效 KV 为 3 KiB，每个物理页跨度 64 KiB；因此需 3 块。"
                 }
-              ],
-              "label": "例子"
+              ]
+            },
+            {
+              "type": "point",
+              "label": "三笔账",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "有效数据为 35×3=105 KiB；空槽为 (3×16−35)×3=39 KiB；页 padding 为 3×(64−16×3)=48 KiB。"
+                }
+              ]
             },
             {
               "type": "boundary",
               "parts": [
                 {
                   "type": "text",
-                  "text": "三项合计 192 KiB；分别计账，避免重复加总。"
+                  "text": "三项合计 192 KiB，恰为 3 个 64 KiB 物理页。算例只计指定单层存储，不把空槽再重复算成物理 padding。"
                 }
               ]
             }
@@ -3107,7 +3216,7 @@
               "parts": [
                 {
                   "type": "text",
-                  "text": "不能；只解除 R 的引用，S 的存活引用仍保护该块。"
+                  "text": "只解除 R 的引用；S 仍要读取该块，所以不能把它改写成其他内容。"
                 }
               ]
             },
@@ -3116,7 +3225,7 @@
               "parts": [
                 {
                   "type": "text",
-                  "text": "还需满足在途访问的安全回收条件。"
+                  "text": "即使引用条件已满足，回收还必须确保在途读写不会再访问即将被覆盖的旧内容。"
                 }
               ]
             }
@@ -3183,7 +3292,7 @@
             }
           ]
         },
-        "锚点": "有数据也可以可分配",
+        "锚点": "可再分配，不等于已清空",
         "来源": "全会话复盘 K12；vLLM v0.26.0"
       },
       "depends_on": []
@@ -3228,7 +3337,7 @@
               "parts": [
                 {
                   "type": "text",
-                  "text": "先保护命中块，再分配新块。"
+                  "text": "正式增加引用，保护命中的缓存块，再分配本次还需要的新块。"
                 }
               ],
               "label": "成功路径"
@@ -3286,7 +3395,7 @@
               "parts": [
                 {
                   "type": "text",
-                  "text": "B=16：已有 47 个 KV tokens、占 3 块，再处理 1 token 无需新块；32 tokens、占 2 块则需新块。"
+                  "text": "每块容纳 B=16 个 token：已有 47 个 KV token、占 3 块，再处理 1 个 token 不需新块；已有 32 个 token、占 2 块，再处理 1 个就要新块。"
                 }
               ],
               "label": "例子"
@@ -3338,7 +3447,7 @@
               "parts": [
                 {
                   "type": "text",
-                  "text": "不能只凭当前块 token 判断；链式 hash 还包含父块身份及额外键。"
+                  "text": "不能只比较当前块的 token。链式 hash 还包含父块 hash 所代表的前缀身份及额外键；同一段当前 token 承接不同上下文时，缓存身份也可能不同。"
                 }
               ]
             },
@@ -3389,7 +3498,7 @@
               "parts": [
                 {
                   "type": "text",
-                  "text": "限定允许共享的范围，不是判断 KV 数值是否相同。"
+                  "text": "cache_salt 限定允许共享缓存的范围；它是复用策略标记，不是 KV 数值相同与否的证据。"
                 }
               ]
             },
@@ -3485,7 +3594,7 @@
               "parts": [
                 {
                   "type": "text",
-                  "text": "会减少或消除这些请求之间的前缀缓存复用机会。"
+                  "text": "Salt 参与缓存身份。每个请求换不同 salt，即使前缀相同，也可能落入不同共享范围，从而减少或消除彼此的前缀复用机会。"
                 }
               ]
             },
@@ -3629,7 +3738,27 @@
               "parts": [
                 {
                   "type": "text",
-                  "text": "不能；字节粒度与 token 分块单位不同，还要结合 dtype、head 维度、布局和 kernel 设计。"
+                  "text": "512 B 是搬运字节数，256 token 是序列位置数，不能直接互换。必须先知道该实现每个 token 的 KV 占多少元素和字节。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "label": "元素不等于 token",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "即使假设每元素占 2 B，512/2 得到的也只是 256 个元素。一个 token 的 KV 往往包含多个 head 的 K、V 元素，不是单个元素。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "label": "接入检查",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "再核对 dtype、head 维度、实际布局和 kernel 支持的块大小，确认所选 token 分块与物理访问契约相容。"
                 }
               ]
             }
@@ -3824,7 +3953,7 @@
               "parts": [
                 {
                   "type": "text",
-                  "text": "两条后续路径没有这个互等要求。"
+                  "text": "最终结果交付不必额外等 Runner 本地请求状态清理；Runner 清理也不必等调用方消费最终结果。两条收尾路径按各自条件推进。"
                 }
               ]
             },
@@ -3833,7 +3962,7 @@
               "parts": [
                 {
                   "type": "text",
-                  "text": "不是允许永不清理；KV 回收仍须遵守在途访问的安全条件。"
+                  "text": "这不允许跳过清理或任意覆写 KV。调度侧解除引用与物理块可安全复用仍要满足引用及在途访问条件。"
                 }
               ]
             }

@@ -8,7 +8,7 @@
       "collection": "inference-adaptation-evidence",
       "id": "kv-spec-learning-evidence",
       "path": "计划/八周冲刺进度/历史记录/W1-学习验收记录.md",
-      "sha256": "a4afc026cce9e690cd79de0f6782cd908ab8e9534b9a89c37ff32c366978e96d",
+      "sha256": "4c285e56a56a4abb82af589c8e8b5a84be4bbf2d706b64760ee74337f4b67490",
       "summary": "已逐项核对从旧验证包迁移的2026-09-09页大小复习片段；仅消费该片段及其vLLM v0.26.0固定源码锚点，不使用待办或其他课程结论。"
     }
   ],
@@ -119,7 +119,7 @@
               "parts": [
                 {
                   "type": "text",
-                  "text": "字节数变大，还必须让 Tensor view 和 kernel 按同一物理页跨度访问。"
+                  "text": "多分配字节只解决空间够不够；Tensor view 和 kernel 还得使用同一页跨度，才能知道下一页从哪里开始。"
                 }
               ]
             },
@@ -155,7 +155,7 @@
             }
           ]
         },
-        "锚点": "页字节数、view 分支、kernel 步距须一致",
+        "锚点": "分配留足空间，view 与 kernel 按同一步距跳页",
         "来源": "W1 2026-09-09 页规格复习；vLLM v0.26.0（568afb3）"
       }
     },
@@ -403,7 +403,7 @@
         "来源": "W1 2026-09-09 页规格复习；vLLM v0.26.0（568afb3）"
       },
       "review_resolution": {
-        "summary": "2026-11-03已对照四张页规格子卡和迁移后仍保持同一固定源码锚点的W1复习片段，复核页大小配置、原始字节容量、BF16元素stride与kernel访问链；题面已前置普通未量化、单层单组、无packed/CP/override等条件，结论未外推到任意backend。"
+        "summary": "2026-11-16 已按语言改写后的依赖卡逐项复核本卡的结论、适用条件与评分锚点；独立语言审查通过，仍覆盖原考查目标，不改变固定版本与实证边界。"
       }
     }
   ]

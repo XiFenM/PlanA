@@ -5,11 +5,11 @@
     "id": "markji",
     "profile": "plana-markji"
   },
-  "artifact_set_sha256": "1764ff227599a3e672491e30b127bffb67faf298b6e752cb0a5fd496841e0fac",
-  "candidate_sha256": "9932a9346532cca1977c9ece2785a6dc8212b3c5801e780a03ec9490cca59d23",
+  "artifact_set_sha256": "3e3823c358b16e1cd18b26cf5316dcd89505a7c72e9576b51a60b954b07f076d",
+  "candidate_sha256": "bc334ab7884aeeb4bc92fde74c1daf5f1789175cb5b16e11a7ec399c3e4e59b4",
   "cards": [
     {
-      "content_sha256": "d4264ba5f6052122f47f90f8dc5753e40b42485134e5fbb838456c46685abf02",
+      "content_sha256": "45f4459e05d90a2c178e440063d73b124f93723a803d56d73ba3d58a63923eb6",
       "content_summary": "A理由：防止把管理权转移误当对象销毁，从而误判借用指针或遗漏真正的悬空访问。",
       "dependency_content_sha256": {},
       "depends_on": [],
@@ -38,7 +38,7 @@
       "template_version": "1.1.0"
     },
     {
-      "content_sha256": "05705b1e137e9cf2e5a2d65ff518b80f8ec37bacc36109610d771486108c9f54",
+      "content_sha256": "9080fbebe3d50a8be7edbc75a0ebb7f0f6b8cdb8764982a8ba74dd8f08738673",
       "content_summary": "A理由：防止混淆受管对象销毁与智能指针变量存续，正确判断 reset 后的资源访问。",
       "dependency_content_sha256": {},
       "depends_on": [],
@@ -210,7 +210,7 @@
       "template_version": "1.1.0"
     },
     {
-      "content_sha256": "9a8c57ba3db59a57c90e43a420f5b0f9b55569d872f020562798f17f952b4de8",
+      "content_sha256": "36758e7380f4e6ef06902256afd95c7db230724025a377a1550f1711c668ba4a",
       "content_summary": "B理由：理解零初始化存储为何不需要等量文件字节；强化文件与内存口径，而不死记算例数字。",
       "dependency_content_sha256": {},
       "depends_on": [],
@@ -237,7 +237,7 @@
       "template_version": "1.1.0"
     },
     {
-      "content_sha256": "21a85afe47e69a775542917cfa9d52e63b61c30b6f12ba83e11d9ab63d5c2fc6",
+      "content_sha256": "f26e467d525e7b80ca4c1a01c0e7e45e8f98c7661f9fbbc891935e70abcb1381",
       "content_summary": "A理由：防止把构建期找到库误当部署时必能加载，正确定位运行时库搜索故障。",
       "dependency_content_sha256": {},
       "depends_on": [],
@@ -264,7 +264,7 @@
       "template_version": "1.1.0"
     },
     {
-      "content_sha256": "980530bf71ff34959ee3ed701064267b284a46862264c6c3dc7c76ed02f5e9a2",
+      "content_sha256": "acb2dd09376dfa89cfef6d7daa1b75f61bbe1162267e0ade327daa8350b56cfc",
       "content_summary": "A理由：防止用当前终端 ldd 覆盖故障进程的实际映射证据，避免诊断错库。",
       "dependency_content_sha256": {},
       "depends_on": [],
@@ -348,11 +348,11 @@
     }
   ],
   "managed_body_sha256": "6e9191b108c296d19691b2ca0c6c6f1293e9661288c566c128de78f39b2e24e5",
-  "manifest_payload_sha256": "7574fb7d8605004cab62cad2cb5783cb845fa91f9767dfe692c95bb5d791dc4f",
+  "manifest_payload_sha256": "3e47a2fa7063904f7cc28390261d14e77455374bf9a8dbac5447ba9198c1afdc",
   "schema": "memo-cards.artifact/v2",
   "sidecars": [
     {
-      "byte_size": 11918,
+      "byte_size": 12460,
       "columns": [
         "问题",
         "答案",
@@ -364,14 +364,14 @@
       "row_count": 12,
       "rows": [
         {
-          "content_sha256": "d4264ba5f6052122f47f90f8dc5753e40b42485134e5fbb838456c46685abf02",
+          "content_sha256": "45f4459e05d90a2c178e440063d73b124f93723a803d56d73ba3d58a63923eb6",
           "logical_id": "mc-00a22ac9bd6add4cfe86d5f9",
-          "row_sha256": "ef8b72d4020840466e0c83f22c6a4760957641603f79c735d384b67a5606b597"
+          "row_sha256": "b1bec66199e044c46a3c89291a9929bde42336fe1a380042ed237c7d099e8851"
         },
         {
-          "content_sha256": "05705b1e137e9cf2e5a2d65ff518b80f8ec37bacc36109610d771486108c9f54",
+          "content_sha256": "9080fbebe3d50a8be7edbc75a0ebb7f0f6b8cdb8764982a8ba74dd8f08738673",
           "logical_id": "mc-60bc058e8e597dab074d7e31",
-          "row_sha256": "884a9286ecec75a41209b71cdb48eeaf49e88fe999cb9972c24b46a6d1373703"
+          "row_sha256": "70265000f22e66393ffccb6a2f23d4b443f2b3454ca0894ab0600968d6355bc5"
         },
         {
           "content_sha256": "042e5b3317ffa1749940010e337b6e8e0d003c801ec92cd52a26b05ace8c93b0",
@@ -399,19 +399,19 @@
           "row_sha256": "95c89fbfa6a93a79ed29ddc61131ec46c6dd434dda023b7ef2bcfb9c455c9875"
         },
         {
-          "content_sha256": "9a8c57ba3db59a57c90e43a420f5b0f9b55569d872f020562798f17f952b4de8",
+          "content_sha256": "36758e7380f4e6ef06902256afd95c7db230724025a377a1550f1711c668ba4a",
           "logical_id": "mc-c23eba0a38c5732608cac09a",
-          "row_sha256": "a300b66f11f4d78eba68c5518336d73a2d32707d4ed0e046c9f0579cd3e1ddbd"
+          "row_sha256": "5f195fb145c1d14fd88f7600ff3493dcc352416f4858f1b4e69cfb898c2dea62"
         },
         {
-          "content_sha256": "21a85afe47e69a775542917cfa9d52e63b61c30b6f12ba83e11d9ab63d5c2fc6",
+          "content_sha256": "f26e467d525e7b80ca4c1a01c0e7e45e8f98c7661f9fbbc891935e70abcb1381",
           "logical_id": "mc-0582bb6fd6e72fd6286d3b33",
-          "row_sha256": "7cd12e7c141407f666ba5951633f4be1be22ef101c8028b022e051d0796d2266"
+          "row_sha256": "3de4430dd0db1851e22b609f3e80ebf2fb66426623c95a050ee65f60edfd2d79"
         },
         {
-          "content_sha256": "980530bf71ff34959ee3ed701064267b284a46862264c6c3dc7c76ed02f5e9a2",
+          "content_sha256": "acb2dd09376dfa89cfef6d7daa1b75f61bbe1162267e0ade327daa8350b56cfc",
           "logical_id": "mc-cb316aa34f2f5aae61bd2c35",
-          "row_sha256": "32e117414f95a6a07e990dc0a313e849dcadca894268189b22e820b1442943c6"
+          "row_sha256": "ad99a081ac94eff2b2146fb35dba9c0fe4be7dbb90c84be9636d16eef9fed556"
         },
         {
           "content_sha256": "f71e26df3829adbcc91f37f30a0f183ac84ec5fd17b16dab2bf1f02755ce1143",
@@ -424,9 +424,9 @@
           "row_sha256": "656f26aa0063ac491c0f0ff87822f5addf2644743e2c8d4be8d979e6facabfdb"
         }
       ],
-      "sha256": "57e9321afc1720bb96ee263d10228a1b20fcae92ba66a8836a00c7e78d03a04d",
+      "sha256": "e276063aa6de4c508266630ae07a2b94299688ca979c82326d9a87932ebd0460",
       "sheet_name": "cards",
-      "table_sha256": "5e2bd6eea2835cc81e33aa6ffbaeaf67739e0b84e6c4d8267da927cf55ccf407",
+      "table_sha256": "e2e418c5a2ab731aadef7d99b9fd36fd96c9b88309f0321aa641d5cb1fc5f4ec",
       "template_id": "technical-qa",
       "template_version": "1.1.0"
     }

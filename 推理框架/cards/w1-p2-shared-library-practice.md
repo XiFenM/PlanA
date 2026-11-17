@@ -5,11 +5,11 @@
     "id": "markji",
     "profile": "plana-markji"
   },
-  "artifact_set_sha256": "7fe0634a7eedf1433efe630de925cd8caf23f2c845742225badeded2d8b0dd19",
-  "candidate_sha256": "76596521bbe518038cd7cd25e4d5bfe93424d4affe95c11df10b46d9ca17cdab",
+  "artifact_set_sha256": "69a5b61b0ffbf7ebfc8c81135a2270e26d35a9d0572c21496cc4edcbba7df7e8",
+  "candidate_sha256": "19d9228d1b43733f04faffeb016aac19af71b4a79e576aeca1d09125085f62f1",
   "cards": [
     {
-      "content_sha256": "3cc7f5ae891f5e570ad8dfa59786e429128eee3fb687f2c1fb2dae79d62e2062",
+      "content_sha256": "928fb64966e55f459deea019231efbc306001b1701b21a667632973021e4b3d2",
       "content_summary": "A理由：防止把相同 SONAME 当成接口兼容证明，定位运行时装载旧库或缺少所需符号。",
       "dependency_content_sha256": {},
       "depends_on": [],
@@ -118,11 +118,11 @@
     }
   ],
   "managed_body_sha256": "4c8fc7fc526b845074cb48151d54afab15953eb54d38083236e17dc11f01769a",
-  "manifest_payload_sha256": "c2c71c702bce2d9c6d7edf1b3da962e1309e0fd819f8e000c64317200d3211b6",
+  "manifest_payload_sha256": "99024f09ab30bc5b3a86f518c7d22717dffa1cd2a338ed74d6f99a4c971617e9",
   "schema": "memo-cards.artifact/v2",
   "sidecars": [
     {
-      "byte_size": 5795,
+      "byte_size": 5906,
       "columns": [
         "问题",
         "答案",
@@ -134,9 +134,9 @@
       "row_count": 4,
       "rows": [
         {
-          "content_sha256": "3cc7f5ae891f5e570ad8dfa59786e429128eee3fb687f2c1fb2dae79d62e2062",
+          "content_sha256": "928fb64966e55f459deea019231efbc306001b1701b21a667632973021e4b3d2",
           "logical_id": "mc-fded6fee441f4f83762d70da",
-          "row_sha256": "9df883df31c3f37567dead3225c109d6b0488a8b731e3bd17ac1bf191b853606"
+          "row_sha256": "16b1cb21484f613f46330822fd7242aba336bae8f9508bc3720b392e574199ec"
         },
         {
           "content_sha256": "691211e7ef7cb1e17024ab750eaad34d95fdf24af0e02d31e62eb9d9f7a34c30",
@@ -154,9 +154,9 @@
           "row_sha256": "9bc5e5579d137ed3499cdcc08fd1c299a6f1962e1100a73d52c51fd265a27983"
         }
       ],
-      "sha256": "5ca04923c5cf477c3a5697f209d6636408d08dd9e3031526319d4b6d77a6b4a4",
+      "sha256": "30b62a582f98552e361503520de44ca29503c30a6932e240320dc10e5a19f282",
       "sheet_name": "cards",
-      "table_sha256": "15bb5334c941806c4c0218578b4b48e1a12d5b64c37e67625559382286bab56a",
+      "table_sha256": "77fa4869091dc9120799dbd7cdccb7abe9a24b1d95e170d03c1e701c45e08ca2",
       "template_id": "technical-qa",
       "template_version": "1.1.0"
     }

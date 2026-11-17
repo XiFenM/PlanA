@@ -5,8 +5,8 @@
     "id": "markji",
     "profile": "plana-markji"
   },
-  "artifact_set_sha256": "0a072791ad1e1fecf831c47d183015cf30847d3e910e3b804bd506613558a798",
-  "candidate_sha256": "57b3eb1795b378fb9142152e11500f43e5b43bfc47c9f839696a4f809960c120",
+  "artifact_set_sha256": "d3ba86e2a153d61ab736f1956dc802733fbe2b06c0e483fde150f54297158678",
+  "candidate_sha256": "911a45db5f40b61e8fdfca0918fedae7f68b0ec7cf31e76b61be334c9fbd5d47",
   "cards": [
     {
       "content_sha256": "272c69d72e00ab121a6bed609c3b5be66cca31707eaa71cbe48991bfdd07e76e",
@@ -69,7 +69,7 @@
       "template_version": "1.1.0"
     },
     {
-      "content_sha256": "d9f48e0699c3d309ef86affb6f3b7f3794e07252e910a914db56c07dc5c5b7fa",
+      "content_sha256": "4d47ea82acbf473f51b3788fb6e96b386c5eb2434d1c96f0c0a9f44db3341a44",
       "content_summary": "B理由：保留可迁移的职责定位方法，不要求逐个背诵完整目录表。",
       "dependency_content_sha256": {},
       "depends_on": [],
@@ -129,7 +129,7 @@
       "template_version": "1.1.0"
     },
     {
-      "content_sha256": "55938ae05c5075e28c9dee66bfb43ac6bc728b6bb5d0f6e7232b81bc5aa93258",
+      "content_sha256": "52dd2ead207b54b56c43c8f3bdc62a3adbdb5f97987c3840ae4db634fc97acb1",
       "content_summary": "A理由：回答服务为何隔离前端与核心循环的架构取舍题，并防止误解uni的进程范围。",
       "dependency_content_sha256": {},
       "depends_on": [],
@@ -189,7 +189,7 @@
       "template_version": "1.1.0"
     },
     {
-      "content_sha256": "497ad8e82f58520bddae2dc452d8d45f242284d61b69d991e1cd392b9f832056",
+      "content_sha256": "cc471f56207580e533173544b06a6429c9775575848dc942dba3e99351c056a3",
       "content_summary": "B理由：理解固定实现的选路启发式与局限，具体权重属于低频版本细节。",
       "dependency_content_sha256": {},
       "depends_on": [],
@@ -219,13 +219,13 @@
       "template_version": "1.1.0"
     },
     {
-      "content_sha256": "e83353a043ad309934afcc7caa3b30478a922351a8baa10e490615a699cf33c7",
+      "content_sha256": "08b6f5b68a8f5d4f5f0ca2b9259e616c9a3d7456b2dd86adcd32409a4dae1a53",
       "content_summary": "A理由：防止只迁移ID或重做prefill便声称实现等价请求迁移，遗漏采样与输出状态。",
       "dependency_content_sha256": {
         "mc-0231ee421ef176e4361b8092": "741dba1dc0eca30dbfcd0d384868b5bde2c9bb757989d310557c1112b32914e1",
-        "mc-6ecc1a209cfc46dfdedd5775": "1ab47cf369be27adf32c4947379f647abd1345b07e5c9aa7a3b31c14144cf08e",
-        "mc-e7291be4ff573e99f0b21531": "497ad8e82f58520bddae2dc452d8d45f242284d61b69d991e1cd392b9f832056",
-        "mc-ff2bbe335a098a1d6b3715af": "0f30ba6847d526cf21bda4e5a3ee42f0fb105892682ba20fc9f1b6e98b5b56b8"
+        "mc-6ecc1a209cfc46dfdedd5775": "9ec59c019c67797986e51eadd890ae42be1b9512e5375cb2ae9280403b00c163",
+        "mc-e7291be4ff573e99f0b21531": "cc471f56207580e533173544b06a6429c9775575848dc942dba3e99351c056a3",
+        "mc-ff2bbe335a098a1d6b3715af": "0013f9a6c4c9cce500b74e9724a60829303797456166a8adc06d10648d2b01ce"
       },
       "depends_on": [
         "mc-0231ee421ef176e4361b8092",
@@ -252,7 +252,7 @@
       "priority": 5,
       "quality": "A",
       "review_resolution": {
-        "summary": "2026-11-07已对照修订后的 DPLB 子卡及固定版本源码复核：本地负载估计在每次自动选定实例后、发送前更新，仅澄清新请求选路的常规记账行为；执行中请求迁移仍须衔接调度进度、物理 KV 与采样状态、输出和取消路由，原题答保持成立。"
+        "summary": "2026-11-16 已按语言改写后的依赖卡逐项复核本卡的结论、适用条件与评分锚点；独立语言审查通过，仍覆盖原考查目标，不改变固定版本与实证边界。"
       },
       "source_ids": [
         "vllm-repository-process-article"
@@ -262,7 +262,7 @@
       "template_version": "1.1.0"
     },
     {
-      "content_sha256": "dd93fea58617bb1cb24e478adf3ec09900b1728fb8ead61dd1b6b97fe331b4a8",
+      "content_sha256": "0be7008b20f3b927860d2d11e96b8e336c90f86cbda9fd9d14a9de2f8f5bce22",
       "content_summary": "B理由：校准协调进程与请求选路的职责，不把拓扑位置记忆作为核心能力。",
       "dependency_content_sha256": {},
       "depends_on": [],
@@ -292,7 +292,7 @@
       "template_version": "1.1.0"
     },
     {
-      "content_sha256": "0f30ba6847d526cf21bda4e5a3ee42f0fb105892682ba20fc9f1b6e98b5b56b8",
+      "content_sha256": "0013f9a6c4c9cce500b74e9724a60829303797456166a8adc06d10648d2b01ce",
       "content_summary": "A理由：回答Worker与Runner的职责设计题，防止设备初始化与每步执行逻辑混放。",
       "dependency_content_sha256": {},
       "depends_on": [],
@@ -322,7 +322,7 @@
       "template_version": "1.1.0"
     },
     {
-      "content_sha256": "1ab47cf369be27adf32c4947379f647abd1345b07e5c9aa7a3b31c14144cf08e",
+      "content_sha256": "9ec59c019c67797986e51eadd890ae42be1b9512e5375cb2ae9280403b00c163",
       "content_summary": "A理由：防止把逻辑KV账本与物理显存所有权混为一体，导致适配修改层级错误。",
       "dependency_content_sha256": {},
       "depends_on": [],
@@ -382,11 +382,11 @@
       "template_version": "1.1.0"
     },
     {
-      "content_sha256": "71e3597fae13245bbf1a950918e84e0881ada36d76f890e15f388a3dd4e3d9a6",
+      "content_sha256": "1035e7030f483e9de31cf968a1431b697dd4d21677bec7ba4909f3dabcb81fb1",
       "content_summary": "B理由：通过放置关系推导进程组成，练习拓扑理解而非死记4和6。",
       "dependency_content_sha256": {
         "mc-0231ee421ef176e4361b8092": "741dba1dc0eca30dbfcd0d384868b5bde2c9bb757989d310557c1112b32914e1",
-        "mc-04939c201c37cffd8e5c77fc": "dd93fea58617bb1cb24e478adf3ec09900b1728fb8ead61dd1b6b97fe331b4a8",
+        "mc-04939c201c37cffd8e5c77fc": "0be7008b20f3b927860d2d11e96b8e336c90f86cbda9fd9d14a9de2f8f5bce22",
         "mc-f302cc845ea60e085cced69b": "4fac2a1620599ea2f262f032940156749eb9642bd40cbecb31eb6496642813f3"
       },
       "depends_on": [
@@ -413,7 +413,7 @@
       "priority": 3,
       "quality": "B",
       "review_resolution": {
-        "summary": "2026-11-03已按同请求的uni/mp、内部DP及DPCoordinator子卡复核：在题设单机、单API、DP backend mp、DP=2且TP=PP=PCP=1下，由组件放置推导uni为4、mp为6个主要进程；不把增加进程当作模型分片。"
+        "summary": "2026-11-16 已按语言改写后的依赖卡逐项复核本卡的结论、适用条件与评分锚点；独立语言审查通过，仍覆盖原考查目标，不改变固定版本与实证边界。"
       },
       "source_ids": [
         "vllm-repository-process-article"
@@ -453,14 +453,14 @@
       "template_version": "1.1.0"
     },
     {
-      "content_sha256": "41616150145ea413332c491cae9d1860b1a3d256cad8429819ef29f2a76133e1",
+      "content_sha256": "75f38a0f7ee4e55e34e55432002453818fa526b9e267391f5e1ff9efb0857dfe",
       "content_summary": "B理由：组合既有子卡形成可自评的架构口述，不引入新的实现结论。",
       "dependency_content_sha256": {
         "mc-33d40a2ab95e6129b9c5f4c5": "1e9b7257284f5f0e300ee4dae1360bbab13f23a910de580c2bb0159c38ed4538",
-        "mc-3c230b513e2bfac0bc2a6179": "55938ae05c5075e28c9dee66bfb43ac6bc728b6bb5d0f6e7232b81bc5aa93258",
+        "mc-3c230b513e2bfac0bc2a6179": "52dd2ead207b54b56c43c8f3bdc62a3adbdb5f97987c3840ae4db634fc97acb1",
         "mc-80af1f420bd379f601b14f22": "f1e46fd6f432a2342fb2ed88411494079203928fd6fbb41905bb5aa897637011",
         "mc-96e1b69dea2352f136f7bf25": "272c69d72e00ab121a6bed609c3b5be66cca31707eaa71cbe48991bfdd07e76e",
-        "mc-ff2bbe335a098a1d6b3715af": "0f30ba6847d526cf21bda4e5a3ee42f0fb105892682ba20fc9f1b6e98b5b56b8"
+        "mc-ff2bbe335a098a1d6b3715af": "0013f9a6c4c9cce500b74e9724a60829303797456166a8adc06d10648d2b01ce"
       },
       "depends_on": [
         "mc-33d40a2ab95e6129b9c5f4c5",
@@ -488,7 +488,7 @@
       "priority": 3,
       "quality": "B",
       "review_resolution": {
-        "summary": "2026-11-03已逐项对照五张修订子卡，核对前端隔离、EngineCore/Scheduler决策、Executor下发和Worker/Runner执行；参考回答及四项评分锚点都有同请求active子卡支持，版本一致，未增加未核验事实。"
+        "summary": "2026-11-16 已按语言改写后的依赖卡逐项复核本卡的结论、适用条件与评分锚点；独立语言审查通过，仍覆盖原考查目标，不改变固定版本与实证边界。"
       },
       "source_ids": [
         "vllm-repository-process-article"
@@ -499,11 +499,11 @@
     }
   ],
   "managed_body_sha256": "1de59d3fa3611caa064adc7e8ce0e59dec35550930a0324f099bc0b16fb68b82",
-  "manifest_payload_sha256": "ff02ad69ae4e43d076192f2b9c6b986d857d2c72d8b7e2c06aebd0ca2f49f06c",
+  "manifest_payload_sha256": "8f91aeefd08eea675c59e9e971b0196afb3d963555ac7e48fc6be69350861391",
   "schema": "memo-cards.artifact/v2",
   "sidecars": [
     {
-      "byte_size": 16514,
+      "byte_size": 17050,
       "columns": [
         "问题",
         "答案",
@@ -525,9 +525,9 @@
           "row_sha256": "bdbe4c5f3780ec1462bb33f2346daac5be82ae308a996c9fa6178f7949483ac0"
         },
         {
-          "content_sha256": "d9f48e0699c3d309ef86affb6f3b7f3794e07252e910a914db56c07dc5c5b7fa",
+          "content_sha256": "4d47ea82acbf473f51b3788fb6e96b386c5eb2434d1c96f0c0a9f44db3341a44",
           "logical_id": "mc-83e65d952696673938e97510",
-          "row_sha256": "efac7ee0dcfb4e7c74fe4fbc093bcc7bcb533baf67661d512ecfff2f8d37fb3a"
+          "row_sha256": "0b9c8d58657886da347c657002353001715a63d756de8bb9af5ecf400d4b9c16"
         },
         {
           "content_sha256": "4fac2a1620599ea2f262f032940156749eb9642bd40cbecb31eb6496642813f3",
@@ -535,9 +535,9 @@
           "row_sha256": "feff8cee26752d43447a07aee80ddd62a488ecdd6cd8f66f074dd1e3036625cc"
         },
         {
-          "content_sha256": "55938ae05c5075e28c9dee66bfb43ac6bc728b6bb5d0f6e7232b81bc5aa93258",
+          "content_sha256": "52dd2ead207b54b56c43c8f3bdc62a3adbdb5f97987c3840ae4db634fc97acb1",
           "logical_id": "mc-3c230b513e2bfac0bc2a6179",
-          "row_sha256": "774be7c2d10892384f09d6a82d782a6e7993973d1c8577dd4c57c767bc9c66c1"
+          "row_sha256": "deac7ed2182bb7924559add7995167c9a9fa8c9543be08d76c439fa4893d8a46"
         },
         {
           "content_sha256": "741dba1dc0eca30dbfcd0d384868b5bde2c9bb757989d310557c1112b32914e1",
@@ -545,29 +545,29 @@
           "row_sha256": "7d0491b2cfa3a937c75e55c98d7e69a8b6ef9a80c7612e26589fd905180265ea"
         },
         {
-          "content_sha256": "497ad8e82f58520bddae2dc452d8d45f242284d61b69d991e1cd392b9f832056",
+          "content_sha256": "cc471f56207580e533173544b06a6429c9775575848dc942dba3e99351c056a3",
           "logical_id": "mc-e7291be4ff573e99f0b21531",
-          "row_sha256": "78cf0bda688082b6408c2a5aec9883fb6a592c91d3975fea4ac849612cce6f16"
+          "row_sha256": "d871fa80ea6e370b3c16884fdd059ec5afe633b68e81f678d535946cc1988c4a"
         },
         {
-          "content_sha256": "e83353a043ad309934afcc7caa3b30478a922351a8baa10e490615a699cf33c7",
+          "content_sha256": "08b6f5b68a8f5d4f5f0ca2b9259e616c9a3d7456b2dd86adcd32409a4dae1a53",
           "logical_id": "mc-3c06179493ab5a7e28f8814c",
-          "row_sha256": "1137eb73bc22d2b39e1a0b106ed9920b49c821103cd05f9492171e3d5d4cafe0"
+          "row_sha256": "dbc53db6c2872cbc61737ba37f73a02a24e7583ec8934905eae76b51f82508a0"
         },
         {
-          "content_sha256": "dd93fea58617bb1cb24e478adf3ec09900b1728fb8ead61dd1b6b97fe331b4a8",
+          "content_sha256": "0be7008b20f3b927860d2d11e96b8e336c90f86cbda9fd9d14a9de2f8f5bce22",
           "logical_id": "mc-04939c201c37cffd8e5c77fc",
-          "row_sha256": "a4b65db2e239872b5896f8eea3e505aa98b27723d07afc4d7b2cd872868aeb82"
+          "row_sha256": "1891c083dee023b0c72b2b0c39ac79913920c78a33754752c3ec884b485379b3"
         },
         {
-          "content_sha256": "0f30ba6847d526cf21bda4e5a3ee42f0fb105892682ba20fc9f1b6e98b5b56b8",
+          "content_sha256": "0013f9a6c4c9cce500b74e9724a60829303797456166a8adc06d10648d2b01ce",
           "logical_id": "mc-ff2bbe335a098a1d6b3715af",
-          "row_sha256": "82fa4d57b2b50af0f6d05d438fe0db5ecb94dd958c5696e9dbfd4296c0f78a34"
+          "row_sha256": "8ef0c2effccbacf46f157ecefe2dd360247ed4d5c662cb1663c5c570edfc1dc1"
         },
         {
-          "content_sha256": "1ab47cf369be27adf32c4947379f647abd1345b07e5c9aa7a3b31c14144cf08e",
+          "content_sha256": "9ec59c019c67797986e51eadd890ae42be1b9512e5375cb2ae9280403b00c163",
           "logical_id": "mc-6ecc1a209cfc46dfdedd5775",
-          "row_sha256": "f9b78e5db332cccff35ccfe4baf2fb039c8bb9a95a831f9e7d6e50284d706862"
+          "row_sha256": "fe30521525d73085c017f0b964a349164f97f568831ee726543a6fa4a3d55df1"
         },
         {
           "content_sha256": "29358b095e117649f3097766717c38800c5c5f2613b1159b1e55e12c7f3a07b5",
@@ -575,7 +575,7 @@
           "row_sha256": "70acddbf523482328d277be9119d670d80b8f539962fb5db4f248fa0eb64b5e4"
         },
         {
-          "content_sha256": "71e3597fae13245bbf1a950918e84e0881ada36d76f890e15f388a3dd4e3d9a6",
+          "content_sha256": "1035e7030f483e9de31cf968a1431b697dd4d21677bec7ba4909f3dabcb81fb1",
           "logical_id": "mc-d5efa0a4591b7b115ec6d666",
           "row_sha256": "2313f10c7d66d5f0b611da5188610986542bf29c43b04d0683b03c23dd185909"
         },
@@ -585,9 +585,9 @@
           "row_sha256": "4f10f83a2e65ff4c28b2ef9ef10ed3496fbcd14b72330ebad1c62aa3c1dc6632"
         }
       ],
-      "sha256": "5ecf4a01ed621ba916ea675f6c19a5e20053bddbbe3065606c7e815b090c51ca",
+      "sha256": "dafbdf1bd6899d08500822a9c83edfa1305203cc76b3ea8407d6fbfecdd6d79b",
       "sheet_name": "cards",
-      "table_sha256": "d23468523c88a0312c306de55277251814d07e0d25e3a3957ce4d034c0400c15",
+      "table_sha256": "7612233754924bc63b73ac541b688e939788a948368c0fe570e6fb084443cb07",
       "template_id": "technical-qa",
       "template_version": "1.1.0"
     },
@@ -604,7 +604,7 @@
       "row_count": 1,
       "rows": [
         {
-          "content_sha256": "41616150145ea413332c491cae9d1860b1a3d256cad8429819ef29f2a76133e1",
+          "content_sha256": "75f38a0f7ee4e55e34e55432002453818fa526b9e267391f5e1ff9efb0857dfe",
           "logical_id": "mc-da4be48b928b158d4537e1bc",
           "row_sha256": "d60e30ba9ef6ef2a8f1560d2b7cf4f6c1bcf1bcccdb7aa74644b744955c7ebd8"
         }

@@ -7,15 +7,15 @@
     {
       "id": "w2-card",
       "collection": "inference-w2-u2-evidence",
-      "path": "面试准备/自我准备/ChangeCard-02-MoE-EP-dispatch-combine.md",
-      "sha256": "9b9a02a5d8b00a348e0403a251004430c028f04e8a0e566b33b8d24ba9b840c3",
+      "path": "面试准备/自我准备/学习设计/ChangeCard-02-MoE-EP-dispatch-combine.md",
+      "sha256": "d0a2d2c7917b5717d8da9189c4e53f84f4c2aef363054dd0397a6cdfc732f0b0",
       "summary": "已审核的接入契约与源码纠正；只采用公开固定源码事实，不将用户芯片说明或待验证结果转为确定实现。"
     },
     {
       "id": "w2-ledger",
       "collection": "inference-w2-u2-evidence",
       "path": "计划/八周冲刺进度/历史记录/W2-学习验收记录.md",
-      "sha256": "445d31cece716ed0a594b32fdbea5cb08d9422d2f0b3d02bdcf0426e1b9055a2",
+      "sha256": "e8e8092a426fff22872f1b4f9a57aaccc8d31015e5859dcb05f1bb43a1b890e9",
       "summary": "单元二固定源码基线、节点检查及已确认的Hybrid-EP场景表；用于确定学习范围和来源锚点，不将mastery状态当知识事实。"
     },
     {
@@ -53,7 +53,7 @@
               "parts": [
                 {
                   "type": "text",
-                  "text": "模型把隐状态交给 factory 创建的 MoE 执行对象；MoERunner 组织 gate 与 top-k，权重方法再进入由 P/F 和 Experts 组成的 modular kernel。"
+                  "text": "先把隐状态交给 MoE 执行对象，由 MoERunner 计算 gate 并选择 top-k 专家；再经权重方法进入 modular kernel。这个内核由准备／收尾模块 P/F 与专家计算模块 Experts 配合完成。"
                 }
               ]
             },
@@ -127,7 +127,7 @@
       "priority": 5,
       "template_id": "technical-qa",
       "fields": {
-        "问题": "在 vLLM d7ada3a 的 CUDA／ROCm 未量化 modular 路径中，不使用 passthrough 或 LoRA。为什么只设置 all2all_backend 还不能确定最终 MoE 实现？沿并行配置、P/F 选择与 Experts 选择说明。",
+        "问题": "在 vLLM d7ada3a 的 CUDA／ROCm 未量化 modular 路径中，不使用 passthrough 或 LoRA。为什么只设置 all2all_backend 还不能确定最终 MoE 实现？沿并行配置、准备／收尾模块（P/F） 选择与 Experts 选择说明。",
         "答案": {
           "blocks": [
             {
@@ -135,7 +135,7 @@
               "parts": [
                 {
                   "type": "text",
-                  "text": "并行配置先决定是否进入专用 all-to-all 分支；通信后端选择 P/F，计算后端还需满足设备、精度和激活布局约定。三者不是任意可互换的开关。"
+                  "text": "先由并行配置决定是否进入专用 all-to-all 路径，再选择准备／收尾模块 P/F，最后找到设备、精度和激活布局都匹配的 Experts。只填一个通信后端名字，还不能确定整条执行路径。"
                 }
               ]
             },
@@ -209,7 +209,7 @@
       "priority": 3,
       "template_id": "technical-qa",
       "fields": {
-        "问题": "在 vLLM d7ada3a 中，一个 OOT 平台注册了 UnquantizedFusedMoEMethod 子类，但继续沿用基类的权重加载与 forward。为什么仅有注册还不足以获得可运行的 P/F＋Experts 路径？",
+        "问题": "在 vLLM d7ada3a 中，一个仓库外平台扩展（OOT）注册了 UnquantizedFusedMoEMethod 子类，却继续沿用基类的权重加载与 forward。为什么仅完成注册还不足以运行准备／收尾模块 P/F 与 Experts 组成的路径？",
         "答案": {
           "blocks": [
             {
@@ -262,7 +262,7 @@
             }
           ]
         },
-        "锚点": "注册替入口，插件建权重与kernel",
+        "锚点": "注册换入口；插件还得备权重、建内核、接执行",
         "来源": "Change Card 02 §4 OOT 子类责任"
       },
       "source_ids": [
@@ -342,7 +342,7 @@
             }
           ]
         },
-        "锚点": "布局定专家，计数定有效行，ids定逐行路由",
+        "锚点": "专家槽位看有效计数；普通行还要认专家",
         "来源": "Change Card 02 §2；课程网页 synthesis“路由信息分两类”"
       },
       "source_ids": [
@@ -370,7 +370,7 @@
       "priority": 5,
       "template_id": "technical-qa",
       "fields": {
-        "问题": "在 vLLM d7ada3a 的 modular MoE 中，先限定 apply_router_weight_on_input=False。Experts 分别交出：已加权归约的行、未加权的 [M,K,H] 行、需由通信combine处理的专家槽位。NoOP、Contiguous、Delegate 如何对应这些契约，为什么不能只按“由P/F做”来选？M为Token行数，K为top-k，H为隐藏维度。",
+        "问题": "在 vLLM d7ada3a 的 modular MoE 中，先限定 apply_router_weight_on_input=False。Experts 分别交出：已加权归约的行、未加权的 [M,K,H] 行、需由通信combine处理的专家槽位。NoOP、Contiguous、Delegate 如何对应这些契约，为什么不能只按“由准备／收尾模块（P/F）做”来选？M为Token行数，K为top-k，H为隐藏维度。",
         "答案": {
           "blocks": [
             {
@@ -378,7 +378,7 @@
               "parts": [
                 {
                   "type": "text",
-                  "text": "返回值表达Experts已经完成哪些工作以及剩余数据适合怎样处理；它们不是固定的执行地点标签。"
+                  "text": "NoOP 表示 Experts 已完成加权与 top-k 归约；Contiguous 提供未归约行的加权求和实现；Delegate 让 P/F 选择具体收尾方式。选择时要看已完成的工作与剩余布局。"
                 }
               ]
             },
@@ -423,7 +423,7 @@
             }
           ]
         },
-        "锚点": "已完成什么 → 剩余布局 → 谁选择收尾实现",
+        "锚点": "先查是否已乘权、已求和，再选收尾方式",
         "来源": "Change Card 02 §2；框架节点检查中的接口补差"
       },
       "source_ids": [
@@ -451,7 +451,7 @@
       "priority": 3,
       "template_id": "technical-qa",
       "fields": {
-        "问题": "在 vLLM d7ada3a 中，P/F的output_is_reduced()描述哪一层归约？比较单rank与多rank配置，为什么不能仅凭返回False就断言输出不完整或必定再次all-reduce？",
+        "问题": "在 vLLM d7ada3a 中，准备／收尾模块（P/F）的output_is_reduced()描述哪一层归约？比较单rank与多rank配置，为什么不能仅凭返回False就断言输出不完整或必定再次all-reduce？",
         "答案": {
           "blocks": [
             {
@@ -459,7 +459,7 @@
               "parts": [
                 {
                   "type": "text",
-                  "text": "它声明finalize输出是否已完成跨rank归约，不是top-k加权或卡内求和的完成标志；后续归约由runner和模型路径共同决定。"
+                  "text": "它声明 finalize 输出是否已完成跨 rank 归约，不是 top-k 加权或单 GPU 内求和的完成标志。后面还做不做归约，要结合 runner 和模型的实际路径判断。"
                 }
               ]
             },
@@ -532,7 +532,7 @@
       "priority": 5,
       "template_id": "technical-qa",
       "fields": {
-        "问题": "在 vLLM d7ada3a 的 V2 GPU ModelRunner 普通DP协作分支中，关闭DBO和投机解码，每请求每步decode一个Token，且不跳过DP协调。组内仍有任务，一个rank因批次不适合录图已选择eager，另一个rank没有请求：空闲rank能否跳过，本步怎样决定graph与padding？",
+        "问题": "在 vLLM d7ada3a 的 V2 GPU ModelRunner 普通DP协作分支中，关闭双批次重叠（DBO）和投机解码，每请求每步decode一个Token，且不跳过DP协调。组内仍有任务，一个rank因批次不适合录图已选择eager，另一个rank没有请求：空闲rank能否跳过，本步怎样决定graph与padding？",
         "答案": {
           "blocks": [
             {
@@ -613,7 +613,7 @@
       "priority": 3,
       "template_id": "technical-qa",
       "fields": {
-        "问题": "在 vLLM d7ada3a 中，已选MK内部共享专家重叠路径，P/F支持异步且不启用DBO。源码把共享专家计算插在dispatch还是combine窗口？请用实际调用顺序说明，并指出另选窗口需要改变什么。",
+        "问题": "在 vLLM d7ada3a 中，已选modular kernel（MK，模块化内核）内部共享专家重叠路径，准备／收尾模块（P/F）支持异步且不启用双批次重叠（DBO）。源码把共享专家计算插在dispatch还是combine窗口？请用实际调用顺序说明，并指出另选窗口需要改变什么。",
         "答案": {
           "blocks": [
             {
@@ -666,7 +666,7 @@
             }
           ]
         },
-        "锚点": "finalize_async → shared Experts → recv hook／receiver",
+        "锚点": "先发起 finalize，再算共享专家，最后接收结果",
         "来源": "Change Card 02 §8；课程网页 comparison 表A；源码审稿补正"
       },
       "source_ids": [
@@ -748,7 +748,7 @@
             }
           ]
         },
-        "锚点": "dispatcher → quant_method/MoeRunner → 双向转换与core → combine",
+        "锚点": "dispatch → 转成计算输入 → runner_core → 转成回传输入 → combine",
         "来源": "课程网页 synthesis §一SGLang代码地图、comparison表A；框架节点检查"
       },
       "source_ids": [
@@ -829,7 +829,7 @@
             }
           ]
         },
-        "锚点": "(dispatch格式,runner) ↔ (runner,combine格式)",
+        "锚点": "输入键：(dispatch格式, runner)；输出键：(runner, 原dispatch格式)",
         "来源": "框架节点检查：SGLang新格式复查；课程网页 synthesis §一、comparison表A"
       },
       "source_ids": [
@@ -857,7 +857,7 @@
       "priority": 3,
       "template_id": "technical-qa",
       "fields": {
-        "问题": "在 SGLang 43a3f95 的普通attention-DP协作组中，正常执行调度元数据的跨rank同步（未跳过、非DWDP），DeepEP设置为auto且TBO开关已启用。同步时非空闲rank的forward mode混有普通EXTEND与DECODE：为什么一个decode rank不能独自坚持LL和原decode图，并自行开启TBO？不考虑投机或其他特殊forward mode。",
+        "问题": "在 SGLang 43a3f95 的普通attention-DP协作组中，正常执行调度元数据的跨rank同步（未跳过、非DWDP），DeepEP设置为auto且双子批重叠（TBO）开关已启用。同步时非空闲rank的forward mode混有普通EXTEND与DECODE：为什么一个decode rank不能独自坚持LL和原decode图，并自行开启TBO？不考虑投机或其他特殊forward mode。",
         "答案": {
           "blocks": [
             {
@@ -910,7 +910,7 @@
             }
           ]
         },
-        "锚点": "全组extend标志 → auto模式；共同资格 → graph与TBO",
+        "锚点": "本卡是 decode，也要服从全组模式与资格",
         "来源": "框架节点检查：SGLang混跑诊断；课程网页 comparison表A"
       },
       "source_ids": [
@@ -938,7 +938,7 @@
       "priority": 3,
       "template_id": "technical-qa",
       "fields": {
-        "问题": "在 SGLang 43a3f95 的DeepSeek主模型中，共享专家已启用。比较各自开关已启用且满足运行条件的TBO与SBO；SBO以非Blackwell NVIDIA平台的DeepEP LL＋DeepGEMM路径为例。二者分别在哪个粒度组织可重叠工作，为什么没有拆micro-batch也不等于没有重叠机制？",
+        "问题": "在 SGLang 43a3f95 的 DeepSeek 主模型中，共享专家已启用。比较各自开关已启用且满足运行条件的 TBO 与 SBO；SBO 以非 Blackwell NVIDIA 平台的 DeepEP LL＋DeepGEMM 路径为例。两者分别在哪个粒度组织重叠工作？没有拆 micro-batch，为什么也可能存在重叠机制？",
         "答案": {
           "blocks": [
             {
@@ -991,7 +991,7 @@
             }
           ]
         },
-        "锚点": "TBO：批间阶段交错；SBO：批内窗口与流水",
+        "锚点": "TBO 拆两批交错跑；SBO 在一批内部找重叠",
         "来源": "课程网页 comparison表A；框架节点检查：TBO／SBO"
       },
       "source_ids": [
@@ -1089,7 +1089,7 @@
       "priority": 5,
       "template_id": "technical-qa",
       "fields": {
-        "问题": "在 vLLM d7ada3a 中，P/F交给BatchedTritonExperts的激活形状为[E,C,H]。E为本卡专家数，H为隐藏维度，每发送rank最多T行，实际dispatcher数为D，库约定C=T×D。max_num_tokens_per_rank()与num_dispatchers()应分别返回什么，怎样检查workspace匹配？",
+        "问题": "在 vLLM d7ada3a 中，准备／收尾模块（P/F）交给BatchedTritonExperts的激活形状为[E,C,H]。E为本卡专家数，H为隐藏维度，每发送rank最多T行，实际dispatcher数为D，库约定C=T×D。max_num_tokens_per_rank()与num_dispatchers()应分别返回什么，怎样检查workspace匹配？",
         "答案": {
           "blocks": [
             {
@@ -1142,7 +1142,7 @@
             }
           ]
         },
-        "锚点": "T与D分别传入，C只计算一次",
+        "锚点": "单发送方上限 T × 发送方数 D；总容量只乘一次",
         "来源": "W2 单元二 · 固定源码与已审核接入契约"
       },
       "source_ids": [
@@ -1169,7 +1169,7 @@
       "priority": 5,
       "template_id": "technical-qa",
       "fields": {
-        "问题": "在 vLLM d7ada3a 的 DeepEP LL P/F 中，apply_router_weight_on_input=True且top-k=1。prepare与finalize怎样处理路由权重？为什么看到Experts返回Delegate，也不能无条件把原权重传给combine？",
+        "问题": "在 vLLM d7ada3a 的 DeepEP LL 准备／收尾模块（P/F） 中，apply_router_weight_on_input=True且top-k=1。prepare与finalize怎样处理路由权重？为什么看到Experts返回Delegate，也不能无条件把原权重传给combine？",
         "答案": {
           "blocks": [
             {
@@ -1177,7 +1177,7 @@
               "parts": [
                 {
                   "type": "text",
-                  "text": "prepare已经在专家计算前把激活乘上路由权重，因此finalize给combine换成全1；Delegate只委托收尾方式，不证明此前没有施权。"
+                  "text": "Prepare 已在专家计算前给激活乘过路由权重，所以 finalize 向 combine 传入全 1，避免重复乘权。Delegate 只委托收尾方式，不记录此前是否已经用过权重。"
                 }
               ]
             },
@@ -1216,13 +1216,13 @@
               "parts": [
                 {
                   "type": "text",
-                  "text": "本题追踪该实现的输入加权分支，不把输入施权与输出施权视为对任意非线性专家都数学等价，也不外推top-k>1。"
+                  "text": "本题只追踪该实现的输入加权分支。对任意非线性专家，在输入上乘权重与在输出上乘权重未必数学等价；也不能将结论外推到 top-k>1。"
                 }
               ]
             }
           ]
         },
-        "锚点": "Delegate不记录施权历史；看输入加权标志",
+        "锚点": "输入已乘过权重，combine 就别再乘一遍",
         "来源": "W2 单元二 · 固定源码与已审核接入契约"
       },
       "source_ids": [
@@ -1250,7 +1250,7 @@
       "priority": 3,
       "template_id": "technical-qa",
       "fields": {
-        "问题": "DeepEP V1 HT（d4f41e4）在节点内经 NVLink 互访、跨节点同 GPU 索引之间经 RDMA 通信。一个 Token 命中远端同一节点内多张卡上的专家时，dispatch 怎样转发，combine 怎样反向归并？这种组织优先节省哪段传输？",
+        "问题": "DeepEP V1 高吞吐（HT）（d4f41e4）在节点内经 NVLink 互访、跨节点同 GPU 索引之间经 RDMA 通信。一个 Token 命中远端同一节点内多张卡上的专家时，dispatch 怎样转发，combine 怎样反向归并？这种组织优先节省哪段传输？",
         "答案": {
           "blocks": [
             {
@@ -1293,7 +1293,7 @@
             }
           ]
         },
-        "锚点": "跨域去重传输，域内分发与归并",
+        "锚点": "出节点少发重复数据，进节点再分；回程先合再传",
         "来源": "DeepEP d4f41e4 · HT 分层传输"
       },
       "source_ids": [
@@ -1321,7 +1321,7 @@
       "priority": 3,
       "template_id": "technical-qa",
       "fields": {
-        "问题": "DeepEP V1 HT（d4f41e4）的非缓存 dispatch，为什么在搬运 Token 前先做 layout 和 notify？CPU 等待发生在哪里，哪些已有接口能绕过这次动态计数等待？",
+        "问题": "DeepEP V1 高吞吐（HT）（d4f41e4）的非缓存 dispatch，为什么在搬运 Token 前先做 layout 和 notify？CPU 等待发生在哪里，哪些已有接口能绕过这次动态计数等待？",
         "答案": {
           "blocks": [
             {
@@ -1374,7 +1374,7 @@
             }
           ]
         },
-        "锚点": "设备计数 → 主机获数 → 分配；例外看参数与缓存条件",
+        "锚点": "先确认将接收多少行，再分配空间；上界或缓存另有条件",
         "来源": "DeepEP d4f41e4 · HT notify 与分配"
       },
       "source_ids": [
@@ -1402,7 +1402,7 @@
       "priority": 3,
       "template_id": "technical-qa",
       "fields": {
-        "问题": "DeepEP V1 HT 节点内非缓存路径（d4f41e4）中，一个 Token 选中了同一目标 rank 的两个专家。该 rank 收到几行激活，怎样知道这一行交给哪些专家，combine 又靠什么送回原 Token？",
+        "问题": "DeepEP V1 高吞吐（HT） 节点内非缓存路径（d4f41e4）中，一个 Token 选中了同一目标 rank 的两个专家。该 rank 收到几行激活，怎样知道这一行交给哪些专家，combine 又靠什么送回原 Token？",
         "答案": {
           "blocks": [
             {
@@ -1483,7 +1483,7 @@
       "priority": 3,
       "template_id": "technical-qa",
       "fields": {
-        "问题": "DeepEP V1 LL（d4f41e4）中，每个源 rank 最多输入 M 个 Token，共 R 个 rank，每卡有 E_local 个专家，H 为激活隐藏维度；每个 Token 的 K 个专家选择互异且有效。若其中两个专家在同一张卡上，LL 会像 HT 那样合成一份激活发送吗？接收槽位如何容纳它们？",
+        "问题": "DeepEP V1 低延迟（LL）（d4f41e4）中，每个源 rank 最多输入 M 个 Token，共 R 个 rank，每卡有 E_local 个专家，H 为激活隐藏维度；每个 Token 的 K 个专家选择互异且有效。若其中两个专家在同一张卡上，LL 会像 HT 那样合成一份激活发送吗？接收槽位如何容纳它们？",
         "答案": {
           "blocks": [
             {
@@ -1536,7 +1536,7 @@
             }
           ]
         },
-        "锚点": "消息按专家，接收按专家×来源分段",
+        "锚点": "同卡两个专家也发两份；每专家再按来源留槽",
         "来源": "DeepEP d4f41e4 · LL 粒度与容量"
       },
       "source_ids": [
@@ -1564,7 +1564,7 @@
       "priority": 3,
       "template_id": "technical-qa",
       "fields": {
-        "问题": "DeepEP V1 LL（d4f41e4）设置return_recv_hook=True时，SEND提交到RECV确认之间怎样形成独立计算窗口？请结合RDMA与节点内P2P两种搬运方式，说明“零SM窗口”的适用边界。",
+        "问题": "DeepEP V1 低延迟（LL）（d4f41e4）设置return_recv_hook=True时，SEND提交到RECV确认之间怎样形成独立计算窗口？请结合RDMA与节点内P2P两种搬运方式，说明“零SM窗口”的适用边界。",
         "答案": {
           "blocks": [
             {
@@ -1645,7 +1645,7 @@
       "priority": 3,
       "template_id": "technical-qa",
       "fields": {
-        "问题": "DeepEP V1 LL（d4f41e4）内部只有两套轮换通信区。普通 dispatch 返回的 packed_recv_x 是否是内部区的视图？combine 的 out= 与 zero_copy=True 分别改变什么？",
+        "问题": "DeepEP V1 低延迟（LL）（d4f41e4）内部只有两套轮换通信区。普通 dispatch 返回的 packed_recv_x 是否是内部区的视图？combine 的 out= 与 zero_copy=True 分别改变什么？",
         "答案": {
           "blocks": [
             {
@@ -1698,7 +1698,7 @@
             }
           ]
         },
-        "锚点": "独立packed输出；out定结果位置；zero_copy定发送输入",
+        "锚点": "packed 是接收输出；out 指最终落点；zero_copy 约定发送输入",
         "来源": "DeepEP d4f41e4 · LL 输出归属"
       },
       "source_ids": [
@@ -1789,7 +1789,7 @@
             }
           ]
         },
-        "锚点": "同步决定精确或上界；展开决定Token行或专家分配行",
+        "锚点": "等计数还是留上界；按 token 还是按专家展开",
         "来源": "DeepEP d4f41e4 · V2 分配分支"
       },
       "source_ids": [
@@ -1870,7 +1870,7 @@
             }
           ]
         },
-        "锚点": "固定段起点让发送先行，计数到齐后再压紧",
+        "锚点": "先按来源分段写入，再按实收计数去掉空洞",
         "来源": "DeepEP d4f41e4 · V2 direct 数据流"
       },
       "source_ids": [
@@ -1979,7 +1979,7 @@
       "priority": 3,
       "template_id": "technical-qa",
       "fields": {
-        "问题": "MORI-EP（2d4c3e2）的通用 IntraNode dispatch 主体中，多个发送方共用接收池。一个block如何先获得连续空间，再给其中的Token分配位置？max_total_recv_tokens控制什么？",
+        "问题": "MORI-EP（2d4c3e2）的通用 IntraNode dispatch 中，多个发送方共用接收池。一个 GPU 线程块（block）怎样先领一段连续空间，再给其中的 token 分配位置？max_total_recv_tokens 管的是哪种容量？",
         "答案": {
           "blocks": [
             {
@@ -1987,7 +1987,7 @@
               "parts": [
                 {
                   "type": "text",
-                  "text": "block先数出去重后的目标rank行数，再对每个有数据的目标远程领取一段连续空间，最后在块内逐行分配；不是每个Token都必须做一次远程原子。"
+                  "text": "Block 先按目标 rank 对 token 去重，数出各目标需要多少行，再向每个有数据的目标远程领取一段连续空间。之后在块内逐行分配位置，不必每个 token 都做一次远程原子操作。"
                 }
               ]
             },
@@ -2194,7 +2194,7 @@
             }
           ]
         },
-        "锚点": "routing快照不等于数据快照，combine输出也有有效期",
+        "锚点": "存下路由，不等于存下数据；返回视图还会被覆盖",
         "来源": "MORI-EP 2d4c3e2 · 视图与 routing handle"
       },
       "source_ids": [
@@ -2312,7 +2312,7 @@
               "parts": [
                 {
                   "type": "text",
-                  "text": "先共享路由信息来确定布局，再按布局传激活；路由元数据全收集不等于把全部 Token 激活复制给每张卡。"
+                  "text": "先让各 rank 看见路由表，确定数据该送到哪里；随后才搬激活。All-gather 的是路由元数据，不能把它理解为所有卡都收到全部 token 激活。"
                 }
               ]
             },
@@ -2357,7 +2357,7 @@
             }
           ]
         },
-        "锚点": "路由元数据／激活载荷／handle／专家布局",
+        "锚点": "先共享路由表 → 再搬激活 → 按专家排好 → 按原位置还回",
         "来源": "W2 单元二课程讲义·操作顺序与接收空间；DeepEP Hybrid-EP 4e890fd"
       },
       "source_ids": [
@@ -2385,7 +2385,7 @@
       "priority": 3,
       "template_id": "technical-qa",
       "fields": {
-        "问题": "在 DeepEP Hybrid-EP 4e890fd 的多节点 dispatch 中，Token 为什么先经跨节点 peer，再在目标节点内分发？TMA 和不同 warp group 在这条路径中分别起什么作用？",
+        "问题": "在 DeepEP Hybrid-EP 4e890fd 的多节点 dispatch 中，token 为什么先发给跨节点 peer，再在目标节点内分发？TMA 和不同 warp group 怎样配合，让数据分块沿这条路径推进？",
         "答案": {
           "blocks": [
             {
@@ -2412,7 +2412,7 @@
               "parts": [
                 {
                   "type": "text",
-                  "text": "不同 warp group 分别承担 RDMA、全局内存到共享内存、共享内存到远端缓冲区。TMA 承担批量异步搬运，共享内存循环 FIFO 连接各阶段，完成信号约束数据何时可消费。"
+                  "text": "不同 warp group 分别承担 RDMA、全局内存到共享内存、共享内存到远端缓冲区的工作。TMA 负责批量异步搬运，共享内存中的循环 FIFO（先进先出队列）衔接各阶段；每个 chunk（数据块）都要等相应完成信号，才能被下一阶段消费。"
                 }
               ],
               "label": "流水"
@@ -2438,7 +2438,7 @@
             }
           ]
         },
-        "锚点": "peer／RDMA与NVLink／TMA／chunk流水",
+        "锚点": "RDMA 先送到节点；NVLink 再分到卡；chunk 逐段流水",
         "来源": "W2 单元二课程讲义·传输与硬件；DeepEP Hybrid-EP 4e890fd"
       },
       "source_ids": [
@@ -2519,7 +2519,7 @@
             }
           ]
         },
-        "锚点": "全组统一S／本地T_r／无路由padding／元数据成本",
+        "锚点": "S 全组统一，T_r 保留实长；空路由仍花元数据成本",
         "来源": "W2 o3 场景表·prefill②及空行通信更正；DeepEP Hybrid-EP 4e890fd"
       },
       "source_ids": [
@@ -2600,7 +2600,7 @@
             }
           ]
         },
-        "锚点": "同一路由／缓存元数据／buffer generation／扩容失效",
+        "锚点": "路由相同可复用；buffer 换代后，旧 handle 作废",
         "来源": "W2 o3 场景表·训练①与prefill①；DeepEP Hybrid-EP 4e890fd"
       },
       "source_ids": [
@@ -2690,7 +2690,7 @@
             }
           ]
         },
-        "锚点": "非阻塞／逐专家padding／P上界／graph形状与地址",
+        "锚点": "每专家先补齐再相加；录图的 P 与地址保持固定",
         "来源": "W2 o3 场景表·decode①及padding更正；DeepEP Hybrid-EP 4e890fd"
       },
       "source_ids": [
@@ -2718,7 +2718,7 @@
       "priority": 5,
       "template_id": "technical-qa",
       "fields": {
-        "问题": "在 DeepEP Hybrid-EP 4e890fd 的非阻塞 permute 路径中，输出容量P不足。overflow_flag 表示什么，库按什么规则截断？为什么不能直接把这种行为当作训练所需的 capacity-factor 路由策略？",
+        "问题": "在 DeepEP Hybrid-EP 4e890fd 的非阻塞 permute 路径中，输出容量P不足。overflow_flag 表示什么，库按什么规则截断？为什么不能直接把这种行为当作训练所需的 capacity-factor（容量因子）路由策略？",
         "答案": {
           "blocks": [
             {
@@ -2771,7 +2771,7 @@
             }
           ]
         },
-        "锚点": "每rank标志／专家顺序截断／分配对／router策略",
+        "锚点": "库按位置截断；模型要丢谁，得另定路由规则",
         "来源": "W2 o3 场景表·训练②；DeepEP Hybrid-EP 4e890fd"
       },
       "source_ids": [
@@ -2852,7 +2852,7 @@
             }
           ]
         },
-        "锚点": "独立输出／内部别名／跨调用顺序／拆分非充分条件",
+        "锚点": "输出各有一份，内部通信区仍可能共用",
         "来源": "W2 o3 场景表·训练③；DeepEP Hybrid-EP 4e890fd"
       },
       "source_ids": [
@@ -2933,7 +2933,7 @@
             }
           ]
         },
-        "锚点": "常驻M／每步S／输出P／显存与实测",
+        "锚点": "M 留常驻空间；S 管当次路由；P 留专家输出",
         "来源": "W2 o3 场景表·prefill①与decode②；DeepEP Hybrid-EP 4e890fd"
       },
       "source_ids": [
@@ -2978,7 +2978,7 @@
               "parts": [
                 {
                   "type": "text",
-                  "text": "模型进入MoERunner后选择top-k，经权重方法调用P/F与Experts组成的kernel。并行配置先决定专用all-to-all是否生效，P/F与计算后端还要匹配布局和元数据。"
+                  "text": "模型进入 MoERunner 后选择 top-k，经权重方法调用准备／收尾 P/F 与专家计算 Experts 组成的 kernel。并行配置先决定专用 all-to-all 是否生效，通信与计算后端还要匹配布局和元数据。"
                 }
               ],
               "label": "vLLM"
@@ -3015,10 +3015,10 @@
           ]
         },
         "评分锚点": [
-          "两框架端到端调用链",
-          "并行与通信/计算选择分开",
-          "布局与元数据契约",
-          "双向转换和实际库调用"
+          "串起两框架的调用链",
+          "分清通信选择与计算选择",
+          "核对布局和元数据",
+          "输入、输出双向转换都接上"
         ],
         "来源": "W2 单元二 · 固定版本主链与横向对照"
       },
@@ -3034,7 +3034,10 @@
         "vllm-prepare-layout-metadata",
         "sglang-moe-ordinary-runner-path",
         "sglang-format-pair-registration"
-      ]
+      ],
+      "review_resolution": {
+        "summary": "2026-11-16 已按语言改写后的依赖卡逐项复核本卡的结论、适用条件与评分锚点；独立语言审查通过，仍覆盖原考查目标，不改变固定版本与实证边界。"
+      }
     },
     {
       "key": "oral-receive-capacity-four-paths",
@@ -3054,7 +3057,7 @@
       "priority": 5,
       "template_id": "oral",
       "fields": {
-        "问题": "面试官请你用60–90秒比较 DeepEP d4f41e4 的V1 HT、V1 LL、V2，以及 MORI-EP 2d4c3e2通用IntraNode路径。围绕“何时知道接收数量、怎样准备空间、有效行数如何表达”说明差异；不要求给性能排名。",
+        "问题": "面试官请你用60–90秒比较 DeepEP d4f41e4 的V1 高吞吐（HT）、V1 低延迟（LL）、V2，以及 MORI-EP 2d4c3e2通用IntraNode路径。围绕“何时知道接收数量、怎样准备空间、有效行数如何表达”说明差异；不要求给性能排名。",
         "参考回答": {
           "blocks": [
             {
@@ -3062,7 +3065,7 @@
               "parts": [
                 {
                   "type": "text",
-                  "text": "四条路径对计数、预分配和布局的分工不同，应先说明接口与空间代价再谈负载适用性。"
+                  "text": "HT 先等计数再分配；LL 先按来源和专家留槽；V2 用开关选择精确或上界分配；MORI 让发送方从共享池领位置。比较时要看计数何时可用、空间由谁预留。"
                 }
               ]
             },
@@ -3129,7 +3132,7 @@
         "mori-completion-and-valid-row-metadata"
       ],
       "review_resolution": {
-        "summary": "2026-11-03已对照修订后的V2同步与展开卡、MORI完成与有效行数卡复核四路径口述；参考回答只比较计数时点、空间分配和有效行含义。V2新增上界理由支持既有容量判断，MORI专家路由延伸不进入评分。四个评分锚点均由同请求五张已核验active子卡支撑，未增加性能或实测结论。"
+        "summary": "2026-11-16 已按语言改写后的依赖卡逐项复核本卡的结论、适用条件与评分锚点；独立语言审查通过，仍覆盖原考查目标，不改变固定版本与实证边界。"
       }
     },
     {
@@ -3204,10 +3207,10 @@
           ]
         },
         "评分锚点": [
-          "路由元数据与载荷分开",
-          "handle代次与共享缓冲依赖",
-          "ragged输入统一S",
-          "固定P包含padding及回放范围"
+          "路由表与激活分开",
+          "handle 绑定 buffer 代次，共享通信区按依赖复用",
+          "变长输入统一 S",
+          "图档位固定 P 并覆盖逐专家 padding"
         ],
         "来源": "W2 单元二 · 固定版本主链与横向对照"
       },
@@ -3223,7 +3226,10 @@
         "hybrid-training-handle-generation",
         "hybrid-graph-padded-capacity",
         "hybrid-shared-buffer-overlap"
-      ]
+      ],
+      "review_resolution": {
+        "summary": "2026-11-16 已按语言改写后的依赖卡逐项复核本卡的结论、适用条件与评分锚点；独立语言审查通过，仍覆盖原考查目标，不改变固定版本与实证边界。"
+      }
     },
     {
       "key": "deepep-ll-cross-round-slot-proof",
@@ -3243,7 +3249,7 @@
       "priority": 5,
       "template_id": "technical-qa",
       "fields": {
-        "问题": "DeepEP V1 LL（d4f41e4）的普通调用交替使用内部槽A、B，dispatch和combine共用轮换索引。两个rank执行相同调用序列，rank1仍读取上一轮A，rank0已经开始下一轮B；无故障且未屏蔽rank。rank0再次写rank1的A之前，须经过怎样的信号与本地执行因果链？请解释它为何不要求两边每轮同时结束。",
+        "问题": "DeepEP V1 低延迟（LL）（d4f41e4）的普通调用交替使用内部槽A、B，dispatch和combine共用轮换索引。两个rank执行相同调用序列，rank1仍读取上一轮A，rank0已经开始下一轮B；无故障且未屏蔽rank。rank0再次写rank1的A之前，须经过怎样的信号与本地执行因果链？请解释它为何不要求两边每轮同时结束。",
         "答案": {
           "blocks": [
             {
@@ -3306,7 +3312,7 @@
             }
           ]
         },
-        "锚点": "本地RECV结束 → 下一轮清旧槽并发信号 → 中间轮接收结束 → 复用旧槽",
+        "锚点": "对端读完旧 A 才发 B；本端收完 B 才能再写 A",
         "来源": "W2单元二课程页·双缓冲跨轮复用；Change Card 02 §5；DeepEP d4f41e4"
       },
       "source_ids": [

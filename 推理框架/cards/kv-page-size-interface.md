@@ -5,8 +5,8 @@
     "id": "markji",
     "profile": "plana-markji"
   },
-  "artifact_set_sha256": "b435abf29229d4a4d38ae22897c64fa15b488b3037e3308640ca4eb008da017c",
-  "candidate_sha256": "77e8df5a36ac65ba3717804a18283873fa70c41cb434094b03c2c22644604f95",
+  "artifact_set_sha256": "a669491196ce49c9cb3be18de88700241b4548d633ef1566e58af09ee7ae9599",
+  "candidate_sha256": "4d77cc79ab870b40bb4c031eedebf5598d88e2e2422961ca20166110fe7802ba",
   "cards": [
     {
       "content_sha256": "acf4fdc169bc2465fb30e7f38b32e617172c834b6f804c06011e78a178cf61a8",
@@ -39,7 +39,7 @@
       "template_version": "1.1.0"
     },
     {
-      "content_sha256": "d39542c2d31577fb9190b8e5048ce839f7e81886436fe5d11ed01d91c7a336ad",
+      "content_sha256": "05f2c71abe2bfaf5b8df91f7aa3c4c3aa558aafd4ffefdf592e49eedc486092a",
       "content_summary": "A理由：防止只扩容页字节数却让view或kernel仍按旧跨度寻址，造成KV读写错误。",
       "dependency_content_sha256": {},
       "depends_on": [],
@@ -129,11 +129,11 @@
       "template_version": "1.1.0"
     },
     {
-      "content_sha256": "d90de1a9007ca0e2058cb539b51759b8eee49f589fa937b82cf11bba28ac8c5c",
+      "content_sha256": "0e4664ae3b85ee4a1b8d448adc560727d6407eb942b550c13aa0340edf09d598",
       "content_summary": "A理由：回答KV页规格适配如何贯穿预算与kernel的设计题，防止各层对同一存储布局解释不一致。",
       "dependency_content_sha256": {
         "mc-093515310c87439e9bb4a53e": "44a1a9a61d60893c6871be549a93b70d68b843b947698d6f0446328893783196",
-        "mc-93f0de5e8b00c29d92e3be7f": "d39542c2d31577fb9190b8e5048ce839f7e81886436fe5d11ed01d91c7a336ad",
+        "mc-93f0de5e8b00c29d92e3be7f": "05f2c71abe2bfaf5b8df91f7aa3c4c3aa558aafd4ffefdf592e49eedc486092a",
         "mc-acc5bf9ee669dda4d35f5fbf": "91464cbaf1c0fcc0966ac8752000eaf78ce10064ef68c9e03ece0e29c8d892a5",
         "mc-e2bb3d174402490d55dad13a": "acf4fdc169bc2465fb30e7f38b32e617172c834b6f804c06011e78a178cf61a8"
       },
@@ -162,7 +162,7 @@
       "priority": 5,
       "quality": "A",
       "review_resolution": {
-        "summary": "2026-11-03已对照四张页规格子卡和迁移后仍保持同一固定源码锚点的W1复习片段，复核页大小配置、原始字节容量、BF16元素stride与kernel访问链；题面已前置普通未量化、单层单组、无packed/CP/override等条件，结论未外推到任意backend。"
+        "summary": "2026-11-16 已按语言改写后的依赖卡逐项复核本卡的结论、适用条件与评分锚点；独立语言审查通过，仍覆盖原考查目标，不改变固定版本与实证边界。"
       },
       "source_ids": [
         "kv-spec-learning-evidence"
@@ -173,11 +173,11 @@
     }
   ],
   "managed_body_sha256": "fb895b165fa5ae327799e97bf5748f0097ab96f4b506c6b6589f6ede72c463c4",
-  "manifest_payload_sha256": "5b1a85cd94b419fa4ee1eeb1f6e77025fc0b2463ddb493ed3b00f3f8ebd9bfc5",
+  "manifest_payload_sha256": "6d9699b9141ad50d70f63199752140ebb39008789a2ebc2e43adbe2749878af4",
   "schema": "memo-cards.artifact/v2",
   "sidecars": [
     {
-      "byte_size": 8855,
+      "byte_size": 8909,
       "columns": [
         "问题",
         "答案",
@@ -194,9 +194,9 @@
           "row_sha256": "9b797c1eca515a1bc9151c713ba9fe64e02df21d99c97931040cef3f94ad43bf"
         },
         {
-          "content_sha256": "d39542c2d31577fb9190b8e5048ce839f7e81886436fe5d11ed01d91c7a336ad",
+          "content_sha256": "05f2c71abe2bfaf5b8df91f7aa3c4c3aa558aafd4ffefdf592e49eedc486092a",
           "logical_id": "mc-93f0de5e8b00c29d92e3be7f",
-          "row_sha256": "df219249ab1d2d66742e887babc8b75d86092df086e40621d65b42f1a29f2af8"
+          "row_sha256": "c62462df2db85278fa09f93e2816adb6fe442d88452e9fe193d5d3d43a6f2644"
         },
         {
           "content_sha256": "91464cbaf1c0fcc0966ac8752000eaf78ce10064ef68c9e03ece0e29c8d892a5",
@@ -209,25 +209,25 @@
           "row_sha256": "efce4c3fe46a65c8782884e83ccecbf8dae5e1b12678866966dfa5b493a4790a"
         },
         {
-          "content_sha256": "d90de1a9007ca0e2058cb539b51759b8eee49f589fa937b82cf11bba28ac8c5c",
+          "content_sha256": "0e4664ae3b85ee4a1b8d448adc560727d6407eb942b550c13aa0340edf09d598",
           "logical_id": "mc-3dc0573e6efa8009574ea78d",
           "row_sha256": "795b3e422f2aa37566df4e8984c749bc23fec03ee38f232d5e7e8c3759c1c6bb"
         }
       ],
-      "sha256": "6450a977a696af57ea1bb558cc16542555103cade1912e119e1b6eadc7a2c729",
+      "sha256": "480d614d31f565c49ea5be945cf8e4c093fe17cc246701d82c6ae7e0e6023c48",
       "sheet_name": "cards",
-      "table_sha256": "987e520242026dfb6e72934e445cb37e5b115279ec40a25ef98312ce95e69b2f",
+      "table_sha256": "7bb5e1f9da552344131eab86bb8449849dbf4e865562ff5e74c7bc9b5c35f2a9",
       "template_id": "technical-qa",
       "template_version": "1.1.0"
     }
   ],
-  "source_fingerprint": "93c32ad7b8a26c25f8489bf0c8a7e3bf5720820ed459c346786b4de86908c3b2",
+  "source_fingerprint": "037b46eaa4b8eb1b07e56a4046ac8786d76fea52f2aa75cc730fa0002621a561",
   "sources": [
     {
       "collection": "inference-adaptation-evidence",
       "id": "kv-spec-learning-evidence",
       "path": "计划/八周冲刺进度/历史记录/W1-学习验收记录.md",
-      "sha256": "a4afc026cce9e690cd79de0f6782cd908ab8e9534b9a89c37ff32c366978e96d",
+      "sha256": "4c285e56a56a4abb82af589c8e8b5a84be4bbf2d706b64760ee74337f4b67490",
       "summary": "已逐项核对从旧验证包迁移的2026-09-09页大小复习片段；仅消费该片段及其vLLM v0.26.0固定源码锚点，不使用待办或其他课程结论。"
     }
   ],

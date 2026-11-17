@@ -64,14 +64,14 @@
               "parts": [
                 {
                   "type": "text",
-                  "text": "业务张量在 GPU 不说明网络直接访问显存；应检查注册和访问描述以及是否先 D2H 到 Host。"
+                  "text": "业务张量在 GPU，不代表网卡直接读写显存。应核对注册与访问描述指向哪里，以及发送前是否先经设备→Host 拷贝（D2H）得到 Host 副本。"
                 }
               ],
               "label": "内存"
             }
           ]
         },
-        "锚点": "控制职责 → transport → 实际内存",
+        "锚点": "CPU 在忙什么？网络跑什么？RNIC 真正读写哪里？",
         "来源": "W3 U3 学习记录 · u3-p01"
       },
       "lifecycle": "active",
@@ -156,7 +156,7 @@
       "fact_status": "verified",
       "template_id": "technical-qa",
       "fields": {
-        "问题": "在 NVSHMEM 3.0.6 的讨论范围内，同一通信请求已经由 GPU kernel 提出。IBRC、典型 IBGDA 与 CPU-assisted IBGDA 分别由谁构造 NIC 工作请求、谁敲 doorbell？CPU-assisted 为什么仍不同于 IBRC？",
+        "问题": "在 NVSHMEM 3.0.6 的讨论范围内，通信请求已由 GPU kernel 提出。对 IBRC、典型 IBGDA、CPU-assisted IBGDA，分别说明谁生成 NIC 工作队列项 WQE，谁敲 doorbell 通知网卡。CPU-assisted 与 IBRC 的分工差在哪里？",
         "答案": {
           "blocks": [
             {
@@ -209,7 +209,7 @@
             }
           ]
         },
-        "锚点": "IBRC：CPU／CPU；典型 IBGDA：GPU／GPU；CPU-assisted：GPU／CPU",
+        "锚点": "按“写工作单／敲铃”记：CPU/CPU；GPU/GPU；GPU/CPU",
         "来源": "W3 U3 学习记录 · u3-p02、u3-p09"
       },
       "lifecycle": "active",
@@ -242,7 +242,7 @@
               "parts": [
                 {
                   "type": "text",
-                  "text": "先建立 GPU 能调用或发布的请求通路，再核对谁能生成与通知 NIC 工作；调用位置不能代替这些接口和硬件条件。"
+                  "text": "先让 GPU 能发布通信请求，再确认谁填写工作队列、谁通知网卡。把调用移进 kernel，不会自动补出这些接口、映射和同步能力。"
                 }
               ]
             },
@@ -305,7 +305,7 @@
       "fact_status": "verified",
       "template_id": "technical-qa",
       "fields": {
-        "问题": "沿 rdma-core v65.0 的 mlx5 路径，应用提交一项非 inline、signaled 的普通 RC WRITE，ibv_post_send 返回成功。为什么此时可重用原 WR／SGE 描述结构，却不能仅凭这一返回值覆盖源 payload？",
+        "问题": "沿 rdma-core v65.0 的 mlx5 路径，应用提交一项普通 RC WRITE：payload 非 inline，且要求生成本地完成记录（signaled）。ibv_post_send 返回成功后，为什么可重用应用侧的 WR（工作请求）／SGE（数据片段描述）结构，却不能仅凭这个返回值覆盖源 payload？",
         "答案": {
           "blocks": [
             {
@@ -322,7 +322,7 @@
               "parts": [
                 {
                   "type": "text",
-                  "text": "WR／SGE 是应用侧请求与片段描述；提交路径据此建立 WQE，成功返回后无需继续保留同一批应用描述结构。"
+                  "text": "WR 描述一次工作请求，SGE 描述数据片段；provider 据此构造 NIC 工作队列项 WQE。成功返回后，不必继续保留同一批应用侧 WR／SGE 结构。"
                 }
               ],
               "label": "描述"
@@ -348,7 +348,7 @@
             }
           ]
         },
-        "锚点": "描述已转换；payload 仍可能被读",
+        "锚点": "工作描述已抄进队列；源数据可能还没读完",
         "来源": "W3 U3 学习记录 · u3-p03"
       },
       "lifecycle": "active",
@@ -376,7 +376,7 @@
       "fact_status": "verified",
       "template_id": "technical-qa",
       "fields": {
-        "问题": "在 rdma-core v65.0 的普通 RC WRITE 场景中，两个 QP 分别发送 A、B，使用不同 wr_id，并共享一个 CQ；两项都 signaled，追踪记录仍有效。软件只取到 B 的成功 WC、尚未取到 A 的 WC，此时对 A 的实际进度和源区域复用，各能得出什么结论？",
+        "问题": "在 rdma-core v65.0 的普通 RC WRITE 中，两个队列对 QP 分别发送 A、B，使用不同 wr_id，共享一个完成队列 CQ；两项都要求生成本地完成记录（signaled），追踪记录仍有效。软件只取到 B 的成功完成记录 WC，还没取到 A 的。对 A 的实际进度和源区域复用，分别能作出什么判断？",
         "答案": {
           "blocks": [
             {
@@ -464,7 +464,7 @@
               "parts": [
                 {
                   "type": "text",
-                  "text": "后续 SEND 的内容落入预先登记的 recv_buf；接收方从 CQ 取得对应完成结果后处理这条通知。"
+                  "text": "后续 SEND 的内容落入预先投递的接收缓冲区 recv_buf；接收方从 CQ 取得对应完成结果后，再读取并处理这条通知。"
                 }
               ],
               "label": "控制消息"
@@ -558,7 +558,7 @@
             }
           ]
         },
-        "锚点": "P 设备/D2H → P Host/网络 → D Host/H2D → D 设备/计算",
+        "锚点": "每块内存都问：谁还会读它，谁还会写它？",
         "来源": "W3 U3 学习记录 · u3-p06、u3-p07"
       },
       "lifecycle": "active",
@@ -626,7 +626,7 @@
             }
           ]
         },
-        "锚点": "全组匹配参与 → 无关接收与协调成本",
+        "锚点": "固定四 rank 组：两端要传，全组仍要参与",
         "来源": "W3 U3 学习记录 · u3-p08"
       },
       "lifecycle": "active",
@@ -764,7 +764,7 @@
             }
           ]
         },
-        "锚点": "D2H → socket完整接收 → 映射核对 → H2D与消费依赖",
+        "锚点": "Host 收齐 → 核对归属 → 拷回设备 → 等消费依赖",
         "来源": "W3 U3 学习记录 · u3-p11"
       },
       "lifecycle": "active",
@@ -792,7 +792,7 @@
       "fact_status": "verified",
       "template_id": "technical-qa",
       "fields": {
-        "问题": "在 rdma-core v65.0 的 verbs 资源初始化中，为什么注册 MR 和创建 QP 都涉及 PD，而创建 QP 时还要指定发送／接收 CQ？请说明这些关联各自承担什么职责；这里 PD 指 Protection Domain。",
+        "问题": "在 rdma-core v65.0 的 verbs 初始化中，注册内存区域 MR 和队列对 QP 为什么都要关联保护域 PD（Protection Domain）？创建 QP 时指定发送／接收完成队列 CQ，又解决什么问题？请分别说明“访问保护”和“完成结果去向”。",
         "答案": {
           "blocks": [
             {
@@ -835,7 +835,7 @@
             }
           ]
         },
-        "锚点": "PD关联MR/QP；QP关联CQ；CQ承载完成记录",
+        "锚点": "PD 管资源保护；CQ 收完成记录",
         "来源": "W3 U3 学习记录 · u3-p14"
       },
       "lifecycle": "active",
