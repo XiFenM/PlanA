@@ -1,0 +1,2397 @@
+{
+  "schemaVersion": 1,
+  "recordingId": "interview-biren-recording-01",
+  "createdAt": "2026-11-17T14:09:05.472Z",
+  "sources": {
+    "asrIndex": {
+      "path": "outputs/managed/interview-video-analysis/transcripts/interview-biren-recording-01.qwen-asr-indexed.json",
+      "sha256": "0f4357fba28354463b0b8a86ba6dc8073b3e043f01682599acdf41ba00905936"
+    },
+    "priorReport": {
+      "path": "outputs/managed/interview-video-analysis/reports/interview-biren-recording-01-analysis.md",
+      "sha256": "dd2d48a9c5131f83165632064c6a026388c3859cd69699e99559c18291409cbe"
+    },
+    "priorEvidenceMap": {
+      "path": "outputs/managed/interview-video-analysis/analysis/interview-biren-recording-01.evidence-map.json",
+      "sha256": "167cf35a1986c0959f4c6af41216ee4ef20c62c50f23ac3d81572cb110f4164e"
+    },
+    "technicalAudit": {
+      "path": "outputs/managed/interview-video-analysis/analysis/interview-biren-recording-01.technical-audit.md",
+      "sha256": "bc5c10e6292f4d3299d4908614e50d85369eb1b9ef90ad42e685af720d6cd811"
+    },
+    "hydrogen": {
+      "path": "outputs/managed/interview-video-analysis/analysis/understand-biren-hydrogen-stream-20261117.audio.md",
+      "sha256": "221db1214ca508cd3c4a000cfb59f644f3e798da899d8856f22184ab729fff58"
+    },
+    "hydrogenMetadata": {
+      "path": "outputs/managed/interview-video-analysis/analysis/understand-biren-hydrogen-stream-20261117.audio.md.response.json",
+      "sha256": "7ab2f1cabd1e55a627063e5b4cb224ecd473fefb484fa795aafcc7c19eacd044"
+    }
+  },
+  "models": {
+    "asr": [
+      "qwen/qwen-audio-3.1-asr-flash"
+    ],
+    "understanding": "google/gemini-4-hydrogen"
+  },
+  "understandingReceipt": "713b215a6ead463fa8f082017a52c416",
+  "understandingCompletion": {
+    "streamed": true,
+    "finishReason": "stop",
+    "completeMarkerPresent": true,
+    "textUtf16Length": 18456
+  },
+  "method": {
+    "independentRequests": true,
+    "understandingInputContainsAsr": false,
+    "inputRelationship": "Qwen received nine contiguous MP3 segments and Hydrogen received the complete MP3, encoded from the same normalized PCM. The requests are independent, but share source audio, signal processing and potential audio defects.",
+    "questionNumbering": "Retain old report Q1–Q17. Hydrogen Q1–Q4 map directly; old Q5 maps to Hydrogen Q5+Q6; old Q6–Q17 map to Hydrogen Q7–Q18.",
+    "offsetConvention": "Zero-based UTF-16 code-unit offsets, start inclusive and end exclusive. ASR global positions address the indexed joined text; segment positions address each raw response.text. Hydrogen positions address the complete saved Markdown body. These are text positions, not audio times.",
+    "humanGroundTruth": false,
+    "humanListening": false,
+    "exactAudioAlignment": false,
+    "modelAgreementProvesTechnicalCorrectness": false,
+    "priorArtifactsModified": false,
+    "externalCallsByComparison": 0
+  },
+  "classificationDefinitions": {
+    "supported": "Both model outputs express the same substantive point; this is cross-source textual support, not acoustic or technical truth.",
+    "additional": "One model supplies a detail not independently supported by the other; retain only as a candidate or verification lead.",
+    "conflict": "The two saved outputs explicitly disagree; do not settle the original wording or implementation by voting or plausibility.",
+    "unconfirmed": "Interpretation, scope, chronology, technical correctness or completeness remains unproven by this comparison."
+  },
+  "summary": {
+    "retained": [
+      "三倍表述是缓存容量核算纠错，不能当作物理容量或吞吐三倍提升。",
+      "D2H回答包含设备布局转换、Host接收空间和消费前等待；没有同步意识的负面结论不成立。",
+      "MLA latent主旨、FlashAttention分块/online softmax与O(N²)方向、两项反问角色得到两路支持。"
+    ],
+    "changedOrAdded": [
+      "状态dtype由单路不清升级为FP16与FP32的显式冲突，须回听并检查实际配置。",
+      "量化权重G/GB、Triton、BLink/VLink是候选术语/单位补充，不是确证。",
+      "Hydrogen将旧Q5拆成自身Q5和Q6；仍保留原17题，不把分组差异当新增问题。",
+      "尾段静音是新增回听线索，未解决第9片计量不一致。"
+    ],
+    "excluded": [
+      "人格/诚实度、包装动机、由工作强度偏好推导的负面能力判断。",
+      "未经记录支持的内存浪费/崩溃成果，以及把标准RoPE变体强加给本场NoPE模型的结论。",
+      "把Hydrogen精确措辞或时间节点当作人工参考稿、逐句对齐或代码/性能验证。"
+    ]
+  },
+  "questions": [
+    {
+      "questionId": "Q1",
+      "title": "目前工作与个人职责",
+      "hydrogenQuestionIds": [
+        "Q1"
+      ],
+      "checks": [
+        {
+          "classification": "supported",
+          "subject": "框架实现与算子/运行时团队协作的职责边界",
+          "asrEvidence": [
+            {
+              "quote": "我会负责框架侧的实现，然后会与算子和运行时的一些团队去确定一些接口和修改",
+              "segmentIndex": 1,
+              "paragraphIds": [
+                "P002"
+              ],
+              "globalStartChar": 444,
+              "globalEndChar": 480,
+              "segmentStartChar": 444,
+              "segmentEndChar": 480,
+              "response": {
+                "path": "outputs/managed/interview-video-analysis/transcripts/transcribe-biren-20261117-part-001.raw.json",
+                "sha256": "a63209c21fb2d3ab85b7a0cf374d78c726d1718bb26e2e8935d03fa72d387cd0"
+              },
+              "coarseAudioRange": {
+                "startSeconds": 0,
+                "endSeconds": 299.8,
+                "precision": "whole-audio-segment-only"
+              },
+              "verification": "exact-substring-in-index-and-raw-response",
+              "acousticVerified": false
+            },
+            {
+              "quote": "其中模型的算子方面是由算子同事进行实现的",
+              "segmentIndex": 2,
+              "paragraphIds": [
+                "P003"
+              ],
+              "globalStartChar": 662,
+              "globalEndChar": 682,
+              "segmentStartChar": 180,
+              "segmentEndChar": 200,
+              "response": {
+                "path": "outputs/managed/interview-video-analysis/transcripts/transcribe-biren-20261117-part-002.raw.json",
+                "sha256": "c8ae0064fc0d469f0624e7dfb8611080d21fc667ef62a72f485acb8ae6d6d682"
+              },
+              "coarseAudioRange": {
+                "startSeconds": 299.8,
+                "endSeconds": 599.6,
+                "precision": "whole-audio-segment-only"
+              },
+              "verification": "exact-substring-in-index-and-raw-response",
+              "acousticVerified": false
+            }
+          ],
+          "hydrogenEvidence": [
+            {
+              "quote": "框架侧实现，以及与算子和运行时（Runtime）团队对齐接口、支持客户交付与模型使用问题",
+              "startChar": 3151,
+              "endChar": 3195,
+              "section": "### Q1：",
+              "claimType": "model-reported-audio-content",
+              "verification": "exact-substring-in-model-output",
+              "acousticVerified": false
+            },
+            {
+              "quote": "算子侧由算子同事实现",
+              "startChar": 3293,
+              "endChar": 3303,
+              "section": "### Q1：",
+              "claimType": "model-reported-audio-content",
+              "verification": "exact-substring-in-model-output",
+              "acousticVerified": false
+            }
+          ],
+          "assessment": "两路均区分框架侧工作与算子同事的实现。可以保留协作边界，不把合作成果全部归于个人；职责、上线和收益仍是现场自述。",
+          "disposition": "retain-with-self-report-boundary",
+          "comparisonId": "C001"
+        }
+      ]
+    },
+    {
+      "questionId": "Q2",
+      "title": "混合缓存与拆池适配",
+      "hydrogenQuestionIds": [
+        "Q2"
+      ],
+      "checks": [
+        {
+          "classification": "supported",
+          "subject": "递推状态/卷积尾状态分开存储并减少隐式拷贝",
+          "asrEvidence": [
+            {
+              "quote": "把原本池给拆成两部分，就是递推矩阵池和一个卷积尾部池",
+              "segmentIndex": 2,
+              "paragraphIds": [
+                "P006"
+              ],
+              "globalStartChar": 1775,
+              "globalEndChar": 1801,
+              "segmentStartChar": 1293,
+              "segmentEndChar": 1319,
+              "response": {
+                "path": "outputs/managed/interview-video-analysis/transcripts/transcribe-biren-20261117-part-002.raw.json",
+                "sha256": "c8ae0064fc0d469f0624e7dfb8611080d21fc667ef62a72f485acb8ae6d6d682"
+              },
+              "coarseAudioRange": {
+                "startSeconds": 299.8,
+                "endSeconds": 599.6,
+                "precision": "whole-audio-segment-only"
+              },
+              "verification": "exact-substring-in-index-and-raw-response",
+              "acousticVerified": false
+            },
+            {
+              "quote": "让算子去直接从一个连续的连续池里面去读，然后这样子性能会好很多",
+              "segmentIndex": 2,
+              "paragraphIds": [
+                "P006"
+              ],
+              "globalStartChar": 1809,
+              "globalEndChar": 1840,
+              "segmentStartChar": 1327,
+              "segmentEndChar": 1358,
+              "response": {
+                "path": "outputs/managed/interview-video-analysis/transcripts/transcribe-biren-20261117-part-002.raw.json",
+                "sha256": "c8ae0064fc0d469f0624e7dfb8611080d21fc667ef62a72f485acb8ae6d6d682"
+              },
+              "coarseAudioRange": {
+                "startSeconds": 299.8,
+                "endSeconds": 599.6,
+                "precision": "whole-audio-segment-only"
+              },
+              "verification": "exact-substring-in-index-and-raw-response",
+              "acousticVerified": false
+            }
+          ],
+          "hydrogenEvidence": [
+            {
+              "quote": "将原生统一内存池拆分为“递推矩阵池”与“卷积尾部池”两个独立连续池",
+              "startChar": 4193,
+              "endChar": 4226,
+              "section": "### Q2：",
+              "claimType": "model-reported-audio-content",
+              "verification": "exact-substring-in-model-output",
+              "acousticVerified": false
+            },
+            {
+              "quote": "使算子能直接从连续池中按对齐格式读取，从而显著提升性能",
+              "startChar": 4227,
+              "endChar": 4254,
+              "section": "### Q2：",
+              "claimType": "model-reported-audio-content",
+              "verification": "exact-substring-in-model-output",
+              "acousticVerified": false
+            }
+          ],
+          "assessment": "拆池与布局动机得到两路支持；两者都没有提供可复算加速比或实测时间线。“显著提升”仍只是模型对现场定性自述的转述。",
+          "disposition": "retain-mechanism-without-invented-metrics",
+          "comparisonId": "C002"
+        },
+        {
+          "classification": "conflict",
+          "subject": "第一类状态是 FP16 还是 FP32",
+          "asrEvidence": [
+            {
+              "quote": "一部分是 FP16，一部分是那个 BF16",
+              "segmentIndex": 2,
+              "paragraphIds": [
+                "P005"
+              ],
+              "globalStartChar": 1372,
+              "globalEndChar": 1393,
+              "segmentStartChar": 890,
+              "segmentEndChar": 911,
+              "response": {
+                "path": "outputs/managed/interview-video-analysis/transcripts/transcribe-biren-20261117-part-002.raw.json",
+                "sha256": "c8ae0064fc0d469f0624e7dfb8611080d21fc667ef62a72f485acb8ae6d6d682"
+              },
+              "coarseAudioRange": {
+                "startSeconds": 299.8,
+                "endSeconds": 599.6,
+                "precision": "whole-audio-segment-only"
+              },
+              "verification": "exact-substring-in-index-and-raw-response",
+              "acousticVerified": false
+            }
+          ],
+          "hydrogenEvidence": [
+            {
+              "quote": "一部分为 `FP32` `[待回听]`，一部分为 `BF16`",
+              "startChar": 3985,
+              "endChar": 4016,
+              "section": "### Q2：",
+              "claimType": "model-reported-audio-content",
+              "verification": "exact-substring-in-model-output",
+              "acousticVerified": false
+            }
+          ],
+          "assessment": "两路在第一类 dtype 上直接不一致。Hydrogen 已标待回听；公开实现默认值即使更接近某一方，也不能决定现场说了什么或自研后端用了什么。",
+          "disposition": "relisten-and-check-actual-tensor-dtype",
+          "comparisonId": "C003"
+        },
+        {
+          "classification": "unconfirmed",
+          "subject": "卷积尾状态的维度术语和 int8 字节池含义",
+          "asrEvidence": [
+            {
+              "quote": "大概应该就是 3×一个 head dim",
+              "segmentIndex": 2,
+              "paragraphIds": [
+                "P005"
+              ],
+              "globalStartChar": 1455,
+              "globalEndChar": 1475,
+              "segmentStartChar": 973,
+              "segmentEndChar": 993,
+              "response": {
+                "path": "outputs/managed/interview-video-analysis/transcripts/transcribe-biren-20261117-part-002.raw.json",
+                "sha256": "c8ae0064fc0d469f0624e7dfb8611080d21fc667ef62a72f485acb8ae6d6d682"
+              },
+              "coarseAudioRange": {
+                "startSeconds": 299.8,
+                "endSeconds": 599.6,
+                "precision": "whole-audio-segment-only"
+              },
+              "verification": "exact-substring-in-index-and-raw-response",
+              "acousticVerified": false
+            },
+            {
+              "quote": "为每一层都申请一个 int8 类型的",
+              "segmentIndex": 2,
+              "paragraphIds": [
+                "P005"
+              ],
+              "globalStartChar": 1248,
+              "globalEndChar": 1266,
+              "segmentStartChar": 766,
+              "segmentEndChar": 784,
+              "response": {
+                "path": "outputs/managed/interview-video-analysis/transcripts/transcribe-biren-20261117-part-002.raw.json",
+                "sha256": "c8ae0064fc0d469f0624e7dfb8611080d21fc667ef62a72f485acb8ae6d6d682"
+              },
+              "coarseAudioRange": {
+                "startSeconds": 299.8,
+                "endSeconds": 599.6,
+                "precision": "whole-audio-segment-only"
+              },
+              "verification": "exact-substring-in-index-and-raw-response",
+              "acousticVerified": false
+            }
+          ],
+          "hydrogenEvidence": [
+            {
+              "quote": "卷积尾部为最后 3 个 token 即 `3×hidden_dim`",
+              "startChar": 4044,
+              "endChar": 4078,
+              "section": "### Q2：",
+              "claimType": "model-reported-audio-content",
+              "verification": "exact-substring-in-model-output",
+              "acousticVerified": false
+            },
+            {
+              "quote": "为每层申请一块完整平铺开来的 `int8` 内存块",
+              "startChar": 3929,
+              "endChar": 3954,
+              "section": "### Q2：",
+              "claimType": "model-reported-audio-content",
+              "verification": "exact-substring-in-model-output",
+              "acousticVerified": false
+            }
+          ],
+          "assessment": "head dim 与 hidden_dim 不是可静默互换的完整 shape 定义。两路关于 int8 池的转述也不证明模型按 int8 数值计算；需区分存储视图、实际 dtype、stride 和后端接口。",
+          "disposition": "keep-shape-and-storage-semantics-pending",
+          "comparisonId": "C004"
+        }
+      ]
+    },
+    {
+      "questionId": "Q3",
+      "title": "8×128×128 的轴含义",
+      "hydrogenQuestionIds": [
+        "Q3"
+      ],
+      "checks": [
+        {
+          "classification": "supported",
+          "subject": "给出 head/K/V 维度线索但轴序与来源未说清",
+          "asrEvidence": [
+            {
+              "quote": "我一下一下子有点想不起来",
+              "segmentIndex": 2,
+              "paragraphIds": [
+                "P007"
+              ],
+              "globalStartChar": 1886,
+              "globalEndChar": 1898,
+              "segmentStartChar": 1404,
+              "segmentEndChar": 1416,
+              "response": {
+                "path": "outputs/managed/interview-video-analysis/transcripts/transcribe-biren-20261117-part-002.raw.json",
+                "sha256": "c8ae0064fc0d469f0624e7dfb8611080d21fc667ef62a72f485acb8ae6d6d682"
+              },
+              "coarseAudioRange": {
+                "startSeconds": 299.8,
+                "endSeconds": 599.6,
+                "precision": "whole-audio-segment-only"
+              },
+              "verification": "exact-substring-in-index-and-raw-response",
+              "acousticVerified": false
+            },
+            {
+              "quote": "应该是 head，然后 DV， DK， 还有 DK， DV",
+              "segmentIndex": 2,
+              "paragraphIds": [
+                "P007"
+              ],
+              "globalStartChar": 1981,
+              "globalEndChar": 2010,
+              "segmentStartChar": 1499,
+              "segmentEndChar": 1528,
+              "response": {
+                "path": "outputs/managed/interview-video-analysis/transcripts/transcribe-biren-20261117-part-002.raw.json",
+                "sha256": "c8ae0064fc0d469f0624e7dfb8611080d21fc667ef62a72f485acb8ae6d6d682"
+              },
+              "coarseAudioRange": {
+                "startSeconds": 299.8,
+                "endSeconds": 599.6,
+                "precision": "whole-audio-segment-only"
+              },
+              "verification": "exact-substring-in-index-and-raw-response",
+              "acousticVerified": false
+            }
+          ],
+          "hydrogenEvidence": [
+            {
+              "quote": "两个 `128` 分别对应 `K` 的维度（`d_k`）与 `V` 的维度（`d_v`）",
+              "startChar": 4669,
+              "endChar": 4713,
+              "section": "### Q3：",
+              "claimType": "model-reported-audio-content",
+              "verification": "exact-substring-in-model-output",
+              "acousticVerified": false
+            },
+            {
+              "quote": "无法当场确认具体是全局 head 数还是单卡切分后的 head 数，亦不确定轴序",
+              "startChar": 4919,
+              "endChar": 4959,
+              "section": "### Q3：",
+              "claimType": "model-assessment",
+              "verification": "exact-substring-in-model-output",
+              "acousticVerified": false
+            }
+          ],
+          "assessment": "两路支持“有轴语义线索，但未形成清楚的配置推导”。不能把尺寸本身判错；技术核查中的 TP8 相容性属于后续解释，不能倒填为现场已经说明。",
+          "disposition": "retain-narrow-observation-not-numeric-error",
+          "comparisonId": "C005"
+        }
+      ]
+    },
+    {
+      "questionId": "Q4",
+      "title": "MLA 的 latent、Q 路径与位置编码",
+      "hydrogenQuestionIds": [
+        "Q4"
+      ],
+      "checks": [
+        {
+          "classification": "supported",
+          "subject": "latent 缓存主旨与 Q 不缓存的现场说法",
+          "asrEvidence": [
+            {
+              "quote": "把这个 latent 的 latent 给保存到我们的 cache 中",
+              "segmentIndex": 3,
+              "paragraphIds": [
+                "P010"
+              ],
+              "globalStartChar": 3050,
+              "globalEndChar": 3085,
+              "segmentStartChar": 1027,
+              "segmentEndChar": 1062,
+              "response": {
+                "path": "outputs/managed/interview-video-analysis/transcripts/transcribe-biren-20261117-part-003.raw.json",
+                "sha256": "1c7f1526c2ed01d3fe864ca5e8a66ef1a8ab037f5078391ceeed4ac3b2e57289"
+              },
+              "coarseAudioRange": {
+                "startSeconds": 599.6,
+                "endSeconds": 899.4,
+                "precision": "whole-audio-segment-only"
+              },
+              "verification": "exact-substring-in-index-and-raw-response",
+              "acousticVerified": false
+            },
+            {
+              "quote": "Q 并没有，我记得并没有进行一个压缩",
+              "segmentIndex": 3,
+              "paragraphIds": [
+                "P011"
+              ],
+              "globalStartChar": 3165,
+              "globalEndChar": 3183,
+              "segmentStartChar": 1142,
+              "segmentEndChar": 1160,
+              "response": {
+                "path": "outputs/managed/interview-video-analysis/transcripts/transcribe-biren-20261117-part-003.raw.json",
+                "sha256": "1c7f1526c2ed01d3fe864ca5e8a66ef1a8ab037f5078391ceeed4ac3b2e57289"
+              },
+              "coarseAudioRange": {
+                "startSeconds": 599.6,
+                "endSeconds": 899.4,
+                "precision": "whole-audio-segment-only"
+              },
+              "verification": "exact-substring-in-index-and-raw-response",
+              "acousticVerified": false
+            }
+          ],
+          "hydrogenEvidence": [
+            {
+              "quote": "推理时仅将体积较小的 `latent` 向量存入 `Cache`",
+              "startChar": 5466,
+              "endChar": 5498,
+              "section": "### Q4：",
+              "claimType": "model-reported-audio-content",
+              "verification": "exact-substring-in-model-output",
+              "acousticVerified": false
+            },
+            {
+              "quote": "认为 `Q` 不占 `Cache`，直接通过投影从 `x` 得到",
+              "startChar": 5580,
+              "endChar": 5612,
+              "section": "### Q4：",
+              "claimType": "model-reported-audio-content",
+              "verification": "exact-substring-in-model-output",
+              "acousticVerified": false
+            }
+          ],
+          "assessment": "Hydrogen支持低秩缓存主旨，并以概述方式保留Q直接投影的现场说法；不缓存历史Q不能据此推出具体模型的Q无低秩路径。",
+          "disposition": "retain-actual-answer-separate-technical-correction",
+          "comparisonId": "C006"
+        },
+        {
+          "classification": "supported",
+          "subject": "RoPE 是面试官提示后才回应",
+          "asrEvidence": [
+            {
+              "quote": "你这里是不是没有考虑，呃，旋转位置编码",
+              "segmentIndex": 3,
+              "paragraphIds": [
+                "P011"
+              ],
+              "globalStartChar": 3260,
+              "globalEndChar": 3279,
+              "segmentStartChar": 1237,
+              "segmentEndChar": 1256,
+              "response": {
+                "path": "outputs/managed/interview-video-analysis/transcripts/transcribe-biren-20261117-part-003.raw.json",
+                "sha256": "1c7f1526c2ed01d3fe864ca5e8a66ef1a8ab037f5078391ceeed4ac3b2e57289"
+              },
+              "coarseAudioRange": {
+                "startSeconds": 599.6,
+                "endSeconds": 899.4,
+                "precision": "whole-audio-segment-only"
+              },
+              "verification": "exact-substring-in-index-and-raw-response",
+              "acousticVerified": false
+            },
+            {
+              "quote": "我默认旋转位置编码在在前面就已经做好了",
+              "segmentIndex": 3,
+              "paragraphIds": [
+                "P011"
+              ],
+              "globalStartChar": 3296,
+              "globalEndChar": 3315,
+              "segmentStartChar": 1273,
+              "segmentEndChar": 1292,
+              "response": {
+                "path": "outputs/managed/interview-video-analysis/transcripts/transcribe-biren-20261117-part-003.raw.json",
+                "sha256": "1c7f1526c2ed01d3fe864ca5e8a66ef1a8ab037f5078391ceeed4ac3b2e57289"
+              },
+              "coarseAudioRange": {
+                "startSeconds": 599.6,
+                "endSeconds": 899.4,
+                "precision": "whole-audio-segment-only"
+              },
+              "verification": "exact-substring-in-index-and-raw-response",
+              "acousticVerified": false
+            }
+          ],
+          "hydrogenEvidence": [
+            {
+              "quote": "面试官提醒：“你这里是不是没有考虑旋转位置编码？”",
+              "startChar": 5769,
+              "endChar": 5794,
+              "section": "### Q4：",
+              "claimType": "model-reported-audio-content",
+              "verification": "exact-substring-in-model-output",
+              "acousticVerified": false
+            },
+            {
+              "quote": "承认未提，并解释“因为我默认旋转位置编码在前面就已经做好了”",
+              "startChar": 5809,
+              "endChar": 5839,
+              "section": "### Q4：",
+              "claimType": "model-reported-audio-content",
+              "verification": "exact-substring-in-model-output",
+              "acousticVerified": false
+            }
+          ],
+          "assessment": "提示归属两路相符。不能将提示后的回应写成独立完整推导，也不能替现场补成已明确解释NoPE。",
+          "disposition": "retain-prompt-attribution",
+          "comparisonId": "C007"
+        },
+        {
+          "classification": "unconfirmed",
+          "subject": "将标准解耦 RoPE 直接作为本场模型的必答项",
+          "asrEvidence": [
+            {
+              "quote": "我默认旋转位置编码在在前面就已经做好了",
+              "segmentIndex": 3,
+              "paragraphIds": [
+                "P011"
+              ],
+              "globalStartChar": 3296,
+              "globalEndChar": 3315,
+              "segmentStartChar": 1273,
+              "segmentEndChar": 1292,
+              "response": {
+                "path": "outputs/managed/interview-video-analysis/transcripts/transcribe-biren-20261117-part-003.raw.json",
+                "sha256": "1c7f1526c2ed01d3fe864ca5e8a66ef1a8ab037f5078391ceeed4ac3b2e57289"
+              },
+              "coarseAudioRange": {
+                "startSeconds": 599.6,
+                "endSeconds": 899.4,
+                "precision": "whole-audio-segment-only"
+              },
+              "verification": "exact-substring-in-index-and-raw-response",
+              "acousticVerified": false
+            }
+          ],
+          "hydrogenEvidence": [
+            {
+              "quote": "未体现标准 MLA 中为兼容矩阵吸收而采用的解耦 RoPE 设计",
+              "startChar": 6059,
+              "endChar": 6091,
+              "section": "### Q4：",
+              "claimType": "model-assessment",
+              "verification": "exact-substring-in-model-output",
+              "acousticVerified": false
+            }
+          ],
+          "assessment": "这是Hydrogen的技术评价，不是新增声学证据。既有技术核查已区分本场GLM NoPE配置与带RoPE参考变体；不能用通用变体要求断定本场实现缺少必要RoPE。仍需澄清现场推导对象和Q路径。",
+          "disposition": "do-not-adopt-generic-rope-verdict",
+          "comparisonId": "C008"
+        }
+      ]
+    },
+    {
+      "questionId": "Q5",
+      "title": "TP8 部署与当前 MoE 并行模式",
+      "hydrogenQuestionIds": [
+        "Q5",
+        "Q6"
+      ],
+      "checks": [
+        {
+          "classification": "supported",
+          "subject": "选择 TP8 的通信/缓存理由及当前 Attention、MoE 都是 TP8",
+          "asrEvidence": [
+            {
+              "quote": "我们一张卡是有64GB",
+              "segmentIndex": 4,
+              "paragraphIds": [
+                "P012"
+              ],
+              "globalStartChar": 3616,
+              "globalEndChar": 3627,
+              "segmentStartChar": 299,
+              "segmentEndChar": 310,
+              "response": {
+                "path": "outputs/managed/interview-video-analysis/transcripts/transcribe-biren-20261117-part-004.raw.json",
+                "sha256": "3d6ed530f89f66575349bfe78901c1848408786464fc6166b48d15d3e186d469"
+              },
+              "coarseAudioRange": {
+                "startSeconds": 899.4,
+                "endSeconds": 1199.2,
+                "precision": "whole-audio-segment-only"
+              },
+              "verification": "exact-substring-in-index-and-raw-response",
+              "acousticVerified": false
+            },
+            {
+              "quote": "现在就相当于是你Attention、MOE都是TP8，是这个意思吗？对对对对对",
+              "segmentIndex": 4,
+              "paragraphIds": [
+                "P015"
+              ],
+              "globalStartChar": 4526,
+              "globalEndChar": 4565,
+              "segmentStartChar": 1209,
+              "segmentEndChar": 1248,
+              "response": {
+                "path": "outputs/managed/interview-video-analysis/transcripts/transcribe-biren-20261117-part-004.raw.json",
+                "sha256": "3d6ed530f89f66575349bfe78901c1848408786464fc6166b48d15d3e186d469"
+              },
+              "coarseAudioRange": {
+                "startSeconds": 899.4,
+                "endSeconds": 1199.2,
+                "precision": "whole-audio-segment-only"
+              },
+              "verification": "exact-substring-in-index-and-raw-response",
+              "acousticVerified": false
+            }
+          ],
+          "hydrogenEvidence": [
+            {
+              "quote": "单卡显存 `64GB`，8 卡总计 `512GB`",
+              "startChar": 6354,
+              "endChar": 6379,
+              "section": "### Q5：",
+              "claimType": "model-reported-audio-content",
+              "verification": "exact-substring-in-model-output",
+              "acousticVerified": false
+            },
+            {
+              "quote": "当前 Attention 与 MoE **均为 `TP8`**",
+              "startChar": 7109,
+              "endChar": 7140,
+              "section": "### Q6：",
+              "claimType": "model-reported-audio-content",
+              "verification": "exact-substring-in-model-output",
+              "acousticVerified": false
+            }
+          ],
+          "assessment": "Hydrogen把旧Q5的确认追问单独编号为Q6，属于分组变化，不是新增面试题。两路支持当前并行配置自述；不证明其在所有约束下最优。",
+          "disposition": "retain-old-q5-and-map-two-hydrogen-sections",
+          "comparisonId": "C009"
+        },
+        {
+          "classification": "additional",
+          "subject": "量化权重单位补为 G/GB",
+          "asrEvidence": [
+            {
+              "quote": "200字左右，一百两百字200字不到一点",
+              "segmentIndex": 4,
+              "paragraphIds": [
+                "P012"
+              ],
+              "globalStartChar": 3593,
+              "globalEndChar": 3613,
+              "segmentStartChar": 276,
+              "segmentEndChar": 296,
+              "response": {
+                "path": "outputs/managed/interview-video-analysis/transcripts/transcribe-biren-20261117-part-004.raw.json",
+                "sha256": "3d6ed530f89f66575349bfe78901c1848408786464fc6166b48d15d3e186d469"
+              },
+              "coarseAudioRange": {
+                "startSeconds": 899.4,
+                "endSeconds": 1199.2,
+                "precision": "whole-audio-segment-only"
+              },
+              "verification": "exact-substring-in-index-and-raw-response",
+              "acousticVerified": false
+            }
+          ],
+          "hydrogenEvidence": [
+            {
+              "quote": "权重体积约“100 到 200G 左右，200G 不到一点”",
+              "startChar": 6323,
+              "endChar": 6353,
+              "section": "### Q5：",
+              "claimType": "model-reported-audio-content",
+              "verification": "exact-substring-in-model-output",
+              "acousticVerified": false
+            }
+          ],
+          "assessment": "Hydrogen提供了ASR不清单位的候选读法。不能只因单位更合常识就确定为近200GB；原报告仍应保留单位待回听及与具体模型/量化配置核对的边界。",
+          "disposition": "candidate-unit-only",
+          "comparisonId": "C010"
+        },
+        {
+          "classification": "unconfirmed",
+          "subject": "TP4+DP2 必然引入 EP 与 token 维确认的顺序",
+          "asrEvidence": [
+            {
+              "quote": "如果我们是TP4、DP2的话，这种的话我们就会需要引入MOE的那个",
+              "segmentIndex": 4,
+              "paragraphIds": [
+                "P015"
+              ],
+              "globalStartChar": 4453,
+              "globalEndChar": 4486,
+              "segmentStartChar": 1136,
+              "segmentEndChar": 1169,
+              "response": {
+                "path": "outputs/managed/interview-video-analysis/transcripts/transcribe-biren-20261117-part-004.raw.json",
+                "sha256": "3d6ed530f89f66575349bfe78901c1848408786464fc6166b48d15d3e186d469"
+              },
+              "coarseAudioRange": {
+                "startSeconds": 899.4,
+                "endSeconds": 1199.2,
+                "precision": "whole-audio-segment-only"
+              },
+              "verification": "exact-substring-in-index-and-raw-response",
+              "acousticVerified": false
+            },
+            {
+              "quote": "每一块卡上算出完整Token是吧？对对对对对是的",
+              "segmentIndex": 6,
+              "paragraphIds": [
+                "P022"
+              ],
+              "globalStartChar": 6587,
+              "globalEndChar": 6611,
+              "segmentStartChar": 121,
+              "segmentEndChar": 145,
+              "response": {
+                "path": "outputs/managed/interview-video-analysis/transcripts/transcribe-biren-20261117-part-006.raw.json",
+                "sha256": "3725323e94a941231b5633aca593dda453bf03927131a04ae42701efd95e64a6"
+              },
+              "coarseAudioRange": {
+                "startSeconds": 1499,
+                "endSeconds": 1798.8,
+                "precision": "whole-audio-segment-only"
+              },
+              "verification": "exact-substring-in-index-and-raw-response",
+              "acousticVerified": false
+            }
+          ],
+          "hydrogenEvidence": [
+            {
+              "quote": "只有假设采用 `TP4 + DP2` 时才需要引入 MoE 的 `EP` 通信",
+              "startChar": 7141,
+              "endChar": 7180,
+              "section": "### Q6：",
+              "claimType": "model-reported-audio-content",
+              "verification": "exact-substring-in-model-output",
+              "acousticVerified": false
+            },
+            {
+              "quote": "面试官补充追问了一句，确认无切分 token",
+              "startChar": 7266,
+              "endChar": 7288,
+              "section": "### Q6：",
+              "claimType": "model-reported-audio-content",
+              "verification": "exact-substring-in-model-output",
+              "acousticVerified": false
+            }
+          ],
+          "assessment": "EP与TP/DP的关系需绑定具体后端配置，不能推广成通用必然关系。Hydrogen还将不切token的确认归并到Q6；ASR对应文字位于后面的Graph讨论P022。保留语义，不把模型分组当精确对话顺序。",
+          "disposition": "keep-configuration-and-order-qualified",
+          "comparisonId": "C011"
+        }
+      ]
+    },
+    {
+      "questionId": "Q6",
+      "title": "MoE TP8/EP8 的峰值显存",
+      "hydrogenQuestionIds": [
+        "Q7"
+      ],
+      "checks": [
+        {
+          "classification": "supported",
+          "subject": "回答重点是 Graph/EP 最坏接收量的缓冲区",
+          "asrEvidence": [
+            {
+              "quote": "最坏的那个接收 token 的数量",
+              "segmentIndex": 5,
+              "paragraphIds": [
+                "P017"
+              ],
+              "globalStartChar": 4987,
+              "globalEndChar": 5004,
+              "segmentStartChar": 247,
+              "segmentEndChar": 264,
+              "response": {
+                "path": "outputs/managed/interview-video-analysis/transcripts/transcribe-biren-20261117-part-005.raw.json",
+                "sha256": "6a124945ab9bc65989b16e013173dde5c9e58b1dca4d98f9160616377bee20e4"
+              },
+              "coarseAudioRange": {
+                "startSeconds": 1199.2,
+                "endSeconds": 1499,
+                "precision": "whole-audio-segment-only"
+              },
+              "verification": "exact-substring-in-index-and-raw-response",
+              "acousticVerified": false
+            },
+            {
+              "quote": "大概在几百兆到一个 G 之间",
+              "segmentIndex": 5,
+              "paragraphIds": [
+                "P018"
+              ],
+              "globalStartChar": 5199,
+              "globalEndChar": 5213,
+              "segmentStartChar": 459,
+              "segmentEndChar": 473,
+              "response": {
+                "path": "outputs/managed/interview-video-analysis/transcripts/transcribe-biren-20261117-part-005.raw.json",
+                "sha256": "6a124945ab9bc65989b16e013173dde5c9e58b1dca4d98f9160616377bee20e4"
+              },
+              "coarseAudioRange": {
+                "startSeconds": 1199.2,
+                "endSeconds": 1499,
+                "precision": "whole-audio-segment-only"
+              },
+              "verification": "exact-substring-in-index-and-raw-response",
+              "acousticVerified": false
+            }
+          ],
+          "hydrogenEvidence": [
+            {
+              "quote": "必须按最坏情况预留显存缓冲区",
+              "startChar": 7719,
+              "endChar": 7733,
+              "section": "### Q7：",
+              "claimType": "model-reported-audio-content",
+              "verification": "exact-substring-in-model-output",
+              "acousticVerified": false
+            },
+            {
+              "quote": "这块预留缓冲区大概在“几百兆到 1 个 G 之间”",
+              "startChar": 7784,
+              "endChar": 7809,
+              "section": "### Q7：",
+              "claimType": "model-reported-audio-content",
+              "verification": "exact-substring-in-model-output",
+              "acousticVerified": false
+            }
+          ],
+          "assessment": "两路都记录了缓冲区这一实际考虑，也都没有完整给出静态权重、激活、通信workspace和Graph池的统一峰值账本。",
+          "disposition": "retain-partial-memory-analysis",
+          "comparisonId": "C012"
+        },
+        {
+          "classification": "unconfirmed",
+          "subject": "整理后的公式与是否实际做过 EP 规划",
+          "asrEvidence": [
+            {
+              "quote": "专家数乘以这个，嗯，嗯，最大的 token，嗯，最大 token 数，然后再，然后再，嗯，最大的那个调度的 token 数",
+              "segmentIndex": 5,
+              "paragraphIds": [
+                "P017"
+              ],
+              "globalStartChar": 5035,
+              "globalEndChar": 5096,
+              "segmentStartChar": 295,
+              "segmentEndChar": 356,
+              "response": {
+                "path": "outputs/managed/interview-video-analysis/transcripts/transcribe-biren-20261117-part-005.raw.json",
+                "sha256": "6a124945ab9bc65989b16e013173dde5c9e58b1dca4d98f9160616377bee20e4"
+              },
+              "coarseAudioRange": {
+                "startSeconds": 1199.2,
+                "endSeconds": 1499,
+                "precision": "whole-audio-segment-only"
+              },
+              "verification": "exact-substring-in-index-and-raw-response",
+              "acousticVerified": false
+            },
+            {
+              "quote": "head 维度",
+              "segmentIndex": 5,
+              "paragraphIds": [
+                "P017"
+              ],
+              "globalStartChar": 5112,
+              "globalEndChar": 5119,
+              "segmentStartChar": 372,
+              "segmentEndChar": 379,
+              "response": {
+                "path": "outputs/managed/interview-video-analysis/transcripts/transcribe-biren-20261117-part-005.raw.json",
+                "sha256": "6a124945ab9bc65989b16e013173dde5c9e58b1dca4d98f9160616377bee20e4"
+              },
+              "coarseAudioRange": {
+                "startSeconds": 1199.2,
+                "endSeconds": 1499,
+                "precision": "whole-audio-segment-only"
+              },
+              "verification": "exact-substring-in-index-and-raw-response",
+              "acousticVerified": false
+            }
+          ],
+          "hydrogenEvidence": [
+            {
+              "quote": "大小估算为“专家数 × 最大调度的 token 数 × hidden 维度”",
+              "startChar": 7734,
+              "endChar": 7772,
+              "section": "### Q7：",
+              "claimType": "model-reported-audio-content",
+              "verification": "exact-substring-in-model-output",
+              "acousticVerified": false
+            },
+            {
+              "quote": "体现了实际做过 EP + CUDA/Device Graph 静态内存规划的思考视角",
+              "startChar": 7940,
+              "endChar": 7982,
+              "section": "### Q7：",
+              "claimType": "model-assessment",
+              "verification": "exact-substring-in-model-output",
+              "acousticVerified": false
+            }
+          ],
+          "assessment": "Hydrogen把口述整理成更规整的公式，但ASR中的变量、重复和head/hidden定义并未核实。对实际做过何种EP/Graph实现的判断也不能由一段估算单独证明。",
+          "disposition": "do-not-promote-normalized-formula-or-experience-inference",
+          "comparisonId": "C013"
+        }
+      ]
+    },
+    {
+      "questionId": "Q7",
+      "title": "AllReduce/All-to-All 与 torus 拓扑",
+      "hydrogenQuestionIds": [
+        "Q8"
+      ],
+      "checks": [
+        {
+          "classification": "supported",
+          "subject": "以 torus、多跳和坏链路解释通信难度",
+          "asrEvidence": [
+            {
+              "quote": "2D torus 还有 3D torus",
+              "segmentIndex": 5,
+              "paragraphIds": [
+                "P019"
+              ],
+              "globalStartChar": 5434,
+              "globalEndChar": 5454,
+              "segmentStartChar": 694,
+              "segmentEndChar": 714,
+              "response": {
+                "path": "outputs/managed/interview-video-analysis/transcripts/transcribe-biren-20261117-part-005.raw.json",
+                "sha256": "6a124945ab9bc65989b16e013173dde5c9e58b1dca4d98f9160616377bee20e4"
+              },
+              "coarseAudioRange": {
+                "startSeconds": 1199.2,
+                "endSeconds": 1499,
+                "precision": "whole-audio-segment-only"
+              },
+              "verification": "exact-substring-in-index-and-raw-response",
+              "acousticVerified": false
+            },
+            {
+              "quote": "某几条线路可能是可能是断的",
+              "segmentIndex": 5,
+              "paragraphIds": [
+                "P019"
+              ],
+              "globalStartChar": 5652,
+              "globalEndChar": 5665,
+              "segmentStartChar": 912,
+              "segmentEndChar": 925,
+              "response": {
+                "path": "outputs/managed/interview-video-analysis/transcripts/transcribe-biren-20261117-part-005.raw.json",
+                "sha256": "6a124945ab9bc65989b16e013173dde5c9e58b1dca4d98f9160616377bee20e4"
+              },
+              "coarseAudioRange": {
+                "startSeconds": 1199.2,
+                "endSeconds": 1499,
+                "precision": "whole-audio-segment-only"
+              },
+              "verification": "exact-substring-in-index-and-raw-response",
+              "acousticVerified": false
+            }
+          ],
+          "hydrogenEvidence": [
+            {
+              "quote": "`2D Torus` 或 `3D Torus` 物理拓扑",
+              "startChar": 8234,
+              "endChar": 8262,
+              "section": "### Q8：",
+              "claimType": "model-reported-audio-content",
+              "verification": "exact-substring-in-model-output",
+              "acousticVerified": false
+            },
+            {
+              "quote": "某几条物理链路可能断开",
+              "startChar": 8352,
+              "endChar": 8363,
+              "section": "### Q8：",
+              "claimType": "model-reported-audio-content",
+              "verification": "exact-substring-in-model-output",
+              "acousticVerified": false
+            }
+          ],
+          "assessment": "两路支持候选人的架构与路由约束自述。该叙述不是对实际硬件拓扑、故障率或通信性能的独立验证。",
+          "disposition": "retain-self-reported-topology",
+          "comparisonId": "C014"
+        },
+        {
+          "classification": "unconfirmed",
+          "subject": "把拓扑比较直接评为符合硬件常识",
+          "asrEvidence": [
+            {
+              "quote": "它不是那种那种 NVLink 那种，那个直接走 IP 或者是直连的那种那种路线",
+              "segmentIndex": 5,
+              "paragraphIds": [
+                "P019"
+              ],
+              "globalStartChar": 5528,
+              "globalEndChar": 5567,
+              "segmentStartChar": 788,
+              "segmentEndChar": 827,
+              "response": {
+                "path": "outputs/managed/interview-video-analysis/transcripts/transcribe-biren-20261117-part-005.raw.json",
+                "sha256": "6a124945ab9bc65989b16e013173dde5c9e58b1dca4d98f9160616377bee20e4"
+              },
+              "coarseAudioRange": {
+                "startSeconds": 1199.2,
+                "endSeconds": 1499,
+                "precision": "whole-audio-segment-only"
+              },
+              "verification": "exact-substring-in-index-and-raw-response",
+              "acousticVerified": false
+            }
+          ],
+          "hydrogenEvidence": [
+            {
+              "quote": "回答符合硬件常识",
+              "startChar": 8522,
+              "endChar": 8530,
+              "section": "### Q8：",
+              "claimType": "model-assessment",
+              "verification": "exact-substring-in-model-output",
+              "acousticVerified": false
+            }
+          ],
+          "assessment": "Hydrogen的肯定评价不能消除原文混用链路、拓扑、IP与collective层次的疑点。技术核查与实际测试仍需分开；不据拓扑名直接判断某个collective性能。",
+          "disposition": "do-not-adopt-blanket-technical-endorsement",
+          "comparisonId": "C015"
+        }
+      ]
+    },
+    {
+      "questionId": "Q8",
+      "title": "148762 tokens 与三倍核算纠错",
+      "hydrogenQuestionIds": [
+        "Q9"
+      ],
+      "checks": [
+        {
+          "classification": "supported",
+          "subject": "三倍是纠正容量计算而非真实扩容",
+          "asrEvidence": [
+            {
+              "quote": "其实没有真正的扩大，只是之前把错误的结果给纠正了",
+              "segmentIndex": 5,
+              "paragraphIds": [
+                "P020"
+              ],
+              "globalStartChar": 5984,
+              "globalEndChar": 6008,
+              "segmentStartChar": 1244,
+              "segmentEndChar": 1268,
+              "response": {
+                "path": "outputs/managed/interview-video-analysis/transcripts/transcribe-biren-20261117-part-005.raw.json",
+                "sha256": "6a124945ab9bc65989b16e013173dde5c9e58b1dca4d98f9160616377bee20e4"
+              },
+              "coarseAudioRange": {
+                "startSeconds": 1199.2,
+                "endSeconds": 1499,
+                "precision": "whole-audio-segment-only"
+              },
+              "verification": "exact-substring-in-index-and-raw-response",
+              "acousticVerified": false
+            },
+            {
+              "quote": "因为池的方案不一样",
+              "segmentIndex": 5,
+              "paragraphIds": [
+                "P020"
+              ],
+              "globalStartChar": 6082,
+              "globalEndChar": 6091,
+              "segmentStartChar": 1342,
+              "segmentEndChar": 1351,
+              "response": {
+                "path": "outputs/managed/interview-video-analysis/transcripts/transcribe-biren-20261117-part-005.raw.json",
+                "sha256": "6a124945ab9bc65989b16e013173dde5c9e58b1dca4d98f9160616377bee20e4"
+              },
+              "coarseAudioRange": {
+                "startSeconds": 1199.2,
+                "endSeconds": 1499,
+                "precision": "whole-audio-segment-only"
+              },
+              "verification": "exact-substring-in-index-and-raw-response",
+              "acousticVerified": false
+            }
+          ],
+          "hydrogenEvidence": [
+            {
+              "quote": "这并非真正意义上的架构扩容 3 倍，而是**前期适配时使用了错误的计算结果**",
+              "startChar": 8766,
+              "endChar": 8805,
+              "section": "### Q9：",
+              "claimType": "model-reported-audio-content",
+              "verification": "exact-substring-in-model-output",
+              "acousticVerified": false
+            },
+            {
+              "quote": "后期只是纠正了该错误",
+              "startChar": 8806,
+              "endChar": 8816,
+              "section": "### Q9：",
+              "claimType": "model-reported-audio-content",
+              "verification": "exact-substring-in-model-output",
+              "acousticVerified": false
+            }
+          ],
+          "assessment": "最重要的原结论得到独立音频理解支持：保留“适配和核算纠错”，不能据当前材料继续宣传物理容量/吞吐三倍提升。148762与170+K仍需分别核实测量口径。",
+          "disposition": "retain-corrected-metric-framing",
+          "comparisonId": "C016"
+        },
+        {
+          "classification": "unconfirmed",
+          "subject": "人格/包装评价及建议中新增的浪费、崩溃",
+          "asrEvidence": [
+            {
+              "quote": "其实没有真正的扩大，只是之前把错误的结果给纠正了",
+              "segmentIndex": 5,
+              "paragraphIds": [
+                "P020"
+              ],
+              "globalStartChar": 5984,
+              "globalEndChar": 6008,
+              "segmentStartChar": 1244,
+              "segmentEndChar": 1268,
+              "response": {
+                "path": "outputs/managed/interview-video-analysis/transcripts/transcribe-biren-20261117-part-005.raw.json",
+                "sha256": "6a124945ab9bc65989b16e013173dde5c9e58b1dca4d98f9160616377bee20e4"
+              },
+              "coarseAudioRange": {
+                "startSeconds": 1199.2,
+                "endSeconds": 1499,
+                "precision": "whole-audio-segment-only"
+              },
+              "verification": "exact-substring-in-index-and-raw-response",
+              "acousticVerified": false
+            }
+          ],
+          "hydrogenEvidence": [
+            {
+              "quote": "回答非常诚实，未夸大成果",
+              "startChar": 9123,
+              "endChar": 9135,
+              "section": "### Q9：",
+              "claimType": "model-assessment",
+              "verification": "exact-substring-in-model-output",
+              "acousticVerified": false
+            },
+            {
+              "quote": "消除错配导致的内存浪费/崩溃",
+              "startChar": 18328,
+              "endChar": 18342,
+              "section": "## 6. 后续准备",
+              "claimType": "model-supplemental-suggestion",
+              "verification": "exact-substring-in-model-output",
+              "acousticVerified": false
+            }
+          ],
+          "assessment": "纠正数字不能用于推断人格或动机。Hydrogen建议的“内存浪费/崩溃”未得到本场两路文本证明，不得加入履历成果或示范回答。保留可以验证的适配动作与核算修正。",
+          "disposition": "exclude-character-judgment-and-invented-outcomes",
+          "comparisonId": "C017"
+        }
+      ]
+    },
+    {
+      "questionId": "Q9",
+      "title": "Decode Graph 的 token 分桶",
+      "hydrogenQuestionIds": [
+        "Q10"
+      ],
+      "checks": [
+        {
+          "classification": "supported",
+          "subject": "澄清 token/batch padding、小规模稠密捕获及到256",
+          "asrEvidence": [
+            {
+              "quote": "对Token维度的Padding",
+              "segmentIndex": 6,
+              "paragraphIds": [
+                "P022"
+              ],
+              "globalStartChar": 6641,
+              "globalEndChar": 6657,
+              "segmentStartChar": 175,
+              "segmentEndChar": 191,
+              "response": {
+                "path": "outputs/managed/interview-video-analysis/transcripts/transcribe-biren-20261117-part-006.raw.json",
+                "sha256": "3725323e94a941231b5633aca593dda453bf03927131a04ae42701efd95e64a6"
+              },
+              "coarseAudioRange": {
+                "startSeconds": 1499,
+                "endSeconds": 1798.8,
+                "precision": "whole-audio-segment-only"
+              },
+              "verification": "exact-substring-in-index-and-raw-response",
+              "acousticVerified": false
+            },
+            {
+              "quote": "从2的幂次一直抓到抓到256",
+              "segmentIndex": 6,
+              "paragraphIds": [
+                "P022"
+              ],
+              "globalStartChar": 6801,
+              "globalEndChar": 6815,
+              "segmentStartChar": 335,
+              "segmentEndChar": 349,
+              "response": {
+                "path": "outputs/managed/interview-video-analysis/transcripts/transcribe-biren-20261117-part-006.raw.json",
+                "sha256": "3725323e94a941231b5633aca593dda453bf03927131a04ae42701efd95e64a6"
+              },
+              "coarseAudioRange": {
+                "startSeconds": 1499,
+                "endSeconds": 1798.8,
+                "precision": "whole-audio-segment-only"
+              },
+              "verification": "exact-substring-in-index-and-raw-response",
+              "acousticVerified": false
+            },
+            {
+              "quote": "123456789都会抓都抓到10都都抓",
+              "segmentIndex": 6,
+              "paragraphIds": [
+                "P022"
+              ],
+              "globalStartChar": 6845,
+              "globalEndChar": 6865,
+              "segmentStartChar": 379,
+              "segmentEndChar": 399,
+              "response": {
+                "path": "outputs/managed/interview-video-analysis/transcripts/transcribe-biren-20261117-part-006.raw.json",
+                "sha256": "3725323e94a941231b5633aca593dda453bf03927131a04ae42701efd95e64a6"
+              },
+              "coarseAudioRange": {
+                "startSeconds": 1499,
+                "endSeconds": 1798.8,
+                "precision": "whole-audio-segment-only"
+              },
+              "verification": "exact-substring-in-index-and-raw-response",
+              "acousticVerified": false
+            }
+          ],
+          "hydrogenEvidence": [
+            {
+              "quote": "**token（batch）维度**上进行 Padding",
+              "startChar": 9456,
+              "endChar": 9485,
+              "section": "### Q10：",
+              "claimType": "model-reported-audio-content",
+              "verification": "exact-substring-in-model-output",
+              "acousticVerified": false
+            },
+            {
+              "quote": "`1, 2, 3, 4, 5, 6, 7, 8, 9, 10` 都会抓",
+              "startChar": 9557,
+              "endChar": 9592,
+              "section": "### Q10：",
+              "claimType": "model-reported-audio-content",
+              "verification": "exact-substring-in-model-output",
+              "acousticVerified": false
+            },
+            {
+              "quote": "后续再按 2 的幂次递增到 `256`",
+              "startChar": 9605,
+              "endChar": 9624,
+              "section": "### Q10：",
+              "claimType": "model-reported-audio-content",
+              "verification": "exact-substring-in-model-output",
+              "acousticVerified": false
+            }
+          ],
+          "assessment": "两路保留了先对齐维度、再补充捕获规模的过程，支持原报告的澄清结论。不能改写为把整个上下文补到256，也不能忽略小规模例外。",
+          "disposition": "retain-clarified-bucketing",
+          "comparisonId": "C018"
+        },
+        {
+          "classification": "unconfirmed",
+          "subject": "把补充1–10直接视为不严密或错误",
+          "asrEvidence": [
+            {
+              "quote": "其实反而前面会抓的比较多",
+              "segmentIndex": 6,
+              "paragraphIds": [
+                "P022"
+              ],
+              "globalStartChar": 6832,
+              "globalEndChar": 6844,
+              "segmentStartChar": 366,
+              "segmentEndChar": 378,
+              "response": {
+                "path": "outputs/managed/interview-video-analysis/transcripts/transcribe-biren-20261117-part-006.raw.json",
+                "sha256": "3725323e94a941231b5633aca593dda453bf03927131a04ae42701efd95e64a6"
+              },
+              "coarseAudioRange": {
+                "startSeconds": 1499,
+                "endSeconds": 1798.8,
+                "precision": "whole-audio-segment-only"
+              },
+              "verification": "exact-substring-in-index-and-raw-response",
+              "acousticVerified": false
+            }
+          ],
+          "hydrogenEvidence": [
+            {
+              "quote": "后又补充 `1–10` 全抓，前后口述不够严密",
+              "startChar": 15334,
+              "endChar": 15357,
+              "section": "## 4. 综合复盘",
+              "claimType": "model-assessment",
+              "verification": "exact-substring-in-model-output",
+              "acousticVerified": false
+            }
+          ],
+          "assessment": "实际回答增加了小batch的例外细节；这不构成两种抓图策略自相矛盾的证据。可以建议先说完整规则，不把正常补充变成确定的技术错误。",
+          "disposition": "do-not-convert-clarification-into-error",
+          "comparisonId": "C019"
+        }
+      ]
+    },
+    {
+      "questionId": "Q10",
+      "title": "D2H 布局、Host接收与完成等待",
+      "hydrogenQuestionIds": [
+        "Q11"
+      ],
+      "checks": [
+        {
+          "classification": "supported",
+          "subject": "设备布局转换与对齐接收空间",
+          "asrEvidence": [
+            {
+              "quote": "一个5×一个128这样子一个大小的一个形状",
+              "segmentIndex": 6,
+              "paragraphIds": [
+                "P025"
+              ],
+              "globalStartChar": 7729,
+              "globalEndChar": 7750,
+              "segmentStartChar": 1263,
+              "segmentEndChar": 1284,
+              "response": {
+                "path": "outputs/managed/interview-video-analysis/transcripts/transcribe-biren-20261117-part-006.raw.json",
+                "sha256": "3725323e94a941231b5633aca593dda453bf03927131a04ae42701efd95e64a6"
+              },
+              "coarseAudioRange": {
+                "startSeconds": 1499,
+                "endSeconds": 1798.8,
+                "precision": "whole-audio-segment-only"
+              },
+              "verification": "exact-substring-in-index-and-raw-response",
+              "acousticVerified": false
+            },
+            {
+              "quote": "我们需要去生成一个128大小的内存",
+              "segmentIndex": 6,
+              "paragraphIds": [
+                "P025"
+              ],
+              "globalStartChar": 8010,
+              "globalEndChar": 8027,
+              "segmentStartChar": 1544,
+              "segmentEndChar": 1561,
+              "response": {
+                "path": "outputs/managed/interview-video-analysis/transcripts/transcribe-biren-20261117-part-006.raw.json",
+                "sha256": "3725323e94a941231b5633aca593dda453bf03927131a04ae42701efd95e64a6"
+              },
+              "coarseAudioRange": {
+                "startSeconds": 1499,
+                "endSeconds": 1798.8,
+                "precision": "whole-audio-segment-only"
+              },
+              "verification": "exact-substring-in-index-and-raw-response",
+              "acousticVerified": false
+            }
+          ],
+          "hydrogenEvidence": [
+            {
+              "quote": "在 device 上实际按 `5×128` 存放",
+              "startChar": 10228,
+              "endChar": 10252,
+              "section": "### Q11：",
+              "claimType": "model-reported-audio-content",
+              "verification": "exact-substring-in-model-output",
+              "acousticVerified": false
+            },
+            {
+              "quote": "在 host 侧申请满足对齐尺寸（例如大小为 `128` 而非 `5`）的内存接收区",
+              "startChar": 10499,
+              "endChar": 10541,
+              "section": "### Q11：",
+              "claimType": "model-reported-audio-content",
+              "verification": "exact-substring-in-model-output",
+              "acousticVerified": false
+            }
+          ],
+          "assessment": "两路支持device侧先重排、Host侧为对齐传输预留空间的主线。元素数、字节数、实际API和布局需代码证明。",
+          "disposition": "retain-data-path-with-implementation-limits",
+          "comparisonId": "C020"
+        },
+        {
+          "classification": "supported",
+          "subject": "CPU消费前确有wait event/stream同步",
+          "asrEvidence": [
+            {
+              "quote": "先要做，要要做 wait event，然后还有，或者是 stream 同步",
+              "segmentIndex": 7,
+              "paragraphIds": [
+                "P027"
+              ],
+              "globalStartChar": 8330,
+              "globalEndChar": 8367,
+              "segmentStartChar": 252,
+              "segmentEndChar": 289,
+              "response": {
+                "path": "outputs/managed/interview-video-analysis/transcripts/transcribe-biren-20261117-part-007.raw.json",
+                "sha256": "0e6026be97daf4fabbc0e800541b6cf7367f089e439ce1d7a86d11f3ba4f6067"
+              },
+              "coarseAudioRange": {
+                "startSeconds": 1798.8,
+                "endSeconds": 2098.6,
+                "precision": "whole-audio-segment-only"
+              },
+              "verification": "exact-substring-in-index-and-raw-response",
+              "acousticVerified": false
+            }
+          ],
+          "hydrogenEvidence": [
+            {
+              "quote": "在下游消费处加入了等待事件（`wait event`）或 `stream` 同步机制",
+              "startChar": 10687,
+              "endChar": 10729,
+              "section": "### Q11：",
+              "claimType": "model-reported-audio-content",
+              "verification": "exact-substring-in-model-output",
+              "acousticVerified": false
+            }
+          ],
+          "assessment": "等待完成后消费得到两路直接支持。不能评价为未考虑同步；具体是设备流依赖还是CPU完成等待，以及生命周期保护，仍须核查。",
+          "disposition": "retain-synchronization-evidence",
+          "comparisonId": "C021"
+        },
+        {
+          "classification": "unconfirmed",
+          "subject": "view零拷贝解释的API精度与工程正确性",
+          "asrEvidence": [
+            {
+              "quote": "直接 view 成一个比较小的张量",
+              "segmentIndex": 7,
+              "paragraphIds": [
+                "P027"
+              ],
+              "globalStartChar": 8220,
+              "globalEndChar": 8237,
+              "segmentStartChar": 142,
+              "segmentEndChar": 159,
+              "response": {
+                "path": "outputs/managed/interview-video-analysis/transcripts/transcribe-biren-20261117-part-007.raw.json",
+                "sha256": "0e6026be97daf4fabbc0e800541b6cf7367f089e439ce1d7a86d11f3ba4f6067"
+              },
+              "coarseAudioRange": {
+                "startSeconds": 1798.8,
+                "endSeconds": 2098.6,
+                "precision": "whole-audio-segment-only"
+              },
+              "verification": "exact-substring-in-index-and-raw-response",
+              "acousticVerified": false
+            }
+          ],
+          "hydrogenEvidence": [
+            {
+              "quote": "直接利用 `PyTorch` 的 `view` 机制将较大缓冲逻辑映射为符合上游期望的小张量",
+              "startChar": 10581,
+              "endChar": 10627,
+              "section": "### Q11：",
+              "claimType": "model-reported-audio-content",
+              "verification": "exact-substring-in-model-output",
+              "acousticVerified": false
+            },
+            {
+              "quote": "工程细节丰富，可信度高",
+              "startChar": 10957,
+              "endChar": 10968,
+              "section": "### Q11：",
+              "claimType": "model-assessment",
+              "verification": "exact-substring-in-model-output",
+              "acousticVerified": false
+            }
+          ],
+          "assessment": "两路都使用view口述，但不能据此证明代码能将128个同dtype元素直接Tensor.view为5个。可能是共享storage的切片/逻辑视图；保留实际API、pinned/registered memory及释放/复用规则待核查，不采用“可信度高”代替验证。",
+          "disposition": "keep-view-and-lifetime-pending",
+          "comparisonId": "C022"
+        }
+      ]
+    },
+    {
+      "questionId": "Q11",
+      "title": "多机任务经验边界",
+      "hydrogenQuestionIds": [
+        "Q12"
+      ],
+      "checks": [
+        {
+          "classification": "supported",
+          "subject": "本场明确自述未做多机",
+          "asrEvidence": [
+            {
+              "quote": "多机的任务我我们我这边确实是没有做过",
+              "segmentIndex": 7,
+              "paragraphIds": [
+                "P028"
+              ],
+              "globalStartChar": 8455,
+              "globalEndChar": 8473,
+              "segmentStartChar": 377,
+              "segmentEndChar": 395,
+              "response": {
+                "path": "outputs/managed/interview-video-analysis/transcripts/transcribe-biren-20261117-part-007.raw.json",
+                "sha256": "0e6026be97daf4fabbc0e800541b6cf7367f089e439ce1d7a86d11f3ba4f6067"
+              },
+              "coarseAudioRange": {
+                "startSeconds": 1798.8,
+                "endSeconds": 2098.6,
+                "precision": "whole-audio-segment-only"
+              },
+              "verification": "exact-substring-in-index-and-raw-response",
+              "acousticVerified": false
+            }
+          ],
+          "hydrogenEvidence": [
+            {
+              "quote": "明确回答**确实没有做过**",
+              "startChar": 11100,
+              "endChar": 11114,
+              "section": "### Q12：",
+              "claimType": "model-reported-audio-content",
+              "verification": "exact-substring-in-model-output",
+              "acousticVerified": false
+            }
+          ],
+          "assessment": "两路支持此次自述的经验边界，保留单机八卡与多机的区别。不能外推为完全没有分布式知识，也不由此预测岗位结果。",
+          "disposition": "retain-stated-experience-boundary",
+          "comparisonId": "C023"
+        }
+      ]
+    },
+    {
+      "questionId": "Q12",
+      "title": "FlashAttention-2 与 online softmax",
+      "hydrogenQuestionIds": [
+        "Q13"
+      ],
+      "checks": [
+        {
+          "classification": "supported",
+          "subject": "分块、在线重标定、Q-tile循环和二次复杂度",
+          "asrEvidence": [
+            {
+              "quote": "进行计算一个校准系数",
+              "segmentIndex": 7,
+              "paragraphIds": [
+                "P030"
+              ],
+              "globalStartChar": 9170,
+              "globalEndChar": 9180,
+              "segmentStartChar": 1092,
+              "segmentEndChar": 1102,
+              "response": {
+                "path": "outputs/managed/interview-video-analysis/transcripts/transcribe-biren-20261117-part-007.raw.json",
+                "sha256": "0e6026be97daf4fabbc0e800541b6cf7367f089e439ce1d7a86d11f3ba4f6067"
+              },
+              "coarseAudioRange": {
+                "startSeconds": 1798.8,
+                "endSeconds": 2098.6,
+                "precision": "whole-audio-segment-only"
+              },
+              "verification": "exact-substring-in-index-and-raw-response",
+              "acousticVerified": false
+            },
+            {
+              "quote": "固定一个 Q 的 tile",
+              "segmentIndex": 7,
+              "paragraphIds": [
+                "P030"
+              ],
+              "globalStartChar": 9325,
+              "globalEndChar": 9338,
+              "segmentStartChar": 1247,
+              "segmentEndChar": 1260,
+              "response": {
+                "path": "outputs/managed/interview-video-analysis/transcripts/transcribe-biren-20261117-part-007.raw.json",
+                "sha256": "0e6026be97daf4fabbc0e800541b6cf7367f089e439ce1d7a86d11f3ba4f6067"
+              },
+              "coarseAudioRange": {
+                "startSeconds": 1798.8,
+                "endSeconds": 2098.6,
+                "precision": "whole-audio-segment-only"
+              },
+              "verification": "exact-substring-in-index-and-raw-response",
+              "acousticVerified": false
+            },
+            {
+              "quote": "O O N 方的",
+              "segmentIndex": 7,
+              "paragraphIds": [
+                "P031"
+              ],
+              "globalStartChar": 9552,
+              "globalEndChar": 9560,
+              "segmentStartChar": 1474,
+              "segmentEndChar": 1482,
+              "response": {
+                "path": "outputs/managed/interview-video-analysis/transcripts/transcribe-biren-20261117-part-007.raw.json",
+                "sha256": "0e6026be97daf4fabbc0e800541b6cf7367f089e439ce1d7a86d11f3ba4f6067"
+              },
+              "coarseAudioRange": {
+                "startSeconds": 1798.8,
+                "endSeconds": 2098.6,
+                "precision": "whole-audio-segment-only"
+              },
+              "verification": "exact-substring-in-index-and-raw-response",
+              "acousticVerified": false
+            }
+          ],
+          "hydrogenEvidence": [
+            {
+              "quote": "对之前的中间累加结果进行重缩放（rescale）",
+              "startChar": 11614,
+              "endChar": 11638,
+              "section": "### Q13：",
+              "claimType": "model-reported-audio-content",
+              "verification": "exact-substring-in-model-output",
+              "acousticVerified": false
+            },
+            {
+              "quote": "外部固定一个 `Q` 的 tile",
+              "startChar": 11716,
+              "endChar": 11733,
+              "section": "### Q13：",
+              "claimType": "model-reported-audio-content",
+              "verification": "exact-substring-in-model-output",
+              "acousticVerified": false
+            },
+            {
+              "quote": "O(N^2)",
+              "startChar": 11501,
+              "endChar": 11507,
+              "section": "### Q13：",
+              "claimType": "model-reported-audio-content",
+              "verification": "exact-substring-in-model-output",
+              "acousticVerified": false
+            }
+          ],
+          "assessment": "Hydrogen支持原报告保留的主要机制；双方一致并不意味着已完整讲清FA2相对FA1的所有改进。二次主导复杂度不等于所有运算量完全不变。",
+          "disposition": "retain-mechanism-and-complexity-boundary",
+          "comparisonId": "C024"
+        },
+        {
+          "classification": "additional",
+          "subject": "业余学习的算子框架候选词 Triton",
+          "asrEvidence": [
+            {
+              "quote": "业业余去看过一些圈层的算子",
+              "segmentIndex": 7,
+              "paragraphIds": [
+                "P028"
+              ],
+              "globalStartChar": 8602,
+              "globalEndChar": 8615,
+              "segmentStartChar": 524,
+              "segmentEndChar": 537,
+              "response": {
+                "path": "outputs/managed/interview-video-analysis/transcripts/transcribe-biren-20261117-part-007.raw.json",
+                "sha256": "0e6026be97daf4fabbc0e800541b6cf7367f089e439ce1d7a86d11f3ba4f6067"
+              },
+              "coarseAudioRange": {
+                "startSeconds": 1798.8,
+                "endSeconds": 2098.6,
+                "precision": "whole-audio-segment-only"
+              },
+              "verification": "exact-substring-in-index-and-raw-response",
+              "acousticVerified": false
+            }
+          ],
+          "hydrogenEvidence": [
+            {
+              "quote": "`Triton` `[待回听]` 算子",
+              "startChar": 11360,
+              "endChar": 11379,
+              "section": "### Q13：",
+              "claimType": "model-reported-audio-content",
+              "verification": "exact-substring-in-model-output",
+              "acousticVerified": false
+            }
+          ],
+          "assessment": "Hydrogen提供了ASR不清术语的候选写法，没有独立代码或回听确认。不得据此增加已经实现Triton kernel的经验。",
+          "disposition": "candidate-term-not-verified-skill",
+          "comparisonId": "C025"
+        }
+      ]
+    },
+    {
+      "questionId": "Q13",
+      "title": "职业诉求与客户沟通占比",
+      "hydrogenQuestionIds": [
+        "Q14"
+      ],
+      "checks": [
+        {
+          "classification": "supported",
+          "subject": "希望提高技术工作比重，沟通约三至四成",
+          "asrEvidence": [
+            {
+              "quote": "想要去深耕我们的技术上面或者是框架上面这些工作",
+              "segmentIndex": 8,
+              "paragraphIds": [
+                "P032"
+              ],
+              "globalStartChar": 9717,
+              "globalEndChar": 9740,
+              "segmentStartChar": 66,
+              "segmentEndChar": 89,
+              "response": {
+                "path": "outputs/managed/interview-video-analysis/transcripts/transcribe-biren-20261117-part-008.raw.json",
+                "sha256": "50348831a2c3976010f9aec8ed82ce159339b7aeac8eac1c047e1159cf2fd18b"
+              },
+              "coarseAudioRange": {
+                "startSeconds": 2098.6,
+                "endSeconds": 2398.4,
+                "precision": "whole-audio-segment-only"
+              },
+              "verification": "exact-substring-in-index-and-raw-response",
+              "acousticVerified": false
+            },
+            {
+              "quote": "大概是在三成到四成左右",
+              "segmentIndex": 8,
+              "paragraphIds": [
+                "P032"
+              ],
+              "globalStartChar": 9814,
+              "globalEndChar": 9825,
+              "segmentStartChar": 163,
+              "segmentEndChar": 174,
+              "response": {
+                "path": "outputs/managed/interview-video-analysis/transcripts/transcribe-biren-20261117-part-008.raw.json",
+                "sha256": "50348831a2c3976010f9aec8ed82ce159339b7aeac8eac1c047e1159cf2fd18b"
+              },
+              "coarseAudioRange": {
+                "startSeconds": 2098.6,
+                "endSeconds": 2398.4,
+                "precision": "whole-audio-segment-only"
+              },
+              "verification": "exact-substring-in-index-and-raw-response",
+              "acousticVerified": false
+            }
+          ],
+          "hydrogenEvidence": [
+            {
+              "quote": "深耕技术或框架层面的工作",
+              "startChar": 12267,
+              "endChar": 12279,
+              "section": "### Q14：",
+              "claimType": "model-reported-audio-content",
+              "verification": "exact-substring-in-model-output",
+              "acousticVerified": false
+            },
+            {
+              "quote": "客户沟通大约占工作时间的“三成到四成左右”（30%–40%）",
+              "startChar": 12319,
+              "endChar": 12349,
+              "section": "### Q14：",
+              "claimType": "model-reported-audio-content",
+              "verification": "exact-substring-in-model-output",
+              "acousticVerified": false
+            }
+          ],
+          "assessment": "两路支持岗位内容偏好与个人估计比例。Hydrogen使用“纯技术研发”的概括不宜强化成拒绝客户协作；不对动机或投入程度下结论。",
+          "disposition": "retain-preference-and-estimate",
+          "comparisonId": "C026"
+        }
+      ]
+    },
+    {
+      "questionId": "Q14",
+      "title": "AI辅助工作与端到端视角",
+      "hydrogenQuestionIds": [
+        "Q15"
+      ],
+      "checks": [
+        {
+          "classification": "supported",
+          "subject": "关注端到端链路和profile，将重复细节封装Skill",
+          "asrEvidence": [
+            {
+              "quote": "端到端的整个整个整个服务或者整个链路",
+              "segmentIndex": 8,
+              "paragraphIds": [
+                "P033"
+              ],
+              "globalStartChar": 10145,
+              "globalEndChar": 10163,
+              "segmentStartChar": 494,
+              "segmentEndChar": 512,
+              "response": {
+                "path": "outputs/managed/interview-video-analysis/transcripts/transcribe-biren-20261117-part-008.raw.json",
+                "sha256": "50348831a2c3976010f9aec8ed82ce159339b7aeac8eac1c047e1159cf2fd18b"
+              },
+              "coarseAudioRange": {
+                "startSeconds": 2098.6,
+                "endSeconds": 2398.4,
+                "precision": "whole-audio-segment-only"
+              },
+              "verification": "exact-substring-in-index-and-raw-response",
+              "acousticVerified": false
+            },
+            {
+              "quote": "打包成一些什么Skill啊之类的",
+              "segmentIndex": 8,
+              "paragraphIds": [
+                "P033"
+              ],
+              "globalStartChar": 10289,
+              "globalEndChar": 10305,
+              "segmentStartChar": 638,
+              "segmentEndChar": 654,
+              "response": {
+                "path": "outputs/managed/interview-video-analysis/transcripts/transcribe-biren-20261117-part-008.raw.json",
+                "sha256": "50348831a2c3976010f9aec8ed82ce159339b7aeac8eac1c047e1159cf2fd18b"
+              },
+              "coarseAudioRange": {
+                "startSeconds": 2098.6,
+                "endSeconds": 2398.4,
+                "precision": "whole-audio-segment-only"
+              },
+              "verification": "exact-substring-in-index-and-raw-response",
+              "acousticVerified": false
+            }
+          ],
+          "hydrogenEvidence": [
+            {
+              "quote": "端到端（End-to-End）全链路视角",
+              "startChar": 12793,
+              "endChar": 12813,
+              "section": "### Q15：",
+              "claimType": "model-reported-audio-content",
+              "verification": "exact-substring-in-model-output",
+              "acousticVerified": false
+            },
+            {
+              "quote": "封装为可复用的 skill 或自动化工具链",
+              "startChar": 12888,
+              "endChar": 12909,
+              "section": "### Q15：",
+              "claimType": "model-reported-audio-content",
+              "verification": "exact-substring-in-model-output",
+              "acousticVerified": false
+            }
+          ],
+          "assessment": "两路支持工作方法的概述。没有案例证明AI产出的正确性验证流程，不能由此认定已经建立完整审查机制，也不能推断使用AI表示缺乏实现能力。",
+          "disposition": "retain-work-method-with-validation-gap",
+          "comparisonId": "C027"
+        }
+      ]
+    },
+    {
+      "questionId": "Q15",
+      "title": "工作强度与加班频率",
+      "hydrogenQuestionIds": [
+        "Q16"
+      ],
+      "checks": [
+        {
+          "classification": "supported",
+          "subject": "可接受加班但关注频率",
+          "asrEvidence": [
+            {
+              "quote": "如果是每天都要加班的话可能有点吃不消了",
+              "segmentIndex": 8,
+              "paragraphIds": [
+                "P034"
+              ],
+              "globalStartChar": 10450,
+              "globalEndChar": 10469,
+              "segmentStartChar": 799,
+              "segmentEndChar": 818,
+              "response": {
+                "path": "outputs/managed/interview-video-analysis/transcripts/transcribe-biren-20261117-part-008.raw.json",
+                "sha256": "50348831a2c3976010f9aec8ed82ce159339b7aeac8eac1c047e1159cf2fd18b"
+              },
+              "coarseAudioRange": {
+                "startSeconds": 2098.6,
+                "endSeconds": 2398.4,
+                "precision": "whole-audio-segment-only"
+              },
+              "verification": "exact-substring-in-index-and-raw-response",
+              "acousticVerified": false
+            }
+          ],
+          "hydrogenEvidence": [
+            {
+              "quote": "如果是每天都要加班的话，可能有点吃不消",
+              "startChar": 13204,
+              "endChar": 13223,
+              "section": "### Q16：",
+              "claimType": "model-reported-audio-content",
+              "verification": "exact-substring-in-model-output",
+              "acousticVerified": false
+            }
+          ],
+          "assessment": "两路支持个人工作边界的表达，没有证据说明对方评价或岗位实际工时。",
+          "disposition": "retain-preference-without-outcome-prediction",
+          "comparisonId": "C028"
+        },
+        {
+          "classification": "unconfirmed",
+          "subject": "将工作强度偏好列为负面证据",
+          "asrEvidence": [
+            {
+              "quote": "需要看加班的频率",
+              "segmentIndex": 8,
+              "paragraphIds": [
+                "P034"
+              ],
+              "globalStartChar": 10441,
+              "globalEndChar": 10449,
+              "segmentStartChar": 790,
+              "segmentEndChar": 798,
+              "response": {
+                "path": "outputs/managed/interview-video-analysis/transcripts/transcribe-biren-20261117-part-008.raw.json",
+                "sha256": "50348831a2c3976010f9aec8ed82ce159339b7aeac8eac1c047e1159cf2fd18b"
+              },
+              "coarseAudioRange": {
+                "startSeconds": 2098.6,
+                "endSeconds": 2398.4,
+                "precision": "whole-audio-segment-only"
+              },
+              "verification": "exact-substring-in-index-and-raw-response",
+              "acousticVerified": false
+            }
+          ],
+          "hydrogenEvidence": [
+            {
+              "quote": "`Q16`（不接受每天加班）",
+              "startChar": 16715,
+              "endChar": 16729,
+              "section": "## 5. 待回听清单",
+              "claimType": "model-assessment",
+              "verification": "exact-substring-in-model-output",
+              "acousticVerified": false
+            }
+          ],
+          "assessment": "Hydrogen把此项放在“可能支持负面判断”的清单中；当前没有岗位条件或绩效证据支持这种评价。报告仅保留双方期望边界，不纳入技术能力负面结论。",
+          "disposition": "exclude-negative-trait-or-performance-inference",
+          "comparisonId": "C029"
+        }
+      ]
+    },
+    {
+      "questionId": "Q16",
+      "title": "反问目标团队互联方案",
+      "hydrogenQuestionIds": [
+        "Q17"
+      ],
+      "checks": [
+        {
+          "classification": "supported",
+          "subject": "候选人提问，面试官介绍机内/机间互联",
+          "asrEvidence": [
+            {
+              "quote": "可以简单的介绍一下吗？嗯可以啊",
+              "segmentIndex": 8,
+              "paragraphIds": [
+                "P034"
+              ],
+              "globalStartChar": 10525,
+              "globalEndChar": 10540,
+              "segmentStartChar": 874,
+              "segmentEndChar": 889,
+              "response": {
+                "path": "outputs/managed/interview-video-analysis/transcripts/transcribe-biren-20261117-part-008.raw.json",
+                "sha256": "50348831a2c3976010f9aec8ed82ce159339b7aeac8eac1c047e1159cf2fd18b"
+              },
+              "coarseAudioRange": {
+                "startSeconds": 2098.6,
+                "endSeconds": 2398.4,
+                "precision": "whole-audio-segment-only"
+              },
+              "verification": "exact-substring-in-index-and-raw-response",
+              "acousticVerified": false
+            },
+            {
+              "quote": "一个是机内，一个是机间",
+              "segmentIndex": 8,
+              "paragraphIds": [
+                "P034"
+              ],
+              "globalStartChar": 10564,
+              "globalEndChar": 10575,
+              "segmentStartChar": 913,
+              "segmentEndChar": 924,
+              "response": {
+                "path": "outputs/managed/interview-video-analysis/transcripts/transcribe-biren-20261117-part-008.raw.json",
+                "sha256": "50348831a2c3976010f9aec8ed82ce159339b7aeac8eac1c047e1159cf2fd18b"
+              },
+              "coarseAudioRange": {
+                "startSeconds": 2098.6,
+                "endSeconds": 2398.4,
+                "precision": "whole-audio-segment-only"
+              },
+              "verification": "exact-substring-in-index-and-raw-response",
+              "acousticVerified": false
+            }
+          ],
+          "hydrogenEvidence": [
+            {
+              "quote": "候选人反问面试官",
+              "startChar": 13404,
+              "endChar": 13412,
+              "section": "### Q17：",
+              "claimType": "model-reported-audio-content",
+              "verification": "exact-substring-in-model-output",
+              "acousticVerified": false
+            },
+            {
+              "quote": "**面试官实际回答**：介绍称通信分机内与机间两部分",
+              "startChar": 13440,
+              "endChar": 13466,
+              "section": "### Q17：",
+              "claimType": "model-reported-audio-content",
+              "verification": "exact-substring-in-model-output",
+              "acousticVerified": false
+            }
+          ],
+          "assessment": "角色归属和两个层次的介绍得到两路支持，不能把面试官的系统介绍写成候选人做过的项目。也不能把口述当正式产品规格。",
+          "disposition": "retain-role-attribution-and-source-boundary",
+          "comparisonId": "C030"
+        },
+        {
+          "classification": "additional",
+          "subject": "机间互联专名 BLink/VLink 候选",
+          "asrEvidence": [
+            {
+              "quote": "机间我们也会有我们叫Blink的东西",
+              "segmentIndex": 8,
+              "paragraphIds": [
+                "P034"
+              ],
+              "globalStartChar": 10681,
+              "globalEndChar": 10699,
+              "segmentStartChar": 1030,
+              "segmentEndChar": 1048,
+              "response": {
+                "path": "outputs/managed/interview-video-analysis/transcripts/transcribe-biren-20261117-part-008.raw.json",
+                "sha256": "50348831a2c3976010f9aec8ed82ce159339b7aeac8eac1c047e1159cf2fd18b"
+              },
+              "coarseAudioRange": {
+                "startSeconds": 2098.6,
+                "endSeconds": 2398.4,
+                "precision": "whole-audio-segment-only"
+              },
+              "verification": "exact-substring-in-index-and-raw-response",
+              "acousticVerified": false
+            }
+          ],
+          "hydrogenEvidence": [
+            {
+              "quote": "音近 `BLink/VLink` `[待回听]`",
+              "startChar": 13521,
+              "endChar": 13545,
+              "section": "### Q17：",
+              "claimType": "model-reported-audio-content",
+              "verification": "exact-substring-in-model-output",
+              "acousticVerified": false
+            }
+          ],
+          "assessment": "Hydrogen新增VLink候选并保留不确定性。具体拼写及产品能力未独立核实，不扩展产品细节。",
+          "disposition": "keep-proper-name-unresolved",
+          "comparisonId": "C031"
+        }
+      ]
+    },
+    {
+      "questionId": "Q17",
+      "title": "跨组推动、告别与尾段覆盖",
+      "hydrogenQuestionIds": [
+        "Q18"
+      ],
+      "checks": [
+        {
+          "classification": "supported",
+          "subject": "跨团队资源反问与面试官客户/项目优先回应",
+          "asrEvidence": [
+            {
+              "quote": "框架工程师能不能去就是推动其他组",
+              "segmentIndex": 9,
+              "paragraphIds": [
+                "P036"
+              ],
+              "globalStartChar": 11126,
+              "globalEndChar": 11142,
+              "segmentStartChar": 102,
+              "segmentEndChar": 118,
+              "response": {
+                "path": "outputs/managed/interview-video-analysis/transcripts/transcribe-biren-20261117-part-009.raw.json",
+                "sha256": "4cea1a35e686f98954380a14c5ae858d8006b36b0bd2d9d9c89fb8349777db0b"
+              },
+              "coarseAudioRange": {
+                "startSeconds": 2398.4,
+                "endSeconds": 2482.133375,
+                "precision": "whole-audio-segment-only"
+              },
+              "verification": "exact-substring-in-index-and-raw-response",
+              "acousticVerified": false
+            },
+            {
+              "quote": "客户以及那个项目是top one的",
+              "segmentIndex": 9,
+              "paragraphIds": [
+                "P036"
+              ],
+              "globalStartChar": 11246,
+              "globalEndChar": 11263,
+              "segmentStartChar": 222,
+              "segmentEndChar": 239,
+              "response": {
+                "path": "outputs/managed/interview-video-analysis/transcripts/transcribe-biren-20261117-part-009.raw.json",
+                "sha256": "4cea1a35e686f98954380a14c5ae858d8006b36b0bd2d9d9c89fb8349777db0b"
+              },
+              "coarseAudioRange": {
+                "startSeconds": 2398.4,
+                "endSeconds": 2482.133375,
+                "precision": "whole-audio-segment-only"
+              },
+              "verification": "exact-substring-in-index-and-raw-response",
+              "acousticVerified": false
+            }
+          ],
+          "hydrogenEvidence": [
+            {
+              "quote": "框架工程师能否推动其他组去实现功能或解决问题",
+              "startChar": 13956,
+              "endChar": 13978,
+              "section": "### Q18：",
+              "claimType": "model-reported-audio-content",
+              "verification": "exact-substring-in-model-output",
+              "acousticVerified": false
+            },
+            {
+              "quote": "**客户优先、项目第一（Top 1）**",
+              "startChar": 14053,
+              "endChar": 14073,
+              "section": "### Q18：",
+              "claimType": "model-reported-audio-content",
+              "verification": "exact-substring-in-model-output",
+              "acousticVerified": false
+            }
+          ],
+          "assessment": "两路支持反问主题和原则性回应。口头回应不是可执行的资源保障或岗位承诺。",
+          "disposition": "retain-question-and-qualified-response",
+          "comparisonId": "C032"
+        },
+        {
+          "classification": "supported",
+          "subject": "两路均包含结束与告别",
+          "asrEvidence": [
+            {
+              "quote": "那我们今天面试先这样啊，谢谢啊嗯好谢谢嗯好好再见嗯好再见",
+              "segmentIndex": 9,
+              "paragraphIds": [
+                "P036"
+              ],
+              "globalStartChar": 11360,
+              "globalEndChar": 11388,
+              "segmentStartChar": 336,
+              "segmentEndChar": 364,
+              "response": {
+                "path": "outputs/managed/interview-video-analysis/transcripts/transcribe-biren-20261117-part-009.raw.json",
+                "sha256": "4cea1a35e686f98954380a14c5ae858d8006b36b0bd2d9d9c89fb8349777db0b"
+              },
+              "coarseAudioRange": {
+                "startSeconds": 2398.4,
+                "endSeconds": 2482.133375,
+                "precision": "whole-audio-segment-only"
+              },
+              "verification": "exact-substring-in-index-and-raw-response",
+              "acousticVerified": false
+            }
+          ],
+          "hydrogenEvidence": [
+            {
+              "quote": "候选人表示明白且无其他问题，双方随后告别",
+              "startChar": 14105,
+              "endChar": 14125,
+              "section": "### Q18：",
+              "claimType": "model-reported-audio-content",
+              "verification": "exact-substring-in-model-output",
+              "acousticVerified": false
+            }
+          ],
+          "assessment": "尾段实质讨论和结束语在两路均出现，但不能据此证明最后每一个声音都被准确覆盖。",
+          "disposition": "retain-ending-without-full-transcription-claim",
+          "comparisonId": "C033"
+        },
+        {
+          "classification": "additional",
+          "subject": "Hydrogen将末尾剩余时段描述为静音",
+          "asrEvidence": [
+            {
+              "quote": "嗯好好再见嗯好再见",
+              "segmentIndex": 9,
+              "paragraphIds": [
+                "P036"
+              ],
+              "globalStartChar": 11379,
+              "globalEndChar": 11388,
+              "segmentStartChar": 355,
+              "segmentEndChar": 364,
+              "response": {
+                "path": "outputs/managed/interview-video-analysis/transcripts/transcribe-biren-20261117-part-009.raw.json",
+                "sha256": "4cea1a35e686f98954380a14c5ae858d8006b36b0bd2d9d9c89fb8349777db0b"
+              },
+              "coarseAudioRange": {
+                "startSeconds": 2398.4,
+                "endSeconds": 2482.133375,
+                "precision": "whole-audio-segment-only"
+              },
+              "verification": "exact-substring-in-index-and-raw-response",
+              "acousticVerified": false
+            }
+          ],
+          "hydrogenEvidence": [
+            {
+              "quote": "随后至 `41:22.133` 为挂断前静音",
+              "startChar": 2712,
+              "endChar": 2734,
+              "section": "## 2. 覆盖索引",
+              "claimType": "model-reported-audio-content",
+              "verification": "exact-substring-in-model-output",
+              "acousticVerified": false
+            }
+          ],
+          "assessment": "这是一条来自完整音频理解的新线索，可以优先回听验证；不能单独解释或消除ASR第9片83.733秒内容与usage.seconds=72的差异。",
+          "disposition": "retain-as-relisten-lead-only",
+          "comparisonId": "C034"
+        },
+        {
+          "classification": "unconfirmed",
+          "subject": "Hydrogen覆盖表中的精确节点与角色/能力推断",
+          "asrEvidence": [
+            {
+              "quote": "生命 bug 提示您，面试官已上线",
+              "segmentIndex": 1,
+              "paragraphIds": [
+                "P001"
+              ],
+              "globalStartChar": 22,
+              "globalEndChar": 39,
+              "segmentStartChar": 22,
+              "segmentEndChar": 39,
+              "response": {
+                "path": "outputs/managed/interview-video-analysis/transcripts/transcribe-biren-20261117-part-001.raw.json",
+                "sha256": "a63209c21fb2d3ab85b7a0cf374d78c726d1718bb26e2e8935d03fa72d387cd0"
+              },
+              "coarseAudioRange": {
+                "startSeconds": 0,
+                "endSeconds": 299.8,
+                "precision": "whole-audio-segment-only"
+              },
+              "verification": "exact-substring-in-index-and-raw-response",
+              "acousticVerified": false
+            }
+          ],
+          "hydrogenEvidence": [
+            {
+              "quote": "精确节点：`03:32` 系统播报；`04:38` 前后进入 `Q1`",
+              "startChar": 1305,
+              "endChar": 1340,
+              "section": "## 2. 覆盖索引",
+              "claimType": "model-reported-audio-content",
+              "verification": "exact-substring-in-model-output",
+              "acousticVerified": false
+            }
+          ],
+          "assessment": "Hydrogen正文前言已说明时间为粗导航，却在表内使用“精确节点”。没有独立对齐或人工回听，比较不采纳其精确性；所有ASR时间继续只表示输入片边界。",
+          "disposition": "do-not-promote-model-times-to-exact-alignment",
+          "comparisonId": "C035"
+        }
+      ]
+    }
+  ],
+  "limitations": [
+    "ASR raw responses have no provider request IDs; all text quotes can be verified locally but remote traceability remains incomplete.",
+    "ASR part009 content is 83.733375 seconds, encoded MP3 83.808 seconds, while usage.seconds is 72; the failed duration check remains unresolved.",
+    "Hydrogen summaries, evaluations and supplemental suggestions are separately labelled; no model-generated standard answer is inserted into the candidate's actual answer.",
+    "Technical-audit references are prior local interpretations backed by their cited public sources, not independent proof of what was spoken or how the private backend behaves."
+  ],
+  "validation": {
+    "questionCount": 17,
+    "comparisonCount": 35,
+    "classificationCounts": {
+      "supported": 20,
+      "additional": 4,
+      "conflict": 1,
+      "unconfirmed": 10
+    },
+    "exactAsrQuoteSpans": 56,
+    "exactHydrogenQuoteSpans": 58,
+    "allAsrQuotesVerifiedAgainstRawAndIndex": true,
+    "allHydrogenQuotesVerifiedAgainstSavedBody": true,
+    "allSourcesHashBound": true
+  }
+}

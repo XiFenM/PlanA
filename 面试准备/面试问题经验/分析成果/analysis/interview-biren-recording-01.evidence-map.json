@@ -1,0 +1,378 @@
+{
+  "schemaVersion": 1,
+  "recordingId": "interview-biren-recording-01",
+  "index": {
+    "path": "outputs/managed/interview-video-analysis/transcripts/interview-biren-recording-01.qwen-asr-indexed.json",
+    "sha256": "0f4357fba28354463b0b8a86ba6dc8073b3e043f01682599acdf41ba00905936"
+  },
+  "understandingResultsAvailable": 0,
+  "independentAsrModels": 1,
+  "records": [
+    {
+      "evidenceId": "E01",
+      "topic": "职责边界",
+      "paragraphId": "P002",
+      "segmentIndex": 1,
+      "sourceRange": {
+        "startSeconds": 0,
+        "endSeconds": 299.8,
+        "precision": "whole-audio-segment-only"
+      },
+      "quote": "我会负责框架侧的实现",
+      "globalStartChar": 444,
+      "globalEndChar": 454,
+      "segmentStartChar": 444,
+      "segmentEndChar": 454,
+      "observation": "自述负责框架实现并与算子/运行时协作；具体代码贡献未独立验证。",
+      "unsupportedInference": "不能把所有算子实现归给候选人。",
+      "verification": "exact-asr-substring-only",
+      "acousticVerified": false
+    },
+    {
+      "evidenceId": "E02",
+      "topic": "线性注意力状态",
+      "paragraphId": "P004",
+      "segmentIndex": 2,
+      "sourceRange": {
+        "startSeconds": 299.8,
+        "endSeconds": 599.6,
+        "precision": "whole-audio-segment-only"
+      },
+      "quote": "需要是递推递推的矩阵",
+      "globalStartChar": 1101,
+      "globalEndChar": 1111,
+      "segmentStartChar": 619,
+      "segmentEndChar": 629,
+      "observation": "能区分递推状态/卷积尾部与普通全注意力整段KV。",
+      "unsupportedInference": "原文KTA/MIA等缩写仍需回听，不自动更改原稿。",
+      "verification": "exact-asr-substring-only",
+      "acousticVerified": false
+    },
+    {
+      "evidenceId": "E03",
+      "topic": "状态张量维度解释",
+      "paragraphId": "P007",
+      "segmentIndex": 2,
+      "sourceRange": {
+        "startSeconds": 299.8,
+        "endSeconds": 599.6,
+        "precision": "whole-audio-segment-only"
+      },
+      "quote": "我一下一下子有点想不起来",
+      "globalStartChar": 1886,
+      "globalEndChar": 1898,
+      "segmentStartChar": 1404,
+      "segmentEndChar": 1416,
+      "observation": "追问轴含义时回答未形成清楚完整的推导。",
+      "unsupportedInference": "8×128×128与官方配置下TP8本地分片可能相容，不能据此判数字错误。",
+      "verification": "exact-asr-substring-only",
+      "acousticVerified": false
+    },
+    {
+      "evidenceId": "E04",
+      "topic": "MLA压缩与Q路径",
+      "paragraphId": "P011",
+      "segmentIndex": 3,
+      "sourceRange": {
+        "startSeconds": 599.6,
+        "endSeconds": 899.4,
+        "precision": "whole-audio-segment-only"
+      },
+      "quote": "Q 并没有，我记得并没有进行一个压缩",
+      "globalStartChar": 3165,
+      "globalEndChar": 3183,
+      "segmentStartChar": 1142,
+      "segmentEndChar": 1160,
+      "observation": "现场把Q路径概述为不压缩；需澄清简化推导还是具体模型实现。",
+      "unsupportedInference": "不缓存Q并不等价于Q投影不能采用低秩分解；具体模型的NoPE与通用RoPE另分。",
+      "verification": "exact-asr-substring-only",
+      "acousticVerified": false
+    },
+    {
+      "evidenceId": "E05",
+      "topic": "部署显存",
+      "paragraphId": "P012",
+      "segmentIndex": 4,
+      "sourceRange": {
+        "startSeconds": 899.4,
+        "endSeconds": 1199.2,
+        "precision": "whole-audio-segment-only"
+      },
+      "quote": "我们一张卡是有64GB",
+      "globalStartChar": 3616,
+      "globalEndChar": 3627,
+      "segmentStartChar": 299,
+      "segmentEndChar": 310,
+      "observation": "自述8张64GB卡，选择TP8并讨论权重/缓存预算。",
+      "unsupportedInference": "量化权重近200GB、148762与170K等不同口径未统一，不视为实测证明。",
+      "verification": "exact-asr-substring-only",
+      "acousticVerified": false
+    },
+    {
+      "evidenceId": "E06",
+      "topic": "MoE峰值缓冲",
+      "paragraphId": "P017",
+      "segmentIndex": 5,
+      "sourceRange": {
+        "startSeconds": 1199.2,
+        "endSeconds": 1499,
+        "precision": "whole-audio-segment-only"
+      },
+      "quote": "最坏的那个接收 token 的数量",
+      "globalStartChar": 4987,
+      "globalEndChar": 5004,
+      "segmentStartChar": 247,
+      "segmentEndChar": 264,
+      "observation": "说明EP路由不均衡和静态执行的预留缓冲需求。",
+      "unsupportedInference": "没有给出完整统一变量的峰值显存公式，不能认定已证明TP8总是更优。",
+      "verification": "exact-asr-substring-only",
+      "acousticVerified": false
+    },
+    {
+      "evidenceId": "E07",
+      "topic": "三倍缓存指标澄清",
+      "paragraphId": "P020",
+      "segmentIndex": 5,
+      "sourceRange": {
+        "startSeconds": 1199.2,
+        "endSeconds": 1499,
+        "precision": "whole-audio-segment-only"
+      },
+      "quote": "其实没有真正的扩大，只是之前把错误的结果给纠正了",
+      "globalStartChar": 5984,
+      "globalEndChar": 6008,
+      "segmentStartChar": 1244,
+      "segmentEndChar": 1268,
+      "observation": "候选人明确将所述三倍解释为容量核算纠错。",
+      "unsupportedInference": "不能宣传为真实性能或物理可用容量三倍提升；也不据此推断诚信或人格。",
+      "verification": "exact-asr-substring-only",
+      "acousticVerified": false
+    },
+    {
+      "evidenceId": "E08",
+      "topic": "Graph分桶",
+      "paragraphId": "P022",
+      "segmentIndex": 6,
+      "sourceRange": {
+        "startSeconds": 1499,
+        "endSeconds": 1798.8,
+        "precision": "whole-audio-segment-only"
+      },
+      "quote": "对Token维度的Padding",
+      "globalStartChar": 6641,
+      "globalEndChar": 6657,
+      "segmentStartChar": 175,
+      "segmentEndChar": 191,
+      "observation": "现场澄清token/batch维padding，并给出到256及小batch密集抓图。",
+      "unsupportedInference": "不能误写为将全上下文sequence length填充到256。",
+      "verification": "exact-asr-substring-only",
+      "acousticVerified": false
+    },
+    {
+      "evidenceId": "E09",
+      "topic": "D2H协作分工",
+      "paragraphId": "P025",
+      "segmentIndex": 6,
+      "sourceRange": {
+        "startSeconds": 1499,
+        "endSeconds": 1798.8,
+        "precision": "whole-audio-segment-only"
+      },
+      "quote": "他们编写了一个转转形状的一个转成CPU Layout的一个算子",
+      "globalStartChar": 7800,
+      "globalEndChar": 7831,
+      "segmentStartChar": 1334,
+      "segmentEndChar": 1365,
+      "observation": "算子同事提供布局转换，候选人描述框架后端分配/接入。",
+      "unsupportedInference": "没有源代码和benchmark，不能把转换算子编写与全部性能成果归个人。",
+      "verification": "exact-asr-substring-only",
+      "acousticVerified": false
+    },
+    {
+      "evidenceId": "E10",
+      "topic": "D2H消费者同步",
+      "paragraphId": "P027",
+      "segmentIndex": 7,
+      "sourceRange": {
+        "startSeconds": 1798.8,
+        "endSeconds": 2098.6,
+        "precision": "whole-audio-segment-only"
+      },
+      "quote": "先要做，要要做 wait event",
+      "globalStartChar": 8330,
+      "globalEndChar": 8348,
+      "segmentStartChar": 252,
+      "segmentEndChar": 270,
+      "observation": "明确提到等待事件/stream同步后再让CPU消费。",
+      "unsupportedInference": "不能写成没有同步概念；具体host同步API与storage视图仍需代码核查。",
+      "verification": "exact-asr-substring-only",
+      "acousticVerified": false
+    },
+    {
+      "evidenceId": "E11",
+      "topic": "多机经验边界",
+      "paragraphId": "P028",
+      "segmentIndex": 7,
+      "sourceRange": {
+        "startSeconds": 1798.8,
+        "endSeconds": 2098.6,
+        "precision": "whole-audio-segment-only"
+      },
+      "quote": "多机的任务我我们我这边确实是没有做过",
+      "globalStartChar": 8455,
+      "globalEndChar": 8473,
+      "segmentStartChar": 377,
+      "segmentEndChar": 395,
+      "observation": "该次自述尚未做多机任务。",
+      "unsupportedInference": "不外推为不理解分布式，也不填造多机经历。",
+      "verification": "exact-asr-substring-only",
+      "acousticVerified": false
+    },
+    {
+      "evidenceId": "E12",
+      "topic": "FlashAttention在线校准",
+      "paragraphId": "P030",
+      "segmentIndex": 7,
+      "sourceRange": {
+        "startSeconds": 1798.8,
+        "endSeconds": 2098.6,
+        "precision": "whole-audio-segment-only"
+      },
+      "quote": "进行计算一个校准系数",
+      "globalStartChar": 9170,
+      "globalEndChar": 9180,
+      "segmentStartChar": 1092,
+      "segmentEndChar": 1102,
+      "observation": "说明分块后用最大值/累加量校准已有结果，固定Q tile遍历K/V。",
+      "unsupportedInference": "没有推导全部公式或FA2硬件调度细节，不将概述包装成已实现kernel。",
+      "verification": "exact-asr-substring-only",
+      "acousticVerified": false
+    },
+    {
+      "evidenceId": "E13",
+      "topic": "FlashAttention计算量",
+      "paragraphId": "P031",
+      "segmentIndex": 7,
+      "sourceRange": {
+        "startSeconds": 1798.8,
+        "endSeconds": 2098.6,
+        "precision": "whole-audio-segment-only"
+      },
+      "quote": "O O N 方的",
+      "globalStartChar": 9552,
+      "globalEndChar": 9560,
+      "segmentStartChar": 1474,
+      "segmentEndChar": 1482,
+      "observation": "明确保留二次计算量，收益侧重减少HBM搬运。",
+      "unsupportedInference": "不能说现场误认为变成线性算术复杂度。",
+      "verification": "exact-asr-substring-only",
+      "acousticVerified": false
+    },
+    {
+      "evidenceId": "E14",
+      "topic": "岗位诉求",
+      "paragraphId": "P032",
+      "segmentIndex": 8,
+      "sourceRange": {
+        "startSeconds": 2098.6,
+        "endSeconds": 2398.4,
+        "precision": "whole-audio-segment-only"
+      },
+      "quote": "大概是在三成到四成左右",
+      "globalStartChar": 9814,
+      "globalEndChar": 9825,
+      "segmentStartChar": 163,
+      "segmentEndChar": 174,
+      "observation": "自述客户沟通占约三至四成，希望增加技术工作比重。",
+      "unsupportedInference": "不是经独立工时记录验证的比例，也不推断其不愿合作。",
+      "verification": "exact-asr-substring-only",
+      "acousticVerified": false
+    },
+    {
+      "evidenceId": "E15",
+      "topic": "AI工具观",
+      "paragraphId": "P033",
+      "segmentIndex": 8,
+      "sourceRange": {
+        "startSeconds": 2098.6,
+        "endSeconds": 2398.4,
+        "precision": "whole-audio-segment-only"
+      },
+      "quote": "端到端的整个整个整个服务或者整个链路",
+      "globalStartChar": 10145,
+      "globalEndChar": 10163,
+      "segmentStartChar": 494,
+      "segmentEndChar": 512,
+      "observation": "主张更多关注端到端需求与profile，将细节自动化。",
+      "unsupportedInference": "不能由此认定无需理解/审核AI代码；具体质量把关实例未在本片展开。",
+      "verification": "exact-asr-substring-only",
+      "acousticVerified": false
+    },
+    {
+      "evidenceId": "E16",
+      "topic": "工作强度偏好",
+      "paragraphId": "P034",
+      "segmentIndex": 8,
+      "sourceRange": {
+        "startSeconds": 2098.6,
+        "endSeconds": 2398.4,
+        "precision": "whole-audio-segment-only"
+      },
+      "quote": "如果是每天都要加班的话可能有点吃不消了",
+      "globalStartChar": 10450,
+      "globalEndChar": 10469,
+      "segmentStartChar": 799,
+      "segmentEndChar": 818,
+      "observation": "表达可接受加班但关注频率。",
+      "unsupportedInference": "不评价敬业程度、健康或心理。",
+      "verification": "exact-asr-substring-only",
+      "acousticVerified": false
+    },
+    {
+      "evidenceId": "E17",
+      "topic": "通信反问",
+      "paragraphId": "P034",
+      "segmentIndex": 8,
+      "sourceRange": {
+        "startSeconds": 2098.6,
+        "endSeconds": 2398.4,
+        "precision": "whole-audio-segment-only"
+      },
+      "quote": "机间我们也会有我们叫Blink的东西",
+      "globalStartChar": 10681,
+      "globalEndChar": 10699,
+      "segmentStartChar": 1030,
+      "segmentEndChar": 1048,
+      "observation": "面试官按语义归属介绍机内/机间互联路线。",
+      "unsupportedInference": "BLink专名及正式产品规格未独立核实，不能当公开承诺或候选人项目经验。",
+      "verification": "exact-asr-substring-only",
+      "acousticVerified": false
+    },
+    {
+      "evidenceId": "E18",
+      "topic": "跨组协调反问",
+      "paragraphId": "P036",
+      "segmentIndex": 9,
+      "sourceRange": {
+        "startSeconds": 2398.4,
+        "endSeconds": 2482.133375,
+        "precision": "whole-audio-segment-only"
+      },
+      "quote": "框架工程师能不能去就是推动其他组",
+      "globalStartChar": 11126,
+      "globalEndChar": 11142,
+      "segmentStartChar": 102,
+      "segmentEndChar": 118,
+      "observation": "候选人询问跨算子/驱动/runtime问题能否调动资源；对方以客户优先回应。",
+      "unsupportedInference": "回答不等于正式岗位保障、流程SLA或录用意向。",
+      "verification": "exact-asr-substring-only",
+      "acousticVerified": false
+    }
+  ],
+  "limitations": [
+    "Exact text matching proves only the ASR quote linkage, not acoustic truth.",
+    "Source times bound entire input segments only; no sentence alignment.",
+    "All ASR responses lack provider request IDs.",
+    "Segment 009 usage.seconds=72 differs from the 83.808 second MP3; retain failed duration check."
+  ]
+}
