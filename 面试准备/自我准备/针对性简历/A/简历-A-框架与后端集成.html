@@ -73,7 +73,7 @@ code { font-family:"DejaVu Sans Mono","Noto Sans Mono CJK SC",monospace; font-si
 <article class="entry"><h3>GLM-5.3-Flash 模型接入与状态管理</h3><p>模型混合线性注意力、稀疏 MLA 和 MoE，不同缓存与递推状态需要分别处理布局和容量。针对上游执行路径无法直接用于目标平台的问题，先建立原生执行路径校验模型语义，再逐步接入融合算子和 decode Graph。</p>
 <ul>
 <li>独立完成模型在既有 vLLM 硬件插件中的接入，覆盖权重映射、混合 KV cache 与状态池；交付 <strong>8 卡 TP8、AWQ 4-bit 权重／BF16 激活</strong>的文本推理版本，由云服务团队生产上线。</li>
-<li>修正缓存分组、页容量核算与 Padding，解决启动 OOM；相同部署配置与显存预算下，KV cache 容量由 <strong>45,409 提升至 148,762 tokens</strong>。将卷积与递推状态拆为连续池，减少非连续状态页引发的 Host 搬运开销。</li>
+<li>按 KDA 逐层分配的方式修正混合 KV cache 容量核算，移除多余的页尾填充，解决模型启动时的 OOM。将卷积与递推状态拆为连续池，减少非连续状态页引发的 Host 搬运开销。</li>
 <li>验收并接入算子团队的融合实现，完成 decode Graph 的 metadata 与 Padding 适配；定位并修复 warmup 污染稀疏 MLA 空块的问题，插件发布定向回归 <strong>161 项通过</strong>。</li>
 </ul></article>
 <article class="entry"><h3>PyTorch 后端异步 D2H 能力实现</h3><p>原后端即使指定 <code>non_blocking=True</code>，仍因同步中转、CPU 布局还原和完成等待阻塞 Worker。通过满足 pinned 内存与传输对齐条件，将提交和完成等待分离，为后续工作继续提交提供条件。</p>

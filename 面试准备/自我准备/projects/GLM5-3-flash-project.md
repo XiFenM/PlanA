@@ -104,7 +104,7 @@ CPU 离线闭环记录为 `num_blocks=1509`、每 block 合计约 `20.734 MiB`�
 
 我在平台 `update_block_size_for_backend` 中继续解析 backend 首选 block size，但跳过 `_align_hybrid_block_size`，保持 `mamba_page_size_padded=None`；同时让 `patch/patch_kv_cache_interface.py` 中 Mamba 的 `page_size_bytes_padded` 返回真实 `page_size_bytes`，防止后续核算再次引入 Padding。
 
-修复后记录为 `page_size_padded=None`、真实页大小 `542,720 B`，34 层 KDA 全部分配成功。显存利用率 0.85 下，启动日志容量由 45,409 提升至 148,762 tokens。排错时也排除了仅降低显存利用率、启用目标 allocator 不支持的 `expandable_segments:True`，或继续调整已经确定的状态形状等方向。
+修复后记录为 `page_size_padded=None`、真实页大小 `542,720 B`，34 层 KDA 全部分配成功。早期启动日志中的 45,409 tokens 来自有误的容量核算。修复后，在显存利用率 0.85 下，启动日志报告 148,762 tokens。排错时也排除了仅降低显存利用率、启用目标 allocator 不支持的 `expandable_segments:True`，或继续调整已经确定的状态形状等方向。
 
 ##### 上游共享页布局成立的前提
 

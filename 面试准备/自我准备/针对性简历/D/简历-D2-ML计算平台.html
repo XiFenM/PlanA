@@ -71,8 +71,8 @@ code { font-family:"DejaVu Sans Mono","Noto Sans Mono CJK SC",monospace; font-si
 <li>参与数据质量监控相关功能与工具研发，支持数据质量检查、指标血缘追踪与异常定位。</li>
 </ul></article></section>
 <section class="resume-section" aria-labelledby="s3"><h2 id="s3">代表项目</h2>
-<article class="entry"><h3>GLM-5.3-Flash 内存容量与执行开销优化</h3><ul>
-<li>负责既有 vLLM 插件中的模型接入与优化，交付 8 卡 TP8、AWQ 4-bit 权重／BF16 激活的文本版本。修正混合缓存分组、页容量与实际分配不一致的问题，相同部署配置和显存预算下，<strong>KV cache 容量由 45,409 提升至 148,762 tokens</strong>。</li>
+<article class="entry"><h3>GLM-5.3-Flash 混合缓存适配与执行开销优化</h3><ul>
+<li>负责既有 vLLM 插件中的模型接入与优化，交付 8 卡 TP8、AWQ 4-bit 权重／BF16 激活的文本版本。按 KDA 逐层分配的方式修正混合 KV cache 容量核算，移除多余的页尾填充，解决模型启动时的 OOM。</li>
 <li>通过 Profile 和隔离微基准定位非连续状态页引发的 Host 逐元素搬运，将卷积与递推状态拆为连续池；同一短 prompt 的插桩对照中，<strong>decode 单步 Host 耗时由约 120 s 降至 2.6 s</strong>。</li>
 <li>合并 metadata H2D、复用持久 buffer、减少阻塞 D2H，并验收算子团队的融合实现；完成 Graph 边界适配，插件发布定向回归 <strong>161 项通过</strong>，由云服务团队生产上线。</li>
 </ul></article>
