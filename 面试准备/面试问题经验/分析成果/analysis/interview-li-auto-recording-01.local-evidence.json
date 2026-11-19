@@ -1,0 +1,640 @@
+{
+  "recordingId": "interview-li-auto-recording-01",
+  "sources": [
+    {
+      "path": "outputs/managed/interview-video-analysis/transcripts/interview-li-auto-recording-01.local-asr-timed.json",
+      "sha256": "6ec303a2737c81ed21547142c0a906da1aeef9ab0bb10ce1f665dbf4d2881929"
+    },
+    {
+      "path": "outputs/managed/interview-video-analysis/transcripts/interview-li-auto-recording-01.paraformer-timed.json",
+      "sha256": "5db06b83991fd2ae2b00bf18bb2e83b6bf17b0b23037ef2990370db215ce047a"
+    }
+  ],
+  "method": "Same exact PCM windows; independent local decoding. Quote offsets are zero-based UTF-16 within each ASR window. Quoted text verifies model output, not acoustic ground truth. Coarse times bound the input window.",
+  "evidence": [
+    {
+      "evidenceId": "E01",
+      "topic": "工作范围",
+      "sourceStartSeconds": 355.3,
+      "sourceEndSeconds": 370.52,
+      "relation": "一致",
+      "reading": "框架侧定位与改动，算子侧协作。",
+      "quotes": [
+        {
+          "file": "outputs/managed/interview-video-analysis/transcripts/interview-li-auto-recording-01.local-asr-timed.json",
+          "id": "L025",
+          "startChar": 34,
+          "endChar": 44,
+          "quote": "框架测的修改一些优化"
+        },
+        {
+          "file": "outputs/managed/interview-video-analysis/transcripts/interview-li-auto-recording-01.paraformer-timed.json",
+          "id": "L025",
+          "startChar": 31,
+          "endChar": 41,
+          "quote": "框架侧的修改一些优化"
+        }
+      ]
+    },
+    {
+      "evidenceId": "E02",
+      "topic": "decode",
+      "sourceStartSeconds": 567.68,
+      "sourceEndSeconds": 585.2,
+      "relation": "一致",
+      "reading": "面试官确认这是单请求 decode。",
+      "quotes": [
+        {
+          "file": "outputs/managed/interview-video-analysis/transcripts/interview-li-auto-recording-01.local-asr-timed.json",
+          "id": "L040",
+          "startChar": 27,
+          "endChar": 44,
+          "quote": "单请求是16到17tokens每秒"
+        },
+        {
+          "file": "outputs/managed/interview-video-analysis/transcripts/interview-li-auto-recording-01.paraformer-timed.json",
+          "id": "L040",
+          "startChar": 24,
+          "endChar": 41,
+          "quote": "单请求是十六到十七 toks 每秒"
+        }
+      ]
+    },
+    {
+      "evidenceId": "E03",
+      "topic": "内存带宽口径",
+      "sourceStartSeconds": 554.02,
+      "sourceEndSeconds": 567.68,
+      "relation": "一致",
+      "reading": "峰值和实测另列，讨论的是单卡显存带宽。",
+      "quotes": [
+        {
+          "file": "outputs/managed/interview-video-analysis/transcripts/interview-li-auto-recording-01.local-asr-timed.json",
+          "id": "L039",
+          "startChar": 15,
+          "endChar": 23,
+          "quote": "不是卡与卡之间的"
+        },
+        {
+          "file": "outputs/managed/interview-video-analysis/transcripts/interview-li-auto-recording-01.paraformer-timed.json",
+          "id": "L039",
+          "startChar": 14,
+          "endChar": 22,
+          "quote": "不是卡与卡之间的"
+        }
+      ]
+    },
+    {
+      "evidenceId": "E04",
+      "topic": "32K耗时",
+      "sourceStartSeconds": 585.2,
+      "sourceEndSeconds": 601.52,
+      "relation": "读数不稳",
+      "reading": "不将任何一个读数作为性能结论。",
+      "quotes": [
+        {
+          "file": "outputs/managed/interview-video-analysis/transcripts/interview-li-auto-recording-01.local-asr-timed.json",
+          "id": "L041",
+          "startChar": 54,
+          "endChar": 60,
+          "quote": "328秒左右"
+        },
+        {
+          "file": "outputs/managed/interview-video-analysis/transcripts/interview-li-auto-recording-01.paraformer-timed.json",
+          "id": "L041",
+          "startChar": 62,
+          "endChar": 69,
+          "quote": "三二十八秒左右"
+        }
+      ]
+    },
+    {
+      "evidenceId": "E05",
+      "topic": "长输入性能",
+      "sourceStartSeconds": 601.52,
+      "sourceEndSeconds": 616.84,
+      "relation": "部分一致",
+      "reading": "与上一窗末尾的 64K 对应，128K 的数字含重复。",
+      "quotes": [
+        {
+          "file": "outputs/managed/interview-video-analysis/transcripts/interview-li-auto-recording-01.local-asr-timed.json",
+          "id": "L042",
+          "startChar": 0,
+          "endChar": 5,
+          "quote": "70秒左右"
+        },
+        {
+          "file": "outputs/managed/interview-video-analysis/transcripts/interview-li-auto-recording-01.paraformer-timed.json",
+          "id": "L042",
+          "startChar": 0,
+          "endChar": 5,
+          "quote": "七十秒左右"
+        }
+      ]
+    },
+    {
+      "evidenceId": "E06",
+      "topic": "输入吞吐",
+      "sourceStartSeconds": 616.84,
+      "sourceEndSeconds": 632.86,
+      "relation": "一致",
+      "reading": "现场讲了时延，尚未报出这一组输入 tokens/s。",
+      "quotes": [
+        {
+          "file": "outputs/managed/interview-video-analysis/transcripts/interview-li-auto-recording-01.local-asr-timed.json",
+          "id": "L043",
+          "startChar": 23,
+          "endChar": 29,
+          "quote": "这可以算一下"
+        },
+        {
+          "file": "outputs/managed/interview-video-analysis/transcripts/interview-li-auto-recording-01.paraformer-timed.json",
+          "id": "L043",
+          "startChar": 21,
+          "endChar": 27,
+          "quote": "这可以算一下"
+        }
+      ]
+    },
+    {
+      "evidenceId": "E07",
+      "topic": "因果卷积",
+      "sourceStartSeconds": 781.76,
+      "sourceEndSeconds": 800.14,
+      "relation": "一致",
+      "reading": "属于线性注意力的一个子步骤。",
+      "quotes": [
+        {
+          "file": "outputs/managed/interview-video-analysis/transcripts/interview-li-auto-recording-01.local-asr-timed.json",
+          "id": "L055",
+          "startChar": 70,
+          "endChar": 77,
+          "quote": "一维的因果卷积"
+        },
+        {
+          "file": "outputs/managed/interview-video-analysis/transcripts/interview-li-auto-recording-01.paraformer-timed.json",
+          "id": "L055",
+          "startChar": 80,
+          "endChar": 87,
+          "quote": "一维的因果卷积"
+        }
+      ]
+    },
+    {
+      "evidenceId": "E08",
+      "topic": "两种状态一",
+      "sourceStartSeconds": 946.42,
+      "sourceEndSeconds": 964.9,
+      "relation": "一致",
+      "reading": "窗口 4 与保留最近 3 个历史位置相容。",
+      "quotes": [
+        {
+          "file": "outputs/managed/interview-video-analysis/transcripts/interview-li-auto-recording-01.local-asr-timed.json",
+          "id": "L066",
+          "startChar": 22,
+          "endChar": 38,
+          "quote": "它的缓存就缓存末尾三个token"
+        },
+        {
+          "file": "outputs/managed/interview-video-analysis/transcripts/interview-li-auto-recording-01.paraformer-timed.json",
+          "id": "L066",
+          "startChar": 24,
+          "endChar": 39,
+          "quote": "缓存就缓存末尾三个 token"
+        }
+      ]
+    },
+    {
+      "evidenceId": "E09",
+      "topic": "卷积状态dtype",
+      "sourceStartSeconds": 946.42,
+      "sourceEndSeconds": 964.9,
+      "relation": "一致",
+      "reading": "本场口述与卷积尾状态相连，仍需具体实现核实。",
+      "quotes": [
+        {
+          "file": "outputs/managed/interview-video-analysis/transcripts/interview-li-auto-recording-01.local-asr-timed.json",
+          "id": "L066",
+          "startChar": 78,
+          "endChar": 82,
+          "quote": "FP32"
+        },
+        {
+          "file": "outputs/managed/interview-video-analysis/transcripts/interview-li-auto-recording-01.paraformer-timed.json",
+          "id": "L066",
+          "startChar": 82,
+          "endChar": 88,
+          "quote": "f p 三二"
+        }
+      ]
+    },
+    {
+      "evidenceId": "E10",
+      "topic": "递推状态dtype",
+      "sourceStartSeconds": 964.9,
+      "sourceEndSeconds": 981.4,
+      "relation": "一致",
+      "reading": "本场口述与递推矩阵相连。",
+      "quotes": [
+        {
+          "file": "outputs/managed/interview-video-analysis/transcripts/interview-li-auto-recording-01.local-asr-timed.json",
+          "id": "L067",
+          "startChar": 68,
+          "endChar": 72,
+          "quote": "BF16"
+        },
+        {
+          "file": "outputs/managed/interview-video-analysis/transcripts/interview-li-auto-recording-01.paraformer-timed.json",
+          "id": "L067",
+          "startChar": 79,
+          "endChar": 85,
+          "quote": "b f 幺六"
+        }
+      ]
+    },
+    {
+      "evidenceId": "E11",
+      "topic": "要求重新概括",
+      "sourceStartSeconds": 1078.88,
+      "sourceEndSeconds": 1091,
+      "relation": "一致",
+      "reading": "由面试官要求按问题、改动、收益重新概括。",
+      "quotes": [
+        {
+          "file": "outputs/managed/interview-video-analysis/transcripts/interview-li-auto-recording-01.local-asr-timed.json",
+          "id": "L075",
+          "startChar": 14,
+          "endChar": 51,
+          "quote": "有什么问题？你们做完了之后，大概的思路有什么样优化，能取得什么样的收益吗？"
+        },
+        {
+          "file": "outputs/managed/interview-video-analysis/transcripts/interview-li-auto-recording-01.paraformer-timed.json",
+          "id": "L075",
+          "startChar": 25,
+          "endChar": 51,
+          "quote": "做完了之后大概的思路有什么样优化能取得什么样的收益吗"
+        }
+      ]
+    },
+    {
+      "evidenceId": "E12",
+      "topic": "连续化开销",
+      "sourceStartSeconds": 1103.12,
+      "sourceEndSeconds": 1118.96,
+      "relation": "一致",
+      "reading": "回答识别出算子前的数据整理，未由profile独立验证。",
+      "quotes": [
+        {
+          "file": "outputs/managed/interview-video-analysis/transcripts/interview-li-auto-recording-01.local-asr-timed.json",
+          "id": "L077",
+          "startChar": 49,
+          "endChar": 57,
+          "quote": "连续化的一些操作"
+        },
+        {
+          "file": "outputs/managed/interview-video-analysis/transcripts/interview-li-auto-recording-01.paraformer-timed.json",
+          "id": "L077",
+          "startChar": 46,
+          "endChar": 54,
+          "quote": "连续化的一些操作"
+        }
+      ]
+    },
+    {
+      "evidenceId": "E13",
+      "topic": "矩阵shape",
+      "sourceStartSeconds": 1153.38,
+      "sourceEndSeconds": 1171.14,
+      "relation": "不可定案",
+      "reading": "两路均有吞字可能；实际 shape 和分片配置需核查。",
+      "quotes": [
+        {
+          "file": "outputs/managed/interview-video-analysis/transcripts/interview-li-auto-recording-01.local-asr-timed.json",
+          "id": "L080",
+          "startChar": 85,
+          "endChar": 93,
+          "quote": "8乘128乘18"
+        },
+        {
+          "file": "outputs/managed/interview-video-analysis/transcripts/interview-li-auto-recording-01.paraformer-timed.json",
+          "id": "L080",
+          "startChar": 89,
+          "endChar": 97,
+          "quote": "八乘幺二八乘幺八"
+        }
+      ]
+    },
+    {
+      "evidenceId": "E14",
+      "topic": "插件版本",
+      "sourceStartSeconds": 1374.12,
+      "sourceEndSeconds": 1392.42,
+      "relation": "一致",
+      "reading": "候选人最后重复的版本读法。",
+      "quotes": [
+        {
+          "file": "outputs/managed/interview-video-analysis/transcripts/interview-li-auto-recording-01.local-asr-timed.json",
+          "id": "L095",
+          "startChar": 62,
+          "endChar": 69,
+          "quote": "V0.30.1"
+        },
+        {
+          "file": "outputs/managed/interview-video-analysis/transcripts/interview-li-auto-recording-01.paraformer-timed.json",
+          "id": "L095",
+          "startChar": 62,
+          "endChar": 70,
+          "quote": "v 零点三零点一"
+        }
+      ]
+    },
+    {
+      "evidenceId": "E15",
+      "topic": "规划与完成时间",
+      "sourceStartSeconds": 1528.98,
+      "sourceEndSeconds": 1544.04,
+      "relation": "一致",
+      "reading": "当时尚无支持，当前接近支持，是两种时间口径。",
+      "quotes": [
+        {
+          "file": "outputs/managed/interview-video-analysis/transcripts/interview-li-auto-recording-01.local-asr-timed.json",
+          "id": "L106",
+          "startChar": 66,
+          "endChar": 75,
+          "quote": "简历上写的那个时候"
+        },
+        {
+          "file": "outputs/managed/interview-video-analysis/transcripts/interview-li-auto-recording-01.paraformer-timed.json",
+          "id": "L106",
+          "startChar": 62,
+          "endChar": 71,
+          "quote": "简历上写的那个时候"
+        }
+      ]
+    },
+    {
+      "evidenceId": "E16",
+      "topic": "扩展点",
+      "sourceStartSeconds": 1648.62,
+      "sourceEndSeconds": 1665.4,
+      "relation": "措辞补充",
+      "reading": "两路支持平台插件；英文类名需以源码为准。",
+      "quotes": [
+        {
+          "file": "outputs/managed/interview-video-analysis/transcripts/interview-li-auto-recording-01.local-asr-timed.json",
+          "id": "L114",
+          "startChar": 19,
+          "endChar": 25,
+          "quote": "平台化的插件"
+        },
+        {
+          "file": "outputs/managed/interview-video-analysis/transcripts/interview-li-auto-recording-01.paraformer-timed.json",
+          "id": "L114",
+          "startChar": 36,
+          "endChar": 65,
+          "quote": "自己的 worker 自己的那个 model runner"
+        }
+      ]
+    },
+    {
+      "evidenceId": "E17",
+      "topic": "分页算例",
+      "sourceStartSeconds": 1765.6,
+      "sourceEndSeconds": 1780.48,
+      "relation": "一致",
+      "reading": "题设 4096，block size 256 是答题者举例。",
+      "quotes": [
+        {
+          "file": "outputs/managed/interview-video-analysis/transcripts/interview-li-auto-recording-01.local-asr-timed.json",
+          "id": "L122",
+          "startChar": 8,
+          "endChar": 12,
+          "quote": "4096"
+        },
+        {
+          "file": "outputs/managed/interview-video-analysis/transcripts/interview-li-auto-recording-01.paraformer-timed.json",
+          "id": "L122",
+          "startChar": 8,
+          "endChar": 18,
+          "quote": "四零九六 token"
+        }
+      ]
+    },
+    {
+      "evidenceId": "E18",
+      "topic": "跨块边界",
+      "sourceStartSeconds": 1878.54,
+      "sourceEndSeconds": 1895.5,
+      "relation": "读数不稳",
+      "reading": "两模型数字写法不同；与数学边界分别记录。",
+      "quotes": [
+        {
+          "file": "outputs/managed/interview-video-analysis/transcripts/interview-li-auto-recording-01.local-asr-timed.json",
+          "id": "L129",
+          "startChar": 2,
+          "endChar": 14,
+          "quote": "116块嗯，然后117块"
+        },
+        {
+          "file": "outputs/managed/interview-video-analysis/transcripts/interview-li-auto-recording-01.paraformer-timed.json",
+          "id": "L129",
+          "startChar": 1,
+          "endChar": 12,
+          "quote": "十十六块嗯然后是十七块"
+        }
+      ]
+    },
+    {
+      "evidenceId": "E19",
+      "topic": "按需分块",
+      "sourceStartSeconds": 1895.5,
+      "sourceEndSeconds": 1907.14,
+      "relation": "一致",
+      "reading": "已表达按需增长。",
+      "quotes": [
+        {
+          "file": "outputs/managed/interview-video-analysis/transcripts/interview-li-auto-recording-01.local-asr-timed.json",
+          "id": "L130",
+          "startChar": 30,
+          "endChar": 49,
+          "quote": "尾一块满了之后，我们再去分配一个新的块"
+        },
+        {
+          "file": "outputs/managed/interview-video-analysis/transcripts/interview-li-auto-recording-01.paraformer-timed.json",
+          "id": "L130",
+          "startChar": 27,
+          "endChar": 46,
+          "quote": "最后尾块满了之后我们再去分配一个新的块"
+        }
+      ]
+    },
+    {
+      "evidenceId": "E20",
+      "topic": "块表用途",
+      "sourceStartSeconds": 1984.24,
+      "sourceEndSeconds": 1994.44,
+      "relation": "一致",
+      "reading": "按请求索引物理块编号。",
+      "quotes": [
+        {
+          "file": "outputs/managed/interview-video-analysis/transcripts/interview-li-auto-recording-01.local-asr-timed.json",
+          "id": "L136",
+          "startChar": 16,
+          "endChar": 36,
+          "quote": "这一条请求，我用的是哪几个blocker"
+        },
+        {
+          "file": "outputs/managed/interview-video-analysis/transcripts/interview-li-auto-recording-01.paraformer-timed.json",
+          "id": "L136",
+          "startChar": 14,
+          "endChar": 32,
+          "quote": "这一条请求我用的是哪几个 block"
+        }
+      ]
+    },
+    {
+      "evidenceId": "E21",
+      "topic": "Conv3D路径",
+      "sourceStartSeconds": 2140.8,
+      "sourceEndSeconds": 2156.7,
+      "relation": "一致",
+      "reading": "描述了合并尾部维度，再由算子解释原布局。",
+      "quotes": [
+        {
+          "file": "outputs/managed/interview-video-analysis/transcripts/interview-li-auto-recording-01.local-asr-timed.json",
+          "id": "L147",
+          "startChar": 21,
+          "endChar": 27,
+          "quote": "展平成个异位"
+        },
+        {
+          "file": "outputs/managed/interview-video-analysis/transcripts/interview-li-auto-recording-01.paraformer-timed.json",
+          "id": "L147",
+          "startChar": 20,
+          "endChar": 26,
+          "quote": "展平成了一位"
+        }
+      ]
+    },
+    {
+      "evidenceId": "E22",
+      "topic": "Conv3D倍数",
+      "sourceStartSeconds": 2192.42,
+      "sourceEndSeconds": 2210.56,
+      "relation": "一致",
+      "reading": "后续重述支持 3→128；只对指定对象和布局做倍率运算。",
+      "quotes": [
+        {
+          "file": "outputs/managed/interview-video-analysis/transcripts/interview-li-auto-recording-01.local-asr-timed.json",
+          "id": "L151",
+          "startChar": 48,
+          "endChar": 56,
+          "quote": "从三变成了128"
+        },
+        {
+          "file": "outputs/managed/interview-video-analysis/transcripts/interview-li-auto-recording-01.paraformer-timed.json",
+          "id": "L151",
+          "startChar": 45,
+          "endChar": 55,
+          "quote": "从三变成了一百二十八"
+        }
+      ]
+    },
+    {
+      "evidenceId": "E23",
+      "topic": "修改归属",
+      "sourceStartSeconds": 2240.5,
+      "sourceEndSeconds": 2250.56,
+      "relation": "一致",
+      "reading": "语境指 PyTorch 侧，未查个人代码。",
+      "quotes": [
+        {
+          "file": "outputs/managed/interview-video-analysis/transcripts/interview-li-auto-recording-01.local-asr-timed.json",
+          "id": "L154",
+          "startChar": 13,
+          "endChar": 27,
+          "quote": "主要修改是在拍套系里面修改的"
+        },
+        {
+          "file": "outputs/managed/interview-video-analysis/transcripts/interview-li-auto-recording-01.paraformer-timed.json",
+          "id": "L154",
+          "startChar": 16,
+          "endChar": 30,
+          "quote": "主要修改是在拍套系里面修改的"
+        }
+      ]
+    },
+    {
+      "evidenceId": "E24",
+      "topic": "对方成本说法",
+      "sourceStartSeconds": 2318.5,
+      "sourceEndSeconds": 2335.42,
+      "relation": "一致",
+      "reading": "这是反问环节对方对团队项目的介绍。",
+      "quotes": [
+        {
+          "file": "outputs/managed/interview-video-analysis/transcripts/interview-li-auto-recording-01.local-asr-timed.json",
+          "id": "L160",
+          "startChar": 0,
+          "endChar": 12,
+          "quote": "官方成本的两折到3折左右"
+        },
+        {
+          "file": "outputs/managed/interview-video-analysis/transcripts/interview-li-auto-recording-01.paraformer-timed.json",
+          "id": "L160",
+          "startChar": 0,
+          "endChar": 12,
+          "quote": "官方成本的两折到三折左右"
+        }
+      ]
+    },
+    {
+      "evidenceId": "E25",
+      "topic": "目标团队框架",
+      "sourceStartSeconds": 2378.28,
+      "sourceEndSeconds": 2395.38,
+      "relation": "不可定案",
+      "reading": "只能记作 S 开头的读音；不能确定产品名。",
+      "quotes": [
+        {
+          "file": "outputs/managed/interview-video-analysis/transcripts/interview-li-auto-recording-01.local-asr-timed.json",
+          "id": "L164",
+          "startChar": 44,
+          "endChar": 51,
+          "quote": "主要是基于S的"
+        },
+        {
+          "file": "outputs/managed/interview-video-analysis/transcripts/interview-li-auto-recording-01.paraformer-timed.json",
+          "id": "L164",
+          "startChar": 42,
+          "endChar": 53,
+          "quote": "主要是基于 s 那样的"
+        }
+      ]
+    },
+    {
+      "evidenceId": "E26",
+      "topic": "收尾",
+      "sourceStartSeconds": 2426,
+      "sourceEndSeconds": 2441.44,
+      "relation": "一致",
+      "reading": "对方表示还要横向讨论。",
+      "quotes": [
+        {
+          "file": "outputs/managed/interview-video-analysis/transcripts/interview-li-auto-recording-01.local-asr-timed.json",
+          "id": "L167",
+          "startChar": 21,
+          "endChar": 42,
+          "quote": "跟其他的同事的一个面试啊，什么一起讨论一下"
+        },
+        {
+          "file": "outputs/managed/interview-video-analysis/transcripts/interview-li-auto-recording-01.paraformer-timed.json",
+          "id": "L167",
+          "startChar": 18,
+          "endChar": 38,
+          "quote": "跟其他的同事的一些面试啊什么一起讨论一下"
+        }
+      ]
+    }
+  ]
+}

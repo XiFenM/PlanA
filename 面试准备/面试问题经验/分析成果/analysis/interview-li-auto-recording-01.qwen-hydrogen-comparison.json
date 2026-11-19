@@ -1,0 +1,735 @@
+{
+  "recordingId": "interview-li-auto-recording-01",
+  "sources": [
+    {
+      "path": "outputs/managed/interview-video-analysis/transcripts/interview-li-auto-recording-01.qwen-asr-indexed.json",
+      "sha256": "bbe778296e88554261f8b09c6b4af6de08e6527d2f6a554d8dfcf19deb1dfe6d"
+    },
+    {
+      "path": "outputs/managed/interview-video-analysis/analysis/understand-li-auto-hydrogen-stream-20261119.audio.md",
+      "sha256": "0fcd102f78d1dbac23e43c521dc7d70ff5f4078ba03af82fcbcc86c988477f74"
+    },
+    {
+      "path": "outputs/managed/interview-video-analysis/transcripts/interview-li-auto-recording-01.local-asr-timed.json",
+      "sha256": "6ec303a2737c81ed21547142c0a906da1aeef9ab0bb10ce1f665dbf4d2881929"
+    },
+    {
+      "path": "outputs/managed/interview-video-analysis/transcripts/interview-li-auto-recording-01.paraformer-timed.json",
+      "sha256": "5db06b83991fd2ae2b00bf18bb2e83b6bf17b0b23037ef2990370db215ce047a"
+    },
+    {
+      "path": "outputs/managed/interview-video-analysis/analysis/interview-li-auto-recording-01.technical-audit.md",
+      "sha256": "97e11e679284ca029f351d4fec17a0027fda3024010b28f18bd9f14139090704"
+    },
+    {
+      "path": "outputs/managed/interview-video-analysis/analysis/interview-li-auto-recording-01.visual-evidence.md",
+      "sha256": "4004f8b5facb143c4b7f488a8f70bfaa77e053ed2e452fa2c92ff9cd43679cf8"
+    }
+  ],
+  "method": "Independent Qwen segmented transcription and full-audio Hydrogen understanding. Character offsets zero-based UTF-16/end exclusive; localWindow links to an independently time-bounded PCM clip. The quoted text verifies model output only.",
+  "questionGroups": 15,
+  "userCorrection": {
+    "statement": "框架名是SGLang",
+    "appliesTo": "Q15 反问中的主力推理框架",
+    "source": "用户在本次对话中明确校正"
+  },
+  "classificationCounts": {
+    "语义一致": 21,
+    "证据不足": 4,
+    "文字分歧": 2,
+    "候选补充": 2,
+    "用户校正": 1
+  },
+  "checks": [
+    {
+      "id": "C01",
+      "question": "Q1",
+      "topic": "背景与团队人数",
+      "classification": "语义一致",
+      "judgment": "两方均有估计语气。团队约十人，不能与公司规模混用。",
+      "localWindow": "L020",
+      "qwen": {
+        "paragraphId": "P002",
+        "segmentIndex": 1,
+        "quote": "200~300 人左右可能",
+        "globalStartChar": 495,
+        "globalEndChar": 508,
+        "segmentStartChar": 495,
+        "segmentEndChar": 508
+      },
+      "hydrogen": {
+        "section": "Q1",
+        "quote": "公司整体约 200–300 人",
+        "startChar": 1832,
+        "endChar": 1847
+      }
+    },
+    {
+      "id": "C02",
+      "question": "Q1",
+      "topic": "办公地",
+      "classification": "证据不足",
+      "judgment": "Hydrogen 提出城市解读并标注存疑，Qwen 紧接雇主名称，缺少具体地点回答，不新增城市信息。",
+      "localWindow": "L018",
+      "qwen": {
+        "paragraphId": "P001",
+        "segmentIndex": 1,
+        "quote": "你现在你现在是在哪呢？中中昊芯英是吗？",
+        "globalStartChar": 317,
+        "globalEndChar": 336,
+        "segmentStartChar": 317,
+        "segmentEndChar": 336
+      },
+      "hydrogen": {
+        "section": "Q1",
+        "quote": "询问公司所在城市/办公地",
+        "startChar": 1685,
+        "endChar": 1697
+      }
+    },
+    {
+      "id": "C03",
+      "question": "Q2",
+      "topic": "本人和算子团队的分工",
+      "classification": "语义一致",
+      "judgment": "保留框架侧接入和 profiling 工作，不把全部算子实现归给候选人。",
+      "localWindow": "L025",
+      "qwen": {
+        "paragraphId": "P003",
+        "segmentIndex": 2,
+        "quote": "框架侧的修改一些优化",
+        "globalStartChar": 829,
+        "globalEndChar": 839,
+        "segmentStartChar": 280,
+        "segmentEndChar": 290
+      },
+      "hydrogen": {
+        "section": "Q1",
+        "quote": "在框架侧进行修改和优化，并与算子团队协作推进算子侧优化",
+        "startChar": 2025,
+        "endChar": 2052
+      }
+    },
+    {
+      "id": "C04",
+      "question": "Q2",
+      "topic": "模型名称与接入工作",
+      "classification": "语义一致",
+      "judgment": "本场项目名称优先按清晰的 Qwen 拼写；后续 KDA 与固定配置相容。",
+      "localWindow": "L027",
+      "qwen": {
+        "paragraphId": "P004",
+        "segmentIndex": 2,
+        "quote": "适配项目是GLM-5.3 Flash这个模型",
+        "globalStartChar": 918,
+        "globalEndChar": 940,
+        "segmentStartChar": 369,
+        "segmentEndChar": 391
+      },
+      "hydrogen": {
+        "section": "Q2",
+        "quote": "本人负责在硬件插件上接入该模型并做性能优化",
+        "startChar": 2475,
+        "endChar": 2496
+      }
+    },
+    {
+      "id": "C05",
+      "question": "Q3",
+      "topic": "峰值算力",
+      "classification": "语义一致",
+      "judgment": "单卡 64 GB 和峰值约 200 TFLOP/s 是自述。120–130 的精度和实测范围需记录。",
+      "localWindow": "L033",
+      "qwen": {
+        "paragraphId": "P004",
+        "segmentIndex": 2,
+        "quote": "200T FLOPS啊",
+        "globalStartChar": 1263,
+        "globalEndChar": 1274,
+        "segmentStartChar": 714,
+        "segmentEndChar": 725
+      },
+      "hydrogen": {
+        "section": "Q2",
+        "quote": "峰值算力约 `200 TFLOPS`",
+        "startChar": 2542,
+        "endChar": 2560
+      }
+    },
+    {
+      "id": "C06",
+      "question": "Q3",
+      "topic": "访存带宽方向",
+      "classification": "语义一致",
+      "judgment": "800–1000 G 是回答中的实测范围，峰值另报 1.6 T。",
+      "localWindow": "L039",
+      "qwen": {
+        "paragraphId": "P005",
+        "segmentIndex": 2,
+        "quote": "不是卡与卡之间的，是从显存到芯片上",
+        "globalStartChar": 1560,
+        "globalEndChar": 1577,
+        "segmentStartChar": 1011,
+        "segmentEndChar": 1028
+      },
+      "hydrogen": {
+        "section": "Q2",
+        "quote": "单卡显存到计算单元之间的访存带宽",
+        "startChar": 2772,
+        "endChar": 2788
+      }
+    },
+    {
+      "id": "C07",
+      "question": "Q4",
+      "topic": "decode 口径",
+      "classification": "语义一致",
+      "judgment": "两个模型均保存面试官的口径确认。这个指标属于整套配置。",
+      "localWindow": "L040",
+      "qwen": {
+        "paragraphId": "P005",
+        "segmentIndex": 2,
+        "quote": "单请求是16到17 tokens每秒",
+        "globalStartChar": 1616,
+        "globalEndChar": 1634,
+        "segmentStartChar": 1067,
+        "segmentEndChar": 1085
+      },
+      "hydrogen": {
+        "section": "Q2",
+        "quote": "单请求下约 `16` 到 `17 tokens/s`",
+        "startChar": 2826,
+        "endChar": 2852
+      }
+    },
+    {
+      "id": "C08",
+      "question": "Q4",
+      "topic": "32K prefill 时延",
+      "classification": "证据不足",
+      "judgment": "28 秒是候选读法，328 秒也不是稳定识别。64K 和 128K 的条件换算可单独进行。",
+      "localWindow": "L041",
+      "qwen": {
+        "paragraphId": "P006",
+        "segmentIndex": 2,
+        "quote": "32K左右是在3 28秒左右",
+        "globalStartChar": 1717,
+        "globalEndChar": 1731,
+        "segmentStartChar": 1168,
+        "segmentEndChar": 1182
+      },
+      "hydrogen": {
+        "section": "Q2",
+        "quote": "在 3……28 秒左右",
+        "startChar": 2889,
+        "endChar": 2900
+      }
+    },
+    {
+      "id": "C09",
+      "question": "Q4",
+      "topic": "输入吞吐追问",
+      "classification": "语义一致",
+      "judgment": "现场没有报换算后的输入 tok/s。936 及 819–874 均是复盘演算。",
+      "localWindow": "L043",
+      "qwen": {
+        "paragraphId": "P007",
+        "segmentIndex": 3,
+        "quote": "这可以算一下，这个我主要看一下Prefer的时延",
+        "globalStartChar": 1816,
+        "globalEndChar": 1840,
+        "segmentStartChar": 80,
+        "segmentEndChar": 104
+      },
+      "hydrogen": {
+        "section": "Q2",
+        "quote": "主要观察了时延指标",
+        "startChar": 2996,
+        "endChar": 3005
+      }
+    },
+    {
+      "id": "C10",
+      "question": "Q5",
+      "topic": "因果卷积是一个步骤",
+      "classification": "语义一致",
+      "judgment": "现场主动区分卷积和完整 KDA。清楚定义当前与历史位置能避免方向歧义。",
+      "localWindow": "L060",
+      "qwen": {
+        "paragraphId": "P010",
+        "segmentIndex": 3,
+        "quote": "这个卷积操作是这KDA里面的一部分",
+        "globalStartChar": 3074,
+        "globalEndChar": 3091,
+        "segmentStartChar": 1338,
+        "segmentEndChar": 1355
+      },
+      "hydrogen": {
+        "section": "Q3",
+        "quote": "内部包含一个一维“因果卷积”",
+        "startChar": 4193,
+        "endChar": 4207
+      }
+    },
+    {
+      "id": "C11",
+      "question": "Q6",
+      "topic": "卷积尾状态和递推矩阵",
+      "classification": "语义一致",
+      "judgment": "中间态及前后相依得到支持。衰减和 delta 更新可作为后续准备。",
+      "localWindow": "L064",
+      "qwen": {
+        "paragraphId": "P012",
+        "segmentIndex": 4,
+        "quote": "缓存前一前一个位置的递推矩阵",
+        "globalStartChar": 3426,
+        "globalEndChar": 3440,
+        "segmentStartChar": 150,
+        "segmentEndChar": 164
+      },
+      "hydrogen": {
+        "section": "Q3",
+        "quote": "必须缓存卷积尾部与递推矩阵",
+        "startChar": 4372,
+        "endChar": 4385
+      }
+    },
+    {
+      "id": "C12",
+      "question": "Q6",
+      "topic": "分别说明状态精度",
+      "classification": "语义一致",
+      "judgment": "此处前一段卷积尾状态报 FP32，递推状态报 BF16。精度表述须按语境区分后面的泛指。",
+      "localWindow": "L067",
+      "qwen": {
+        "paragraphId": "P013",
+        "segmentIndex": 4,
+        "quote": "它的它的数据类型是 BF16 的",
+        "globalStartChar": 3680,
+        "globalEndChar": 3696,
+        "segmentStartChar": 404,
+        "segmentEndChar": 420
+      },
+      "hydrogen": {
+        "section": "Q3",
+        "quote": "heads * dk * dv`（连读`[待回听]`）的递推状态矩阵，类型 `bf16`",
+        "startChar": 4017,
+        "endChar": 4061
+      }
+    },
+    {
+      "id": "C13",
+      "question": "Q7",
+      "topic": "拆池为什么可能更快",
+      "classification": "语义一致",
+      "judgment": "同条件拷贝量和端到端收益未提供。不要把一个 view 操作本身视为必然拷贝。",
+      "localWindow": "L078",
+      "qwen": {
+        "paragraphId": "P015",
+        "segmentIndex": 4,
+        "quote": "我们把这部分转形状和各种的连续化的操作给省略掉",
+        "globalStartChar": 4416,
+        "globalEndChar": 4439,
+        "segmentStartChar": 1140,
+        "segmentEndChar": 1163
+      },
+      "hydrogen": {
+        "section": "Q3",
+        "quote": "省去计算前的切分和连续化拷贝",
+        "startChar": 4146,
+        "endChar": 4160
+      }
+    },
+    {
+      "id": "C14",
+      "question": "Q7",
+      "topic": "递推矩阵的数字",
+      "classification": "文字分歧",
+      "judgment": "Qwen 重复写 18，Hydrogen 给 128。本地另一次识别出混合的 128 与 18；公开配置只能说明 128 相容，实际 shape、TP 与槽位需核实。",
+      "localWindow": "L073",
+      "qwen": {
+        "paragraphId": "P014",
+        "segmentIndex": 4,
+        "quote": "8×18×18",
+        "globalStartChar": 4130,
+        "globalEndChar": 4137,
+        "segmentStartChar": 854,
+        "segmentEndChar": 861
+      },
+      "hydrogen": {
+        "section": "Q3",
+        "quote": "8 * 128 * 128",
+        "startChar": 4096,
+        "endChar": 4109
+      }
+    },
+    {
+      "id": "C15",
+      "question": "Q7",
+      "topic": "面试官要求概括",
+      "classification": "语义一致",
+      "judgment": "适合把问题、改动、可测收益放在项目开场，而非据此推断面试官对人的评价。",
+      "localWindow": "L075",
+      "qwen": {
+        "paragraphId": "P015",
+        "segmentIndex": 4,
+        "quote": "先简单几句话跟我说一下",
+        "globalStartChar": 4212,
+        "globalEndChar": 4223,
+        "segmentStartChar": 936,
+        "segmentEndChar": 947
+      },
+      "hydrogen": {
+        "section": "Q3",
+        "quote": "先用几句话概括现有问题、思路和收益",
+        "startChar": 4896,
+        "endChar": 4913
+      }
+    },
+    {
+      "id": "C16",
+      "question": "Q8",
+      "topic": "自定义类名",
+      "classification": "候选补充",
+      "judgment": "复用既有管理逻辑、修改分配这件事两路相容；类名仍用源码核查，不能认定精确类和接口。",
+      "localWindow": "L087",
+      "qwen": {
+        "paragraphId": "P017",
+        "segmentIndex": 5,
+        "quote": "Map Cache 一个 Group",
+        "globalStartChar": 5164,
+        "globalEndChar": 5182,
+        "segmentStartChar": 318,
+        "segmentEndChar": 336
+      },
+      "hydrogen": {
+        "section": "Q3",
+        "quote": "MambaCache` group",
+        "startChar": 4482,
+        "endChar": 4499
+      }
+    },
+    {
+      "id": "C17",
+      "question": "Q8",
+      "topic": "固定插件基线",
+      "classification": "语义一致",
+      "judgment": "最后重复读数相容，仅作为团队当时自述版本，不把对方提到的 0.34 当作今天的最新版。",
+      "localWindow": "L095",
+      "qwen": {
+        "paragraphId": "P019",
+        "segmentIndex": 5,
+        "quote": "V 零点三零点一",
+        "globalStartChar": 5882,
+        "globalEndChar": 5890,
+        "segmentStartChar": 1036,
+        "segmentEndChar": 1044
+      },
+      "hydrogen": {
+        "section": "Q3",
+        "quote": "v0.30.1",
+        "startChar": 4640,
+        "endChar": 4647
+      }
+    },
+    {
+      "id": "C18",
+      "question": "Q9",
+      "topic": "后续优化与项目时期",
+      "classification": "语义一致",
+      "judgment": "MTP 和尝试 FP8 都是讨论中的后续方向，现场不支持写作已上线收益。",
+      "localWindow": "L106",
+      "qwen": {
+        "paragraphId": "P022",
+        "segmentIndex": 6,
+        "quote": "简历上写的那个时候写的项目我们还没有支持",
+        "globalStartChar": 6620,
+        "globalEndChar": 6640,
+        "segmentStartChar": 214,
+        "segmentEndChar": 234
+      },
+      "hydrogen": {
+        "section": "Q3",
+        "quote": "简历所写项目阶段尚未支持",
+        "startChar": 4815,
+        "endChar": 4827
+      }
+    },
+    {
+      "id": "C19",
+      "question": "Q9",
+      "topic": "后面重述的缓存精度",
+      "classification": "文字分歧",
+      "judgment": "这里比较的是 Qwen 后段泛称与 Hydrogen 对前段说明的归纳。P013 与本地原窗支持前段 BF16；P020 的 FP16 与本地 L102 有差别，不能跨句静默统一。",
+      "localWindow": "L102",
+      "qwen": {
+        "paragraphId": "P020",
+        "segmentIndex": 5,
+        "quote": "KV Cache 之前说是用的是 FP16 和 FP32",
+        "globalStartChar": 6321,
+        "globalEndChar": 6349,
+        "segmentStartChar": 1475,
+        "segmentEndChar": 1503
+      },
+      "hydrogen": {
+        "section": "Q3",
+        "quote": "递推状态矩阵，类型 `bf16`",
+        "startChar": 4045,
+        "endChar": 4061
+      }
+    },
+    {
+      "id": "C20",
+      "question": "Q10",
+      "topic": "主仓与插件边界",
+      "classification": "语义一致",
+      "judgment": "融合算子替换 modeling 片段可能涉及主仓；worker/runner/分配尽量在插件。具体 commit 未查证。",
+      "localWindow": "L114",
+      "qwen": {
+        "paragraphId": "P023",
+        "segmentIndex": 6,
+        "quote": "自己的 worker，自己的那个 model runner",
+        "globalStartChar": 7107,
+        "globalEndChar": 7136,
+        "segmentStartChar": 701,
+        "segmentEndChar": 730
+      },
+      "hydrogen": {
+        "section": "Q4",
+        "quote": "自定义 `Worker`、`ModelRunner` 及缓存分配机制",
+        "startChar": 5172,
+        "endChar": 5206
+      }
+    },
+    {
+      "id": "C21",
+      "question": "Q11",
+      "topic": "块表与非连续存储",
+      "classification": "语义一致",
+      "judgment": "已说出核心映射。块表在 GPU 上的具体表示形式是额外实现细节。",
+      "localWindow": "L117",
+      "qwen": {
+        "paragraphId": "P024",
+        "segmentIndex": 6,
+        "quote": "根据我们的 block table",
+        "globalStartChar": 7307,
+        "globalEndChar": 7324,
+        "segmentStartChar": 901,
+        "segmentEndChar": 918
+      },
+      "hydrogen": {
+        "section": "Q5",
+        "quote": "建立从逻辑块到物理块的映射",
+        "startChar": 5592,
+        "endChar": 5605
+      }
+    },
+    {
+      "id": "C22",
+      "question": "Q12",
+      "topic": "4096 与尾块",
+      "classification": "语义一致",
+      "judgment": "两份相对长上下文材料都保留 16/17，并支持按需增长。整除时无需额外尾块；是否想表达预留尚未确认。",
+      "localWindow": "L129",
+      "qwen": {
+        "paragraphId": "P027",
+        "segmentIndex": 7,
+        "quote": "十十六块，然后十十七块",
+        "globalStartChar": 8322,
+        "globalEndChar": 8333,
+        "segmentStartChar": 372,
+        "segmentEndChar": 383
+      },
+      "hydrogen": {
+        "section": "Q5",
+        "quote": "16 块……17 块然后再加上一个末尾的",
+        "startChar": 5827,
+        "endChar": 5847
+      }
+    },
+    {
+      "id": "C23",
+      "question": "Q12",
+      "topic": "前缀共享",
+      "classification": "语义一致",
+      "judgment": "可以把共同前缀的复用与渐进分配分开讲；实际共享取决于实现及匹配条件。",
+      "localWindow": "L133",
+      "qwen": {
+        "paragraphId": "P028",
+        "segmentIndex": 7,
+        "quote": "我们可以 block block 的命中",
+        "globalStartChar": 8643,
+        "globalEndChar": 8663,
+        "segmentStartChar": 693,
+        "segmentEndChar": 713
+      },
+      "hydrogen": {
+        "section": "Q5",
+        "quote": "以 block 为单位复用分叉前的所有块",
+        "startChar": 5953,
+        "endChar": 5973
+      }
+    },
+    {
+      "id": "C24",
+      "question": "Q13",
+      "topic": "Conv3D 项目与框架",
+      "classification": "候选补充",
+      "judgment": "多模态 32B 项目和 PyTorch 侧布局修改有多处支持；模型全名及具体 revision 仍待确认。",
+      "localWindow": "L143",
+      "qwen": {
+        "paragraphId": "P030",
+        "segmentIndex": 7,
+        "quote": "千问千问三 32B VR",
+        "globalStartChar": 9253,
+        "globalEndChar": 9265,
+        "segmentStartChar": 1303,
+        "segmentEndChar": 1315
+      },
+      "hydrogen": {
+        "section": "Q6",
+        "quote": "千问3 32B VL",
+        "startChar": 6443,
+        "endChar": 6453
+      }
+    },
+    {
+      "id": "C25",
+      "question": "Q13",
+      "topic": "末维 3→128",
+      "classification": "语义一致",
+      "judgment": "用重述确认通道对齐。42.67 仅是在其余条件相同下旧物理张量与紧凑张量的倍率，整体峰值待测。",
+      "localWindow": "L151",
+      "qwen": {
+        "paragraphId": "P031",
+        "segmentIndex": 8,
+        "quote": "它直接就 padding 成 128 了",
+        "globalStartChar": 9487,
+        "globalEndChar": 9507,
+        "segmentStartChar": 121,
+        "segmentEndChar": 141
+      },
+      "hydrogen": {
+        "section": "Q6",
+        "quote": "最后一维 `3` 被直接 pad 到 `128`",
+        "startChar": 6623,
+        "endChar": 6647
+      }
+    },
+    {
+      "id": "C26",
+      "question": "Q13",
+      "topic": "精确五维原貌",
+      "classification": "证据不足",
+      "judgment": "P031 后续明确恢复五维。Hydrogen 在建议中补的具体 patch shape 与片上操作不计为现场回答。",
+      "localWindow": "L143",
+      "qwen": {
+        "paragraphId": "P030",
+        "segmentIndex": 7,
+        "quote": "N C H W",
+        "globalStartChar": 9336,
+        "globalEndChar": 9343,
+        "segmentStartChar": 1386,
+        "segmentEndChar": 1393
+      },
+      "hydrogen": {
+        "section": "Q6",
+        "quote": "口述示例说 `5, 14, 14, 3` 仅四维",
+        "startChar": 6526,
+        "endChar": 6550
+      }
+    },
+    {
+      "id": "C27",
+      "question": "Q14",
+      "topic": "成本数字的归属",
+      "classification": "语义一致",
+      "judgment": "这是对方云端工作举例；负载和成本基准未知，不写成个人成果或公司的公开承诺。",
+      "localWindow": "L160",
+      "qwen": {
+        "paragraphId": "P033",
+        "segmentIndex": 8,
+        "quote": "官方成本的两折到三折左右",
+        "globalStartChar": 10383,
+        "globalEndChar": 10395,
+        "segmentStartChar": 1017,
+        "segmentEndChar": 1029
+      },
+      "hydrogen": {
+        "section": "反问",
+        "quote": "将成本降到官方的约“两折到三折”",
+        "startChar": 7184,
+        "endChar": 7200
+      }
+    },
+    {
+      "id": "C28",
+      "question": "Q14",
+      "topic": "云端推理术语",
+      "classification": "证据不足",
+      "judgment": "多 batch 与 MTP 得到支持。中间技术名在各路识别中差异大，“chunked prefill”仅作待核候选。",
+      "localWindow": "L163",
+      "qwen": {
+        "paragraphId": "P034",
+        "segmentIndex": 8,
+        "quote": "像 WiFi， MTP",
+        "globalStartChar": 10661,
+        "globalEndChar": 10672,
+        "segmentStartChar": 1295,
+        "segmentEndChar": 1306
+      },
+      "hydrogen": {
+        "section": "反问",
+        "quote": "多 batch、chunked prefill、MTP",
+        "startChar": 7297,
+        "endChar": 7324
+      }
+    },
+    {
+      "id": "C29",
+      "question": "Q15",
+      "topic": "主要框架专名",
+      "classification": "用户校正",
+      "judgment": "用户在本次复盘中明确确认“框架名是SGLang”。正文据此采用 SGLang；保留 Qwen 原始误识。此项确认仅用于该名称。",
+      "localWindow": "L164",
+      "qwen": {
+        "paragraphId": "P034",
+        "segmentIndex": 8,
+        "quote": "主要是基于 Hugging Face 的",
+        "globalStartChar": 10759,
+        "globalEndChar": 10779,
+        "segmentStartChar": 1393,
+        "segmentEndChar": 1413
+      },
+      "hydrogen": {
+        "section": "反问",
+        "quote": "主力基于 `SGLang`",
+        "startChar": 7447,
+        "endChar": 7460
+      }
+    },
+    {
+      "id": "C30",
+      "question": "Q15",
+      "topic": "收尾表态",
+      "classification": "语义一致",
+      "judgment": "支持对方会讨论后反馈。末片计量差异仍在，不以告别文字推断全片准确率或面试结果。",
+      "localWindow": "L167",
+      "qwen": {
+        "paragraphId": "P035",
+        "segmentIndex": 9,
+        "quote": "跟其他的同事的一些面试啊什么一起讨论一下",
+        "globalStartChar": 10983,
+        "globalEndChar": 11003,
+        "segmentStartChar": 151,
+        "segmentEndChar": 171
+      },
+      "hydrogen": {
+        "section": "反问",
+        "quote": "与其他同事的其他场次结果汇总讨论",
+        "startChar": 7615,
+        "endChar": 7631
+      }
+    }
+  ]
+}

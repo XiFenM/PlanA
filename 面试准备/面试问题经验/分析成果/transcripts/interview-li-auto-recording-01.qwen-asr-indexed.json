@@ -1,0 +1,855 @@
+{
+  "schemaVersion": 1,
+  "recordingId": "interview-li-auto-recording-01",
+  "derivation": {
+    "path": "work/managed/interview-video-analysis/derived/li-auto-20261119-full/interview-li-auto-recording-01.audio-derivation.json",
+    "sha256": "7b380ed1a18451cedfd35501f6296d2a31257db7ea4c70a709b836db22fc214e"
+  },
+  "responseList": {
+    "path": "work/managed/interview-video-analysis/preflight/li-auto-asr-responses-list.json",
+    "sha256": "f220cba5ba502f157592b8286b8f9e15b28607c10245cee131509331b098d620"
+  },
+  "offsetConvention": "Zero-based UTF-16 code-unit offsets, start inclusive and end exclusive. Global offsets address sources.map(source => source.text).join(segmentSeparator); these are text positions, not times.",
+  "speakerAttribution": "not-added",
+  "usagePolicy": "Only token counts and seconds are copied. Detailed billing remains in the original response and is not reproduced in this index.",
+  "timestamps": "whole-audio-segment-boundaries-only; no sentence alignment or text-length interpolation",
+  "method": "Consecutive paragraphs up to 400 UTF-16 units, preferring a sentence-ending boundary after 200 units. Preserve every original text character; no correction, omission, deduplication or speaker assignment.",
+  "segmentSeparator": "\n",
+  "textUtf16Length": 11050,
+  "originalTextUtf16Length": 11042,
+  "sources": [
+    {
+      "segmentIndex": 1,
+      "response": {
+        "path": "outputs/managed/interview-video-analysis/transcripts/transcribe-li-auto-20261119-part-001.private-billing.raw.json",
+        "sha256": "257bcf74a45e8d76b89337ba24d782d42096b0f349d7594df418e9c9f37a42ed"
+      },
+      "audio": {
+        "path": "work/managed/interview-video-analysis/derived/li-auto-20261119-full/interview-li-auto-recording-01.segment-001.mono-16k-48kbps.mp3",
+        "sha256": "bb3716fcfc49310d0c916bc6b6be8ac57dc65cefee695a4829259fe0995e8e91",
+        "startSample": 0,
+        "endSample": 4796800
+      },
+      "sourceRange": {
+        "startSeconds": 0,
+        "endSeconds": 299.8,
+        "precision": "whole-audio-segment-only"
+      },
+      "model": "qwen/qwen-audio-3.1-asr-flash",
+      "receipts": {},
+      "usage": {
+        "input_tokens": 3748,
+        "output_tokens": 344,
+        "total_tokens": 4092,
+        "seconds": 300
+      },
+      "globalStartChar": 0,
+      "globalEndChar": 548,
+      "textUtf16Length": 548,
+      "text": "喂喂。嗯嗯。好，我放在我那个，我听一下。喂，您好，你听得到吗？啊，能听到吗？我可以听到。啊，好的，我我调大一点声音。好，行。好，您您再，您说句话我听，看我我刚刚没听到，有点模糊。现现在能现在能听到吗？啊，可以可以可以，好，谢谢谢谢。啊，好的好的，我打扰你了。哦，然后我说理想这边我们现在做那个，自己自己的性能优化，框架，算子，加速啊，都都是都是这一些吧。然后然后整个面试的话，我们可能是三个流程，就没有没有笔试，就是大概我会了解一下你的个人的情况，然后根据项目问一问，然后这样的话我会问一些可能我这边关心的，不一定是你项目的一些问题。那最后你可能如果你有什么问题可以问我，大概 30 分钟，40 分钟左右，对。嗯，好的好的。然后，哦，你现在你现在是在哪呢？中中昊芯英是吗？对对对对对对，是的是的，那这也是一家自研芯 AI 芯片的公司，对。哦，这这个公公司的规模是什么样子？你们现在有多少人呢？您您您是说是整个是是我们组，还是说整个公司，还是软件部门？整个整个公司是什么样？因为我我可能对这个不太了解。对，整个公司是什么规模？然后你们组是多少人呢？现在你们主要是做什么？然后整个公司大概是在 200~300 人左右可能，然后我们组是大概是 10 个人左右，10 个人不到一点。然后我们主要就是我们。",
+      "paragraphIds": [
+        "P001",
+        "P002"
+      ],
+      "textRoundtripVerified": true
+    },
+    {
+      "segmentIndex": 2,
+      "response": {
+        "path": "outputs/managed/interview-video-analysis/transcripts/transcribe-li-auto-20261119-part-002.private-billing.raw.json",
+        "sha256": "5828ebe9d09c9ed5014526a4ecc4ae9a7c7f76b977f1c4ea7fd5eb9b33d26f29"
+      },
+      "audio": {
+        "path": "work/managed/interview-video-analysis/derived/li-auto-20261119-full/interview-li-auto-recording-01.segment-002.mono-16k-48kbps.mp3",
+        "sha256": "a299b56b148c1c0cc9ba39695328f6637ad6bed46b6dea02f67aab33a780d67b",
+        "startSample": 4796800,
+        "endSample": 9593600
+      },
+      "sourceRange": {
+        "startSeconds": 299.8,
+        "endSeconds": 599.6,
+        "precision": "whole-audio-segment-only"
+      },
+      "model": "qwen/qwen-audio-3.1-asr-flash",
+      "receipts": {},
+      "usage": {
+        "input_tokens": 3748,
+        "output_tokens": 709,
+        "total_tokens": 4457,
+        "seconds": 300
+      },
+      "globalStartChar": 549,
+      "globalEndChar": 1735,
+      "textUtf16Length": 1186,
+      "text": "主要的工作是呃是做那个我们自研芯片上面的框架推理框架还有训练框架，做框架上面的开发和适配，然后还会适配一些模型这样子。然后我这边。对，然后嗯我这边的嗯好像有点延迟，好像什么有点延迟。对，感觉有点延迟。嗯那那我先说，那我就简单啊我就先自我介绍简单介绍一下，然后我现在是嗯AI框架开发工程师，然后这边主要是围绕着PyTorch和那个VLM，然后做那个模型上的嗯接入和那个推理优化，然后嗯在模型优化上面我主要工作就是根据我们的实际的负载，然后分析模型的时延吞吐内存的问题，然后通过一些profile还有形状分析，然后一些测试，然后去定位一些性能瓶颈，然后做框架上面的框架侧的修改一些优化，然后其中会跟算子团队然后去协作一些那个算子层面的一些推进一些优化。对。呃你部具体部署了什么模型呢？然后有达到什么样的那个水平？嗯然后我呃最近最近近期的呃一个适配项目是GLM-5.3 Flash这个模型，然后我是负责了那个插件我们的在插我们的硬件插件上接入这个这个模型，然后进行一些性能优化，然后最终的性能大概是在10101016到十七tokens每秒。然后这是一个单请求的，然后是呃。哎您说您说您说。哎这个延迟有这么高吗？你是裸单量在面试吗？哎。没有，我就是在一个会议室里面试。嗯呃OK呃我看稍等，你们是在自己的那个芯片上部署了这个模型吗？对对是的是的。这芯片大概是什么样的算力和带宽方便说吗？嗯。算力大概显存。嗯显存是64GB。量产了量产了，然后显存是在464GB一张一张卡是64GB，然后是算力方面是嗯在200 200T FLOPS左右，但是这是一个最就是新硬件上面的理想的算力。然后我们是。200T 200G。200 200T FLOPS。200T FLOPS啊。对，然后这是一个硬件上理想的算力，然后我们平时的话我们测试下来一般来说是能够应用到实际场景中的大概是在120到130左右。嗯带宽呢？带宽是在800G到1000G之间。啊还有这个千，那它不是一个具体的数吗？嗯。哦它不是这个固定的数吗？这还有。啊这这个是我刚刚说的就是实测的实测的大概在这个范围波动，它有个波动它会有呈现一个波动现象。那它的那个就是硬件的标定的那个带宽是多少？硬件标定的带宽就是那个最高的峰值带宽是1.6T。是多少？1.6T 1.6。1.6T。嗯。OK。嗯这个带宽是指它的显存到芯片的计算之间的带宽，还是它芯片之间互联那个带宽？是显是单单独一张卡上面的带宽，不是卡与卡之间的，是从显存到芯片上。然后你们做好，那你们那个呃做出来之后的那个性能是多少来着？刚刚说。啊刚刚说是单请求是16到17 tokens每秒。哦这是decode是吗？对对对。decode那那compile呢？啊profile profile的话看那个上下文输入的长度嘛，长长度越长它是是那个耗时越长，然后在32K左右是在3 28秒左右，然后。",
+      "paragraphIds": [
+        "P003",
+        "P004",
+        "P005",
+        "P006"
+      ],
+      "textRoundtripVerified": true
+    },
+    {
+      "segmentIndex": 3,
+      "response": {
+        "path": "outputs/managed/interview-video-analysis/transcripts/transcribe-li-auto-20261119-part-003.private-billing.raw.json",
+        "sha256": "2ee790560b9165393082d9f2e4e51f572bf22ef7d32b61f9eb2d2c90c393b87e"
+      },
+      "audio": {
+        "path": "work/managed/interview-video-analysis/derived/li-auto-20261119-full/interview-li-auto-recording-01.segment-003.mono-16k-48kbps.mp3",
+        "sha256": "92d2b30005252bdf7fa8a77e05c49e92fa6edaff922c37177664b5be248cca9a",
+        "startSample": 9593600,
+        "endSample": 14390400
+      },
+      "sourceRange": {
+        "startSeconds": 599.6,
+        "endSeconds": 899.4,
+        "precision": "whole-audio-segment-only"
+      },
+      "model": "qwen/qwen-audio-3.1-asr-flash",
+      "receipts": {},
+      "usage": {
+        "input_tokens": 3748,
+        "output_tokens": 1709,
+        "total_tokens": 5457,
+        "seconds": 271
+      },
+      "globalStartChar": 1736,
+      "globalEndChar": 3275,
+      "textUtf16Length": 1539,
+      "text": "64K左右是在70秒左右，然后到那个128K是在100、150、160左右。有有看它是多少Token每秒吗？嗯，大概是在嗯，您说输入输入吞吐是吧？大概是在几嗯，这可以算一下，这个我主要看一下Prefer的时延，然后就是对。好。那那你们有有有自己评估过，比如这个性能大概是一个什么样的水平吗？就是比如它在业界什么样水平，它相对你的芯片中是否达到一个比较理想的一个水平？嗯，在业界在业嗯，在业界上看，就是如果是对比其他的国产芯片的话，可能还是那个相对比较嗯比较低的一个水平。偏差吗？符合预期。嗯，应该是应该是就符对符合我们我们自己的预期，对对，因为它这个毕竟嗯其实这代产品也是发布比较久了，所以它的性能实际上不是很理想，所以是符合我们自己的预期的。OK。然后因为还没有开启一些更高级的优化。那你在里面有什么性能优化吗？嗯，里面这GLM-5.3 Flash这个模型，它最大的特点就是它的是线引入了一个KDA线性注意力，然后我主要就是针对这个KDA线性注意力做了一些缓存上面的布局的优化。然后我接下来详细详细讲一下，然后因为在V具体是什么？嗯，对，然后我接下来详细讲一下。然后在VRM里面，它对于线性注意力这个模块，因为嗯这个模块还没有大家还没有收敛，所以它给到的一个Cache的嗯主流的Cache方案，它是一个统一的Cache池，就是给那个32、33、34层的KDA，它都分配了一整个一整个Cache，就是它是一个INT8的，然后一个连续的几嗯几十万的一个长度。然后如果但是我们在针对我们这个具体的这个模型上面，然后它是一个它的KDA，它需要是两种缓存，一种是卷积的尾部池。嗯，就是它有一个卷积模块，然后它需要每次递推到前最后的几个Token的卷积隐藏隐藏那个嗯嗯卷积的那个结果，然后需要把它缓存下来。然后第二部分是递推矩阵，然后它我们每次会有一个嗯嗯对每一个Token它有一个每一个位置它会有一个递推矩阵需要保存下来，然后在那个卷积尾部池卷积尾部的缓存里面，我们需要的是一个。稍等一下。Flash这个模型里面会有卷积的这个算，Flash这个模型里面会有卷积的算法吗？对对，是的，在KDA里面。哪里哪哪个地方会用到卷积呢？就KDA，Kimi的Delta Attention。因为GLM-5.3 Flash这个。Delta Attention里面是解卷积吗？你是在说它那个线性注意力吗？对，它线性注意力它有一它有一个一维的因果卷积。一维的什么卷积？因果卷积，它会从前往后去因果的卷积。因果卷积。对。你确认那个东西是叫叫卷积吗？确定，这我这我就是这么我就是这么做的，就他就是这样做。嗯，那你说它大概是怎么实现的呢？嗯，你是说具体的算法流程吗？它就是它从它会每一次我看四个Token，就是四个Token位置，它的它的它的它毕竟它也是一个序列，一维序列，它是从前往后看四个Token，然后四个Token然后汇聚到一个一个一个最前面的一个位置，它是这样子的一个卷积，一维的线一维的，然后从前往后看的这样一个卷积。你那你的这个卷积就是在说刚刚那个线性注意力吗？这两个是一回事吗？它是它这个卷积是线性注意力里面的一部分，对对对，它是这个这个卷积是卷积是处理KDA吗？对对对，它是这个这个卷积是这个这个卷积操作是这KDA里面的一部分。那整个KDA是什么样的原理呢？整个KDA的算法就比较长了，这里面我就不不太方便再说，因为他我讲的话我可能要讲用用给PPT展示那个很多东西了，我主要是我主要是想讲就是我俩。你能简单几句话概括一下吗？嗯，首先我们通过卷积之后得到。你接着念。对，先让我们通过卷积之后得到它每个每个KV，K嗯QKV之后，然后它会去给每一个嗯QKV然后做嗯就是就很多的线性和那个Norm操作。",
+      "paragraphIds": [
+        "P007",
+        "P008",
+        "P009",
+        "P010",
+        "P011"
+      ],
+      "textRoundtripVerified": true
+    },
+    {
+      "segmentIndex": 4,
+      "response": {
+        "path": "outputs/managed/interview-video-analysis/transcripts/transcribe-li-auto-20261119-part-004.private-billing.raw.json",
+        "sha256": "6d819ea138c54dea79977d7ab37f7c32027a2843c13fbc486f27962559a944c8"
+      },
+      "audio": {
+        "path": "work/managed/interview-video-analysis/derived/li-auto-20261119-full/interview-li-auto-recording-01.segment-004.mono-16k-48kbps.mp3",
+        "sha256": "cbf8cc3d8cadefe39470fcfdc7d69ab904d87c587e257bf1ada8dde5ef80c47c",
+        "startSample": 14390400,
+        "endSample": 19187200
+      },
+      "sourceRange": {
+        "startSeconds": 899.4,
+        "endSeconds": 1199.2,
+        "precision": "whole-audio-segment-only"
+      },
+      "model": "qwen/qwen-audio-3.1-asr-flash",
+      "receipts": {},
+      "usage": {
+        "input_tokens": 3748,
+        "output_tokens": 862,
+        "total_tokens": 4610,
+        "seconds": 300
+      },
+      "globalStartChar": 3276,
+      "globalEndChar": 4845,
+      "textUtf16Length": 1569,
+      "text": "然后得到一个得到一个 S， 然后再用这 S 然后再去递推，跟前面一代，前前面一个位置，然后递推一个，得到一个递推矩阵，然后再这个递推矩阵，然后再不停的往后再进行叠加。然后所以我们在这个过程中我们需要的两两两个缓存，就是一个是那个卷，前面在说的那个卷积的缓存。是，另外一个是后面那个递推矩阵，我们需要去缓存前一前一个位置的递推矩阵，然后得到下一个位置递递推矩阵。啊，你接着说。嗯，然后在这里，然后在这两个池里面，然后前面的一个看卷积的尾部池，它是一个 3，之前也说就是它四个 token 一看，所以它的缓存就缓存末尾三个 token，然后它就是 3 乘一个 head and dim 这个一个形状。然后它的它的那个数据类型是是那个 FP32 的，然后后面一个是后面有一个到那个到那递推矩阵那边，它的形状是是 head heads 乘以一个 dk dv，这个是一个这个是一个它的递，每我定义每个位置的递推矩阵啊，它的它的数据类型是 BF16 的。然后这个两种两种池它的形状是不一样的，它的那个数据类型也是不一样的。但是用，但是 VRM 里面它因为为了统一所有的暂时先统一所有的信息处理的开启方式，所以它只是给了一个 int8 的类型。然后如果如果要用到算子里面的话，如果要用到算子里面的话，我们就需要去一个，把那个一个大池，然后去 view 到，就切分，然后 view 成一个一个个小块，然后在这个在这个操作里面，对于我们自研芯片它是一个比较复杂的工，就是不能说复杂，就是耗时比较大的工作，它需要一个它需个，对，需要重新把这个池里面切分，然后重新连续化，连续化成，化成一个几个连续的连续的那 tensor，然后再传入进去。然后这个操作是，就是耗时很大。然后我们我们的想法就是把这个把这个通用的池给具体化成，就针对我们这个模型，然后具体化，直接就拆成两部分，把一部分拆成那个，那卷积池，一部分拆成那个递推矩阵池，然后分别就就用类似于原本的 kv 开启的方式，就是前面的槽位 p，然后后面就是我们的大小，比如说那个 8×18×18，然后把它分成两个具体的，针对我们这模型具体形状的这个这个池，然后再去让算子去计算，这样子会效率会高很多。没听明白啊，你能，刚刚刚有比较多的细节，你能先简单几句话跟我说一下，比如说现在的 VRM 的那套 kv 池子有什么问题，你们做完了之后大概的思路有什么样优化，能取得什么样的收益吗？啊现在的 VRM 它是通用化的，然后没有针对我们，没没有针对加入我们这个 KDA 去这个模型的，所以所以它是它会存在一些额额外的操作，而不不能直接把这个池给放，输入到那个算子里面去，需要经过中间的一些转形状或者是连续化的一些操作之后才能去让算子直接计算。然后我们的方案就是我们把这部分转形状和各种的连续化的操作给省略掉，我们在一开始分配这个池的过程中，就直接去针对这个模，这模型这个这个 attention 的这个特点，直接去分配好我们所需要的这个池的形状。要把它拆成两部分。具体有什么形状吗？跟 VRM 本身它的形状有什么区别吗？就一开始提到的就是 VRM 本身的形状，它是 int8 数据类型的，然后它是连续的，可能是那个根据我们显存大小可能连续的几万的几万连续化的一个 tensor。然后我们的我们模型中所需要的它是两块，一块是 BF16 的，一块是 FP32 的，然后两块形状还是也也不一样，一块是 8×18×18 作为一个槽位。这个这个精度，这个精度是，比如说你刚刚说的， VRM 的 int8 那个，它是针对于 Flash 这个模型，它就这个精度吗？还是说它那种缓存池的类型就是固定这种精度呢？啊，不是这个模型，是 VRM 它一，它为了，因因为我们线性助力其实，那线性助力模型这个还没有收敛成一个非常具体的模块，大家。",
+      "paragraphIds": [
+        "P012",
+        "P013",
+        "P014",
+        "P015",
+        "P016"
+      ],
+      "textRoundtripVerified": true
+    },
+    {
+      "segmentIndex": 5,
+      "response": {
+        "path": "outputs/managed/interview-video-analysis/transcripts/transcribe-li-auto-20261119-part-005.private-billing.raw.json",
+        "sha256": "6a408fe4c2b61381b85fa466a54cb634c35cd3197e9a3a7b64568d7f46d0b4b2"
+      },
+      "audio": {
+        "path": "work/managed/interview-video-analysis/derived/li-auto-20261119-full/interview-li-auto-recording-01.segment-005.mono-16k-48kbps.mp3",
+        "sha256": "b68801ca586088416622c571fc9cfafea584e85cbb67241068d9037791fc1001",
+        "startSample": 19187200,
+        "endSample": 23984000
+      },
+      "sourceRange": {
+        "startSeconds": 1199.2,
+        "endSeconds": 1499,
+        "precision": "whole-audio-segment-only"
+      },
+      "model": "qwen/qwen-audio-3.1-asr-flash",
+      "receipts": {},
+      "usage": {
+        "input_tokens": 3748,
+        "output_tokens": 864,
+        "total_tokens": 4612,
+        "seconds": 300
+      },
+      "globalStartChar": 4846,
+      "globalEndChar": 6405,
+      "textUtf16Length": 1559,
+      "text": "做线性注意力的方式还是不一样，有的它需要，有的比如它这种是需要卷积维度和低推矩阵，有的它可能只有低推矩阵，有的可能还有其他的东西。所以 VLM 是在上游，就上游这里面它是为了暂时先让每一个模型它都能跑起来，所以它用的是 int8 的这种数据类型，然后直接平铺开的一个空间。嗯，那它这种类型可以直接改吗？我理解你要申请什么样类型，它可能甚至有地方你能配置之类的吧。它不能直接配置，它需要从代码里面修改，它可以，我们我们就是从代码里面直接修改。哦，就你实你自己实例化一个 KV Cache 的类是吧？然后你自己通过这个类来去申请你要的类型，什么类型，大小，是这样吗？对对对，是的是的。是是这样吗？是的是的是的是的。就我们做了一个自己的那个 Map Cache 一个 Group，对。哦对，是是做了一个自己的那个类，对吧？对对，是的是的是的。 OK， 那那那里面具体实现了什么样的能力呢？就是哪些，你改了哪些东西呢？就比如说就你你在里面大概需要什么样的工作？我在里面主要就是做那个它的形状的调整和那个，还有这个这个数据类型调整。然后它，大多数大多数功能它都能够从原本的这个 Map Cache 里面直接复用，主要就是在后面，在分配的时候，我们就要分配两块嘛，我们需要把那个形状就不能直接的，不能不能直接分配，我们要需要重新计算那个形状，我们需要把那个形状给除成那个那个按照我们自己形状的话，就是就是怎么说呢，就是除一个那个，除以那个开启槽位，就之前说的那个 8×18×18×那个数字。我我能理解，这我能，这我已经能 get 到。但那我有个问题是，因为我们最近没有看 VLM 这个框架，那么对于 GLM Flash 这 5.3 的这种相对已经出来比较长时间，比较也用的比较多的模型， VLM 天生没有去很好的支持它吗？这我我们是从我们的我们的 VLM 这个版本它没有是，因为我们是自研芯片，我们需要去做一个硬件插件，然后去插入到一个 VLM 上，插插入到 VLM 上。那么我我们是固定了一个 VLM 的版本，然后再去适配的，不是没有，就是用到没有用最新的 VLM 版本，就是我们当时固定了 VLM 版本，然后去开始去沿用，然后做我们自己适配，因为我们公司里面不可能去一直反复的更新 VLM， 如果反复更新的话，我们会有产生很多的那种代码冲突问题。也没有哪个版本，现在最新是哪个版本？现在最新的我我我不太清楚是哪，到更新到哪里了。然后我们用的那个版本是 V 三点 V 零点三点零， V 零点三零点一。哪个？我们用的是 V 零点三零点一。 V 零点三点一。零点，嗯，对。是吧？对对。我看一下啊，零点三点零一是吧？零点三零点一。零点三零点一。零点三零是吧？对对对，零点三零，对，零点三零。哦，零点三零啊，那么那确实，那现在已经零点三四了。对。啊， OK， 但但我我 get 了，就是原来是原来那一版的线性注意力里面的那个数据类型和数据池的分块可能不是你们想要的，所以你去新增了这样一种类型。那你的这个类型就会有问题啊，你的新，你只是新增一个类型把它跑通，这不代表它的性能就会很好，这里面就会有很多的工作要做。我们做这个类型它就是为了性能好一点。对，就是为了性能。那你觉得这里面的那你觉得这里面的性能达到预期了吗？它还有什么样的优化的方向和空间吗？针对我们整体整体的模型，后面还有优化的空间。比如我们可以后续还可以支持 MTP， 比如我们还可以支持 MTP， 我们目前没有支持 MTP 多，那个 Multi Token 预测这种方式。然后还有第2块是第2块是我们的 KV Cache 之前说是用的是 FP16 和 FP32， 我们可以未来可以去尝试那个 FP8 的那个 KV Cache。 然后主要是后面还会去优化这两方面。这这两个。",
+      "paragraphIds": [
+        "P017",
+        "P018",
+        "P019",
+        "P020",
+        "P021"
+      ],
+      "textRoundtripVerified": true
+    },
+    {
+      "segmentIndex": 6,
+      "response": {
+        "path": "outputs/managed/interview-video-analysis/transcripts/transcribe-li-auto-20261119-part-006.private-billing.raw.json",
+        "sha256": "2a602b3124579c088fff5f312121e17160439175e16d0db9a563242dd0ec657c"
+      },
+      "audio": {
+        "path": "work/managed/interview-video-analysis/derived/li-auto-20261119-full/interview-li-auto-recording-01.segment-006.mono-16k-48kbps.mp3",
+        "sha256": "c847d61d95e674528bc4eb6ff6926be7d13bc41b400d806c841fe34d28127625",
+        "startSample": 23984000,
+        "endSample": 28780800
+      },
+      "sourceRange": {
+        "startSeconds": 1499,
+        "endSeconds": 1798.8,
+        "precision": "whole-audio-segment-only"
+      },
+      "model": "qwen/qwen-audio-3.1-asr-flash",
+      "receipts": {},
+      "usage": {
+        "input_tokens": 3748,
+        "output_tokens": 802,
+        "total_tokens": 4550,
+        "seconds": 300
+      },
+      "globalStartChar": 6406,
+      "globalEndChar": 7949,
+      "textUtf16Length": 1543,
+      "text": "听起来是相对比较成熟的功能了，为什么现在没有支持呢？这这，因为自研芯片公司这个支持这个需要时间啊。您您这边是也是自做自做自己的视频，做自己的芯片吗？对，我们也做自己的自研芯片。但比如说对 MTP 这个来说，核心就是你去实现它的算子，对吧？它的框架层的调度它已经有，已经有现成了。对对对。对。因为算子编写需要一点时间，然后这是一个，就是一个过程。然后现在，如果我说现在这个时间点的话，我们是确实已经正在支持的差不多了，但是我们，我简历上写的那个时候写的项目我们还没有支持。嗯，那你们比如说像你主要是负责框架，还是负责算子，还是框框架，就框架框架。嗯，对，我刚才就讲了，大多数都是框架上面的改改动吧。OK， 那还有一个问题就是你们作为插件的方式把现在芯片的这一整套流程接进去，然后你对框架本身有什么改动吗？还是说你可以相对没有侵入性的去接入这个事情呢？还是有一些改动的。但是，因为我后面工主要工作在直接就做插件上，因为有一些改动是我觉得是必须要在模型里面做，就是在那个在主体框架里面做的，就就比如我们在那个我们可能会去实现一下自己的算子，然后在让它的模型调度过程中，它就是模型执行路径里面，它那它那个那个路径它是需要在那个它的主体的那框，就是主体主主仓库里面做的。然后我们如果要，可能要去改一些模型的具体的实现的算子，就比如我们可能实现了一个融合算子，然后我们想要整个替换掉中间的某一某那个模型执行路径中的某一段，然后我们这个时候可能就需要去改一下主体框架。OK， 然后除了改 modeling 那一部分，还还改了什么其他的部分吗？那还有的大多数都能够在插件里面是通过平台化的插件然后进行实现，我们可以实现自己的 worker，自己的那个 model runner，然后就是可能中间加加一些加加一些自己的分配的方式，都在我们自己插件里面做的。就尽量了，我们的想法还是在插件里做。行，我大概了解了。那比如说你们用的 vm，然后 vm 它本身之前比较经典的那个 page token 的算法有了解过吗？嗯，我了解过，它就是把那个我们分配的 kv cache 池给进行分块，然后使得我们可以，就是算子读取的时候，根据我们的 block table 和那个每一个层，每一个从逻辑逻辑上面的 kv cache 块到物理上的 kv cache 块的之间映射，然后找到它，找到我们 sequence 所对应的那那几个 block，然后再进行提取，从其中的查询，然后那提提取提取其中的 kv cache，然后进行进行查询计算。然后这里面我们就不需要分配一个连续的连，每给每一个 sequence 分配连，完全连续的那个 kv cache，然后可以把那个我们的 kv cache 块组织成一个一一个个 block，然后可以让它复用，给每，可以那个那个节省，减少那个缓内存之显显存之间的那个碎片化的问题，然后可以方便于复用。嗯，具体展开一下，比如说它的 page 和 block 具体是怎么样的关系呢？就它分了分了哪几层的那些 block，然后有什么样的那些 page？什么样的 page？对，就是说，比如说我们再详细一点说一下，比如说 page token 的这一个算法，你刚刚说到说它有一个逻辑上的，对吧？有一个物理上的。那它的逻辑上的和物理上的具体是怎么去组织的呢？比如说我有一个请求，那我这一个请求大概 4096 个 token，它具体怎么在逻辑和物理上分别去映射，然后从而去刚刚说它会节省一定的那个空间，然后怎么能省出来呢？能举一个具体的例子吗？比如说它以前，我们就假设说没有 page token 之前，这个事情要怎么做？然后有了之后它其实是怎么做的？然后它所以为什么能够省这些东西？哦，我想一想。",
+      "paragraphIds": [
+        "P022",
+        "P023",
+        "P024",
+        "P025",
+        "P026"
+      ],
+      "textRoundtripVerified": true
+    },
+    {
+      "segmentIndex": 7,
+      "response": {
+        "path": "outputs/managed/interview-video-analysis/transcripts/transcribe-li-auto-20261119-part-007.private-billing.raw.json",
+        "sha256": "893ceb036d0e9573e7d76745b85c4f4b6ee07440ff37020f438a19e2ca4834d9"
+      },
+      "audio": {
+        "path": "work/managed/interview-video-analysis/derived/li-auto-20261119-full/interview-li-auto-recording-01.segment-007.mono-16k-48kbps.mp3",
+        "sha256": "27766a42fb7d19626087882d30d96f91f12dea61941960cb8fc880e26cca6f44",
+        "startSample": 28780800,
+        "endSample": 33577600
+      },
+      "sourceRange": {
+        "startSeconds": 1798.8,
+        "endSeconds": 2098.6,
+        "precision": "whole-audio-segment-only"
+      },
+      "model": "qwen/qwen-audio-3.1-asr-flash",
+      "receipts": {},
+      "usage": {
+        "input_tokens": 3748,
+        "output_tokens": 708,
+        "total_tokens": 4456,
+        "seconds": 300
+      },
+      "globalStartChar": 7950,
+      "globalEndChar": 9365,
+      "textUtf16Length": 1415,
+      "text": "好，那假如有一个 4096 的长度的那个请求进来，然后如果我们没有一个没有一个没有 page 的查询，没没有那个 block 划分的话，我们需要根据我们这个请求的实际需要，那个请求它请求的那个长度，我们为了，我们需要估计这个请求未来可能生成的生成的最长的那个长度。然后把根据那个最长的长度，然后去分配一块直接连续的 KV cache，然后然后去交给这个请求用。然后因为在这个抵扣的过程中，我们这个请求会会不断的增长嘛，我们需要可能可能就我们就要需要直接分配好最坏情况的那个连续的这个 KV cache。然后如果是如果是我们，就我们有了这个 block 这个机制的话，然后我们可以去，我们 4096 的输入长度我们肯定是必须要分配好的，就是按照 block，可能我们 block size 大概，假设它是 256，那么我们就要去设分配个1234，十十六块，然后十十七块，然后再加上一个末尾的。然后这是我们可以先分配一个少量的，就是没有达到最最最坏情况的那个长度，那个长度的 cache 的大小，我们可以分配几块，然后几块之后我们随着抵扣的的不断不断增加，然后我们去，那最后尾块满了之后我们再去分配一个新的块。就我们就不需要去，在它是一个我们有所用的块的数量，它是一个渐进增长的。然后第二点它是碎，它有没有碎片化问题，它就是我如如果没有，之后又新来了一个请求的话，如果我们如果有原本是是原本的那个连续化的分配的一整个开始的话，我们可能就是必须要去，如果发我们要复用的话，就可能要必须要整个整个前面的整整个所有块都都都要复用的时候我们才能够去命中这个东西，但是我们如果是按 block 的话，我们可以 block block 的命中。用个，可能到中间某一个点它是分叉开来了，我们就可以只用前面这几个 block。哦，我大概了解了。然后配置中心这里面有一个比较中间比较相对比较重要的一个配置 table 的这样一个数据的结构。有理解它里面大概是什么样子，用来干嘛的吗？ Page table 你说是 block table 是吗？它就是我记得是就是映射我这每这这一条请求我用的是哪几个 block，就是我们那个，就是就是什么？就是就是我们有个他，因为他们需要映射到实际的那个 block 编号嘛，所以我们需要这个请求是用的是某某某几个 block，那个请，第二行请求用的是哪几个 block。那他通过这个索引，然后去读取对应的 block。哦哦哦，嗯，对， OK， 没问题。哦，我我刚刚刚刚听到了，比如说那个框架相关的一些改动，以及我可能顺着这个框架来的一些东西，问了一些前前后后的问题吧。就比如说在工作上内容还有什么其他的方面没有介绍到的吗？因为我中间可能稍微打断和发散了一下。工作中还有什么其他的是做优化的是吗？您说的意思是。哦，就你觉得还比较那个不错，可以介绍的一些和探讨的一些内容。嗯，好的。那我们简历中应该我记得还写了一个，有一个那个在多模态里面有一个 Comfy3D 上面的优化。然后在这个优化里面它一，我们一开始它是一个是 OOM 的问题，就是它是它是很多一是显存不足的问题。然后我是在那个千，这是在千问千问三 32B VR 这个模型的适配过程中遇到的一个问题。然后在这个问题中，因为在 Comfy3D 里面，因为在 Comfy3D 里面它输入它是一个我记得是一个 N C H W 这样的一个这样的一个那个输入形状，然后在。",
+      "paragraphIds": [
+        "P027",
+        "P028",
+        "P029",
+        "P030"
+      ],
+      "textRoundtripVerified": true
+    },
+    {
+      "segmentIndex": 8,
+      "response": {
+        "path": "outputs/managed/interview-video-analysis/transcripts/transcribe-li-auto-20261119-part-008.private-billing.raw.json",
+        "sha256": "48dbdf92b495dc4b7d02b2e28d86e32b67e249c029160a362f62cb9b09d55b4e"
+      },
+      "audio": {
+        "path": "work/managed/interview-video-analysis/derived/li-auto-20261119-full/interview-li-auto-recording-01.segment-008.mono-16k-48kbps.mp3",
+        "sha256": "1c0d665d9e1047ed181a925dfc1b1a3a76089b2bae1d3955d2a1e946daa464a2",
+        "startSample": 33577600,
+        "endSample": 38374400
+      },
+      "sourceRange": {
+        "startSeconds": 2098.6,
+        "endSeconds": 2398.4,
+        "precision": "whole-audio-segment-only"
+      },
+      "model": "qwen/qwen-audio-3.1-asr-flash",
+      "receipts": {},
+      "usage": {
+        "input_tokens": 3748,
+        "output_tokens": 831,
+        "total_tokens": 4579,
+        "seconds": 300
+      },
+      "globalStartChar": 9366,
+      "globalEndChar": 10831,
+      "textUtf16Length": 1465,
+      "text": "原本实现中，它会把 C channel 那个维度给放到最后一维去。然后放到最后一维去，然后我们的硬件它是有一个强制的一个 padding 的一个机制，然后会导致我们最后这个通道数 3，然后去会去 padding 成一整个，可能是比较长的，可能它直接就 padding 成 128 了，然后它就导致我们这显存的大量的浪费。所以背景是这样子。然后然后我最后后面做的工作就是把这个，因为因为 NCHW 后面是这个 14 14，如果把任何一维它都放到放到最后的话，它都会产生一些 padding。然后我们最后的话是把后面的几维全部给打，展平成一位，所以就变成了一个 N N H 的这个架构。有两维的数据，然后再让算子里面去根据输入的原信息把它重建成一个，恢复成原本的，五维形状，然后再进行计算。然后这样子的话，这大约节这大约节省了多少的显存？这样子，可以，因为简单估算一下，我们就原本它是拍定成，它原本是 3 的，然后它拍定成 128，它节省了上将近差不多四十几倍显存。这个四十几倍，我看它只是在最后一个维度做的拍定，它会让整体变成四十几倍吗？对对，是的是的，因为它是，就就假如它是那个可能是，五五，然后是十四十四三，然后它最后一位它从它它从三变成了128的话，它就是整体的，整就整整体整个形状都拍定出来了。就它会有一个溢出效应，对。这也是在哪个项目里面做做的推理呢？这是在那个千问三三十，千问三三十二 B 这个多模态推理里面。它的推理的那些代码有用什么样的框架或者什么样的库吗？什么框架什么库，我们用的就是 PyTorch 和 VM。也是在 VM 里面吗？那这个是主要修改是在 PyTorch 里面修改的，因为需要去调用里面的算子嘛。 OK，行。 OK，好，大概了解了。行，我这边没有其他的，看你有什么其他的问题吗？那因为我这边是经常接到接到信息是因为理想汽车这边我理解是可能是端侧比较多，您这边是开始在做是也是在做云端这种大规模是吗？端和云我们都有做呀，对。都有做什么？对你你想他的那个，对，其实理想汽车不管是他的自动驾驶还是最近的 Agent，他想要或他做舱内模型嘛，他可能最终交付的是端侧，但他绝大部分的推理其实是在云端呀，因为那个端侧模型是最终在云端，不管是训练还是推理出来，最后蒸馏的一个版本而已。对。所以说我们本身也做云端的，就包括包括 GPT 5.3 可能前段前段时间比较火，我们也拿来做部署，然后做了一些优化，大概可能做到了官方成本的两折到三折左右。我们也把一些当时社区还不太支持的功能也去回馈到了社区，比如它的一些 CP 或者一些 L3 缓存上一些不太完整的地方，因为因为它的很多 demo 其实都只是一种能够跑起来，真正在大规模里面用起来就一般。对，所以我们会做那个云端的一个东西。而且你在端侧的推理和云端推理，我觉得没有本质的区别。端侧可能你只是可以相相对来说比较确切点只去实现那个，啊， batch size 等于一的，对吧？你可以用一些极致的融合的算子去尽量减少你的在芯片上的交换和搬运来提升这个这个这个性能。但到云端你得考虑多个 batch，考虑多个，像它的那些什么，像 WiFi， MTP 那些能力，那你在算子的设计上可能会有区别，但把它大的思想是没有没有本质的变化的。嗯，明白明白。所以你们，您您这边也是用的是像是 VM 这种框架，还是会去自研框架呢？我们其实主要是基于 Hugging Face 的，然后在 Hugging Face 上面我们会做一些自己的改动，然后觉得如，对，如果这个符合社区的那些。",
+      "paragraphIds": [
+        "P031",
+        "P032",
+        "P033",
+        "P034"
+      ],
+      "textRoundtripVerified": true
+    },
+    {
+      "segmentIndex": 9,
+      "response": {
+        "path": "outputs/managed/interview-video-analysis/transcripts/transcribe-li-auto-20261119-part-009.private-billing.raw.json",
+        "sha256": "b19bc461e547add19b46100724089a6b369c4afa5e1fd1a51e44eb62fc169660"
+      },
+      "audio": {
+        "path": "work/managed/interview-video-analysis/derived/li-auto-20261119-full/interview-li-auto-recording-01.segment-009.mono-16k-48kbps.mp3",
+        "sha256": "e288935dd3a7a2bc4938f7437413dc1238e10236f35ad8e6fbb2b3809c1f18a0",
+        "startSample": 38374400,
+        "endSample": 39401814
+      },
+      "sourceRange": {
+        "startSeconds": 2398.4,
+        "endSeconds": 2462.613375,
+        "precision": "whole-audio-segment-only"
+      },
+      "model": "qwen/qwen-audio-3.1-asr-flash",
+      "receipts": {},
+      "usage": {
+        "input_tokens": 803,
+        "output_tokens": 130,
+        "total_tokens": 933,
+        "seconds": 46
+      },
+      "globalStartChar": 10832,
+      "globalEndChar": 11050,
+      "textUtf16Length": 218,
+      "text": "呃，节奏和思路我们就可以把它合并回去，对。但VM我们现在也支持，因为因为我帮你了解过，就理想他不自己也成立了一个新的芯片公司嘛，那么他也会卖这些芯片。那客户有用H3的，也有用VM的，所以说本身我们也都会支持。对。嗯嗯，明白。好好，谢谢谢谢，我嗯没有问题了，谢谢。好好，谢谢。然后可能我会整体横向看一下，跟其他的同事的一些面试啊什么一起讨论一下，然后后面可能呃会有一些进展的一些通知，好吧？嗯，好好的，好，谢谢。嗯，好好，谢谢。嗯，再见。",
+      "paragraphIds": [
+        "P035"
+      ],
+      "textRoundtripVerified": true
+    }
+  ],
+  "segments": [
+    {
+      "id": "P001",
+      "segmentIndex": 1,
+      "startChar": 0,
+      "endChar": 396,
+      "segmentStartChar": 0,
+      "segmentEndChar": 396,
+      "sourceRange": {
+        "startSeconds": 0,
+        "endSeconds": 299.8,
+        "precision": "whole-audio-segment-only"
+      },
+      "text": "喂喂。嗯嗯。好，我放在我那个，我听一下。喂，您好，你听得到吗？啊，能听到吗？我可以听到。啊，好的，我我调大一点声音。好，行。好，您您再，您说句话我听，看我我刚刚没听到，有点模糊。现现在能现在能听到吗？啊，可以可以可以，好，谢谢谢谢。啊，好的好的，我打扰你了。哦，然后我说理想这边我们现在做那个，自己自己的性能优化，框架，算子，加速啊，都都是都是这一些吧。然后然后整个面试的话，我们可能是三个流程，就没有没有笔试，就是大概我会了解一下你的个人的情况，然后根据项目问一问，然后这样的话我会问一些可能我这边关心的，不一定是你项目的一些问题。那最后你可能如果你有什么问题可以问我，大概 30 分钟，40 分钟左右，对。嗯，好的好的。然后，哦，你现在你现在是在哪呢？中中昊芯英是吗？对对对对对对，是的是的，那这也是一家自研芯 AI 芯片的公司，对。哦，这这个公公司的规模是什么样子？你们现在有多少人呢？"
+    },
+    {
+      "id": "P002",
+      "segmentIndex": 1,
+      "startChar": 396,
+      "endChar": 548,
+      "segmentStartChar": 396,
+      "segmentEndChar": 548,
+      "sourceRange": {
+        "startSeconds": 0,
+        "endSeconds": 299.8,
+        "precision": "whole-audio-segment-only"
+      },
+      "text": "您您您是说是整个是是我们组，还是说整个公司，还是软件部门？整个整个公司是什么样？因为我我可能对这个不太了解。对，整个公司是什么规模？然后你们组是多少人呢？现在你们主要是做什么？然后整个公司大概是在 200~300 人左右可能，然后我们组是大概是 10 个人左右，10 个人不到一点。然后我们主要就是我们。"
+    },
+    {
+      "id": "P003",
+      "segmentIndex": 2,
+      "startChar": 549,
+      "endChar": 903,
+      "segmentStartChar": 0,
+      "segmentEndChar": 354,
+      "sourceRange": {
+        "startSeconds": 299.8,
+        "endSeconds": 599.6,
+        "precision": "whole-audio-segment-only"
+      },
+      "text": "主要的工作是呃是做那个我们自研芯片上面的框架推理框架还有训练框架，做框架上面的开发和适配，然后还会适配一些模型这样子。然后我这边。对，然后嗯我这边的嗯好像有点延迟，好像什么有点延迟。对，感觉有点延迟。嗯那那我先说，那我就简单啊我就先自我介绍简单介绍一下，然后我现在是嗯AI框架开发工程师，然后这边主要是围绕着PyTorch和那个VLM，然后做那个模型上的嗯接入和那个推理优化，然后嗯在模型优化上面我主要工作就是根据我们的实际的负载，然后分析模型的时延吞吐内存的问题，然后通过一些profile还有形状分析，然后一些测试，然后去定位一些性能瓶颈，然后做框架上面的框架侧的修改一些优化，然后其中会跟算子团队然后去协作一些那个算子层面的一些推进一些优化。对。呃你部具体部署了什么模型呢？然后有达到什么样的那个水平？"
+    },
+    {
+      "id": "P004",
+      "segmentIndex": 2,
+      "startChar": 903,
+      "endChar": 1275,
+      "segmentStartChar": 354,
+      "segmentEndChar": 726,
+      "sourceRange": {
+        "startSeconds": 299.8,
+        "endSeconds": 599.6,
+        "precision": "whole-audio-segment-only"
+      },
+      "text": "嗯然后我呃最近最近近期的呃一个适配项目是GLM-5.3 Flash这个模型，然后我是负责了那个插件我们的在插我们的硬件插件上接入这个这个模型，然后进行一些性能优化，然后最终的性能大概是在10101016到十七tokens每秒。然后这是一个单请求的，然后是呃。哎您说您说您说。哎这个延迟有这么高吗？你是裸单量在面试吗？哎。没有，我就是在一个会议室里面试。嗯呃OK呃我看稍等，你们是在自己的那个芯片上部署了这个模型吗？对对是的是的。这芯片大概是什么样的算力和带宽方便说吗？嗯。算力大概显存。嗯显存是64GB。量产了量产了，然后显存是在464GB一张一张卡是64GB，然后是算力方面是嗯在200 200T FLOPS左右，但是这是一个最就是新硬件上面的理想的算力。然后我们是。200T 200G。200 200T FLOPS。200T FLOPS啊。"
+    },
+    {
+      "id": "P005",
+      "segmentIndex": 2,
+      "startChar": 1275,
+      "endChar": 1668,
+      "segmentStartChar": 726,
+      "segmentEndChar": 1119,
+      "sourceRange": {
+        "startSeconds": 299.8,
+        "endSeconds": 599.6,
+        "precision": "whole-audio-segment-only"
+      },
+      "text": "对，然后这是一个硬件上理想的算力，然后我们平时的话我们测试下来一般来说是能够应用到实际场景中的大概是在120到130左右。嗯带宽呢？带宽是在800G到1000G之间。啊还有这个千，那它不是一个具体的数吗？嗯。哦它不是这个固定的数吗？这还有。啊这这个是我刚刚说的就是实测的实测的大概在这个范围波动，它有个波动它会有呈现一个波动现象。那它的那个就是硬件的标定的那个带宽是多少？硬件标定的带宽就是那个最高的峰值带宽是1.6T。是多少？1.6T 1.6。1.6T。嗯。OK。嗯这个带宽是指它的显存到芯片的计算之间的带宽，还是它芯片之间互联那个带宽？是显是单单独一张卡上面的带宽，不是卡与卡之间的，是从显存到芯片上。然后你们做好，那你们那个呃做出来之后的那个性能是多少来着？刚刚说。啊刚刚说是单请求是16到17 tokens每秒。哦这是decode是吗？对对对。decode那那compile呢？"
+    },
+    {
+      "id": "P006",
+      "segmentIndex": 2,
+      "startChar": 1668,
+      "endChar": 1735,
+      "segmentStartChar": 1119,
+      "segmentEndChar": 1186,
+      "sourceRange": {
+        "startSeconds": 299.8,
+        "endSeconds": 599.6,
+        "precision": "whole-audio-segment-only"
+      },
+      "text": "啊profile profile的话看那个上下文输入的长度嘛，长长度越长它是是那个耗时越长，然后在32K左右是在3 28秒左右，然后。"
+    },
+    {
+      "id": "P007",
+      "segmentIndex": 3,
+      "startChar": 1736,
+      "endChar": 2093,
+      "segmentStartChar": 0,
+      "segmentEndChar": 357,
+      "sourceRange": {
+        "startSeconds": 599.6,
+        "endSeconds": 899.4,
+        "precision": "whole-audio-segment-only"
+      },
+      "text": "64K左右是在70秒左右，然后到那个128K是在100、150、160左右。有有看它是多少Token每秒吗？嗯，大概是在嗯，您说输入输入吞吐是吧？大概是在几嗯，这可以算一下，这个我主要看一下Prefer的时延，然后就是对。好。那那你们有有有自己评估过，比如这个性能大概是一个什么样的水平吗？就是比如它在业界什么样水平，它相对你的芯片中是否达到一个比较理想的一个水平？嗯，在业界在业嗯，在业界上看，就是如果是对比其他的国产芯片的话，可能还是那个相对比较嗯比较低的一个水平。偏差吗？符合预期。嗯，应该是应该是就符对符合我们我们自己的预期，对对，因为它这个毕竟嗯其实这代产品也是发布比较久了，所以它的性能实际上不是很理想，所以是符合我们自己的预期的。OK。然后因为还没有开启一些更高级的优化。那你在里面有什么性能优化吗？"
+    },
+    {
+      "id": "P008",
+      "segmentIndex": 3,
+      "startChar": 2093,
+      "endChar": 2484,
+      "segmentStartChar": 357,
+      "segmentEndChar": 748,
+      "sourceRange": {
+        "startSeconds": 599.6,
+        "endSeconds": 899.4,
+        "precision": "whole-audio-segment-only"
+      },
+      "text": "嗯，里面这GLM-5.3 Flash这个模型，它最大的特点就是它的是线引入了一个KDA线性注意力，然后我主要就是针对这个KDA线性注意力做了一些缓存上面的布局的优化。然后我接下来详细详细讲一下，然后因为在V具体是什么？嗯，对，然后我接下来详细讲一下。然后在VRM里面，它对于线性注意力这个模块，因为嗯这个模块还没有大家还没有收敛，所以它给到的一个Cache的嗯主流的Cache方案，它是一个统一的Cache池，就是给那个32、33、34层的KDA，它都分配了一整个一整个Cache，就是它是一个INT8的，然后一个连续的几嗯几十万的一个长度。然后如果但是我们在针对我们这个具体的这个模型上面，然后它是一个它的KDA，它需要是两种缓存，一种是卷积的尾部池。嗯，就是它有一个卷积模块，然后它需要每次递推到前最后的几个Token的卷积隐藏隐藏那个嗯嗯卷积的那个结果，然后需要把它缓存下来。"
+    },
+    {
+      "id": "P009",
+      "segmentIndex": 3,
+      "startChar": 2484,
+      "endChar": 2852,
+      "segmentStartChar": 748,
+      "segmentEndChar": 1116,
+      "sourceRange": {
+        "startSeconds": 599.6,
+        "endSeconds": 899.4,
+        "precision": "whole-audio-segment-only"
+      },
+      "text": "然后第二部分是递推矩阵，然后它我们每次会有一个嗯嗯对每一个Token它有一个每一个位置它会有一个递推矩阵需要保存下来，然后在那个卷积尾部池卷积尾部的缓存里面，我们需要的是一个。稍等一下。Flash这个模型里面会有卷积的这个算，Flash这个模型里面会有卷积的算法吗？对对，是的，在KDA里面。哪里哪哪个地方会用到卷积呢？就KDA，Kimi的Delta Attention。因为GLM-5.3 Flash这个。Delta Attention里面是解卷积吗？你是在说它那个线性注意力吗？对，它线性注意力它有一它有一个一维的因果卷积。一维的什么卷积？因果卷积，它会从前往后去因果的卷积。因果卷积。对。你确认那个东西是叫叫卷积吗？确定，这我这我就是这么我就是这么做的，就他就是这样做。嗯，那你说它大概是怎么实现的呢？嗯，你是说具体的算法流程吗？"
+    },
+    {
+      "id": "P010",
+      "segmentIndex": 3,
+      "startChar": 2852,
+      "endChar": 3210,
+      "segmentStartChar": 1116,
+      "segmentEndChar": 1474,
+      "sourceRange": {
+        "startSeconds": 599.6,
+        "endSeconds": 899.4,
+        "precision": "whole-audio-segment-only"
+      },
+      "text": "它就是它从它会每一次我看四个Token，就是四个Token位置，它的它的它的它毕竟它也是一个序列，一维序列，它是从前往后看四个Token，然后四个Token然后汇聚到一个一个一个最前面的一个位置，它是这样子的一个卷积，一维的线一维的，然后从前往后看的这样一个卷积。你那你的这个卷积就是在说刚刚那个线性注意力吗？这两个是一回事吗？它是它这个卷积是线性注意力里面的一部分，对对对，它是这个这个卷积是卷积是处理KDA吗？对对对，它是这个这个卷积是这个这个卷积操作是这KDA里面的一部分。那整个KDA是什么样的原理呢？整个KDA的算法就比较长了，这里面我就不不太方便再说，因为他我讲的话我可能要讲用用给PPT展示那个很多东西了，我主要是我主要是想讲就是我俩。你能简单几句话概括一下吗？嗯，首先我们通过卷积之后得到。你接着念。"
+    },
+    {
+      "id": "P011",
+      "segmentIndex": 3,
+      "startChar": 3210,
+      "endChar": 3275,
+      "segmentStartChar": 1474,
+      "segmentEndChar": 1539,
+      "sourceRange": {
+        "startSeconds": 599.6,
+        "endSeconds": 899.4,
+        "precision": "whole-audio-segment-only"
+      },
+      "text": "对，先让我们通过卷积之后得到它每个每个KV，K嗯QKV之后，然后它会去给每一个嗯QKV然后做嗯就是就很多的线性和那个Norm操作。"
+    },
+    {
+      "id": "P012",
+      "segmentIndex": 4,
+      "startChar": 3276,
+      "endChar": 3574,
+      "segmentStartChar": 0,
+      "segmentEndChar": 298,
+      "sourceRange": {
+        "startSeconds": 899.4,
+        "endSeconds": 1199.2,
+        "precision": "whole-audio-segment-only"
+      },
+      "text": "然后得到一个得到一个 S， 然后再用这 S 然后再去递推，跟前面一代，前前面一个位置，然后递推一个，得到一个递推矩阵，然后再这个递推矩阵，然后再不停的往后再进行叠加。然后所以我们在这个过程中我们需要的两两两个缓存，就是一个是那个卷，前面在说的那个卷积的缓存。是，另外一个是后面那个递推矩阵，我们需要去缓存前一前一个位置的递推矩阵，然后得到下一个位置递递推矩阵。啊，你接着说。嗯，然后在这里，然后在这两个池里面，然后前面的一个看卷积的尾部池，它是一个 3，之前也说就是它四个 token 一看，所以它的缓存就缓存末尾三个 token，然后它就是 3 乘一个 head and dim 这个一个形状。"
+    },
+    {
+      "id": "P013",
+      "segmentIndex": 4,
+      "startChar": 3574,
+      "endChar": 3791,
+      "segmentStartChar": 298,
+      "segmentEndChar": 515,
+      "sourceRange": {
+        "startSeconds": 899.4,
+        "endSeconds": 1199.2,
+        "precision": "whole-audio-segment-only"
+      },
+      "text": "然后它的它的那个数据类型是是那个 FP32 的，然后后面一个是后面有一个到那个到那递推矩阵那边，它的形状是是 head heads 乘以一个 dk dv，这个是一个这个是一个它的递，每我定义每个位置的递推矩阵啊，它的它的数据类型是 BF16 的。然后这个两种两种池它的形状是不一样的，它的那个数据类型也是不一样的。但是用，但是 VRM 里面它因为为了统一所有的暂时先统一所有的信息处理的开启方式，所以它只是给了一个 int8 的类型。"
+    },
+    {
+      "id": "P014",
+      "segmentIndex": 4,
+      "startChar": 3791,
+      "endChar": 4190,
+      "segmentStartChar": 515,
+      "segmentEndChar": 914,
+      "sourceRange": {
+        "startSeconds": 899.4,
+        "endSeconds": 1199.2,
+        "precision": "whole-audio-segment-only"
+      },
+      "text": "然后如果如果要用到算子里面的话，如果要用到算子里面的话，我们就需要去一个，把那个一个大池，然后去 view 到，就切分，然后 view 成一个一个个小块，然后在这个在这个操作里面，对于我们自研芯片它是一个比较复杂的工，就是不能说复杂，就是耗时比较大的工作，它需要一个它需个，对，需要重新把这个池里面切分，然后重新连续化，连续化成，化成一个几个连续的连续的那 tensor，然后再传入进去。然后这个操作是，就是耗时很大。然后我们我们的想法就是把这个把这个通用的池给具体化成，就针对我们这个模型，然后具体化，直接就拆成两部分，把一部分拆成那个，那卷积池，一部分拆成那个递推矩阵池，然后分别就就用类似于原本的 kv 开启的方式，就是前面的槽位 p，然后后面就是我们的大小，比如说那个 8×18×18，然后把它分成两个具体的，针对我们这模型具体形状的这个这个池，然后再去让算子去计算，这样子会效率会高很多。"
+    },
+    {
+      "id": "P015",
+      "segmentIndex": 4,
+      "startChar": 4190,
+      "endChar": 4546,
+      "segmentStartChar": 914,
+      "segmentEndChar": 1270,
+      "sourceRange": {
+        "startSeconds": 899.4,
+        "endSeconds": 1199.2,
+        "precision": "whole-audio-segment-only"
+      },
+      "text": "没听明白啊，你能，刚刚刚有比较多的细节，你能先简单几句话跟我说一下，比如说现在的 VRM 的那套 kv 池子有什么问题，你们做完了之后大概的思路有什么样优化，能取得什么样的收益吗？啊现在的 VRM 它是通用化的，然后没有针对我们，没没有针对加入我们这个 KDA 去这个模型的，所以所以它是它会存在一些额额外的操作，而不不能直接把这个池给放，输入到那个算子里面去，需要经过中间的一些转形状或者是连续化的一些操作之后才能去让算子直接计算。然后我们的方案就是我们把这部分转形状和各种的连续化的操作给省略掉，我们在一开始分配这个池的过程中，就直接去针对这个模，这模型这个这个 attention 的这个特点，直接去分配好我们所需要的这个池的形状。要把它拆成两部分。具体有什么形状吗？跟 VRM 本身它的形状有什么区别吗？"
+    },
+    {
+      "id": "P016",
+      "segmentIndex": 4,
+      "startChar": 4546,
+      "endChar": 4845,
+      "segmentStartChar": 1270,
+      "segmentEndChar": 1569,
+      "sourceRange": {
+        "startSeconds": 899.4,
+        "endSeconds": 1199.2,
+        "precision": "whole-audio-segment-only"
+      },
+      "text": "就一开始提到的就是 VRM 本身的形状，它是 int8 数据类型的，然后它是连续的，可能是那个根据我们显存大小可能连续的几万的几万连续化的一个 tensor。然后我们的我们模型中所需要的它是两块，一块是 BF16 的，一块是 FP32 的，然后两块形状还是也也不一样，一块是 8×18×18 作为一个槽位。这个这个精度，这个精度是，比如说你刚刚说的， VRM 的 int8 那个，它是针对于 Flash 这个模型，它就这个精度吗？还是说它那种缓存池的类型就是固定这种精度呢？啊，不是这个模型，是 VRM 它一，它为了，因因为我们线性助力其实，那线性助力模型这个还没有收敛成一个非常具体的模块，大家。"
+    },
+    {
+      "id": "P017",
+      "segmentIndex": 5,
+      "startChar": 4846,
+      "endChar": 5237,
+      "segmentStartChar": 0,
+      "segmentEndChar": 391,
+      "sourceRange": {
+        "startSeconds": 1199.2,
+        "endSeconds": 1499,
+        "precision": "whole-audio-segment-only"
+      },
+      "text": "做线性注意力的方式还是不一样，有的它需要，有的比如它这种是需要卷积维度和低推矩阵，有的它可能只有低推矩阵，有的可能还有其他的东西。所以 VLM 是在上游，就上游这里面它是为了暂时先让每一个模型它都能跑起来，所以它用的是 int8 的这种数据类型，然后直接平铺开的一个空间。嗯，那它这种类型可以直接改吗？我理解你要申请什么样类型，它可能甚至有地方你能配置之类的吧。它不能直接配置，它需要从代码里面修改，它可以，我们我们就是从代码里面直接修改。哦，就你实你自己实例化一个 KV Cache 的类是吧？然后你自己通过这个类来去申请你要的类型，什么类型，大小，是这样吗？对对对，是的是的。是是这样吗？是的是的是的是的。就我们做了一个自己的那个 Map Cache 一个 Group，对。哦对，是是做了一个自己的那个类，对吧？对对，是的是的是的。 OK， 那那那里面具体实现了什么样的能力呢？"
+    },
+    {
+      "id": "P018",
+      "segmentIndex": 5,
+      "startChar": 5237,
+      "endChar": 5601,
+      "segmentStartChar": 391,
+      "segmentEndChar": 755,
+      "sourceRange": {
+        "startSeconds": 1199.2,
+        "endSeconds": 1499,
+        "precision": "whole-audio-segment-only"
+      },
+      "text": "就是哪些，你改了哪些东西呢？就比如说就你你在里面大概需要什么样的工作？我在里面主要就是做那个它的形状的调整和那个，还有这个这个数据类型调整。然后它，大多数大多数功能它都能够从原本的这个 Map Cache 里面直接复用，主要就是在后面，在分配的时候，我们就要分配两块嘛，我们需要把那个形状就不能直接的，不能不能直接分配，我们要需要重新计算那个形状，我们需要把那个形状给除成那个那个按照我们自己形状的话，就是就是怎么说呢，就是除一个那个，除以那个开启槽位，就之前说的那个 8×18×18×那个数字。我我能理解，这我能，这我已经能 get 到。但那我有个问题是，因为我们最近没有看 VLM 这个框架，那么对于 GLM Flash 这 5.3 的这种相对已经出来比较长时间，比较也用的比较多的模型， VLM 天生没有去很好的支持它吗？"
+    },
+    {
+      "id": "P019",
+      "segmentIndex": 5,
+      "startChar": 5601,
+      "endChar": 5983,
+      "segmentStartChar": 755,
+      "segmentEndChar": 1137,
+      "sourceRange": {
+        "startSeconds": 1199.2,
+        "endSeconds": 1499,
+        "precision": "whole-audio-segment-only"
+      },
+      "text": "这我我们是从我们的我们的 VLM 这个版本它没有是，因为我们是自研芯片，我们需要去做一个硬件插件，然后去插入到一个 VLM 上，插插入到 VLM 上。那么我我们是固定了一个 VLM 的版本，然后再去适配的，不是没有，就是用到没有用最新的 VLM 版本，就是我们当时固定了 VLM 版本，然后去开始去沿用，然后做我们自己适配，因为我们公司里面不可能去一直反复的更新 VLM， 如果反复更新的话，我们会有产生很多的那种代码冲突问题。也没有哪个版本，现在最新是哪个版本？现在最新的我我我不太清楚是哪，到更新到哪里了。然后我们用的那个版本是 V 三点 V 零点三点零， V 零点三零点一。哪个？我们用的是 V 零点三零点一。 V 零点三点一。零点，嗯，对。是吧？对对。我看一下啊，零点三点零一是吧？零点三零点一。零点三零点一。零点三零是吧？对对对，零点三零，对，零点三零。"
+    },
+    {
+      "id": "P020",
+      "segmentIndex": 5,
+      "startChar": 5983,
+      "endChar": 6382,
+      "segmentStartChar": 1137,
+      "segmentEndChar": 1536,
+      "sourceRange": {
+        "startSeconds": 1199.2,
+        "endSeconds": 1499,
+        "precision": "whole-audio-segment-only"
+      },
+      "text": "哦，零点三零啊，那么那确实，那现在已经零点三四了。对。啊， OK， 但但我我 get 了，就是原来是原来那一版的线性注意力里面的那个数据类型和数据池的分块可能不是你们想要的，所以你去新增了这样一种类型。那你的这个类型就会有问题啊，你的新，你只是新增一个类型把它跑通，这不代表它的性能就会很好，这里面就会有很多的工作要做。我们做这个类型它就是为了性能好一点。对，就是为了性能。那你觉得这里面的那你觉得这里面的性能达到预期了吗？它还有什么样的优化的方向和空间吗？针对我们整体整体的模型，后面还有优化的空间。比如我们可以后续还可以支持 MTP， 比如我们还可以支持 MTP， 我们目前没有支持 MTP 多，那个 Multi Token 预测这种方式。然后还有第2块是第2块是我们的 KV Cache 之前说是用的是 FP16 和 FP32， 我们可以未来可以去尝试那个 FP8 的那个 KV Cache。"
+    },
+    {
+      "id": "P021",
+      "segmentIndex": 5,
+      "startChar": 6382,
+      "endChar": 6405,
+      "segmentStartChar": 1536,
+      "segmentEndChar": 1559,
+      "sourceRange": {
+        "startSeconds": 1199.2,
+        "endSeconds": 1499,
+        "precision": "whole-audio-segment-only"
+      },
+      "text": " 然后主要是后面还会去优化这两方面。这这两个。"
+    },
+    {
+      "id": "P022",
+      "segmentIndex": 6,
+      "startChar": 6406,
+      "endChar": 6789,
+      "segmentStartChar": 0,
+      "segmentEndChar": 383,
+      "sourceRange": {
+        "startSeconds": 1499,
+        "endSeconds": 1798.8,
+        "precision": "whole-audio-segment-only"
+      },
+      "text": "听起来是相对比较成熟的功能了，为什么现在没有支持呢？这这，因为自研芯片公司这个支持这个需要时间啊。您您这边是也是自做自做自己的视频，做自己的芯片吗？对，我们也做自己的自研芯片。但比如说对 MTP 这个来说，核心就是你去实现它的算子，对吧？它的框架层的调度它已经有，已经有现成了。对对对。对。因为算子编写需要一点时间，然后这是一个，就是一个过程。然后现在，如果我说现在这个时间点的话，我们是确实已经正在支持的差不多了，但是我们，我简历上写的那个时候写的项目我们还没有支持。嗯，那你们比如说像你主要是负责框架，还是负责算子，还是框框架，就框架框架。嗯，对，我刚才就讲了，大多数都是框架上面的改改动吧。OK， 那还有一个问题就是你们作为插件的方式把现在芯片的这一整套流程接进去，然后你对框架本身有什么改动吗？还是说你可以相对没有侵入性的去接入这个事情呢？还是有一些改动的。"
+    },
+    {
+      "id": "P023",
+      "segmentIndex": 6,
+      "startChar": 6789,
+      "endChar": 7175,
+      "segmentStartChar": 383,
+      "segmentEndChar": 769,
+      "sourceRange": {
+        "startSeconds": 1499,
+        "endSeconds": 1798.8,
+        "precision": "whole-audio-segment-only"
+      },
+      "text": "但是，因为我后面工主要工作在直接就做插件上，因为有一些改动是我觉得是必须要在模型里面做，就是在那个在主体框架里面做的，就就比如我们在那个我们可能会去实现一下自己的算子，然后在让它的模型调度过程中，它就是模型执行路径里面，它那它那个那个路径它是需要在那个它的主体的那框，就是主体主主仓库里面做的。然后我们如果要，可能要去改一些模型的具体的实现的算子，就比如我们可能实现了一个融合算子，然后我们想要整个替换掉中间的某一某那个模型执行路径中的某一段，然后我们这个时候可能就需要去改一下主体框架。OK， 然后除了改 modeling 那一部分，还还改了什么其他的部分吗？那还有的大多数都能够在插件里面是通过平台化的插件然后进行实现，我们可以实现自己的 worker，自己的那个 model runner，然后就是可能中间加加一些加加一些自己的分配的方式，都在我们自己插件里面做的。"
+    },
+    {
+      "id": "P024",
+      "segmentIndex": 6,
+      "startChar": 7175,
+      "endChar": 7459,
+      "segmentStartChar": 769,
+      "segmentEndChar": 1053,
+      "sourceRange": {
+        "startSeconds": 1499,
+        "endSeconds": 1798.8,
+        "precision": "whole-audio-segment-only"
+      },
+      "text": "就尽量了，我们的想法还是在插件里做。行，我大概了解了。那比如说你们用的 vm，然后 vm 它本身之前比较经典的那个 page token 的算法有了解过吗？嗯，我了解过，它就是把那个我们分配的 kv cache 池给进行分块，然后使得我们可以，就是算子读取的时候，根据我们的 block table 和那个每一个层，每一个从逻辑逻辑上面的 kv cache 块到物理上的 kv cache 块的之间映射，然后找到它，找到我们 sequence 所对应的那那几个 block，然后再进行提取，从其中的查询，然后那提提取提取其中的 kv cache，然后进行进行查询计算。"
+    },
+    {
+      "id": "P025",
+      "segmentIndex": 6,
+      "startChar": 7459,
+      "endChar": 7780,
+      "segmentStartChar": 1053,
+      "segmentEndChar": 1374,
+      "sourceRange": {
+        "startSeconds": 1499,
+        "endSeconds": 1798.8,
+        "precision": "whole-audio-segment-only"
+      },
+      "text": "然后这里面我们就不需要分配一个连续的连，每给每一个 sequence 分配连，完全连续的那个 kv cache，然后可以把那个我们的 kv cache 块组织成一个一一个个 block，然后可以让它复用，给每，可以那个那个节省，减少那个缓内存之显显存之间的那个碎片化的问题，然后可以方便于复用。嗯，具体展开一下，比如说它的 page 和 block 具体是怎么样的关系呢？就它分了分了哪几层的那些 block，然后有什么样的那些 page？什么样的 page？对，就是说，比如说我们再详细一点说一下，比如说 page token 的这一个算法，你刚刚说到说它有一个逻辑上的，对吧？有一个物理上的。那它的逻辑上的和物理上的具体是怎么去组织的呢？"
+    },
+    {
+      "id": "P026",
+      "segmentIndex": 6,
+      "startChar": 7780,
+      "endChar": 7949,
+      "segmentStartChar": 1374,
+      "segmentEndChar": 1543,
+      "sourceRange": {
+        "startSeconds": 1499,
+        "endSeconds": 1798.8,
+        "precision": "whole-audio-segment-only"
+      },
+      "text": "比如说我有一个请求，那我这一个请求大概 4096 个 token，它具体怎么在逻辑和物理上分别去映射，然后从而去刚刚说它会节省一定的那个空间，然后怎么能省出来呢？能举一个具体的例子吗？比如说它以前，我们就假设说没有 page token 之前，这个事情要怎么做？然后有了之后它其实是怎么做的？然后它所以为什么能够省这些东西？哦，我想一想。"
+    },
+    {
+      "id": "P027",
+      "segmentIndex": 7,
+      "startChar": 7950,
+      "endChar": 8345,
+      "segmentStartChar": 0,
+      "segmentEndChar": 395,
+      "sourceRange": {
+        "startSeconds": 1798.8,
+        "endSeconds": 2098.6,
+        "precision": "whole-audio-segment-only"
+      },
+      "text": "好，那假如有一个 4096 的长度的那个请求进来，然后如果我们没有一个没有一个没有 page 的查询，没没有那个 block 划分的话，我们需要根据我们这个请求的实际需要，那个请求它请求的那个长度，我们为了，我们需要估计这个请求未来可能生成的生成的最长的那个长度。然后把根据那个最长的长度，然后去分配一块直接连续的 KV cache，然后然后去交给这个请求用。然后因为在这个抵扣的过程中，我们这个请求会会不断的增长嘛，我们需要可能可能就我们就要需要直接分配好最坏情况的那个连续的这个 KV cache。然后如果是如果是我们，就我们有了这个 block 这个机制的话，然后我们可以去，我们 4096 的输入长度我们肯定是必须要分配好的，就是按照 block，可能我们 block size 大概，假设它是 256，那么我们就要去设分配个1234，十十六块，然后十十七块，然后再加上一个末尾的。"
+    },
+    {
+      "id": "P028",
+      "segmentIndex": 7,
+      "startChar": 8345,
+      "endChar": 8712,
+      "segmentStartChar": 395,
+      "segmentEndChar": 762,
+      "sourceRange": {
+        "startSeconds": 1798.8,
+        "endSeconds": 2098.6,
+        "precision": "whole-audio-segment-only"
+      },
+      "text": "然后这是我们可以先分配一个少量的，就是没有达到最最最坏情况的那个长度，那个长度的 cache 的大小，我们可以分配几块，然后几块之后我们随着抵扣的的不断不断增加，然后我们去，那最后尾块满了之后我们再去分配一个新的块。就我们就不需要去，在它是一个我们有所用的块的数量，它是一个渐进增长的。然后第二点它是碎，它有没有碎片化问题，它就是我如如果没有，之后又新来了一个请求的话，如果我们如果有原本是是原本的那个连续化的分配的一整个开始的话，我们可能就是必须要去，如果发我们要复用的话，就可能要必须要整个整个前面的整整个所有块都都都要复用的时候我们才能够去命中这个东西，但是我们如果是按 block 的话，我们可以 block block 的命中。用个，可能到中间某一个点它是分叉开来了，我们就可以只用前面这几个 block。哦，我大概了解了。"
+    },
+    {
+      "id": "P029",
+      "segmentIndex": 7,
+      "startChar": 8712,
+      "endChar": 9111,
+      "segmentStartChar": 762,
+      "segmentEndChar": 1161,
+      "sourceRange": {
+        "startSeconds": 1798.8,
+        "endSeconds": 2098.6,
+        "precision": "whole-audio-segment-only"
+      },
+      "text": "然后配置中心这里面有一个比较中间比较相对比较重要的一个配置 table 的这样一个数据的结构。有理解它里面大概是什么样子，用来干嘛的吗？ Page table 你说是 block table 是吗？它就是我记得是就是映射我这每这这一条请求我用的是哪几个 block，就是我们那个，就是就是什么？就是就是我们有个他，因为他们需要映射到实际的那个 block 编号嘛，所以我们需要这个请求是用的是某某某几个 block，那个请，第二行请求用的是哪几个 block。那他通过这个索引，然后去读取对应的 block。哦哦哦，嗯，对， OK， 没问题。哦，我我刚刚刚刚听到了，比如说那个框架相关的一些改动，以及我可能顺着这个框架来的一些东西，问了一些前前后后的问题吧。就比如说在工作上内容还有什么其他的方面没有介绍到的吗？因为我中间可能稍微打断和发散了一下。工作中还有什么其他的是做优化的是吗？您说的意思是。"
+    },
+    {
+      "id": "P030",
+      "segmentIndex": 7,
+      "startChar": 9111,
+      "endChar": 9365,
+      "segmentStartChar": 1161,
+      "segmentEndChar": 1415,
+      "sourceRange": {
+        "startSeconds": 1798.8,
+        "endSeconds": 2098.6,
+        "precision": "whole-audio-segment-only"
+      },
+      "text": "哦，就你觉得还比较那个不错，可以介绍的一些和探讨的一些内容。嗯，好的。那我们简历中应该我记得还写了一个，有一个那个在多模态里面有一个 Comfy3D 上面的优化。然后在这个优化里面它一，我们一开始它是一个是 OOM 的问题，就是它是它是很多一是显存不足的问题。然后我是在那个千，这是在千问千问三 32B VR 这个模型的适配过程中遇到的一个问题。然后在这个问题中，因为在 Comfy3D 里面，因为在 Comfy3D 里面它输入它是一个我记得是一个 N C H W 这样的一个这样的一个那个输入形状，然后在。"
+    },
+    {
+      "id": "P031",
+      "segmentIndex": 8,
+      "startChar": 9366,
+      "endChar": 9733,
+      "segmentStartChar": 0,
+      "segmentEndChar": 367,
+      "sourceRange": {
+        "startSeconds": 2098.6,
+        "endSeconds": 2398.4,
+        "precision": "whole-audio-segment-only"
+      },
+      "text": "原本实现中，它会把 C channel 那个维度给放到最后一维去。然后放到最后一维去，然后我们的硬件它是有一个强制的一个 padding 的一个机制，然后会导致我们最后这个通道数 3，然后去会去 padding 成一整个，可能是比较长的，可能它直接就 padding 成 128 了，然后它就导致我们这显存的大量的浪费。所以背景是这样子。然后然后我最后后面做的工作就是把这个，因为因为 NCHW 后面是这个 14 14，如果把任何一维它都放到放到最后的话，它都会产生一些 padding。然后我们最后的话是把后面的几维全部给打，展平成一位，所以就变成了一个 N N H 的这个架构。有两维的数据，然后再让算子里面去根据输入的原信息把它重建成一个，恢复成原本的，五维形状，然后再进行计算。然后这样子的话，这大约节这大约节省了多少的显存？"
+    },
+    {
+      "id": "P032",
+      "segmentIndex": 8,
+      "startChar": 9733,
+      "endChar": 10121,
+      "segmentStartChar": 367,
+      "segmentEndChar": 755,
+      "sourceRange": {
+        "startSeconds": 2098.6,
+        "endSeconds": 2398.4,
+        "precision": "whole-audio-segment-only"
+      },
+      "text": "这样子，可以，因为简单估算一下，我们就原本它是拍定成，它原本是 3 的，然后它拍定成 128，它节省了上将近差不多四十几倍显存。这个四十几倍，我看它只是在最后一个维度做的拍定，它会让整体变成四十几倍吗？对对，是的是的，因为它是，就就假如它是那个可能是，五五，然后是十四十四三，然后它最后一位它从它它从三变成了128的话，它就是整体的，整就整整体整个形状都拍定出来了。就它会有一个溢出效应，对。这也是在哪个项目里面做做的推理呢？这是在那个千问三三十，千问三三十二 B 这个多模态推理里面。它的推理的那些代码有用什么样的框架或者什么样的库吗？什么框架什么库，我们用的就是 PyTorch 和 VM。也是在 VM 里面吗？那这个是主要修改是在 PyTorch 里面修改的，因为需要去调用里面的算子嘛。 OK，行。 OK，好，大概了解了。行，我这边没有其他的，看你有什么其他的问题吗？"
+    },
+    {
+      "id": "P033",
+      "segmentIndex": 8,
+      "startChar": 10121,
+      "endChar": 10514,
+      "segmentStartChar": 755,
+      "segmentEndChar": 1148,
+      "sourceRange": {
+        "startSeconds": 2098.6,
+        "endSeconds": 2398.4,
+        "precision": "whole-audio-segment-only"
+      },
+      "text": "那因为我这边是经常接到接到信息是因为理想汽车这边我理解是可能是端侧比较多，您这边是开始在做是也是在做云端这种大规模是吗？端和云我们都有做呀，对。都有做什么？对你你想他的那个，对，其实理想汽车不管是他的自动驾驶还是最近的 Agent，他想要或他做舱内模型嘛，他可能最终交付的是端侧，但他绝大部分的推理其实是在云端呀，因为那个端侧模型是最终在云端，不管是训练还是推理出来，最后蒸馏的一个版本而已。对。所以说我们本身也做云端的，就包括包括 GPT 5.3 可能前段前段时间比较火，我们也拿来做部署，然后做了一些优化，大概可能做到了官方成本的两折到三折左右。我们也把一些当时社区还不太支持的功能也去回馈到了社区，比如它的一些 CP 或者一些 L3 缓存上一些不太完整的地方，因为因为它的很多 demo 其实都只是一种能够跑起来，真正在大规模里面用起来就一般。对，所以我们会做那个云端的一个东西。"
+    },
+    {
+      "id": "P034",
+      "segmentIndex": 8,
+      "startChar": 10514,
+      "endChar": 10831,
+      "segmentStartChar": 1148,
+      "segmentEndChar": 1465,
+      "sourceRange": {
+        "startSeconds": 2098.6,
+        "endSeconds": 2398.4,
+        "precision": "whole-audio-segment-only"
+      },
+      "text": "而且你在端侧的推理和云端推理，我觉得没有本质的区别。端侧可能你只是可以相相对来说比较确切点只去实现那个，啊， batch size 等于一的，对吧？你可以用一些极致的融合的算子去尽量减少你的在芯片上的交换和搬运来提升这个这个这个性能。但到云端你得考虑多个 batch，考虑多个，像它的那些什么，像 WiFi， MTP 那些能力，那你在算子的设计上可能会有区别，但把它大的思想是没有没有本质的变化的。嗯，明白明白。所以你们，您您这边也是用的是像是 VM 这种框架，还是会去自研框架呢？我们其实主要是基于 Hugging Face 的，然后在 Hugging Face 上面我们会做一些自己的改动，然后觉得如，对，如果这个符合社区的那些。"
+    },
+    {
+      "id": "P035",
+      "segmentIndex": 9,
+      "startChar": 10832,
+      "endChar": 11050,
+      "segmentStartChar": 0,
+      "segmentEndChar": 218,
+      "sourceRange": {
+        "startSeconds": 2398.4,
+        "endSeconds": 2462.613375,
+        "precision": "whole-audio-segment-only"
+      },
+      "text": "呃，节奏和思路我们就可以把它合并回去，对。但VM我们现在也支持，因为因为我帮你了解过，就理想他不自己也成立了一个新的芯片公司嘛，那么他也会卖这些芯片。那客户有用H3的，也有用VM的，所以说本身我们也都会支持。对。嗯嗯，明白。好好，谢谢谢谢，我嗯没有问题了，谢谢。好好，谢谢。然后可能我会整体横向看一下，跟其他的同事的一些面试啊什么一起讨论一下，然后后面可能呃会有一些进展的一些通知，好吧？嗯，好好的，好，谢谢。嗯，好好，谢谢。嗯，再见。"
+    }
+  ],
+  "validation": {
+    "responseCount": 9,
+    "paragraphCount": 35,
+    "sourceSampleCoverageComplete": true,
+    "eachResponseTextRoundtrip": true,
+    "eachGlobalCharacterRangeVerified": true,
+    "emptyResponseSegments": [],
+    "externalCalls": 0
+  }
+}
