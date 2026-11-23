@@ -12,7 +12,7 @@
 |---|---|
 | 开发与交付时间 | 2026-09-01 至 2026-10-27；截至 2026-11-02 已确认生产上线，实际首次上线日期本人不掌握 |
 | 角色 | AI 框架开发工程师；独立负责本模型在既有 vLLM 硬件插件中的适配开发、插件侧性能优化、排障与发布验证 |
-| 模型与部署 | GLM-5.3-Flash-Mix，AWQ 4-bit 权重、BF16 激活，8 卡自研 AI 加速芯片、TP=8、`block_size=256` |
+| 模型与部署 | GLM-5.3-Flash-Mix，AWQ 4-bit 权重、BF16 激活，单机 8 卡（自研 AI 加速芯片），TP=8，`block_size=256`。单机配置由本人于 2026-11-20 确认 |
 | 最终软件基线 | vLLM `0.30.1rc0`、PyTorch `2.5.0` 芯片后端、自研 vLLM 插件与 AOT 算子库；模型 revision、插件及后端发布标识待补充 |
 | 发布执行路径 | 文本推理、V1 runner、`FULL_DECODE_ONLY`；decode 使用 graph，prefill／chunked prefill 使用 eager |
 | 发布范围之外 | MTP、多模态、FP8、V2 runner、计算与通信重叠；MoE router 仍使用 BF16 logits |

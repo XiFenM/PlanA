@@ -1,0 +1,3129 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; script-src 'unsafe-inline'; img-src 'self' data:; font-src data:; connect-src 'self'; base-uri 'none'; form-action 'none'">
+<meta name="lesson-pages" content="v1" data-id="plana-jd-w4-mock-readiness" data-key="e985635ceff8" data-rev="22" data-updated="2026-11-22">
+<title>第一次推理模拟面试与投递门槛复核 · 八周证据冲刺 · W4 · 单元六</title>
+<script id="lp-boot">
+document.documentElement.classList.add("js");
+window.LessonPage = (function () {
+  function num(value, digits) {
+    if (value === null || value === undefined || value === "") return "—";
+    if (typeof value !== "number") return String(value);
+    if (value !== value) return "—";
+    if (value === Infinity) return "∞";
+    if (value === -Infinity) return "−∞";
+    var d = digits == null || !isFinite(digits) ? (Math.abs(value) >= 100 ? 0 : Math.abs(value) >= 10 ? 1 : 2) : Math.max(0, Math.min(20, Math.round(digits)));
+    var text = value.toLocaleString("en-US", { maximumFractionDigits: d, minimumFractionDigits: 0 });
+    return /^-0(\.0*)?$/.test(text) ? "0" : text.replace("-", "−");
+  }
+  function bytes(value) {
+    if (typeof value !== "number" || !isFinite(value)) return num(value);
+    var units = ["B", "KiB", "MiB", "GiB", "TiB", "PiB"], i = 0, v = value;
+    while (Math.abs(v) >= 1024 && i < units.length - 1) { v /= 1024; i += 1; }
+    var digits = v >= 100 || i === 0 ? 0 : 1;
+    if (i < units.length - 1 && Math.abs(Number(v.toFixed(digits))) >= 1024) { v /= 1024; i += 1; digits = 1; }
+    return num(v, digits) + " " + units[i];
+  }
+  return { onStep: {}, explorers: {}, fmt: { num: num, bytes: bytes } };
+})();
+try { var lpTheme = window.localStorage.getItem("lesson-pages-theme"); if (lpTheme === "light" || lpTheme === "dark") document.documentElement.setAttribute("data-theme", lpTheme); } catch (error) { /* 文件页可能禁用存储 */ }
+</script>
+<style id="lp-base">
+/* lesson-pages base v2：安静的讲义，发亮的实验台。正文在浅纸上安静易读；可以动手的图和代码放在深色台面上；检查题是全页最醒目的色块；朱红只标导师指给你看的地方；符号色贯穿正文、公式、代码和图。页面不要修改本段：部件样式随片段写 <style data-lp-style>，整页生效的少量调整写进 #lp-page-style。 */
+:root {
+  color-scheme: light dark;
+  --paper: #fbfbf8; --raised: #f2f1ec; --ink: #1e2024; --ink-soft: #474a52; --ink-faint: #696c75;
+  --rule: #dddbd3; --accent: #b23f27; --accent-ink: #9a321e; --accent-wash: #f7e8e2; --focus: #2f62d8;
+  --mark: #fbe7a8; --s1: #0062a3; --s2: #00765a; --s3: #a0407a; --s4: #8f5b00;
+  --band: #16181d; --band-ink: #f5f3ed; --band-soft: #bdbab1; --band-rule: #3a3d45;
+  --stage: #121418; --glow-a: rgba(226, 106, 74, .34); --glow-b: rgba(64, 140, 214, .24); --dot: rgba(255, 255, 255, .075);
+  --shadow: 0 1px 2px rgba(22, 24, 29, .06), 0 14px 34px -20px rgba(22, 24, 29, .42);
+  --font-sans: "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei UI", "Microsoft YaHei", "Noto Sans CJK SC", "Source Han Sans SC", system-ui, sans-serif;
+  --font-kai: "Kaiti SC", "STKaiti", "KaiTi", "AR PL UKai CN", "AR PL KaitiM GB", serif;
+  --font-mono: ui-monospace, "SF Mono", "Cascadia Mono", "JetBrains Mono", Menlo, Consolas, "Noto Sans Mono CJK SC", monospace;
+  --font-math: "STIX Two Math", "Cambria Math", "Latin Modern Math", "Noto Sans Math", math;
+  --text: 17px; --leading: 1.75; --measure: 38em; --gutter: clamp(16px, 4vw, 40px); --radius: 4px; --round: 14px; --note: 220px;
+  --ease: cubic-bezier(.2, .7, .2, 1);
+}
+@media screen and (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #181a1e; --raised: #212429; --ink: #e7e5df; --ink-soft: #b9b7b0; --ink-faint: #8f8e89;
+    --rule: #34373d; --accent: #f08c6d; --accent-ink: #f4a286; --accent-wash: #3a2520; --focus: #8fb0ff;
+    --mark: #4d3f17; --s1: #6cb6f0; --s2: #3fcf9f; --s3: #e397c4; --s4: #e9b84a;
+    --band: #0d0f12; --band-ink: #f0eee8; --band-soft: #b9b7b0; --band-rule: #2c3038;
+    --stage: #0c0e11; --glow-a: rgba(240, 140, 109, .2); --glow-b: rgba(108, 182, 240, .18); --dot: rgba(255, 255, 255, .05);
+    --shadow: inset 0 1px 0 rgba(255, 255, 255, .07), 0 1px 2px rgba(0, 0, 0, .3), 0 24px 48px -26px rgba(0, 0, 0, .9), 0 0 80px -40px var(--glow-b);
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --paper: #181a1e; --raised: #212429; --ink: #e7e5df; --ink-soft: #b9b7b0; --ink-faint: #8f8e89;
+  --rule: #34373d; --accent: #f08c6d; --accent-ink: #f4a286; --accent-wash: #3a2520; --focus: #8fb0ff;
+  --mark: #4d3f17; --s1: #6cb6f0; --s2: #3fcf9f; --s3: #e397c4; --s4: #e9b84a;
+  --band: #0d0f12; --band-ink: #f0eee8; --band-soft: #b9b7b0; --band-rule: #2c3038;
+  --stage: #0c0e11; --glow-a: rgba(240, 140, 109, .2); --glow-b: rgba(108, 182, 240, .18); --dot: rgba(255, 255, 255, .05);
+  --shadow: inset 0 1px 0 rgba(255, 255, 255, .07), 0 1px 2px rgba(0, 0, 0, .3), 0 24px 48px -26px rgba(0, 0, 0, .9), 0 0 80px -40px var(--glow-b);
+}
+:root[data-theme="light"] { color-scheme: light; }
+/* 实验台：可以动手的图、代码块在两种主题下都用深色令牌；里面的部件样式照常写 var(--…)，自动适配 */
+:is(.lp-stepper, .lp-explorer, .lp-toggle, .lp-figure.is-stage, pre.lp-code, .lp-code-head) {
+  color-scheme: dark;
+  --paper: var(--stage); --raised: #1c1f25; --ink: #eceae4; --ink-soft: #c2c0b9; --ink-faint: #8f8e89;
+  --rule: #2d3138; --accent: #ff8f6b; --accent-ink: #ffab8f; --accent-wash: #3e231c; --focus: #8fb0ff;
+  --mark: #5a4917; --s1: #6cb6f0; --s2: #3fcf9f; --s3: #e397c4; --s4: #e9b84a;
+  --rim: rgba(255, 143, 107, .45); --glow-a: rgba(108, 182, 240, .14); --dot: rgba(255, 255, 255, .045);
+  --code-kw: #bb9af7; --code-str: #9ece6a; --code-num: #ff9e64; --code-fn: #7aa2f7; --code-type: #73daca; --code-com: #8d94a6; --code-meta: #e0af68;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html { -webkit-text-size-adjust: 100%; }
+body { margin: 0; background: var(--paper); color: var(--ink); font: 400 var(--text)/var(--leading) var(--font-sans); line-break: strict; font-kerning: normal; }
+@media (prefers-reduced-motion: no-preference) { html { scroll-behavior: smooth; } }
+[id] { scroll-margin-top: 24px; }
+a { color: inherit; text-decoration-color: var(--ink-faint); text-underline-offset: .22em; text-decoration-thickness: 1px; transition: color .15s ease, text-decoration-color .15s ease; }
+a:hover { color: var(--accent-ink); text-decoration-color: currentColor; }
+:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; border-radius: 2px; }
+::selection { background: var(--mark); color: var(--ink); }
+sub, sup { line-height: 0; }
+.nb { white-space: nowrap; }
+
+/* 版面三档：≥1280 目录｜正文｜批注；1100–1279 正文｜批注；更窄时单栏，批注回到正文。封面与正文用同一套栏线对齐。 */
+.lp-page, .lp-cover-in { display: grid; grid-template-columns: [main] minmax(0, var(--measure)) [end]; justify-content: center; gap: 0 48px; max-width: 1260px; margin: 0 auto; padding: 0 var(--gutter); }
+.lp-page { padding-bottom: 96px; }
+.lp-toc { display: none; }
+.lp-main { grid-column: main; min-width: 0; position: relative; }
+@media (min-width: 1100px) { .lp-page, .lp-cover-in { grid-template-columns: [main] minmax(0, var(--measure)) [note] var(--note) [end]; } }
+@media (min-width: 1280px) {
+  .lp-page, .lp-cover-in { grid-template-columns: [toc] 180px [main] minmax(0, var(--measure)) [note] var(--note) [end]; justify-content: space-between; }
+  .lp-toc { display: block; grid-column: toc; grid-row: 1; }
+  .lp-toc-inline { display: none; }
+}
+
+/* 封面：深色色带，首屏仍以标题和导入为主 */
+.lp-cover { position: relative; isolation: isolate; overflow: hidden; color: var(--band-ink); background: var(--band); border-bottom: 1px solid var(--band-rule); }
+.lp-cover::before { content: ""; position: absolute; z-index: -1; inset: 0; background: radial-gradient(60% 120% at 88% 0%, var(--glow-a), transparent 62%), radial-gradient(50% 110% at 8% 100%, var(--glow-b), transparent 60%); }
+.lp-cover::after { content: ""; position: absolute; z-index: -1; inset: 0; background-image: linear-gradient(var(--dot) 1px, transparent 1px), linear-gradient(90deg, var(--dot) 1px, transparent 1px); background-size: 28px 28px; -webkit-mask-image: linear-gradient(100deg, transparent 8%, #000 55%, transparent 96%); mask-image: linear-gradient(100deg, transparent 8%, #000 55%, transparent 96%); }
+.lp-cover-in { position: relative; }
+.lp-cover-in::before { content: ""; position: absolute; z-index: -1; left: 0; right: 0; top: 56px; height: 28px; background: linear-gradient(90deg, transparent, var(--glow-a) 45%, transparent 70%) no-repeat; background-size: 40% 100%; background-position: -60% 0; opacity: 0; pointer-events: none; }
+@media (prefers-reduced-motion: no-preference) { .lp-cover-in::before { animation: lp-sweep 2.4s .3s var(--ease) both; } }
+@keyframes lp-sweep { 0% { opacity: 0; background-position: -60% 0; } 20% { opacity: 1; } 100% { opacity: 0; background-position: 160% 0; } }
+.lp-cover-in { padding-top: 40px; padding-bottom: 38px; }
+.lp-cover-body { grid-column: main / end; min-width: 0; }
+.lp-headbar { display: flex; align-items: center; gap: 8px 16px; margin: 0 0 22px; }
+.lp-crumb { margin: 0; color: var(--band-soft); font-size: 14px; line-height: 1.5; }
+.lp-title { max-width: 22em; margin: 0; font-size: clamp(28px, 4.2vw, 42px); line-height: 1.22; font-weight: 700; letter-spacing: .01em; text-wrap: balance; }
+.lp-title::after { content: ""; display: block; width: 64px; height: 3px; margin-top: 20px; background: linear-gradient(90deg, var(--accent) 35%, color-mix(in srgb, var(--accent) 15%, transparent)); border-radius: 2px; transform-origin: left; }
+.lp-meta { display: flex; flex-wrap: wrap; gap: 2px 20px; margin: 16px 0 0; color: var(--band-soft); font-size: 14.5px; line-height: 1.6; }
+.lp-meta > p { margin: 0; }
+.lp-meta a { color: var(--band-ink); }
+.lp-tools { display: flex; gap: 6px; margin-left: auto; }
+.lp-tools button { min-height: 30px; padding: 2px 12px; font: inherit; font-size: 13.5px; line-height: 1.6; color: var(--band-soft); background: transparent; border: 1px solid var(--band-rule); border-radius: 999px; cursor: pointer; transition: color .15s ease, border-color .15s ease, background-color .15s ease; }
+.lp-tools button:hover { color: var(--band-ink); border-color: var(--band-soft); }
+.lp-tools button[aria-pressed="true"] { color: var(--band); background: var(--band-ink); border-color: var(--band-ink); }
+.lp-updated { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0 2px; width: fit-content; max-width: 100%; margin: 20px 0 0; padding: 6px 14px; font-size: 14.5px; line-height: 1.65; color: var(--band-ink); background: color-mix(in srgb, var(--band-ink) 7%, transparent); border: 1px solid var(--band-rule); border-radius: 12px; }
+.lp-updated:empty { display: none; }
+.lp-updated::before { content: ""; align-self: center; width: 7px; height: 7px; margin-right: 8px; background: var(--accent); border-radius: 50%; box-shadow: 0 0 0 4px var(--glow-a); }
+.lp-updated a { font-weight: 600; color: var(--band-ink); text-decoration-color: var(--band-soft); }
+@media (prefers-reduced-motion: no-preference) {
+  .lp-title, .lp-meta, .lp-updated { animation: lp-rise .7s var(--ease) both; }
+  .lp-meta { animation-delay: .08s; }
+  .lp-updated { animation-delay: .16s; }
+  .lp-title::after { animation: lp-grow .9s .25s var(--ease) both; }
+}
+@keyframes lp-rise { from { opacity: 0; transform: translateY(10px); } }
+@keyframes lp-grow { from { transform: scaleX(0); } }
+.lp-toc-inline { margin: 22px 0 0; font-size: 14.5px; }
+.lp-toc-inline > summary { width: max-content; cursor: pointer; color: var(--ink-soft); }
+.lp-toc-inline nav { margin-top: 8px; }
+
+/* 阅读进度与目录 */
+.lp-progress { position: fixed; z-index: 30; top: 0; left: 0; right: 0; height: 3px; pointer-events: none; background: var(--accent); transform: scaleX(var(--p, 0)); transform-origin: left; }
+.lp-toc nav { position: sticky; top: 28px; max-height: calc(100vh - 28px); padding-top: 48px; overflow: auto; font-size: 14px; line-height: 1.5; }
+.lp-toc ol, .lp-toc-inline ol { position: relative; list-style: none; margin: 0; padding: 0; }
+.lp-toc a, .lp-toc-inline a { display: block; padding: 4px 0 4px 14px; color: var(--ink-faint); text-decoration: none; border-left: 1px solid var(--rule); text-wrap: pretty; }
+.lp-toc a:hover, .lp-toc-inline a:hover { color: var(--ink); }
+.lp-toc a.is-past { color: var(--ink-soft); }
+.lp-toc a[aria-current="true"] { color: var(--ink); font-weight: 600; }
+.lp-toc-marker { position: absolute; left: 0; top: 0; width: 2px; height: 0; background: var(--accent); border-radius: 1px; transition: transform .35s var(--ease), height .35s var(--ease); }
+.lp-toc .lp-toc-sub a, .lp-toc-inline .lp-toc-sub a { padding-left: 26px; font-size: 13.5px; }
+
+/* 正文 */
+.lp-main h2 { position: relative; margin: 76px 0 16px; font-size: 23px; line-height: 1.35; font-weight: 700; text-wrap: balance; }
+.lp-main > section:first-of-type > h2:first-child { margin-top: 44px; }
+.lp-main h3 { margin: 32px 0 8px; font-size: 18px; line-height: 1.4; font-weight: 600; }
+.lp-main p, .lp-main ul, .lp-main ol, .lp-main dl { margin: 0 0 1em; }
+.lp-main p { text-wrap: pretty; }
+.lp-main ul, .lp-main ol { padding-left: 1.4em; }
+.lp-main li { margin: .25em 0; }
+.lp-main strong, .lp-main b { font-weight: 600; }
+.lp-narrative > p:first-of-type { font-size: 18.5px; line-height: 1.75; }
+.lp-lead { font-size: 18.5px; line-height: 1.72; }
+.lp-lead > b:first-child { display: inline-block; margin-right: .6em; padding: 0 .5em; font-size: .78em; line-height: 1.65; font-weight: 600; letter-spacing: .04em; color: var(--paper); background: var(--ink); border-radius: 5px; vertical-align: .14em; }
+.lp-layer { margin-right: .5em; font-weight: 600; color: var(--ink); }
+.lp-layer::before { content: ""; display: inline-block; width: .42em; height: .42em; margin-right: .45em; background: var(--accent); border-radius: 50%; vertical-align: .16em; }
+var { font-family: var(--font-mono); font-size: .92em; font-style: normal; }
+.lp-s1 { color: var(--s1); } .lp-s2 { color: var(--s2); } .lp-s3 { color: var(--s3); } .lp-s4 { color: var(--s4); }
+var:is(.lp-s1, .lp-s2, .lp-s3, .lp-s4) { font-weight: 600; }
+var.is-math { margin-right: .08em; font-family: KaTeX_Math, var(--font-math), serif; font-size: 1.12em; font-style: italic; font-weight: 400; line-height: 1; }
+code { padding: .08em .35em; font-family: var(--font-mono); font-size: .88em; background: var(--raised); border-radius: 4px; overflow-wrap: anywhere; }
+mark, .lp-hl { padding: 0 .12em; color: inherit; background: var(--mark); border-radius: 3px; }
+math { font-family: var(--font-math); font-size: 1.08em; }
+.lp-math { margin: 0 0 1.1em; overflow-x: auto; text-align: center; }
+pre.lp-formula { margin: 0 0 1.1em; padding: 14px 16px; overflow-x: auto; font: 14.5px/1.7 var(--font-mono); white-space: pre; background: var(--raised); border-radius: 10px; }
+.lp-pen { padding-bottom: .1em; background: linear-gradient(var(--accent), var(--accent)) 0 100% / 100% 2px no-repeat; -webkit-box-decoration-break: clone; box-decoration-break: clone; transition: background-size 1s var(--ease) .15s; }
+.lp-motion .lp-pen:not(.is-drawn) { background-size: 0 2px; }
+.lp-aside { font-size: 15.5px; color: var(--ink-soft); }
+.lp-aside .lp-layer { color: var(--ink-soft); }
+.lp-aside .lp-layer::before { background: var(--ink-faint); }
+.lp-tag { display: inline-block; margin: 0 .25em; padding: 0 .45em; font-size: 12.5px; line-height: 1.6; color: var(--ink-soft); white-space: nowrap; vertical-align: .1em; background: var(--raised); border-radius: 4px; }
+.lp-path { font-family: var(--font-mono); font-size: .86em; overflow-wrap: anywhere; }
+
+/* 公式：TeX 在写入时渲染；行间公式过宽时在自身范围内横向滚动 */
+:root .katex { font-size: 1.1em; text-rendering: optimizeLegibility; }
+span.tex { white-space: nowrap; }
+div.tex { position: relative; margin: 1.3em 0 1.5em; padding: 6px 2px; overflow-x: auto; overflow-y: hidden; text-align: center; background: linear-gradient(90deg, var(--paper) 40%, transparent) left / 28px 100% no-repeat local, linear-gradient(270deg, var(--paper) 40%, transparent) right / 28px 100% no-repeat local, radial-gradient(farthest-side at 0 50%, var(--rule), transparent) left / 10px 100% no-repeat scroll, radial-gradient(farthest-side at 100% 50%, var(--rule), transparent) right / 10px 100% no-repeat scroll; }
+div.tex .katex-display { margin: 0; }
+:root div.tex > .katex-display > .katex { font-size: 1.3em; }
+.katex :is(.vlist-t, .vlist-r, .vlist) { pointer-events: none; }
+.katex :is(.lp-s1, .lp-s2, .lp-s3, .lp-s4) { pointer-events: auto; }
+.lp-copy-tex { position: absolute; top: 2px; right: 0; min-height: 26px; padding: 0 9px; font: 12px/24px var(--font-sans); color: var(--ink-faint); background: var(--paper); border: 1px solid var(--rule); border-radius: 999px; cursor: pointer; opacity: 0; transition: opacity .2s ease, color .15s ease; }
+div.tex:hover .lp-copy-tex, .lp-copy-tex:focus-visible, .lp-copy-tex.is-done { opacity: 1; }
+.lp-copy-tex:hover { color: var(--ink); }
+@media (hover: none) { .lp-copy-tex { display: none; } }
+
+/* 节点：编号徽标，宽屏时悬挂在左边距；读到哪一节，徽标就亮起来 */
+.lp-no { display: inline-grid; place-items: center; min-width: 1.75em; height: 1.75em; margin-right: .55em; padding: 0 .35em; font-size: .78em; font-weight: 700; line-height: 1; color: var(--accent-ink); background: var(--accent-wash); border-radius: 8px; font-variant-numeric: tabular-nums; vertical-align: .1em; transition: color .3s ease, background-color .3s ease, box-shadow .3s ease; }
+.lp-node.is-current > h2 .lp-no { color: var(--paper); background: var(--accent); box-shadow: 0 6px 16px -6px var(--accent); }
+@media (min-width: 1100px) { .lp-node > h2 .lp-no { position: absolute; right: 100%; top: .05em; margin-right: 16px; } }
+.lp-spine { margin: -6px 0 6px !important; font-size: 14.5px; line-height: 1.6; color: var(--ink-soft); }
+.lp-spine::before { content: "对应资料　"; color: var(--ink-faint); }
+
+/* 整节点复制：有脚本时才加控件，保留独立标题供目录与阅读模式使用。 */
+.lp-node-copy-enabled { position: relative; }
+.lp-main .lp-node-copy-enabled > h2 { min-height: 44px; margin-inline-end: 168px; padding-inline-end: 0; }
+.lp-node-copy-tools {
+  position: absolute;
+  inset-inline-end: 0;
+  top: var(--lp-node-copy-top, 0px);
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  min-height: 44px;
+  margin: 0;
+  z-index: 2;
+}
+.lp-node-copy-button {
+  box-sizing: border-box;
+  min-height: 44px;
+  min-width: 44px;
+  padding: 8px 14px;
+  color: var(--ink-soft);
+  background: var(--paper);
+  border: 1px solid var(--rule);
+  border-radius: var(--radius, 4px);
+  font: 500 13.5px/1.5 var(--font-sans);
+  white-space: nowrap;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+.lp-node-copy-tools > .lp-node-copy-button { min-width: 152px; }
+.lp-node-copy-button:hover { color: var(--accent-ink); border-color: var(--accent); background: var(--accent-wash); }
+.lp-node-copy-button:focus-visible { outline: 2px solid var(--focus); outline-offset: 3px; }
+.lp-node-copy-button[aria-busy="true"] { cursor: progress; }
+.lp-node-copy-status {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+.lp-node-copy-buffer { position: fixed; inset: 0 auto auto 0; width: 1px; height: 1px; opacity: 0; padding: 0; border: 0; }
+.lp-node-copy-dialog {
+  box-sizing: border-box;
+  width: min(880px, calc(100vw - 32px));
+  max-height: calc(100dvh - 32px);
+  padding: 24px;
+  color: var(--ink);
+  background: var(--paper);
+  border: 1px solid var(--rule);
+  border-radius: var(--round, 14px);
+  box-shadow: var(--shadow);
+}
+.lp-node-copy-dialog::backdrop { background: color-mix(in srgb, var(--band) 48%, transparent); }
+.lp-node-copy-dialog > h2 { margin: 0 0 12px; font-size: 20px; }
+.lp-node-copy-dialog > p { margin: 0 0 16px; color: var(--ink-soft); font-size: 15px; }
+.lp-node-copy-text {
+  box-sizing: border-box;
+  display: block;
+  width: 100%;
+  height: min(52dvh, 480px);
+  min-height: 160px;
+  padding: 12px;
+  color: var(--ink);
+  background: var(--raised);
+  border: 1px solid var(--rule);
+  border-radius: var(--radius, 4px);
+  font: 13px/1.6 var(--font-mono);
+  white-space: pre;
+  resize: vertical;
+  tab-size: 4;
+}
+.lp-node-copy-dialog-actions { display: flex; justify-content: flex-end; gap: 12px; margin-top: 16px; }
+@media (max-width: 760px) {
+  .lp-main .lp-node-copy-enabled > h2 { margin-inline-end: 0; padding-inline-end: 0; min-height: 0; margin-bottom: 12px; }
+  .lp-node-copy-tools { position: static; justify-content: flex-start; width: 100%; margin: 0 0 16px; }
+  .lp-node-copy-dialog { padding: 16px; }
+}
+@media print {
+  .lp-node-copy-tools { display: none !important; }
+  .lp-main .lp-node-copy-enabled > h2 { margin-inline-end: 0; padding-inline-end: 0; min-height: 0; }
+  .lp-node-copy-dialog { display: none; }
+}
+
+/* 批注：宽屏在右栏，窄屏紧跟所属段落 */
+.lp-note { position: relative; margin: -.35em 0 1.1em; padding-left: 16px; font-size: 14px; line-height: 1.65; color: var(--ink-soft); }
+.lp-note::before { content: "注"; position: absolute; left: 0; top: 0; font-family: var(--font-kai); color: var(--accent); }
+@media (min-width: 1100px) { .lp-note { float: right; clear: right; width: var(--note); margin: .3em calc(-1 * var(--note) - 48px) 1em 0; } }
+
+/* 面试怎么讲 */
+blockquote.lp-oral { position: relative; margin: 36px 0; padding: 20px 24px 6px 60px; background: var(--raised); border-radius: var(--round); }
+blockquote.lp-oral::before { content: "“"; position: absolute; left: 20px; top: 12px; font-family: Georgia, "Times New Roman", serif; font-size: 3.4em; line-height: 1; color: var(--accent); }
+.lp-oral-label { margin: 0 0 6px !important; font-size: 14.5px; font-weight: 700; color: var(--ink); }
+.lp-oral-label span { margin-left: .6em; font-family: var(--font-sans); font-size: 13.5px; font-weight: 400; color: var(--ink-faint); }
+
+/* 检查题：全页最醒目的色块 */
+.lp-check { --pad: 24px; position: relative; margin: 60px calc(-1 * var(--pad)); padding: 22px var(--pad) 10px; background: var(--raised); border-radius: var(--round); }
+.lp-check[data-state="open"] { padding-top: 0; background: var(--accent-wash); box-shadow: inset 0 0 0 2px var(--accent), 0 22px 44px -28px var(--accent); }
+.lp-check[data-state="open"] > h3 { margin: 0 calc(-1 * var(--pad)) 16px; padding: 10px var(--pad); color: var(--paper); background: var(--accent); border-radius: var(--round) var(--round) 0 0; }
+.lp-check[data-state="open"] > h3 .lp-kind { color: var(--accent-ink); background: var(--paper); }
+.lp-check > h3 { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; margin: 0 0 10px; font-size: 16px; }
+.lp-check > h3 .lp-kind { padding: 0 8px; font-size: 13px; font-weight: 500; line-height: 1.7; color: var(--ink-soft); background: var(--paper); border-radius: 999px; }
+.lp-check > h3::after { margin-left: auto; padding: 1px 12px; font-size: 13px; font-weight: 600; line-height: 1.7; color: var(--ink-soft); border: 1px solid var(--rule); border-radius: 999px; }
+.lp-check[data-state="open"] > h3::after { content: "在对话中回答"; color: var(--accent-ink); background: var(--paper); border-color: var(--paper); }
+.lp-check[data-state="open"] > h3 .lp-new { color: var(--accent-ink); background: var(--paper); }
+.lp-check[data-state="answered"] > h3::after { content: "已作答 · 补差中"; }
+.lp-check[data-state="replaced"] > h3::after { content: "已更换：题意不清"; }
+.lp-check[data-state="closed"] > h3::after { content: "已作答"; }
+.lp-check[data-state="replaced"] .lp-ask { color: var(--ink-faint); text-decoration: line-through; text-decoration-color: var(--rule); }
+@media (prefers-reduced-motion: no-preference) {
+  .lp-check[data-state="open"].is-in > h3::after { animation: lp-pulse 1.6s ease-out .4s 3; }
+}
+@keyframes lp-pulse { 0% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--paper) 70%, transparent); } 100% { box-shadow: 0 0 0 10px transparent; } }
+.lp-ask { margin: 0 0 12px !important; font-size: 20px; line-height: 1.7; font-weight: 600; }
+.lp-how { font-size: 14px; color: var(--ink-soft); }
+details.lp-answer { margin: 0 0 14px; padding: 10px 14px; background: var(--paper); border-radius: 10px; }
+details.lp-answer > summary { width: max-content; cursor: pointer; font-size: 15px; font-weight: 600; color: var(--ink-soft); }
+details.lp-answer[open] > summary { margin-bottom: 8px; }
+
+/* 补充：答题后补上的差值，缩进在所属节点下 */
+.lp-addendum { margin: 30px 0; padding: 4px 0 2px 20px; border-left: 2px dashed var(--rule); }
+.lp-addendum > h3 { margin-top: 0; font-size: 16px; color: var(--ink-soft); }
+.lp-addendum > h3::before { content: "补充"; margin-right: .6em; padding: 0 .5em; font-size: 12.5px; font-weight: 600; color: var(--ink-soft); background: var(--raised); border-radius: 4px; vertical-align: .1em; }
+
+/* 图：编号按节点写死（图 2.1），宽图可伸进批注栏 */
+.lp-figure { margin: 34px 0; }
+@media (min-width: 1100px) { .lp-figure.is-wide { clear: right; margin-right: calc(-1 * var(--note) - 48px); } }
+.lp-figure figcaption { max-width: var(--measure); margin-top: 12px; font-size: 14px; line-height: 1.6; color: var(--ink-soft); }
+.lp-figure figcaption b { margin-right: .6em; font-weight: 700; color: var(--ink); }
+.lp-canvas { padding: 18px; overflow-x: auto; background: var(--raised); border-radius: 10px; }
+.lp-canvas svg { display: block; width: 100%; height: auto; }
+.lp-figure svg { color: var(--ink); }
+svg text { font-family: var(--font-sans); fill: currentColor; }
+/* 实验台的外观：深色、细网格、角上一点光 */
+:is(.lp-stepper, .lp-explorer, .lp-toggle, .lp-figure.is-stage) { position: relative; padding: 22px 24px 18px; color: var(--ink); background-color: var(--paper); background-image: linear-gradient(90deg, transparent 10%, var(--rim) 50%, transparent 90%), radial-gradient(42% 55% at 100% 0%, var(--glow-a), transparent 70%), linear-gradient(var(--dot) 1px, transparent 1px), linear-gradient(90deg, var(--dot) 1px, transparent 1px); background-size: 100% 1px, auto, 24px 24px, 24px 24px; background-repeat: no-repeat, no-repeat, repeat, repeat; border-radius: var(--round); box-shadow: inset 0 0 0 1px var(--rule), var(--shadow); }
+:is(.lp-stepper, .lp-explorer, .lp-toggle, .lp-figure.is-stage) .lp-canvas { padding: 6px 0; background: none; border-radius: 0; }
+:is(.lp-stepper, .lp-explorer, .lp-toggle, .lp-figure.is-stage) figcaption { max-width: none; padding-top: 12px; border-top: 1px solid var(--rule); }
+:is(.lp-stepper, .lp-explorer, .lp-toggle, .lp-figure.is-stage) figcaption b { color: var(--ink); }
+html:not(.js) .lp-toggle .lp-controls, html:not(.js) .lp-tools { display: none; }
+html:not(.js) .lp-toggle [data-panel][data-label]::before { content: attr(data-label); display: block; margin: 10px 0 4px; font-size: 13px; font-weight: 600; color: var(--ink-soft); }
+
+/* 全流程骨架：一条主线上的阶段；讲过的阶段是实心点并链接到节点，没讲的是空心点 */
+.lp-flow { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 18px 12px; margin: 0 !important; padding: 0 !important; list-style: none; }
+.lp-flow > li { position: relative; margin: 0; padding: 24px 4px 0 0; font-size: 14px; line-height: 1.55; color: var(--ink-faint); }
+.lp-flow > li::before { content: ""; position: absolute; left: 0; top: 3px; z-index: 1; width: 14px; height: 14px; background: var(--raised); border: 2px solid var(--ink-faint); border-radius: 50%; transition: transform .45s var(--ease) calc(var(--i, 0) * 110ms), background-color .3s ease; }
+.lp-flow > li:has(b a)::before { background: var(--accent); border-color: var(--accent); box-shadow: 0 0 0 4px var(--accent-wash); }
+.lp-flow > li:not(:last-child)::after { content: ""; position: absolute; left: 16px; right: -12px; top: 9px; border-top: 2px solid var(--rule); transform-origin: left; transition: transform .5s var(--ease) calc(var(--i, 0) * 110ms + 120ms); }
+.lp-flow > li:has(b a):not(:last-child)::after { border-top-color: var(--accent); }
+.lp-flow > li.is-row-end::after { content: none; }
+.lp-flow > li b { display: block; margin-bottom: 2px; font-size: 15px; font-weight: 600; color: var(--ink-soft); }
+.lp-flow > li > span { display: block; text-wrap: pretty; }
+.lp-flow > li b a { color: var(--ink); text-decoration: none; }
+.lp-flow > li b a:hover { color: var(--accent-ink); text-decoration: underline; }
+.lp-flow.is-vertical { grid-template-columns: 1fr; gap: 14px; }
+.lp-flow.is-vertical > li { padding: 0 0 0 28px; }
+.lp-flow.is-vertical > li::before { top: .4em; }
+.lp-flow.is-vertical > li:not(:last-child)::after { left: 6px; right: auto; top: calc(.4em + 16px); bottom: -14px; border-top: 0; border-left: 2px solid var(--rule); transform-origin: top; }
+.lp-flow.is-vertical > li:has(b a):not(:last-child)::after { border-left-color: var(--accent); }
+.lp-motion .lp-reveal:not(.is-in) .lp-flow > li::before { transform: scale(0); }
+.lp-motion .lp-reveal:not(.is-in) .lp-flow > li::after { transform: scaleX(0); }
+.lp-motion .lp-reveal:not(.is-in) .lp-flow.is-vertical > li::after { transform: scaleY(0); }
+@media (max-width: 899px) {
+  .lp-flow:not(.is-laid-out) { grid-template-columns: 1fr; gap: 14px; }
+}
+
+/* 代码：深色台面、语法着色、行号；讲到的行用底色标出；行注与代码行互相指认 */
+.lp-code-head { display: flex; align-items: center; gap: 10px; margin: 0; padding: 6px 8px 6px 16px; font: 12.5px/1.5 var(--font-mono); color: var(--ink-soft); background: var(--raised); border-radius: var(--round) var(--round) 0 0; box-shadow: inset 0 0 0 1px var(--rule); }
+.lp-code-lang { font-weight: 600; color: var(--accent-ink); }
+.lp-code-title { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.lp-code-copy { margin-left: auto; min-height: 26px; padding: 0 10px; font: 12.5px/24px var(--font-sans); color: var(--ink-soft); background: transparent; border: 1px solid var(--rule); border-radius: 999px; cursor: pointer; transition: color .15s ease, border-color .15s ease; }
+.lp-code-copy:hover, .lp-code-copy.is-done { color: var(--ink); border-color: var(--ink-faint); }
+pre.lp-code { margin: 0 0 1.1em; padding: 14px 0; overflow-x: auto; font: 14px/1.6 var(--font-mono); tab-size: 4; color: var(--ink); background: linear-gradient(90deg, var(--paper) 40%, transparent) left / 28px 100% no-repeat local, linear-gradient(270deg, var(--paper) 40%, transparent) right / 28px 100% no-repeat local, radial-gradient(farthest-side at 0 50%, color-mix(in srgb, var(--ink) 30%, transparent), transparent) left / 16px 100% no-repeat scroll, radial-gradient(farthest-side at 100% 50%, color-mix(in srgb, var(--ink) 30%, transparent), transparent) right / 16px 100% no-repeat scroll, var(--paper); border-radius: var(--round); box-shadow: inset 0 0 0 1px var(--rule), var(--shadow); }
+.lp-code-head + pre.lp-code { border-radius: 0 0 var(--round) var(--round); }
+pre.lp-code code { display: block; min-width: max-content; padding: 0; font-size: inherit; color: inherit; background: none; }
+pre.lp-code .lp-line { position: relative; display: block; padding: 0 18px 0 14px; border-left: 2px solid transparent; transition: background-color .25s ease, opacity .25s ease; }
+pre.lp-code .lp-line::before { content: attr(data-n); display: inline-block; width: 2.6em; color: var(--ink-faint); user-select: none; -webkit-user-select: none; }
+pre.lp-code .lp-line.is-on { background: var(--accent-wash); border-left-color: var(--accent); }
+pre.lp-code .lp-line:is(.is-on, .is-focus)::before { color: var(--ink-soft); }
+pre.lp-code.has-notes .lp-line { padding-left: 30px; }
+pre.lp-code .lp-line[data-note]::after { content: attr(data-note); position: absolute; left: 6px; top: .28em; display: grid; place-items: center; width: 17px; height: 17px; font: 700 10.5px/1 var(--font-sans); color: var(--paper); background: var(--accent); border-radius: 50%; }
+pre.lp-code.is-focusing .lp-line:not(.is-focus) { opacity: .38; }
+pre.lp-code .lp-line.is-focus { background: var(--accent-wash); }
+pre.lp-code var:is(.lp-s1, .lp-s2, .lp-s3, .lp-s4) { font-size: inherit; border-radius: 3px; }
+html:not(.js) pre.lp-code > code { padding: 0 18px; }
+.hljs-keyword, .hljs-selector-tag, .hljs-literal, .hljs-doctag { color: var(--code-kw); }
+.hljs-string, .hljs-regexp, .hljs-addition, .hljs-char { color: var(--code-str); }
+.hljs-number, .hljs-symbol, .hljs-bullet { color: var(--code-num); }
+.hljs-title, .hljs-section, .hljs-name, .hljs-selector-id, .hljs-selector-class { color: var(--code-fn); }
+.hljs-built_in, .hljs-type, .hljs-attr, .hljs-attribute, .hljs-property, .hljs-params .hljs-type { color: var(--code-type); }
+.hljs-comment, .hljs-quote, .hljs-deletion { color: var(--code-com); }
+.hljs-meta, .hljs-template-tag, .hljs-variable.language_ { color: var(--code-meta); }
+.hljs-subst, .hljs-operator, .hljs-punctuation { color: var(--ink-soft); }
+.lp-code-src { margin: calc(8px - 1.1em) 0 1.1em !important; font: 13px/1.5 var(--font-mono); color: var(--ink-faint); overflow-wrap: anywhere; }
+ol.lp-code-notes { margin: 0 0 1.3em !important; padding: 0 !important; list-style: none; counter-reset: lp-note; }
+ol.lp-code-notes > li { position: relative; margin: 0; padding: 7px 10px 7px 36px; font-size: 15px; line-height: 1.65; border-radius: 10px; counter-increment: lp-note; cursor: default; transition: background-color .2s ease; }
+ol.lp-code-notes > li::before { content: counter(lp-note); position: absolute; left: 9px; top: .62em; display: grid; place-items: center; width: 19px; height: 19px; font: 700 11px/1 var(--font-sans); color: var(--paper); background: var(--accent); border-radius: 50%; }
+ol.lp-code-notes > li[data-lines]::after { content: "第 " attr(data-lines) " 行"; margin-left: .6em; font: 12.5px/1 var(--font-mono); color: var(--ink-faint); white-space: nowrap; }
+ol.lp-code-notes > li:hover, ol.lp-code-notes > li.is-focus { background: var(--raised); }
+ol.lp-code-notes > li.is-pinned { box-shadow: inset 0 0 0 1.5px var(--accent); }
+@media (min-width: 1100px) {
+  ol.lp-code-notes.is-side { position: absolute; left: calc(100% + 48px); width: var(--note); margin: 0 !important; }
+  ol.lp-code-notes.is-side > li { position: absolute; left: 0; right: 0; padding: 5px 8px 6px 30px; font-size: 14px; line-height: 1.6; }
+  ol.lp-code-notes.is-side > li::before { left: 4px; top: .5em; }
+  ol.lp-code-notes.is-side > li[data-lines]::after { display: block; margin: 2px 0 0; }
+}
+.lp-canvas pre.lp-code, .lp-figure > pre.lp-code:last-of-type { margin-bottom: 0; }
+.lp-check pre { margin: 4px 0 12px; }
+pre.lp-output { margin: 0 0 1.1em; padding: 12px 16px; overflow-x: auto; font: 13.5px/1.55 var(--font-mono); color: var(--ink-soft); white-space: pre; background: var(--raised); border-radius: 10px; }
+pre.lp-output code { padding: 0; font-size: inherit; background: none; }
+
+/* 表格：行内滚动，不撑破页面 */
+.lp-table { margin: 0 0 1.2em; overflow-x: auto; }
+.lp-table table { width: 100%; border-collapse: collapse; font-size: 15px; line-height: 1.5; }
+.lp-table th, .lp-table td { padding: 9px 14px 9px 0; text-align: left; vertical-align: top; border-bottom: 1px solid var(--rule); }
+.lp-table th { font-size: 13.5px; font-weight: 600; color: var(--ink-soft); border-bottom: 2px solid var(--ink); }
+.lp-table tbody tr { transition: background-color .15s ease; }
+.lp-table tbody tr:hover { background: var(--raised); }
+.lp-table .num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+
+/* 部件控件：全圆角，按下下沉 1px；主按钮是朱红 */
+.lp-controls { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 12px; margin: 14px 0 0; font-size: 14.5px; }
+.lp-controls label { display: inline-flex; align-items: center; gap: 8px; color: var(--ink-soft); }
+.lp-btn { min-height: 36px; padding: 4px 15px; font: inherit; font-size: 14.5px; line-height: 1.5; color: var(--ink); background: var(--raised); border: 1px solid var(--rule); border-radius: 999px; cursor: pointer; transition: transform .12s ease, background-color .15s ease, border-color .15s ease, color .15s ease, box-shadow .2s ease; }
+.lp-btn:hover { border-color: var(--ink-faint); }
+.lp-btn:active { transform: translateY(1px); }
+.lp-btn[disabled] { opacity: .4; cursor: default; transform: none; }
+.lp-btn.is-primary { color: var(--paper); font-weight: 600; background: var(--accent); border-color: var(--accent); box-shadow: 0 6px 18px -8px var(--accent); }
+.lp-btn.is-primary:hover { box-shadow: 0 8px 22px -6px var(--accent); }
+.lp-btn.is-quiet { color: var(--ink-soft); background: transparent; border-color: transparent; }
+.lp-btn.is-quiet:hover { color: var(--ink); border-color: var(--rule); }
+.lp-btn[aria-pressed="true"] { color: var(--ink); background: var(--accent-wash); border-color: var(--accent); }
+.lp-seg { position: relative; display: inline-flex; flex-wrap: wrap; max-width: 100%; padding: 3px; background: var(--raised); border: 1px solid var(--rule); border-radius: 999px; }
+.lp-seg button { position: relative; z-index: 1; min-height: 32px; padding: 3px 15px; font: inherit; font-size: 14px; color: var(--ink-soft); background: transparent; border: 0; border-radius: 999px; cursor: pointer; transition: color .2s ease; }
+.lp-seg button[aria-pressed="true"] { color: var(--paper); background: var(--accent); font-weight: 600; }
+.lp-seg-thumb { position: absolute; top: 0; left: 0; pointer-events: none; background: var(--accent); border-radius: 999px; box-shadow: 0 4px 14px -6px var(--accent); transition: transform .3s cubic-bezier(.3, .7, .2, 1), width .3s cubic-bezier(.3, .7, .2, 1), height .3s cubic-bezier(.3, .7, .2, 1); }
+input[type="range"] { width: 160px; accent-color: var(--accent); }
+select, input[type="number"] { padding: 3px 8px; font: inherit; font-size: 14.5px; color: var(--ink); background: var(--raised); border: 1px solid var(--rule); border-radius: 8px; }
+.lp-out { font-family: var(--font-mono); font-size: .95em; font-variant-numeric: tabular-nums; white-space: nowrap; }
+[data-out] { transition: color .7s ease, text-shadow .7s ease; }
+[data-out].is-changed { color: var(--accent-ink); text-shadow: 0 0 12px color-mix(in srgb, var(--accent) 60%, transparent); transition: none; }
+.lp-meter { display: block; height: 6px; margin-top: 5px; overflow: hidden; background: var(--raised); border-radius: 3px; }
+.lp-meter > i { display: block; height: 100%; width: 0; background: linear-gradient(90deg, color-mix(in srgb, var(--accent) 50%, transparent), var(--accent)); border-radius: 3px; transition: width .45s var(--ease); }
+.lp-readout { display: grid; grid-template-columns: max-content 1fr; gap: 8px 16px; margin: 16px 0 0; font-size: 15px; line-height: 1.55; }
+.lp-readout dt { color: var(--ink-soft); }
+.lp-readout dd { margin: 0; }
+.lp-widget-error { margin: 10px 0 0; font-size: 14px; color: var(--accent-ink); }
+
+/* 分步演示：没有脚本时按顺序全部显示；有脚本时一次一帧，可以播放、点圆点跳转 */
+.lp-main .lp-steps { min-height: 3.4em; margin: 14px 0 0; padding: 0; list-style: none; }
+.lp-stepper.is-ready .lp-steps + .lp-controls { margin-top: 6px; }
+.lp-steps > li { margin: 0 0 .4em; font-size: 15.5px; line-height: 1.7; }
+.lp-stepper.is-ready .lp-steps { display: grid; }
+.lp-stepper.is-ready .lp-steps > li { grid-area: 1 / 1; margin: 0; }
+.lp-stepper.is-ready .lp-steps > li:not(.is-current) { visibility: hidden; }
+@media (prefers-reduced-motion: no-preference) { .lp-stepper.is-ready .lp-steps > li.is-current { animation: lp-rise .4s var(--ease) both; } }
+.lp-stepper.is-ready [data-show]:not(.is-shown) { opacity: 0; visibility: hidden; }
+.lp-stepper.is-ready.lp-dim [data-show]:not(.is-shown) { opacity: .15; visibility: visible; }
+[data-show] { transition: opacity .35s ease-out, visibility .35s; }
+.lp-visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.lp-step-count { min-width: 3.5em; font-size: 14px; color: var(--ink-soft); text-align: center; font-variant-numeric: tabular-nums; }
+.lp-dots { display: inline-flex; align-items: center; gap: 2px; }
+.lp-dots button { position: relative; width: 22px; height: 22px; padding: 0; background: none; border: 0; cursor: pointer; }
+.lp-dots button::before { content: ""; position: absolute; left: 50%; top: 50%; width: 8px; height: 8px; background: var(--rule); border-radius: 999px; transform: translate(-50%, -50%); transition: width .3s var(--ease), background-color .25s ease; }
+.lp-dots button:hover::before { background: var(--ink-faint); }
+.lp-dots button.is-past::before { background: color-mix(in srgb, var(--accent) 55%, var(--rule)); }
+.lp-dots button[aria-current="step"]::before { width: 18px; background: var(--accent); }
+
+/* 符号互认：指向一个符号色时，全页同色的符号一起亮起；有符号表条目的符号可以看释义 */
+:root[data-lp-sym] .lp-s1, :root[data-lp-sym] .lp-s2, :root[data-lp-sym] .lp-s3, :root[data-lp-sym] .lp-s4 { transition: background-color .2s ease, box-shadow .2s ease, filter .2s ease; }
+:root[data-lp-sym="1"] .lp-s1:not(svg *), :root[data-lp-sym="2"] .lp-s2:not(svg *), :root[data-lp-sym="3"] .lp-s3:not(svg *), :root[data-lp-sym="4"] .lp-s4:not(svg *) { background: color-mix(in srgb, currentColor 22%, transparent); box-shadow: 0 0 0 2px color-mix(in srgb, currentColor 22%, transparent); border-radius: 3px; }
+:root[data-lp-sym="1"] pre.lp-code .lp-s1, :root[data-lp-sym="2"] pre.lp-code .lp-s2, :root[data-lp-sym="3"] pre.lp-code .lp-s3, :root[data-lp-sym="4"] pre.lp-code .lp-s4 { background: color-mix(in srgb, currentColor 30%, transparent); box-shadow: 0 0 0 1px color-mix(in srgb, currentColor 60%, transparent); }
+:root[data-lp-sym] pre.lp-code var:is(.lp-s1, .lp-s2, .lp-s3, .lp-s4) { transition: opacity .2s ease, background-color .2s ease; }
+:root[data-lp-sym="1"] pre.lp-code var:is(.lp-s2, .lp-s3, .lp-s4), :root[data-lp-sym="2"] pre.lp-code var:is(.lp-s1, .lp-s3, .lp-s4), :root[data-lp-sym="3"] pre.lp-code var:is(.lp-s1, .lp-s2, .lp-s4), :root[data-lp-sym="4"] pre.lp-code var:is(.lp-s1, .lp-s2, .lp-s3) { opacity: .45; }
+:root[data-lp-sym="1"] svg .lp-s1, :root[data-lp-sym="2"] svg .lp-s2, :root[data-lp-sym="3"] svg .lp-s3, :root[data-lp-sym="4"] svg .lp-s4 { filter: drop-shadow(0 0 4px currentColor); }
+.has-gloss { cursor: help; }
+.lp-pop { position: absolute; z-index: 40; max-width: min(340px, calc(100vw - 32px)); padding: 10px 14px 11px; font-size: 14.5px; line-height: 1.6; color: var(--ink); background: var(--paper); border: 1px solid var(--rule); border-radius: 10px; box-shadow: var(--shadow); pointer-events: none; }
+.lp-pop b { display: block; margin-bottom: 2px; font-family: var(--font-mono); font-size: 14px; }
+.lp-pop span { color: var(--ink-soft); }
+@media (prefers-reduced-motion: no-preference) { .lp-pop { animation: lp-pop .18s var(--ease) both; } }
+@keyframes lp-pop { from { opacity: 0; transform: translateY(4px) scale(.98); } }
+
+/* 滚动出现：只在支持且允许动效时；没有脚本、打印、减少动态效果时全部直接可见 */
+.lp-motion .lp-reveal { transition: opacity .7s var(--ease), transform .7s var(--ease); }
+.lp-motion .lp-reveal:not(.is-in) { opacity: 0; transform: translateY(18px); scroll-margin-top: 42px; }
+@media (prefers-reduced-motion: no-preference) { .lp-toggle [data-panel]:not([hidden]) { animation: lp-fade .35s ease both; } }
+@keyframes lp-fade { from { opacity: 0; } }
+
+/* 新内容、计时、更新提示 */
+.lp-new { display: inline-block; margin-left: .5em; padding: 0 .45em; font-size: 12px; line-height: 1.6; font-weight: 700; letter-spacing: .05em; vertical-align: .2em; color: var(--paper); background: var(--accent); border-radius: 4px; }
+:target > h2:first-of-type, :target > h3:first-of-type, h2:target, h3:target { animation: lp-arrive 1.8s ease-out; border-radius: 4px; }
+@keyframes lp-arrive { 0%, 30% { background: var(--mark); box-shadow: 0 0 0 6px var(--mark); } 100% { background: transparent; box-shadow: 0 0 0 6px transparent; } }
+.lp-timer { display: flex; align-items: center; gap: 12px; margin: 4px 0 14px; font-size: 14px; color: var(--ink-soft); }
+.lp-timer-bar { flex: 1; max-width: 220px; height: 6px; overflow: hidden; background: var(--rule); border-radius: 3px; }
+.lp-timer-bar > span { display: block; width: 0; height: 100%; background: var(--ink-soft); }
+.lp-timer.is-over .lp-timer-bar > span { background: var(--accent); }
+.lp-timer-time { min-width: 3.5em; font-variant-numeric: tabular-nums; }
+.lp-banner { position: fixed; left: 50%; bottom: 20px; z-index: 50; display: flex; align-items: center; gap: 14px; padding: 8px 8px 8px 18px; transform: translateX(-50%); font-size: 14.5px; color: var(--band-ink); background: var(--band); border: 1px solid var(--band-rule); border-radius: 999px; box-shadow: var(--shadow); }
+.lp-banner .lp-btn.is-primary { color: var(--band); background: var(--band-ink); border-color: var(--band-ink); box-shadow: none; }
+
+/* 符号与名词、来源 */
+.lp-glossary dl { display: grid; grid-template-columns: minmax(4em, max-content) 1fr; gap: 8px 18px; font-size: 15.5px; line-height: 1.65; }
+.lp-glossary dl > div { display: contents; }
+.lp-glossary dt { justify-self: start; align-self: start; padding: 0 .55em; font-family: var(--font-mono); font-size: 14.5px; background: var(--raised); border-radius: 6px; }
+.lp-glossary dd { margin: 0; color: var(--ink-soft); }
+.lp-sources { margin-top: 80px; padding-top: 20px; font-size: 14px; line-height: 1.7; color: var(--ink-soft); border-top: 1px solid var(--rule); }
+.lp-sources h2 { margin: 0 0 8px !important; font-size: 16px !important; color: var(--ink); }
+.lp-sources ol { padding-left: 1.4em; overflow-wrap: anywhere; }
+.lp-practice { font-size: 15px; color: var(--ink-soft); }
+#next-part p { overflow-wrap: anywhere; }
+/* 分了页的课：页头的上一页、下一页与分页目录（脚本维护） */
+.lp-pager { margin: 18px 0 0; font-size: 14.5px; line-height: 1.6; color: var(--band-soft); }
+.lp-pager-row { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 18px; }
+.lp-pager a { color: var(--band-ink); }
+.lp-pager-list > summary { width: max-content; cursor: pointer; color: var(--band-ink); }
+.lp-pager-list > ol { margin: 10px 0 0; padding: 4px 16px 10px; list-style: none; border: 1px solid var(--band-rule); border-radius: 10px; }
+.lp-pager-list > ol > li { margin-top: 8px; }
+.lp-pager-list > ol > li[aria-current] > a { font-weight: 600; }
+.lp-pager-list ol ol { margin: 2px 0 0; padding: 0; list-style: none; }
+.lp-pager-list ol ol a { display: grid; grid-template-columns: 1.8em minmax(0, 1fr); color: var(--band-soft); overflow-wrap: anywhere; }
+.lp-pager-list ol ol b { font-variant-numeric: tabular-nums; }
+.lp-pager code { color: inherit; background: color-mix(in srgb, var(--band-ink) 14%, transparent); }
+.lp-cover :focus-visible { outline-color: var(--band-ink); }
+
+/* 只看要点：结论、骨架、口述版与题目 */
+.lp-review-exit { position: fixed; z-index: 45; right: 20px; bottom: 20px; min-height: 40px; padding: 6px 18px; font: inherit; font-size: 14.5px; font-weight: 600; color: var(--band-ink); background: var(--band); border: 1px solid var(--band-rule); border-radius: 999px; box-shadow: var(--shadow); cursor: pointer; }
+.lp-review .lp-node > :not(h2):not(.lp-lead):not(.lp-oral):not(.lp-where):not(.lp-spine):not(.lp-node-copy-tools) { display: none; }
+.lp-review .lp-narrative > p:not(:first-of-type), .lp-review #spine, .lp-review .lp-addendum { display: none; }
+
+@media (max-width: 639px) {
+  :root { --text: 16.5px; }
+  .lp-cover-in { padding-top: 24px; padding-bottom: 28px; }
+  .lp-headbar { margin-bottom: 16px; }
+  .lp-main h2 { margin-top: 60px; font-size: 21px; }
+  .lp-narrative > p:first-of-type, .lp-lead { font-size: 17.5px; }
+  .lp-ask { font-size: 17.5px; }
+  .lp-check { --pad: 12px; margin-left: -10px; margin-right: -10px; padding-top: 18px; padding-bottom: 8px; }
+  .lp-canvas { padding: 14px 12px; }
+  :is(.lp-stepper, .lp-explorer, .lp-toggle, .lp-figure.is-stage) { margin-left: -6px; margin-right: -6px; padding: 16px 14px 14px; }
+  blockquote.lp-oral { padding: 18px 16px 4px 44px; }
+  blockquote.lp-oral::before { left: 10px; }
+  pre.lp-code { font-size: 13px; }
+}
+/* 触屏：所有可点的控件至少 44 像素高；放在全部控件规则之后才压得住它们 */
+@media (pointer: coarse) {
+  .lp-btn, .lp-seg button, .lp-tools button, .lp-code-copy, .lp-review-exit { min-height: 44px; }
+  .lp-toc-inline > summary, details.lp-answer > summary { padding: 10px 0; }
+  .lp-dots button { width: 28px; height: 44px; }
+}
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition: none !important; animation: none !important; } }
+@media print {
+  :root, :root[data-theme], :is(.lp-stepper, .lp-explorer, .lp-toggle, .lp-figure.is-stage, pre.lp-code, .lp-code-head) {
+    color-scheme: light;
+    --paper: #ffffff; --raised: #f2f1ec; --ink: #1e2024; --ink-soft: #474a52; --ink-faint: #696c75;
+    --rule: #dddbd3; --accent: #b23f27; --accent-ink: #9a321e; --accent-wash: #f7e8e2;
+    --mark: #fbe7a8; --s1: #0062a3; --s2: #00765a; --s3: #a0407a; --s4: #8f5b00;
+    --code-kw: #6f3fbf; --code-str: #3d7a1f; --code-num: #a8500c; --code-fn: #2453c2; --code-type: #0f736c; --code-com: #63676f; --code-meta: #7d5300;
+    --band: #ffffff; --band-ink: #1e2024; --band-soft: #474a52; --band-rule: #dddbd3; --dot: transparent; --glow-a: transparent; --glow-b: transparent; --shadow: none;
+  }
+  .lp-toc, .lp-toc-inline, .lp-pager-list, .lp-controls, .lp-tools, .lp-updated, .lp-banner, .lp-timer, .lp-new, .lp-progress, .lp-code-copy, .lp-copy-tex, .lp-pop { display: none !important; }
+  .lp-motion .lp-reveal { opacity: 1 !important; transform: none !important; }
+  .lp-explorer .lp-controls { display: flex !important; }
+  .lp-explorer [data-preset] { display: none; }
+  .lp-toggle [data-panel][data-label]::before { content: attr(data-label); display: block; margin-bottom: 6px; font-size: 13px; font-weight: 600; color: var(--ink-soft); }
+  .lp-stepper.is-ready .lp-steps { display: block; }
+  .lp-stepper.is-ready .lp-steps > li { display: list-item !important; margin: 0 0 .4em; visibility: visible !important; animation: none !important; }
+  .lp-stepper.is-ready [data-show] { opacity: 1 !important; visibility: visible !important; }
+  .lp-toggle [data-panel][hidden] { display: block !important; margin-top: 12px; }
+  .lp-page, .lp-cover-in { display: block; }
+  .lp-note { float: none; width: auto; margin: 0 0 1em !important; }
+  /* 纸面不能横向滚动：保留缩进和逻辑换行，长代码及输出在可打印宽度内折行。 */
+  pre.lp-code, pre.lp-output { max-width: 100%; overflow: visible; white-space: pre-wrap; overflow-wrap: anywhere; word-break: normal; }
+  pre.lp-code code, pre.lp-output code { min-width: 0; max-width: 100%; white-space: inherit; overflow-wrap: anywhere; }
+  blockquote.lp-oral, .lp-check, .lp-figure, pre.lp-code, ol.lp-code-notes, div.tex, .lp-table { break-inside: avoid; }
+  h2, h3, .lp-code-head { break-after: avoid; }
+  .lp-check { margin-left: 0; margin-right: 0; }
+  .lp-review-exit, .lp-cover-in::before { display: none !important; }
+  ol.lp-code-notes.is-side { position: static !important; width: auto !important; }
+  ol.lp-code-notes.is-side > li { position: relative !important; top: auto !important; }
+}
+/* ===== 阅读辅助：各段开头有说明 ===== */
+:root {
+  --line: var(--accent); --line-idle: var(--rule); --station: var(--paper);
+  --fog: color-mix(in srgb, var(--paper) 72%, transparent);
+  --st1: #d4a94f; --st2: #c06a4a; --st3: #7f9a52; --st4: #4f7fa8; --st5: #9a72b6; --st6: #3f9a8c;
+}
+@media screen and (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) { --st1: #e7c271; --st2: #e08a69; --st3: #a7c27a; --st4: #79a9d6; --st5: #c09ad8; --st6: #6cc7b7; }
+}
+:root[data-theme="dark"] { --st1: #e7c271; --st2: #e08a69; --st3: #a7c27a; --st4: #79a9d6; --st5: #c09ad8; --st6: #6cc7b7; }
+
+/* 地铁线路：讲过的站已通车（实线、实心站），没讲的站在建（虚线、空心站）并蒙着雾 */
+.lp-stages.lp-flow { row-gap: 26px; }
+.lp-stages.lp-flow > li { padding-top: 32px; }
+.lp-stages.lp-flow > li::before { top: 0; width: 22px; height: 22px; background: var(--station); border: 5px solid var(--line-idle); box-shadow: none; }
+.lp-stages.lp-flow > li.is-open::before { border-color: var(--line); box-shadow: none; }
+.lp-stages.lp-flow > li.is-interchange::before { width: 26px; height: 26px; top: -2px; left: -2px; border: 4px solid var(--ink); box-shadow: inset 0 0 0 3px var(--station), inset 0 0 0 7px var(--line); }
+.lp-stages.lp-flow > li:not(:last-child)::after { left: 20px; right: -12px; top: 8px; border-top: 6px solid var(--line); border-radius: 3px; }
+.lp-stages.lp-flow > li.to-fog:not(:last-child)::after, .lp-stages.lp-flow > li.is-fog:not(:last-child)::after { border-top-style: dashed; border-top-color: var(--line-idle); }
+.lp-stages.lp-flow.is-vertical > li { padding: 0 0 0 36px; }
+.lp-stages.lp-flow.is-vertical > li::before { top: .15em; }
+.lp-stages.lp-flow.is-vertical > li:not(:last-child)::after { left: 8px; top: calc(.15em + 20px); bottom: -24px; border-top: 0; border-left: 6px solid var(--line); }
+.lp-stages.lp-flow.is-vertical > li.to-fog:not(:last-child)::after, .lp-stages.lp-flow.is-vertical > li.is-fog:not(:last-child)::after { border-left-style: dashed; border-left-color: var(--line-idle); }
+.lp-xfer { display: block; margin-top: 4px; font-size: 12.5px; color: var(--ink-faint); }
+.lp-xfer a { display: inline-block; margin-left: 4px; padding: 0 7px; color: var(--ink-soft); text-decoration: none; background: var(--raised); border-radius: 999px; }
+.lp-xfer a:hover { color: var(--ink); }
+.lp-soon { display: inline-block; margin-left: .4em; padding: 0 .45em; font-size: 11.5px; font-weight: 600; line-height: 1.6; color: var(--ink-faint); vertical-align: .15em; border: 1px dashed var(--ink-faint); border-radius: 4px; }
+/* 迷雾：字还读得出，只是退后；指向或聚焦时拨开 */
+.lp-stages > li.is-fog > :not(.lp-mist) { opacity: .55; filter: blur(.8px); transition: opacity .5s ease, filter .5s ease; }
+.lp-stages > li.is-fog:hover > :not(.lp-mist), .lp-stages > li.is-fog:focus-within > :not(.lp-mist) { opacity: 1; filter: none; }
+.lp-mist { position: absolute; z-index: 2; inset: -14px 0 -10px -14px; pointer-events: none; background: radial-gradient(55% 45% at 22% 30%, var(--fog), transparent 72%), radial-gradient(60% 50% at 70% 62%, var(--fog), transparent 75%), radial-gradient(40% 40% at 45% 85%, var(--fog), transparent 70%); transition: opacity .5s ease; }
+.lp-stages > li.is-fog:hover .lp-mist, .lp-stages > li.is-fog:focus-within .lp-mist { opacity: .25; }
+.lp-stages > li.is-clearing .lp-mist { animation: lp-clear 1.8s var(--ease) .4s both; }
+.lp-stages > li.is-clearing > :not(.lp-mist) { animation: lp-unblur 1.4s var(--ease) .5s both; }
+@keyframes lp-clear { from { opacity: 1; filter: none; } to { opacity: 0; filter: blur(8px); } }
+@keyframes lp-unblur { from { opacity: .55; filter: blur(.8px); } to { opacity: 1; filter: none; } }
+
+/* 站牌：每个节点开头一块，上一站、本站、下一站，底下是整条线 */
+.lp-where.lp-sign { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, auto) minmax(0, 1fr); align-items: end; gap: 0 16px; margin: 6px 0 26px; padding: 12px 16px 0; color: var(--band-ink); background: var(--band); border-radius: 10px; overflow: hidden; }
+.lp-sign small { display: block; margin-bottom: 1px; font-size: 11.5px; font-weight: 400; letter-spacing: .06em; color: var(--band-soft); }
+.lp-sign a, .lp-sign .lp-sign-end { display: block; min-width: 0; padding-bottom: 10px; font-size: 14px; line-height: 1.4; color: var(--band-soft); text-decoration: none; }
+.lp-sign a:hover { color: var(--band-ink); }
+.lp-sign-prev > span::before { content: "← "; }
+.lp-sign-next { text-align: right; }
+.lp-sign-next > span::after { content: " →"; }
+.lp-sign-next.is-fog > span { opacity: .6; filter: blur(.5px); }
+.lp-sign-here { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: center; gap: 3px 12px; min-width: 0; padding-bottom: 10px; text-align: center; }
+.lp-sign-here > small { flex: 0 0 100%; margin: 0; }
+.lp-sign-here > span { display: inline-flex; flex: 0 0 auto; align-items: baseline; max-width: 100%; white-space: normal; overflow-wrap: anywhere; font-size: 19px; font-weight: 700; line-height: 1.35; color: var(--band-ink); }
+.lp-sign-here > span + span::before { content: "⇄"; flex: 0 0 auto; margin-right: 12px; font-weight: 400; color: var(--band-soft); }
+.lp-sign-line { grid-column: 1 / -1; position: relative; display: flex; justify-content: space-between; align-items: center; height: 18px; margin: 0 -16px !important; padding: 0 22px !important; list-style: none; background: linear-gradient(var(--line), var(--line)) center / 100% 6px no-repeat; }
+.lp-sign-line > li { width: 10px; height: 10px; margin: 0 !important; background: var(--band); border: 2px solid var(--band-ink); border-radius: 50%; }
+.lp-sign-line > li.is-fog { background: var(--band); border-style: dashed; border-color: var(--band-soft); }
+.lp-sign-line > li.is-here { width: 14px; height: 14px; background: var(--band-ink); box-shadow: 0 0 0 4px color-mix(in srgb, var(--band-ink) 30%, transparent); }
+@media (max-width: 680px) {
+  .lp-where.lp-sign { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 0 12px; }
+  .lp-sign-here { grid-column: 1 / -1; grid-row: 1; gap: 4px 9px; padding-bottom: 12px; }
+  .lp-sign-here > span { font-size: 16px; }
+  .lp-sign-here > span + span::before { margin-right: 9px; }
+}
+
+/* 中英术语注音：注音只占行距里的空间，不撑高行 */
+ruby { ruby-position: over; }
+rt { font-family: var(--font-sans); font-size: .5em; font-weight: 400; font-style: normal; line-height: 1; letter-spacing: .02em; color: var(--ink-faint); white-space: nowrap; }
+
+/* 可拖动的数字：可调段落带虚线框和“可调”标签，段里带 ‹ › 的数是小拨盘 */
+.lp-live { --pad: 18px; position: relative; margin: 34px calc(-1 * var(--pad)) 26px; padding: 18px var(--pad) 12px; background: color-mix(in srgb, var(--accent-wash) 38%, transparent); border: 1px dashed color-mix(in srgb, var(--accent) 50%, transparent); border-radius: 12px; }
+html:not(.js) .lp-live { margin: 0 0 1.1em; padding: 0; background: none; border: 0; }
+.lp-live-tag { position: absolute; top: 0; left: calc(var(--pad) - 8px); display: inline-flex; align-items: center; gap: .45em; padding: 0 .7em; font-size: 12.5px; font-weight: 600; line-height: 1.75; letter-spacing: .02em; color: var(--paper); background: var(--accent); border-radius: 999px; transform: translateY(-55%); white-space: nowrap; }
+.lp-live-tag small { font-size: inherit; font-weight: 400; opacity: .92; }
+.lp-knob { margin: 0 .08em; padding: .04em .34em; font-weight: 650; font-variant-numeric: tabular-nums; color: var(--accent-ink); white-space: nowrap; background: var(--accent-wash); border-radius: 7px; box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--accent) 55%, transparent), 0 1.5px 0 color-mix(in srgb, var(--accent) 45%, transparent); cursor: ew-resize; touch-action: none; user-select: none; -webkit-user-select: none; transition: box-shadow .2s ease, background-color .2s ease; }
+.lp-knob::before, .lp-knob::after { display: inline-block; font-weight: 700; color: var(--accent); transition: transform .2s var(--ease); }
+.lp-knob::before { content: "‹"; margin-right: .22em; }
+.lp-knob::after { content: "›"; margin-left: .22em; }
+.lp-knob:hover, .lp-knob:focus-visible, .lp-knob.is-dragging { box-shadow: inset 0 0 0 1.5px var(--accent), 0 0 0 4px color-mix(in srgb, var(--accent) 18%, transparent); }
+.lp-knob:hover::before, .lp-knob:focus-visible::before, .lp-knob.is-dragging::before { transform: translateX(-3px); }
+.lp-knob:hover::after, .lp-knob:focus-visible::after, .lp-knob.is-dragging::after { transform: translateX(3px); }
+.lp-knob:focus-visible { outline: 2px solid var(--focus); outline-offset: 3px; }
+.lp-live.is-tweaked [data-out] { color: var(--ink); background: linear-gradient(var(--mark), var(--mark)) 0 88% / 100% .42em no-repeat; }
+@media (prefers-reduced-motion: no-preference) {
+  .lp-knob.is-peek { animation: lp-knob-glow 1.3s var(--ease) 2; }
+  .lp-knob.is-peek::before { animation: lp-knob-left 1.3s var(--ease) 2; }
+  .lp-knob.is-peek::after { animation: lp-knob-right 1.3s var(--ease) 2; }
+}
+@keyframes lp-knob-glow { 40% { box-shadow: inset 0 0 0 1.5px var(--accent), 0 0 0 6px color-mix(in srgb, var(--accent) 22%, transparent); } }
+@keyframes lp-knob-left { 35% { transform: translateX(-5px); } 70% { transform: none; } }
+@keyframes lp-knob-right { 35% { transform: translateX(5px); } 70% { transform: none; } }
+html:not(.js) .lp-knob { padding: 0; font-weight: inherit; color: inherit; background: none; box-shadow: none; cursor: auto; }
+html:not(.js) .lp-knob::before, html:not(.js) .lp-knob::after { content: none; }
+.lp-live-reset { margin-left: .5em; padding: 0 .7em; font: inherit; font-size: 13px; line-height: 1.8; color: var(--ink-soft); background: var(--paper); border: 1px solid var(--rule); border-radius: 999px; cursor: pointer; }
+.lp-live-reset:hover { color: var(--ink); border-color: var(--ink-faint); }
+/* 拨盘的浮层：取值一排，当前值实心；第一次读到可调段落时，浮层先在第一个拨盘上提示一次 */
+.lp-pop .lp-pop-vals { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 7px; }
+.lp-pop .lp-pop-vals i { padding: 0 7px; font: 12.5px/1.7 var(--font-mono); font-style: normal; color: var(--ink-soft); background: var(--raised); border-radius: 999px; }
+.lp-pop .lp-pop-vals i.is-on { color: var(--paper); background: var(--accent); }
+.lp-pop.is-knob { max-width: min(430px, calc(100vw - 32px)); }
+.lp-pop.is-knob b { font-family: var(--font-sans); }
+.lp-pop.is-intro { border-color: var(--accent); box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 16%, transparent), var(--shadow); }
+.lp-pop.is-intro::after { content: ""; position: absolute; left: var(--arrow, 50%); bottom: -7px; width: 12px; height: 12px; margin-left: -6px; background: var(--paper); border-right: 1px solid var(--accent); border-bottom: 1px solid var(--accent); transform: rotate(45deg); }
+.lp-pop.is-intro.is-below::after { top: -7px; bottom: auto; transform: rotate(225deg); }
+@media (max-width: 639px) { .lp-live { --pad: 12px; margin-left: -10px; margin-right: -10px; } }
+
+/* 圈注：导师用笔圈出的关键数字，滚到时一笔圈上 */
+.lp-ring { position: relative; white-space: nowrap; }
+.lp-ring::after { content: ""; position: absolute; inset: -.16em -.4em -.1em; border: 2px solid var(--accent); border-radius: 52% 46% 55% 44% / 58% 50% 48% 44%; transform: rotate(-3deg); pointer-events: none; clip-path: inset(0 0 0 0); transition: clip-path .9s var(--ease) .15s; }
+.lp-motion .lp-ring:not(.is-drawn)::after { clip-path: inset(0 100% 0 0); }
+
+/* 学习地层：右侧一根地层柱，按内容加入的先后分层；图例里点一层只看这一层 */
+.lp-strata-col { position: absolute; top: 0; right: -30px; width: 10px; pointer-events: none; }
+/* 伸进批注栏的宽图压在地层柱上面：柱子不切过图里的内容，也不挡图里的点击 */
+.lp-strata .lp-main .lp-figure.is-wide { position: relative; z-index: 1; }
+.lp-strata-col > i { position: absolute; left: 0; right: 0; background: var(--layer); border-radius: 3px; box-shadow: 0 0 0 2px var(--paper); pointer-events: auto; }
+@media (max-width: 1099px) { .lp-strata-col { right: -13px; width: 6px; } }
+.lp-strata .lp-main [data-layer] { transition: opacity .3s ease; }
+.lp-strata .lp-main .is-layer-dim { opacity: .28; }
+.lp-strata .lp-main .is-layer-focus { outline: 2px solid var(--layer); outline-offset: 8px; border-radius: 6px; }
+.lp-strata-legend { position: fixed; z-index: 44; left: 20px; bottom: 20px; width: min(300px, calc(100vw - 40px)); max-height: 60vh; overflow: auto; padding: 12px 12px 10px; font-size: 13.5px; line-height: 1.5; color: var(--ink); background: var(--paper); border: 1px solid var(--rule); border-radius: 12px; box-shadow: var(--shadow); }
+.lp-strata-legend h2 { display: flex; align-items: center; justify-content: flex-start; margin: 0 0 8px !important; font-size: 14px !important; }
+.lp-strata-legend h2 button { margin-left: auto; padding: 0 8px; font: inherit; font-size: 12.5px; color: var(--ink-soft); background: none; border: 1px solid var(--rule); border-radius: 999px; cursor: pointer; }
+.lp-strata-legend ol { margin: 0 !important; padding: 0 !important; list-style: none; }
+.lp-strata-legend li { margin: 0 !important; }
+.lp-strata-legend li button { display: grid; grid-template-columns: 14px 1fr; gap: 0 10px; width: 100%; padding: 6px 6px; font: inherit; text-align: left; color: inherit; background: none; border: 0; border-radius: 8px; cursor: pointer; }
+.lp-strata-legend li button::before { content: ""; grid-row: span 2; width: 14px; height: 100%; min-height: 30px; background: var(--layer); border-radius: 3px; }
+.lp-strata-legend li button:hover, .lp-strata-legend li button[aria-pressed="true"] { background: var(--raised); }
+.lp-strata-legend b { font-weight: 600; }
+.lp-strata-legend small { color: var(--ink-soft); font-size: 12.5px; }
+@media (max-width: 639px) { .lp-strata-legend { left: 10px; right: 10px; bottom: 10px; width: auto; max-height: 45vh; } }
+/* 宽屏左栏是目录和小地铁，图例放到右下角，不挡目录 */
+@media (min-width: 1280px) { .lp-strata-legend { left: auto; right: 20px; width: 280px; } }
+.lp-review .lp-strata-legend { bottom: 72px; }
+
+/* 时光机：图例顶上的滑块，轨道按层着色；拖到早先的一层时后来的块先藏起来 */
+@media screen { .lp-strata .lp-main .is-future { display: none !important; } }
+.lp-strata-time { margin: 0 0 10px; padding: 8px 10px 9px; background: var(--raised); border-radius: 8px; }
+.lp-strata-time label { display: grid; grid-template-columns: auto minmax(0, 1fr) 4.2em; align-items: center; gap: 10px; font-weight: 600; }
+.lp-strata-time input { --track: linear-gradient(90deg, transparent var(--p, 100%), color-mix(in srgb, var(--raised) 72%, transparent) 0), var(--strata); width: 100%; height: 20px; margin: 0; background: none; -webkit-appearance: none; appearance: none; }
+.lp-strata-time input::-webkit-slider-runnable-track { height: 8px; border-radius: 4px; background: var(--track); }
+.lp-strata-time input::-moz-range-track { height: 8px; border-radius: 4px; background: var(--track); }
+.lp-strata-time input::-webkit-slider-thumb { width: 12px; height: 12px; margin-top: -2px; background: var(--paper); border: 3px solid var(--ink); border-radius: 50%; -webkit-appearance: none; }
+.lp-strata-time input::-moz-range-thumb { width: 12px; height: 12px; background: var(--paper); border: 3px solid var(--ink); border-radius: 50%; }
+.lp-strata-legend li button.is-future { color: var(--ink-faint); }
+.lp-strata-legend li button.is-future::before { background: repeating-linear-gradient(-45deg, var(--paper) 0 2px, transparent 0 5px), var(--layer); opacity: .6; }
+.lp-strata-time output { font-variant-numeric: tabular-nums; text-align: right; color: var(--ink-soft); }
+.lp-travel .lp-strata-time output { color: var(--accent-ink); }
+.lp-strata-time small { display: block; margin-top: 3px; font-size: 12px; }
+@media (pointer: coarse) {
+  .lp-strata-legend h2 button { min-width: 44px; min-height: 44px; }
+  .lp-strata-time input { height: 44px; }
+  .lp-strata-time input::-webkit-slider-thumb { width: 22px; height: 22px; margin-top: -7px; }
+  .lp-strata-time input::-moz-range-thumb { width: 22px; height: 22px; }
+}
+.lp-travel .lp-strata-legend { box-shadow: 0 0 0 2px var(--accent), var(--shadow); }
+
+/* 小地铁：宽屏目录栏顶上的竖线路，当前一节讲到的站亮起，之前的站算已经过 */
+.lp-minimetro { margin: 0 0 26px; font-size: 13px; line-height: 1.45; }
+.lp-minimetro > p { margin: 0 0 8px; font-size: 11.5px; letter-spacing: .1em; color: var(--ink-faint); }
+.lp-minimetro-line { position: relative; }
+.lp-minimetro ol { position: static; margin: 0; padding: 0 4px; list-style: none; }
+.lp-minimetro li { position: relative; margin: 0; padding: 4px 0 4px 24px; }
+.lp-minimetro li::before { content: ""; position: absolute; z-index: 1; left: 2px; top: calc(4px + .725em - 6px); width: 12px; height: 12px; background: var(--station); border: 3px solid var(--line); border-radius: 50%; transition: background-color .3s ease; }
+.lp-minimetro-line > i { position: absolute; left: 0; right: 0; top: 0; height: 0; background: color-mix(in srgb, var(--line) 13%, transparent); border-radius: 12px; transition: top .45s var(--ease), height .45s var(--ease); }
+.lp-minimetro li:not(:last-child)::after { content: ""; position: absolute; left: 6.5px; top: calc(4px + .725em); bottom: calc(-4px - .725em); border-left: 3px solid var(--line); }
+.lp-minimetro li.to-fog::after, .lp-minimetro li.is-fog::after { border-left-style: dashed; border-left-color: var(--line-idle); }
+.lp-minimetro li.is-fog::before { border-style: dashed; border-color: var(--line-idle); }
+.lp-minimetro a, .lp-minimetro span { display: block; padding: 0; overflow: hidden; color: var(--ink-faint); text-decoration: none; text-overflow: ellipsis; white-space: nowrap; border: 0; }
+.lp-minimetro li.is-fog > * { opacity: .7; }
+.lp-minimetro li.is-past a { color: var(--ink-soft); }
+.lp-minimetro a:hover { color: var(--ink); }
+.lp-minimetro li:is(.is-here, .is-past)::before { background: var(--line); }
+.lp-minimetro li.is-here a { font-weight: 600; color: var(--ink); }
+
+/* 深链聚光：四周暗下来，目标四周一圈光，上面一枚小标签 */
+.lp-spot { position: fixed; z-index: 48; left: 0; top: 0; border-radius: var(--round); pointer-events: none; box-shadow: 0 0 0 2px var(--accent), 0 0 0 9px color-mix(in srgb, var(--accent) 20%, transparent), 0 0 0 200vmax color-mix(in srgb, var(--stage) 40%, transparent); transition: opacity .6s ease; }
+.lp-spot.is-out { opacity: 0; }
+.lp-spot.is-tight > span { top: 8px; left: auto; right: 14px; transform: none; }
+.lp-spot > span { position: absolute; left: 14px; top: 0; transform: translateY(-50%); padding: 1px 10px; font-size: 12.5px; font-weight: 600; line-height: 1.7; color: var(--paper); white-space: nowrap; background: var(--accent); border-radius: var(--round); }
+@media (prefers-reduced-motion: no-preference) { .lp-spot { animation: lp-spot-in .7s var(--ease) both; } }
+@keyframes lp-spot-in { from { box-shadow: 0 0 0 2px transparent, 0 0 0 48px transparent, 0 0 0 200vmax transparent; } }
+
+/* 工具多了时换行 */
+.lp-headbar { flex-wrap: wrap; }
+.lp-tools { flex-wrap: wrap; justify-content: flex-end; }
+@media print {
+  .lp-strata-legend, .lp-strata-col, .lp-live-tag, .lp-live-reset, .lp-mist, .lp-spot, .lp-minimetro { display: none !important; }
+  .lp-stages > li.is-fog > * { opacity: 1 !important; filter: none !important; }
+  .lp-strata .lp-main .is-layer-dim { opacity: 1; transition: none; }
+  .lp-strata .lp-main .is-layer-focus { outline: 0; }
+  .lp-live { margin: 0 0 1.1em; padding: 0; background: none; border: 0; }
+  .lp-knob { padding: 0; background: none; box-shadow: none; }
+  .lp-knob::before, .lp-knob::after { content: none; }
+}
+</style>
+<style id="lp-page-style">
+/* 整页生效的少量调整写在这里；部件样式随片段写 <style data-lp-style>。颜色只用 var(--…) 令牌。 */
+</style>
+</head>
+<body>
+<header class="lp-cover">
+  <div class="lp-cover-in">
+    <div class="lp-cover-body">
+      <div class="lp-headbar">
+        <p class="lp-crumb">八周证据冲刺 · W4 · 单元六</p>
+        <div class="lp-tools"><button type="button" data-lp-strata aria-pressed="false">地层</button><button type="button" data-lp-review aria-pressed="false">只看要点</button><button type="button" data-lp-theme aria-pressed="false">深色</button></div>
+      </div>
+      <h1 class="lp-title">第一次推理模拟面试与投递门槛复核</h1>
+      <div class="lp-meta">
+        <p>主线资料：W1 的 vLLM 请求主链、单元五的 Conv3D 项目卡与 W3 的 PD/KV 设计</p>
+        <p data-lp-auto="minutes"></p>
+        <p data-lp-auto="date">更新于 2026-11-22</p>
+      </div>
+      <p class="lp-updated" data-lp-auto="updated"></p>
+    </div>
+  </div>
+</header>
+<div class="lp-page">
+  <aside class="lp-toc" aria-label="本页目录"><nav></nav></aside>
+  <main class="lp-main" id="top">
+    <details class="lp-toc-inline"><summary>本页目录</summary><nav></nav></details>
+<section class="lp-narrative" id="intro" data-rev="1">
+<h2>面试官手上没有你的项目卡</h2>
+<p>面试官需要从你的讲述里听懂你选了哪种负载、系统里发生了什么，以及你凭什么这样判断。背记时先读每题的回答要点，收起参考口述，就可以自己讲一遍。</p>
+<nav class="mock-ref-nav" aria-label="面试背记入口"><a href="#voice-review-1122">vLLM 请求主链的参考回答</a><a href="#voice-review-conv3d">Conv3D 项目的参考回答</a><a href="#ref-pd-kv">PD/KV 系统设计的参考回答</a><a href="#ref-pd-split" data-rev="22">高峰期的 PD 拆分题</a><a href="#mock-review-cues">整场复习要点</a></nav>
+<figure class="lp-figure is-wide" id="fig-0">
+<ol class="lp-stages lp-flow">
+<li id="st-open" data-label="两分钟开场"><b>两分钟开场</b><span>选定负载和服务配置，说清计时起止与单位</span></li>
+<li id="st-request" data-label="vLLM 主链"><b>vLLM 请求主链</b><span>沿一条请求讲到结束，接住组件分工与条件变化的追问</span></li>
+<li id="st-case" data-label="项目深挖"><b>深挖一个项目</b><span>用 Conv3D 讲清故障、个人改动和回归依据</span></li>
+<li id="st-pd" data-label="PD/KV 设计"><b>PD/KV 系统设计</b><span>为具体配置估算开销，解释交接、回收和故障回退</span></li>
+<li id="st-review" data-label="反馈与投递"><b>反馈与投递复核</b><span>重答最薄弱的一问，再对照目标岗位梳理证据</span></li>
+</ol>
+<figcaption><b>图 0</b> W4 的第一场推理模拟面试分三段。开场接在主链题前，反馈在系统设计题之后。</figcaption>
+</figure>
+<p>我们一次只谈一个问题。主链这一段约 15 分钟，先讲两分钟全景，再跟着追问展开。项目深挖约 25–30 分钟，系统设计约 15 分钟。每段都可以在对话里分轮完成。你用中文脱稿说，我会从你刚说过的一句话往下问。</p>
+<p>三段讲完后，我们把需要回去核实的项目事实记清楚，挑一个最影响理解的地方，当场换个问法再讲一次。复核投递准备时，先对照简历、项目卡和自我介绍里的数字，核实哪些改动是你做的、哪些是与同事合作的。再看你能否脱稿讲清主链和多模态案例，是否有一个能完整复算的性能案例，以及已有的 C++ 基线表现。最后用一个多 GPU 或多节点配置讲清计算、显存和通信瓶颈，分别说明哪些有实测支持、哪些来自估算。这些证据会按计划里的 96121、94063、96120 三个岗位依次复核。</p>
+</section>
+<section id="spine" data-rev="1">
+<h2>答完后可以回哪里核对</h2>
+<div class="lp-table" tabindex="0" aria-label="三段面试与投递复核的资料和回看时机"><table><thead><tr><th scope="col">资料</th><th scope="col">能核对什么</th><th scope="col">什么时候看</th></tr></thead><tbody>
+<tr><td><a href="../../计划/八周冲刺进度/W4-学习计划.md#w4-unit-6-mock-readiness">W4 单元六安排</a></td><td>一场面试的题段与完成条件</td><td>开场前看范围即可</td></tr>
+<tr><td><a href="../../推理框架/深入学习理解vLLM/2-Request-Lifecycle-and-Output.md#pass-c-source-map">W1 请求主链源码索引</a></td><td>W1 所用 vLLM v0.26.0 的组件职责和状态交接</td><td>主链口述与追问结束后</td></tr>
+<tr><td><a href="plana-jd-w4-case-evidence-audit.html#interview-conv3d">单元五 Conv3D 口述</a>与<a href="../../面试准备/自我准备/projects/multimodal-inference-project.md#project1-conv3d-case-card-v1">项目卡</a></td><td>原项目的输入、比较对象、计时和职责</td><td>项目深挖结束后</td></tr>
+<tr><td><a href="../../面试准备/自我准备/学习设计/ChangeCard-03-PD-KV-transport.md#change-card-03-pd-kv">W3 的 PD/KV 设计</a></td><td>把 prefill 和 decode 部署在不同实例时，KV 交接所依赖的配置与验证范围</td><td>系统设计口述后</td></tr>
+<tr><td><a href="../../计划/八周冲刺进度/W4-学习计划.md#w4-mock-readiness-gate">投递门槛与岗位方向</a></td><td>既有 C++、性能与项目材料，哪些条件还要结合这次口述判断</td><td>重答后一起核对</td></tr>
+</tbody></table></div>
+</section>
+<section id="written-materials" data-rev="3">
+<h2>GLM 简历上的 120 秒量了什么？</h2>
+<p>B 版简历写到，调整 GLM-5.3-Flash 的状态布局后，decode 单步的 Host 耗时从约 120 秒降到 2.6 秒。自我介绍里有一句“处理非连续状态访问带来的 Host 开销”。把两份材料和项目表对起来，这里的 Host 指主机侧，计时范围是模型生成过程中的一个 decode 步。<a href="../../面试准备/自我准备/针对性简历/B/简历-B-推理性能与模型优化.md">B 版简历</a> · <a href="../../面试准备/自我准备/自我介绍/B-推理性能与模型优化.md">对应自我介绍</a></p>
+<p>项目记录保留了同一短提示词下、在模型里插桩得到的两行数。“计时单位”说清一行是按步还是按次调用计时。“每步调用数”用来把一次调用的耗时换算成每步的合计。</p>
+<div class="lp-table" tabindex="0" aria-label="相同短提示词下两种计时单位的对照"><table><thead><tr><th scope="col">量了哪段</th><th scope="col">拆池前</th><th scope="col">拆池后</th><th scope="col">计时单位</th><th scope="col">每步调用数<br>（次调用／步）</th></tr></thead><tbody>
+<tr><th scope="row">主机侧一个 decode 步</th><td>119,962</td><td>2,579</td><td>毫秒／步</td><td>不适用</td></tr>
+<tr><th scope="row">一次 conv update 调用</th><td>1,835</td><td>0.19</td><td>毫秒／次调用</td><td>待从同一步的 trace 计数</td></tr>
+</tbody></table></div>
+<p>第一行换成秒是 119.962 和 2.579，简历上的约数能对上。在这条短提示词上，拆池前测得的 decode 单步 Host 耗时约为拆池后的 46.5 倍。要算客户端等完整回答的时间缩短了多少，得另拿同一负载的端到端计时作对照。<a href="../../面试准备/自我准备/projects/GLM5-3-flash-project.md">GLM 项目记录 · 状态拆池与分阶段计时</a></p>
+<p>为什么值得改布局？原来每个 block 里先存卷积状态，再存递推状态，读取相邻两个 block 的卷积状态时，中间隔着一整份递推状态。项目记录显示，这种不连续的访问在目标后端走了很慢的主机搬运路径。拆池后，同一种状态跨 block 连续存放。每个 block 里的数据合计仍是 542,720 字节，改变的是取这些数据要走的路径。</p>
+<p id="written-field"><b>怎样用这一列？</b> 在同一条 Host 线程上，假设一个 decode 步依次执行 <var>N</var> 次 conv update，以拆池后的 0.19 毫秒估算每次调用耗时，这部分合计约为 0.19 × <var>N</var> 毫秒／步。计数时只取这个步、这条线程上的 conv update。如果 trace 还记下了每次调用的实际耗时，把它们相加就得到这一步内 conv update 的累计耗时。</p>
+</section>
+<section id="written-amd-throughput" data-rev="4">
+<h2>用 AMD 单卡的六轮记录复算输出吞吐</h2>
+<p>这次换一把秒表，量整批请求完成得有多快。W4 单元二用一张 AMD gfx1100 卡跑 Qwen2.5-1.5B-Instruct，精度为 BF16。每轮使用同一批 48 条请求，长短提示词各占一半，最多 8 条同时在途。每条请求都生成 128 个 token，所以每轮的有效输出是 6,144 个 token。<a href="../../推理框架/实践/W4-U2/README.md">实验负载与计时方法</a></p>
+<p>从逐轮记录取出正式测量窗口的时长，用输出 token 总数除以这个时长。例如，每次调度的 token 预算为 512 时，第一轮用了 18.5169 秒，吞吐就是 6,144 ÷ 18.5169 ≈ 331.8 token/s。用同样的方法算完六轮，再对每档的三轮取中位数。<a href="../../推理框架/实践/W4-U2/review/case-20261112T060528Z-be871729/metrics_audit.json">逐轮计数、窗口与指标</a></p>
+<div class="lp-table" tabindex="0" aria-label="单卡固定负载下两档调度预算的结果"><table><thead><tr><th scope="col">每次调度的 token 预算</th><th scope="col">输出吞吐<br>token/s</th><th scope="col">客户端相邻输出 token 间隔的 P99<br>毫秒</th></tr></thead><tbody>
+<tr><th scope="row">512</th><td>331.8</td><td>75.8</td></tr>
+<tr><th scope="row">2,048</th><td>381.8</td><td>141.4</td></tr>
+</tbody></table></div>
+<p>这六轮里，每条非空输出消息都恰好带一个 token。右列先在每一轮汇集各条请求内部相邻输出消息的间隔，取第 99 百分位，再对同一预算的三轮取中位数。表中两档预算各回放了三轮，写图注时保留这个测试范围。<a href="../../计划/八周冲刺进度/历史记录/W4-学习验收记录.md#w4-u2-measurement-review-20261112">正确性对照与测量记录</a></p>
+<p id="written-amd-caption"><b>图注</b>　在本次 AMD 单卡的固定负载下，将每步调度预算从 512 提至 2,048 token 后，输出吞吐从 331.8 提高到 381.8 token/s（约增加 15.1%），同时客户端相邻输出 token 的间隔 P99 从 75.8 增至 141.4 毫秒。两项均取每档三轮统计值的中位数。</p>
+<p data-rev="5">预算是一步最多可以调度的 token 数。单独采集的 2,048 档四请求短 trace 里，有一步调度了 2,047 个 prefill token 和 1 个 decode token，也有一步只调度了 4 个 decode token。长提示词在较大的预算下有机会分成更少的 prefill 块。要判断整轮是否真的少跑了几步、GPU 是否被用得更充分，需要对照两档同负载的实际步数、各步的 token 构成和 GPU 活动记录。<a href="../../推理框架/实践/W4-U2/review/case-20261112T060528Z-be871729/trace_index_corrected.json">单独采集的调度批记录</a></p>
+<p data-rev="5">如果客户端等了很久才收到同一条请求的下一个 token，可能是相关执行步变长，也可能是请求等待下一次执行或输出送达花了更久。要分清原因，可以把长间隔对应的请求和调度、设备执行、客户端收包这几处时间点对齐。</p>
+<p id="written-budget-limit" data-rev="5"><b>书面小变式。</b> 假设现在只剩 8 条请求一起解码，每步每条生成 1 个 token，期间没有新请求或抢占。把预算从 512 提到 2,048，会减少每条请求再生成 32 个 token 所需的调度步数吗？写一句理由就行。</p>
+<p id="written-budget-answer" data-rev="6"><b>两档预算都要 32 步。</b> 8 条请求可以一起算，每步每条各生成 1 个 token，一共只用掉 8 个 token 的预算。对同一条请求，下一个 token 依赖刚生成的那个，所以这 32 个 token 要逐步生成。512 和 2,048 两个上限都够用，调高上限不会让这一批请求在同一步多生成一个 token。</p>
+</section>
+
+
+<section class="lp-node" id="node-1" data-stages="st-open" data-rev="2">
+<h2><span class="lp-no">1</span>先让对方知道你在跟哪一条请求</h2>
+<p class="lp-spine">从 W1 学过的 vLLM V1 文本请求开始。先口述自己的版本，讲完这个题段后再翻源码索引。</p>
+<p>用户说“回答一开始要等很久”，面试官还不知道你打算讨论哪种服务、用户在等哪个输出。开头先选一种你熟悉的配置。沿着这一条请求往下讲，每到一个交接处，说一句上一方交给下一方什么、对方拿它做什么。某个类名一时想不起来，可以先把它的职责讲清楚。</p>
+<p class="lp-lead"><b>这一轮的答法</b> 先用约两分钟讲全景，细节留给追问。在实时语音里，你可以停下来想，讲完一段我再接问。页上的计时器可以按需启动。</p>
+</section>
+<section class="lp-check" id="q-1" data-state="closed" data-rev="20">
+<h3>开场题<span class="lp-kind">一条请求的首 token</span></h3>
+<p class="lp-ask">请你选一个具体的 vLLM V1 服务配置，用约 2 分钟讲清一条文本请求怎样产生并返回第一个生成 token。要量用户等了多久，你会从哪里开始计时，在哪里停表，用什么单位？</p>
+<div class="lp-timer" data-seconds="120"></div>
+<details class="lp-answer" data-rev="20"><summary>参考要点</summary><p><a href="#voice-review-points">单卡请求从输入到首个生成 token 的要点与参考口述</a></p></details>
+</section>
+<style data-lp-style>
+.mock-ref-nav { display:flex; flex-wrap:wrap; gap:.2rem 1.25rem; margin:.35rem 0 1.15rem; }
+.mock-ref-nav a { display:inline-flex; align-items:center; padding:.3rem 0; }
+.mock-references .ref-question { margin:1.65rem 0; scroll-margin-top:1rem; }
+.mock-references .ref-question h3 { margin:0 0 .45rem; font-size:1.08rem; line-height:1.5; }
+.mock-references .ref-key { margin:0 0 .4rem; }
+.mock-references .ref-key b { margin-right:.4em; }
+.mock-references details { margin:0; border-top:1px solid var(--rule); }
+.mock-references summary { cursor:pointer; padding:.5rem .1rem; font-weight:600; color:var(--accent-ink); }
+.mock-references .lp-oral { margin:.15rem 0 .55rem; padding:.9rem 1.05rem .1rem 2.45rem; }
+.mock-references .lp-oral::before { top:.1rem; left:.6rem; font-size:2rem; }
+.mock-references .ref-source { color:var(--ink-soft); font-size:.9em; }
+@media (pointer:coarse) {
+  .mock-ref-nav a, .mock-references summary { min-height:44px; box-sizing:border-box; }
+}
+
+.lp-review #top .mock-references > .ref-question { display:block; }
+.lp-review .lp-node.mock-references .ref-question details { display:none; }
+.lp-review #mock-review-cues > ul { display:block; }
+</style>
+<section class="lp-node mock-references" data-stages="st-request" id="voice-review-1122" data-rev="10">
+<h2>面试参考回答 · vLLM 请求主链</h2>
+<p class="lp-spine ref-source">本组接口与调度顺序采用 W1 的 vLLM v0.26.0 单卡 V1 路径。<a href="../../推理框架/深入学习理解vLLM/2-Request-Lifecycle-and-Output.md#pass-d-execution-contract">请求执行与输出契约</a></p>
+
+<div class="ref-question" id="voice-review-points">
+<h3>单卡 vLLM V1 服务怎样返回第一个生成 token？</h3>
+<p class="ref-key"><b>回答要点</b> 固定服务和计时口径。沿前端、调度器、执行端和前端返回这四处交接，讲清每一处传的是什么。</p>
+<details open id="voice-review-spoken"><summary>参考口述</summary>
+<blockquote class="lp-oral">
+<p>我以一台已经加载好模型的单卡服务为例。用户发来纯文本聊天请求，要求流式输出。这次启用分块 prefill，关闭投机解码，提示词也没有命中前缀缓存。我在客户端从发出请求开始计时。</p>
+<p>API Server 先用聊天模板整理消息，再分词得到提示词的 token ID。温度等采样设置会单独整理。前端把请求标识、token ID 和采样参数发给 EngineCore。调度器根据这一步的 token 预算和可用 KV 块，决定让哪些请求各推进多少个 token。执行端据此组批，ModelRunner 准备输入、位置和注意力所需的元数据，再调用模型。</p>
+<p>长提示词可以分几步做 prefill。算到最后一个输入位置时，输出层把该位置的隐藏向量变成词表分数，采样器选出第一个生成 token。引擎把 token ID 和请求标识送回前端，前端解码并发出文本增量。客户端收到第一段带生成内容的消息时停表，这就是我用毫秒报告的首 token 延迟，也就是 TTFT。</p>
+</blockquote></details>
+</div>
+
+<div class="ref-question" id="ref-ttft">
+<h3>改成非流式返回，客户端还能直接量到 TTFT 吗？</h3>
+<p class="ref-key"><b>回答要点</b> 先确定停表事件。流式看首次生成内容，非流式看完整响应。要观察引擎的中间结果，另用服务端同一只钟。</p>
+<details open><summary>参考口述</summary>
+<blockquote class="lp-oral"><p>流式请求会陆续收到消息，我在第一段生成内容到达时停表，只有角色标记或空内容的消息会跳过。非流式请求等整段回答准备好才交给客户端，所以同一只秒表量到的是端到端请求时延。只有请求发出和完整响应收到这两个时间点，无法从中还原首 token 出现的时刻。</p>
+<p>如果可以在服务端打点，我会在同一前端进程打两次时间戳，一次在收到请求时，一次在收到引擎送来的首个生成 token 时。两者之差回答的是服务端前端等了多久。客户端实际看到文字，还要经过后续的解码、发送和传输。</p></blockquote></details>
+</div>
+
+<div class="ref-question" id="ref-logits">
+<h3>最后一个位置的隐藏向量，怎样变成第一个 token？</h3>
+<p class="ref-key"><b>回答要点</b> 输出线性层得到词表分数 logits。贪心取最高分，top-k 随机采样在保留的候选中按概率选。</p>
+<details open><summary>参考口述</summary>
+<blockquote class="lp-oral"><p>我取最后一个输入位置的隐藏向量，把它送进模型的输出线性层，也叫 LM head。输出权重的每一行对应词表里的一个 token。用这一行和隐藏向量做点积，就得到这个 token 的分数。把所有行一起算，就是一次矩阵乘法。带偏置的输出层还会加上偏置。得到的这排原始分数叫 logits。贪心解码直接选最高分的 ID。如果用 top-k 随机采样，就保留分数最高的 k 个候选，用 softmax 得到它们的概率，再抽一个 ID。</p></blockquote></details>
+</div>
+
+<div class="ref-question" id="ref-decode">
+<h3>首个 token 已经选出来，下一步怎样生成第二个？</h3>
+<p class="ref-key"><b>回答要点</b> 第一个生成 token 是下一步的输入。历史 K、V 从缓存读取，当前位置的 Q、K、V 新算，新的 K、V 写入缓存。</p>
+<details open><summary>参考口述</summary>
+<blockquote class="lp-oral"><p>prefill 结束后，提示词在各层的 K 和 V 已经存好了。我把刚选出的第一个 token 作为下一步模型输入。在每一层，当前位置会算出自己的 Q、K 和 V。Q 用来和可见位置的 K 算注意力权重，包括历史位置和自己，再用这些权重对相应的 V 加权。历史 K、V 可以直接读缓存，当前位置的新 K、V 则写回去供后续步使用。经过剩下的网络层、输出投影和采样，就得到第二个 token。</p></blockquote></details>
+</div>
+
+<div class="ref-question" id="ref-scheduling">
+<h3>已有请求正在 decode，又来了一个长提示词，这一步怎么排？</h3>
+<p class="ref-key"><b>回答要点</b> 看 RUNNING 和 WAITING 两类请求，先安排运行中的工作，再看剩余 token 预算和可用 KV 块。运行中的请求也可能还在做 prefill。</p>
+<details open><summary>参考口述</summary>
+<blockquote class="lp-oral"><p>在这个配置下，调度器先看已经运行的请求。token 预算和 KV 块都够时，本步排进去的普通 decode 请求各推进一个 token。优先让这些请求继续出词，有助于缩短用户等下一次输出的时间。如果本步还有 token 预算，也能给新请求分配 KV 块，就可以把新提示词的一部分放进同一批做 prefill，剩下的留到后面的步。这里优先考虑的是请求的运行状态。一个上一步只处理了部分提示词的请求，也可能已经在 RUNNING 队列里。</p></blockquote></details>
+</div>
+
+<div class="ref-question" id="ref-block-table">
+<h3>同一批有多条请求，注意力怎样找到其中一条的历史 KV？</h3>
+<p class="ref-key"><b>回答要点</b> 先按请求选块表，再用逻辑块号查物理块号。序列长度限定有效上下文。</p>
+<details open><summary>参考口述</summary>
+<blockquote class="lp-oral"><p>调度侧给请求分配 KV 块，执行端根据调度结果维护每条请求的块表。注意力要读某条请求的历史时，先选这条请求在当前批次对应的那一行。行里按逻辑块的先后顺序存着物理块号。即使这些块在显存里不连续，内核也能沿块表找到它们，再结合序列长度读出这条请求的有效 KV。</p></blockquote></details>
+</div>
+
+<div class="ref-question" id="ref-slot-mapping">
+<h3>历史 KV 用块表读，当前 token 的新 K、V 写到哪里？</h3>
+<p class="ref-key"><b>回答要点</b> 在单卡、等长块的例子里，用 token 的序列位置求逻辑块号和块内偏移，从请求的块表查出物理块号，得到写入槽位。</p>
+<details open><summary>参考口述</summary>
+<blockquote class="lp-oral"><p>ModelRunner 会为本步每个输入 token 准备 <code>slot_mapping</code>。拿单卡的等长块来说，位置从零开始，位置除以每块的 token 数，商是逻辑块号，余数是块内偏移。用逻辑块号查这条请求的块表得到物理块号。物理块号乘块大小，再加块内偏移，就是这个 token 的槽位。执行端按这个槽位写入当前层新算的 K 和 V。批次顺序变化时，token 和它的槽位也得一一对上。</p></blockquote></details>
+</div>
+<p class="lp-lead"><b>复习要点</b> 说到一个组件时，讲清它接到什么、交给谁，以及计时器在这一段能看到什么。</p>
+</section>
+<section class="lp-node mock-references" data-stages="st-case" id="voice-review-conv3d" data-rev="10">
+<h2>面试参考回答 · Conv3D 项目</h2>
+<p class="lp-spine ref-source">本组的模型、修改分工与验证范围依据项目记录。<a href="../../面试准备/自我准备/projects/multimodal-inference-project.md#project1-conv3d-case-card-v1">Conv3D 项目卡 F1–F6</a></p>
+
+<div class="ref-question" id="voice-conv-points">
+<h3>请讲一次你亲自定位的多模态推理显存问题。</h3>
+<p class="ref-key"><b>回答要点</b> 从 32B 的一条视频请求讲起。用快照说明哪一步分配了新存储，讲清模型侧和算子侧分工，最后用可运行性与精度对照收尾。</p>
+<details open id="voice-conv-spoken"><summary>参考口述</summary>
+<blockquote class="lp-oral">
+<p>我在自研芯片上用 vLLM 0.9.3 适配 Qwen2.5-VL。32B 模型处理一条视频请求时耗尽了显存，Python 调用栈指向视觉编码器入口的 Conv3D。我提取那次调用的形状做了单例，沿后端实现找到一次通道末置的重排。把重排移到算子调用前再看显存快照，显存占用就在它后面明显上升。原因是每个时空位置的三个颜色分量放在一起只占很短一段，每段都要按设备要求补齐。</p>
+<p>我和算子同事一起改了接口。我在模型侧保留已有的二维 patch 输入，在初始化时把卷积核按相同顺序展平。专用算子由同事实现，按我们约定的布局和原始维度读取数据。改完后，原视频请求能够跑完。我先用 CPU 参考验证单算子，结果在设定的容差内。再用 32B 模型跑图片，只切换视觉入口的 Conv3D，两条路径生成的 token 逐例一致。</p>
+</blockquote></details>
+</div>
+
+<div class="ref-question" id="ref-conv-memory">
+<h3>调用栈指向 Conv3D，怎样把显存上涨定位到重排这一步？</h3>
+<p class="ref-key"><b>回答要点</b> 五维 view 共用原存储，生成通道末置的连续布局时申请新存储。把重排单独拿出来看快照。</p>
+<details open><summary>参考口述</summary>
+<blockquote class="lp-oral"><p>最初一行就存着一个完整 patch。设备上的 view 只是把同一份存储解释成五维。后端接下来把通道移到末尾，实际写出一份连续的新存储，这时才要重新分配。原来只在每行 patch 的末尾补齐一次，新布局在每个时空位置都留下一个只有三个数的通道段，每段都要补齐。我的依据是把重排单独移出来后，显存跃升也跟着它走。要确定最终是哪次分配失败、当时申请了多少字节，还得查原始分配记录。</p></blockquote></details>
+</div>
+
+<div class="ref-question" id="ref-conv-interface">
+<h3>你在初始化和 forward 里具体改了什么？</h3>
+<p class="ref-key"><b>回答要点</b> 每行输入是一个 patch，每行权重是一个输出通道的卷积核。两边的元素顺序相同，算子接口另收原始维度。</p>
+<details open><summary>参考口述</summary>
+<blockquote class="lp-oral"><p>输入在主机侧已经按 patch 展平了。我在 forward 沿用这份二维输入和原有的二维传输路径。权重只在模型初始化时整理一次，把每个输出通道的卷积核按通道、时间、高和宽的顺序展成一行。调用专用算子时，我同时传入原来的四个维度，算子就能把每个输入元素和对应权重配起来，输出每个 patch 的特征。这样省去了通道末置时那份反复补齐的临时存储。二维行末本身仍按硬件要求对齐。我的改动在模型调用和权重初始化，算子内部的读取与计算由算子同事负责。</p></blockquote></details>
+</div>
+
+<div class="ref-question" id="ref-conv-numeric">
+<h3>单算子数值怎样对齐？两种输出形状不同，按什么判据通过？</h3>
+<p class="ref-key"><b>回答要点</b> 同一份 BF16 输入与权重，对照 CPU Conv3D。CPU 输出从 <code>(14040, 1280, 1, 1, 1)</code> 去掉末尾三个单例维，与 <code>(14040, 1280)</code> 对齐。相对容差 <code>rtol=0.1</code>，绝对容差 <code>atol=0.05</code>。</p>
+<details open><summary>参考口述</summary>
+<blockquote class="lp-oral"><p>我在 CPU 上准备同一份 BF16 输入和权重，用 CPU Conv3D 算参考输出，再用展平后的输入和权重跑芯片上的专用算子。拿视频形状的那个单例来说，CPU 输出的前两维已经对应 patch 和输出通道，末尾还带着三个长度为一的维度。我只去掉这三个维度，再把同一个 patch、同一个输出通道的数逐项比较。测试套件设的相对容差是 0.1，绝对容差是 0.05，这个用例在这组容差内通过。实测最大误差要看当时的误差记录。</p></blockquote></details>
+</div>
+
+<div class="ref-question" id="ref-conv-model">
+<h3>视频重新跑通后，模型生成结果的正确性验证到了哪里？</h3>
+<p class="ref-key"><b>回答要点</b> 原视频复跑验证显存问题。模型精度用 32B 的 10 个图片用例验证，只替换 Conv3D，逐例比生成的 token 序列。</p>
+<details open><summary>参考口述</summary>
+<blockquote class="lp-oral"><p>改动后我重跑原来会 OOM 的视频请求，它能跑到结束，这是这条请求可运行的证据。模型级精度我用的是 Qwen2.5-VL-32B 的十个图片用例。固定输入、权重和生成设置，温度设为零、种子设为 1234，一条路径用芯片上的专用 Conv3D，另一条只把 Conv3D 切到 CPU，模型其余部分保持一致。十个用例的生成 token 序列逐例相同。如果要把这个结论扩到视频，我会固定视频帧和提示词，照同样的方法补做模型级对照。</p></blockquote></details>
+</div>
+<div class="ref-question" id="ref-conv-ttft" data-rev="12">
+<h3>怎样报告优化前后的平均首 token 延迟？</h3>
+<p class="ref-key"><b>回答要点</b> 32B 图片组，单并发，10 个用例每例前后各一次。客户端计时，分别取算术平均。</p>
+<details open><summary>参考口述</summary><blockquote class="lp-oral"><p>我们用 Qwen2.5-VL-32B，在相同服务配置下比较优化前后的 Conv3D 路径。服务就绪后，测试并发固定为 1。同一组十个图片用例，每个用例在两条路径上各发一次流式请求。从客户端发出请求开始计时，到收到第一个生成 token 时停表。优化前和优化后各有十个 TTFT，分别取算术平均。按这个口径，平均 TTFT 从分钟级降到了五秒以内。</p></blockquote></details>
+</div>
+<div class="ref-question" id="ref-conv-attribution" data-rev="16">
+<h3>这组首 token 计时能拆出模型侧改动单独省下的时间吗？</h3>
+<p class="ref-key"><b>回答要点</b> 当时一次只发一个请求。模型侧布局和专用算子一起改了，前后两组平均时延的差值只能归到联合方案。</p>
+<details open><summary>参考口述</summary><blockquote class="lp-oral">
+<p>我在 Qwen2.5-VL-32B 上用同一组十个图片用例，一次只发一个请求。优化前后每例各测一次，客户端的计时起止点相同。我负责保留二维输入、重构模型调用和调整初始化时的权重布局，算子同事同时改了专用 Conv3D 的实现。这组请求的平均首 token 延迟从分钟级降到五秒以内，是双方改动一起落地后的结果。</p>
+<p>如果要单独估算布局改动省了多少时间，我会选一版能同时处理新旧布局的算子，固定输入、并发和计时口径，只切换布局再测。得到的差值只能按那次对照的算子版本和负载报告。</p>
+</blockquote></details>
+<details open id="ref-conv-attribution-short" data-rev="17"><summary>约 15 秒的面试版</summary><blockquote class="lp-oral"><p>我改了模型调用和权重布局，同事改了专用算子。十个图片用例单并发测下来，平均首 token 延迟从分钟级降到五秒以内。这是两边一起改的收益，单凭这组数据拆不出我那部分。</p></blockquote></details>
+</div>
+<div class="ref-question" id="ref-conv-kernel-only" data-rev="18">
+<h3>保持模型调用和布局不变，只换兼容的算子实现，这次差值能归给谁？</h3>
+<p class="ref-key"><b>回答要点</b> 看两条路径究竟改了哪个变量，再说明测量的是算子耗时还是服务指标。结果只按当次负载和版本报告。</p>
+<details open><summary>参考口述</summary><blockquote class="lp-oral"><p>在这次假设对照里，模型调用、输入与权重的布局、图片负载和计时口径都相同，变化的是专用算子的内部实现。因此，这组平均首 token 延迟的差值，可以归给换算子实现对这组请求的影响。要报单算子执行时间，还得给算子本身单独计时。回到原项目，模型侧布局和专用算子一起改了，原项目的端到端记录支持联合收益。</p></blockquote></details>
+</div>
+
+
+
+<p class="lp-lead"><b>复习要点</b> 先报工作负载与对照路径，再报性能或精度结果。只给能被这组对照单独区分的改动报收益。</p>
+</section>
+<section class="lp-check" id="q-2" data-state="closed" data-rev="13">
+<h3>项目追问<span class="lp-kind">首 token 的前后对照</span></h3>
+<p class="lp-ask">你会用哪组请求来报告 Conv3D 优化前后的平均首 token 延迟？请讲清对照条件、计时起止点、统计方式和测到的结果。</p>
+<details class="lp-answer" data-rev="13"><summary>参考要点</summary><p><a href="#ref-conv-ttft">图片组的对照条件、计时与完整参考口述</a></p></details>
+</section>
+<section class="lp-check" id="q-3" data-state="closed" data-rev="21">
+<h3>项目追问<span class="lp-kind">个人改动的收益归因</span></h3>
+<p class="lp-ask">如果要知道单独保留你负责的模型侧改动能省多少时间，你会怎样用这组测量回答？</p>
+<details class="lp-answer" data-rev="21"><summary>参考要点</summary><p><a href="#ref-conv-attribution">原项目的联合收益</a> · <a href="#ref-conv-kernel-only">只换算子实现时的收益归因</a></p></details>
+</section>
+<section class="lp-node mock-references" id="ref-pd-kv" data-stages="st-pd" data-rev="19">
+<h2>面试参考回答 · PD 分离与 KV 交接</h2>
+<p class="lp-spine ref-source">早先的学习设计以 PULL 为主例，本节用相同的资源依赖原则处理主动推送。<a href="../../面试准备/自我准备/学习设计/ChangeCard-03-PD-KV-transport.md#change-card-03-pd-kv">交接条件与传输时间估算</a> · <a href="../../推理框架/PD-KV故障矩阵与测试设计.md">PUSH 故障与回收的设计依据</a></p>
+
+<div class="ref-question" id="ref-pd-push">
+<h3>两台机器分别做 prefill 和 decode，一条请求怎样交接过去？</h3>
+<p class="ref-key"><b>回答要点</b> 先定模型、两端并行配置和 KV 布局。decode 端预留目标块，prefill 端推送有效 KV，decode 端确认本地可读再继续生成。</p>
+<details open><summary>参考口述</summary><blockquote class="lp-oral">
+<p>我先选一个简单配置。两台机器各用一张卡，模型、KV 精度、块大小和布局一致。我选 prefill 端主动推送，decode 端用主机内存中转。decode 端先给这条请求留好接收缓冲区和目标显存块，双方对齐请求身份、要传哪些逻辑块以及它们在目标端的位置。</p>
+<p>prefill 端算完提示词，各层 KV 就绪后，把有效数据传到对端的接收缓冲区。我让 prefill 端同时负责选出第一个生成 token，把它和继续生成所需的请求状态一起交接。decode 端确认数据收齐后，按自己的块表把 KV 拷进显存。等计算流可以读取这些块，就用刚交接的 token 做下一步 decode。这样两端可以分别调度计算，代价是目标端要预留缓存，交接也要花时间。</p>
+</blockquote></details>
+</div>
+
+<div class="ref-question" id="ref-pd-ready">
+<h3>收到“发送完成”的通知，attention 在什么条件下可以读 KV？</h3>
+<p class="ref-key"><b>回答要点</b> 先定义通知能证明哪一步。主机收齐、设备拷贝提交、目标显存可读是三个时刻。</p>
+<details open><summary>参考口述</summary><blockquote class="lp-oral"><p>我会把请求和预期传输的块对应起来，看通知具体保证了什么。在主机中转的方案里，确认整份数据抵达 decode 端的主机内存之后，还有一次主机到显存的拷贝。如果拷贝和 attention 在不同的流上，我会让计算流等待这次拷贝的完成事件。这样 attention 读到的才是这条请求已经写好的 KV。换成设备直传，也要核实传输后端如何保证目标侧可见，并和计算流建立依赖。</p></blockquote></details>
+</div>
+
+<div class="ref-question" id="ref-pd-bytes">
+<h3>每层 GQA 配置相同，一条请求要传多少有效 KV？</h3>
+<p class="ref-key"><b>回答要点</b> 单卡、全注意力、只传有效提示词位置。把提示词 token 数、层数、KV 头数、每头维度、K/V 两份和每元素字节数相乘。</p>
+<details open><summary>参考口述</summary><blockquote class="lp-oral"><p>我先算一个 token 在一层的数据。它的 K 有“KV 头数乘每头维度”个元素，V 在这个配置下同样大，所以乘二。如果 KV 用 BF16，每个元素又占两个字节。最后乘层数，再乘要交接的有效提示词 token 数，就得到整条请求的有效 KV 字节数。GQA 里多个查询头共享 KV 头，所以这里用的是 KV 头数。按整块传输产生的尾部补齐和协议开销需要另外计。</p></blockquote>
+<p><code>有效 KV 字节数 = 有效 token 数 × 层数 × KV 头数 × 每头维度 × 2 × 每元素字节数</code></p>
+</details>
+</div>
+
+<div class="ref-question" id="ref-pd-network-time">
+<h3>怎样估传输时间？主机中转时还要算哪一段？</h3>
+<p class="ref-key"><b>回答要点</b> 用有效载荷除以同单位的有效带宽。256 MiB ÷ 25 GiB/s = 10 ms，这里只估网络段。</p>
+<details open><summary>参考口述</summary><blockquote class="lp-oral"><p>我先统一单位。256 MiB 是 0.25 GiB，按每秒 25 GiB 的有效带宽来算，网络搬运这份数据需要 0.01 秒，也就是 10 毫秒。这是给定带宽、忽略额外开销时的网络时间。按我们选的整份收齐再拷入显存的方案，decode 端还要等本地拷贝完成。要解释端到端的交接时延，我会沿实际时间线再看排队、通知和两端搬运，确认哪些阶段串行、哪些发生了重叠。</p></blockquote></details>
+</div>
+
+<div class="ref-question" id="ref-pd-reclaim">
+<h3>等 KV 超时了，预留的显存块什么时候能安全复用？</h3>
+<p class="ref-key"><b>回答要点</b> 业务可以先判失败。保留目标块及旧任务的关联，等所有相关访问结束，再交还内存池。</p>
+<details open><summary>参考口述</summary><blockquote class="lp-oral"><p>超时意味着这条请求已经等得太久。这个方案里我会先让请求失败，把目标块放进待回收状态。若后端支持取消，我还要弄清它返回的是“收到取消请求”，还是“所有已提交的访问都已经结束”。</p>
+<p>主机中转时要分别照看两段。接收缓冲区要等旧网络传输停止访问，而且本地拷贝也读完了才能复用。目标显存要等本地拷贝完成，或确认取消后它不会再写。已经提交的 attention 等任务也要结束对这些块的访问，相关引用都释放后，块才能归还。拿不到这些保证，就让相关缓冲区继续隔离，按后端的恢复流程处理。关掉网络通道以后，已经提交到本地设备的工作仍需单独确认。</p></blockquote></details>
+</div>
+<p class="lp-lead"><b>复习要点</b> 把请求、缓冲区和最后一次访问它的任务对应起来。网络传输、显存可读和块可回收，各有自己的完成条件。</p>
+</section>
+<section class="lp-node mock-references" id="ref-pd-split" data-stages="st-pd" data-rev="22">
+<h2>面试参考回答 · 高峰期值得拆分 PD 吗？</h2>
+<p class="lp-spine ref-source"><a href="#ref-ttft">客户端 TTFT 的计时起止点</a> · <a href="#ref-pd-push">两台机器之间的 KV 交接</a></p>
+<p class="lp-lead"><b>两题共用的对照</b> 用同样的两张卡，按相同的到达节奏回放同一批请求。在客户端量用户等了多久，再到服务端查这段时间花在了哪里。</p>
+
+<div class="ref-question" id="ref-pd-split-itl">
+<h3>回答到一半偶尔会卡一下。把 prefill 和 decode 拆开会有帮助吗？</h3>
+<p class="ref-key"><b>回答要点</b> 用客户端相邻输出 token 的时间间隔（ITL）衡量卡顿，比较两组的 ITL P99，单位是毫秒。同时看首 token 延迟（TTFT）和整套服务的输出吞吐（token/s）。</p>
+<details open><summary>参考口述</summary><blockquote class="lp-oral">
+<p>我先假设模型单卡就能放下，两台机器各有一张同型号的卡。一组每台都跑完整实例，各自做 prefill 和 decode。另一组一台做 prefill，另一台做 decode，两端通过网络交接 KV。两组用相同的生成设置，把同一批请求按原来的到达间隔重放一遍。</p>
+<p>我怀疑长提示词在做 prefill 时，让正在出词的请求多等了一会儿。两组都逐 token 流式返回。我会在客户端记录每条请求相邻两个 token 隔了多少毫秒，把这些间隔放在一起取 P99。只有拆开后长停顿明显缩短，用户等首字的时间和服务每秒输出的 token 数也都达标，我才会选拆分。</p>
+</blockquote></details>
+</div>
+
+<div class="ref-question" id="ref-pd-split-ttft">
+<h3>如果是等很久才看到第一个字，之后出字很顺，又怎么判断？</h3>
+<p class="ref-key"><b>回答要点</b> 主指标换成客户端 TTFT（毫秒）。服务端分别量请求等调度的时间和实际执行 prefill 的时间。拆分后还要看首 token 之后平均每个输出 token 的用时（TPOT）和相邻 token 的间隔（ITL）。</p>
+<details open><summary>参考口述</summary><blockquote class="lp-oral">
+<p>我还是用两台各一张卡的机器，比较两个完整实例和一台 prefill 配一台 decode，按相同的到达时间回放同一批请求。这次我关心用户等首字等了多久，就从客户端发出请求计到收到第一个生成 token，用毫秒比较两组的 TTFT。</p>
+<p>首字慢可能是请求在排队，也可能是提示词本身算得久。我会在服务端把这两段分开计时。如果原先是在等 decode 让出算力，拆开就有机会缩短排队。</p>
+<p>我还会看首 token 什么时候返回。如果发给客户端之前要等 KV 交接，这段等待就计入 TTFT。如果 prefill 端先返回首 token，我会看第二个 token 有没有因为等 KV 而晚到。只有 TTFT 明显缩短，后面的 TPOT 和 ITL 也满足服务要求，我才会在这批请求上选拆分。</p>
+</blockquote></details>
+</div>
+</section>
+
+<section class="lp-node" id="mock-review-cues" data-stages="st-review" data-rev="19">
+<h2>整场复习要点</h2>
+<p class="lp-spine"><a href="../../计划/八周冲刺进度/W4-学习计划.md#w4-mock-readiness-gate">回看 W4 单元六的题段与投递复核条件。</a></p>
+<ul>
+<li><b>请求主链。</b> 说清提示词如何变成 token ID、最后一个输入位置如何得到词表分数，再根据流式或非流式返回选择停表点。读历史 KV 查请求的块表，写本步新 KV 用写入槽位。<a href="#voice-review-1122">请求主链参考回答</a></li>
+<li><b>项目证据。</b> 视频请求复跑回答显存问题，图片组回答模型输出与平均首 token 延迟。报收益时先说本人和同事各改了哪一层，再交代这组对照能分辨哪项改动。<a href="#ref-conv-kernel-only">收益归因变式</a></li>
+<li><b>系统设计。</b> 先定两端配置、传输方向和暂存位置。定量时写清字节和带宽单位。安全使用和回收 KV 时，说出最后一次访问发生在哪一端、由哪个完成事件作证。<a href="#ref-pd-kv">PD/KV 参考回答</a> <span data-rev="22">· <a href="#ref-pd-split">高峰期值得拆分 PD 吗？</a></span></li>
+</ul>
+<p class="lp-lead"><b>复习要点</b> 把最容易混的两种计时、两项改动或两个完成时刻分开讲，让面试官听得出每个结论的依据。</p>
+</section>
+
+
+
+
+
+<!-- lp:append -->
+    <section class="lp-glossary" id="glossary" aria-labelledby="glossary-title">
+      <h2 id="glossary-title">符号与名词</h2>
+      <dl id="glossary-list">
+      </dl>
+    </section>
+    <footer class="lp-sources" id="sources">
+      <h2>来源</h2>
+      <ol id="sources-list">
+
+      </ol>
+    </footer>
+  </main>
+</div>
+<script id="lp-runtime">
+/* lesson-pages runtime v3.2。页面不要修改本段；本页专用的部件逻辑写进带 data-lp-hook 的脚本。 */
+(function () {
+  "use strict";
+  var root = document.documentElement;
+  var LP = window.LessonPage;
+  var main = document.querySelector(".lp-main");
+  var meta = document.querySelector('meta[name="lesson-pages"]');
+  var pageId = meta ? meta.getAttribute("data-id") : "page";
+  var pageKey = meta && meta.getAttribute("data-key") ? meta.getAttribute("data-key") : pageId + ":" + window.location.pathname;
+  var rev = meta ? parseInt(meta.getAttribute("data-rev") || "1", 10) : 1;
+  var reduceMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var freshSince = rev - 1;
+
+  /* 整节点 Markdown：保存作者内容，不把运行时控件与当前折叠状态当作教材。 */
+  var nodeCopy = (function () {
+    // Snapshot author DOM before navigation, code, math, or widget UI is generated.
+    var snapshots = new Map();
+    var snapshotsById = new Map();
+    var controls = [];
+    var initialized = false;
+    var layoutFrame = 0;
+    var manualDialog = null;
+    var manualReturn = null;
+    var skipped = "button,nav,script,style,template,input,textarea,select,dialog," +
+      ".lp-node-copy-tools,.lp-code-head,.lp-where,.lp-copy-tex,.lp-step-controls";
+    var blockTags = /^(ADDRESS|ARTICLE|ASIDE|BLOCKQUOTE|DETAILS|DIV|DL|FIGCAPTION|FIGURE|FOOTER|H[1-6]|HEADER|HR|OL|P|PRE|SECTION|SUMMARY|TABLE|UL)$/;
+
+    function escapeText(value) {
+      return value.replace(/\\/g, "\\\\").replace(/([`*_[\]<>$])/g, "\\$1")
+        .replace(/(^|\n)([ \t]*)(#{1,6}|[-+] )/g, "$1$2\\$3")
+        .replace(/(^|\n)([ \t]*)(\d+)([.)]) /g, "$1$2$3\\$4 ");
+    }
+
+    function destination(value) {
+      return value.replace(/[\s<>]/g, function (ch) { return encodeURIComponent(ch); });
+    }
+
+    function codeSpan(value) {
+      value = value.replace(/\r\n?|\n/g, " ");
+      var runs = value.match(/`+/g) || [];
+      var fence = "`".repeat(Math.max.apply(null, [0].concat(runs.map(function (s) { return s.length; }))) + 1);
+      var pad = /^`|`$/.test(value) || (/^ .* $/.test(value) && /\S/.test(value));
+      return fence + (pad ? " " : "") + value + (pad ? " " : "") + fence;
+    }
+
+    function wrapped(value, marker) {
+      if (!value.trim()) return value;
+      var leading = (value.match(/^\s*/) || [""])[0];
+      var trailing = (value.match(/\s*$/) || [""])[0];
+      return leading + marker + value.trim() + marker + trailing;
+    }
+
+    function mathValue(el) {
+      var tex = el.getAttribute("data-tex");
+      if (tex === null) return null;
+      var display = el.tagName === "DIV" || el.tagName === "PRE" || el.getAttribute("data-display") === "true";
+      return display ? "$$\n" + tex + "\n$$" : "$" + tex + "$";
+    }
+
+    function inline(node) {
+      if (node.nodeType === 3) return escapeText(node.nodeValue.replace(/\s+/g, " "));
+      if (node.nodeType !== 1 || node.matches(skipped)) return "";
+      var formula = mathValue(node);
+      if (formula !== null) return formula;
+      var tag = node.tagName;
+      if (tag === "BR") return "  \n";
+      if (tag === "CODE" || tag === "KBD" || tag === "SAMP") return codeSpan(node.textContent);
+      if (tag === "IMG") return "![" + escapeText(node.getAttribute("alt") || "") + "](<" + destination(node.getAttribute("src") || "") + ">)";
+      var value = Array.from(node.childNodes).map(inline).join("");
+      if (node.classList.contains("lp-no")) return value + " ";
+      if (tag === "STRONG" || tag === "B") return wrapped(value, "**");
+      if (tag === "EM" || tag === "I") return wrapped(value, "*");
+      if (tag === "DEL" || tag === "S") return wrapped(value, "~~");
+      if (tag === "SUB" || tag === "SUP") return "<" + tag.toLowerCase() + ">" + value + "</" + tag.toLowerCase() + ">";
+      if (tag === "A" && node.hasAttribute("href")) return "[" + (value || escapeText(node.getAttribute("href"))) + "](<" + destination(node.getAttribute("href")) + ">)";
+      return value;
+    }
+
+    function flow(el) {
+      var parts = [];
+      var pending = "";
+      function flush() {
+        if (pending.trim()) parts.push(pending.trim());
+        pending = "";
+      }
+      Array.from(el.childNodes).forEach(function (node) {
+        if (node.nodeType === 1 && (blockTags.test(node.tagName.toUpperCase()) || node.tagName.toUpperCase() === "SVG")) {
+          flush();
+          var value = block(node);
+          if (value) parts.push(value);
+        } else pending += inline(node);
+      });
+      flush();
+      return parts.join("\n\n");
+    }
+
+    function list(el) {
+      var number = Number(el.getAttribute("start")) || 1;
+      var ordered = el.tagName === "OL";
+      return Array.from(el.children).filter(function (node) { return node.tagName === "LI"; }).map(function (item) {
+        if (item.hasAttribute("value")) number = Number(item.getAttribute("value"));
+        var prefix = ordered ? String(number++) + ". " : "- ";
+        var content;
+        if (el.classList.contains("lp-timeline-state")) {
+          content = Array.from(item.children).map(function (child) { return inline(child).trim(); }).filter(Boolean).join(" · ");
+        } else content = flow(item);
+        var title = item.getAttribute("data-title");
+        if (title) content = "**" + escapeText(title) + "**" + (content ? "\n\n" + content : "");
+        return prefix + content.split("\n").join("\n" + " ".repeat(prefix.length));
+      }).join("\n\n");
+    }
+
+    function table(el) {
+      var rows = Array.from(el.rows);
+      if (!rows.length) return "";
+      var grid = [];
+      rows.forEach(function (row, r) {
+        if (!grid[r]) grid[r] = [];
+        var c = 0;
+        Array.from(row.cells).forEach(function (cell) {
+          while (grid[r][c] !== undefined) c++;
+          var value = flow(cell).trim().replace(/\|/g, "\\|").replace(/\n+/g, "<br>");
+          var columns = Math.max(1, cell.colSpan || 1);
+          var height = cell.rowSpan === 0 ? rows.length - r : Math.max(1, cell.rowSpan || 1);
+          // GFM has no spans: repeat the original cell in each covered column/row.
+          for (var y = r; y < Math.min(rows.length, r + height); y++) {
+            if (!grid[y]) grid[y] = [];
+            for (var x = c; x < c + columns; x++) grid[y][x] = value;
+          }
+          c += columns;
+        });
+      });
+      var width = Math.max.apply(null, grid.map(function (row) { return row.length; }));
+      grid = grid.map(function (row) { return Array.from({ length: width }, function (_, i) { return row[i] || ""; }); });
+      if (!Array.from(rows[0].cells).some(function (cell) { return cell.tagName === "TH"; })) grid.unshift(Array(width).fill(""));
+      var lines = grid.map(function (row) { return "| " + row.join(" | ") + " |"; });
+      lines.splice(1, 0, "| " + Array(width).fill("---").join(" | ") + " |");
+      var caption = el.caption ? inline(el.caption).trim() : "";
+      return (caption ? caption + "\n\n" : "") + lines.join("\n");
+    }
+
+    function block(el) {
+      if (el.matches(skipped)) return "";
+      var formula = mathValue(el);
+      if (formula !== null) return formula;
+      var tag = el.tagName.toUpperCase();
+      if (/^H[1-6]$/.test(tag)) return "#".repeat(Number(tag[1])) + " " + inline(el).trim();
+      if (tag === "PRE") {
+        var code = el.querySelector("code") || el;
+        var value = code.textContent.replace(/\r\n?/g, "\n");
+        var langMatch = code.className.match(/(?:language-|lang-)([\w+-]+)/);
+        var language = el.getAttribute("data-lang") || code.getAttribute("data-lang") || (langMatch ? langMatch[1] : "");
+        language = language.replace(/[^\w+#.-]/g, "");
+        var runs = value.match(/`+/g) || [];
+        var fence = "`".repeat(Math.max.apply(null, [2].concat(runs.map(function (s) { return s.length; }))) + 1);
+        var title = el.getAttribute("data-title");
+        return (title ? "**" + escapeText(title) + "**\n\n" : "") + fence + language + "\n" + value + (value.endsWith("\n") ? "" : "\n") + fence;
+      }
+      if (tag === "UL" || tag === "OL") return list(el);
+      if (tag === "TABLE") return table(el);
+      if (tag === "BLOCKQUOTE" || tag === "ASIDE") return flow(el).split("\n").map(function (line) { return ">" + (line ? " " + line : ""); }).join("\n");
+      if (tag === "HR") return "---";
+      if (tag === "SVG") return Array.from(el.querySelectorAll("title,desc,text,foreignObject")).filter(function (node) {
+        return !node.parentElement.closest("text, foreignObject, defs");
+      }).map(function (node) { return node.tagName === "foreignObject" ? flow(node) : escapeText(node.textContent.trim()); }).filter(Boolean).join("\n\n");
+      if (tag === "DL") return Array.from(el.children).map(function (child) {
+        return child.tagName === "DT" ? "**" + inline(child).trim() + "**" : flow(child);
+      }).filter(Boolean).join("\n\n");
+      if (tag === "SUMMARY") return wrapped(inline(el).trim(), "**");
+      return flow(el);
+    }
+
+    function serialize(target) {
+      var source;
+      if (typeof target === "string") {
+        var id = target.replace(/^#/, "");
+        source = snapshotsById.get(id) || document.getElementById(id);
+      } else source = snapshots.get(target) || target;
+      if (!source || source.nodeType !== 1) throw new TypeError("LessonPage.nodeMarkdown requires a node element or its id.");
+      return block(source).trim() + "\n";
+    }
+
+    function rememberPosition() {
+      var active = document.activeElement;
+      var selection = window.getSelection();
+      var ranges = [];
+      if (selection) for (var i = 0; i < selection.rangeCount; i++) ranges.push(selection.getRangeAt(i).cloneRange());
+      var inputRange = null;
+      try { if (active && typeof active.selectionStart === "number") inputRange = [active.selectionStart, active.selectionEnd, active.selectionDirection]; } catch (_) { /* Non-text control. */ }
+      return { active: active, x: window.scrollX, y: window.scrollY, ranges: ranges, inputRange: inputRange };
+    }
+
+    function keepScroll(position) {
+      window.scrollTo({ left: position.x, top: position.y, behavior: "instant" });
+    }
+
+    function restorePosition(position) {
+      if (position.active && position.active.isConnected) {
+        try { position.active.focus({ preventScroll: true }); } catch (_) { position.active.focus(); }
+        if (position.inputRange) try { position.active.setSelectionRange.apply(position.active, position.inputRange); } catch (_) { /* Not a text input now. */ }
+      }
+      var selection = window.getSelection();
+      if (selection) {
+        selection.removeAllRanges();
+        position.ranges.forEach(function (range) { if (range.commonAncestorContainer.isConnected) selection.addRange(range); });
+      }
+      keepScroll(position);
+    }
+
+    function legacyCopy(text) {
+      var position = rememberPosition();
+      var area = document.createElement("textarea");
+      area.className = "lp-node-copy-buffer";
+      area.value = text;
+      area.readOnly = true;
+      area.setAttribute("aria-label", "临时复制内容");
+      document.body.appendChild(area);
+      var copied = false;
+      try {
+        area.focus({ preventScroll: true });
+        area.select();
+        copied = !!document.execCommand && document.execCommand("copy");
+      } catch (_) { copied = false; }
+      area.remove();
+      restorePosition(position);
+      return copied;
+    }
+
+    function showManualCopy(text) {
+      if (!manualDialog) {
+        manualDialog = document.createElement("dialog");
+        manualDialog.className = "lp-node-copy-dialog";
+        manualDialog.setAttribute("aria-labelledby", "lp-node-copy-dialog-title");
+        var title = document.createElement("h2");
+        title.id = "lp-node-copy-dialog-title";
+        title.textContent = "复制 Markdown";
+        var hint = document.createElement("p");
+        hint.textContent = "自动复制不可用。内容已选中，请使用系统复制操作（Ctrl+C 或 ⌘C）。";
+        var area = document.createElement("textarea");
+        area.className = "lp-node-copy-text";
+        area.readOnly = true;
+        area.spellcheck = false;
+        area.setAttribute("aria-label", "本节点的 Markdown");
+        var actions = document.createElement("div");
+        actions.className = "lp-node-copy-dialog-actions";
+        var select = document.createElement("button");
+        select.type = "button";
+        select.className = "lp-node-copy-button";
+        select.textContent = "全选";
+        select.addEventListener("click", function () { area.focus({ preventScroll: true }); area.select(); });
+        var close = document.createElement("button");
+        close.type = "button";
+        close.className = "lp-node-copy-button";
+        close.textContent = "关闭";
+        function finish() {
+          if (typeof manualDialog.close === "function") manualDialog.close();
+          else { manualDialog.removeAttribute("open"); if (manualReturn) restorePosition(manualReturn); }
+        }
+        close.addEventListener("click", finish);
+        manualDialog.addEventListener("close", function () { if (manualReturn) restorePosition(manualReturn); manualReturn = null; });
+        manualDialog.addEventListener("keydown", function (event) { if (event.key === "Escape" && typeof manualDialog.showModal !== "function") { event.preventDefault(); finish(); } });
+        actions.append(select, close);
+        manualDialog.append(title, hint, area, actions);
+        document.body.appendChild(manualDialog);
+      }
+      manualReturn = rememberPosition();
+      var textArea = manualDialog.querySelector("textarea");
+      textArea.value = text;
+      if (!manualDialog.open) {
+        if (typeof manualDialog.showModal === "function") manualDialog.showModal();
+        else manualDialog.setAttribute("open", "");
+      }
+      textArea.focus({ preventScroll: true });
+      textArea.select();
+      textArea.scrollTop = 0;
+      keepScroll(manualReturn);
+    }
+
+    function alignTools() {
+      layoutFrame = 0;
+      controls.forEach(function (entry) {
+        var top = entry.heading.getBoundingClientRect().top - entry.node.getBoundingClientRect().top;
+        entry.tools.style.setProperty("--lp-node-copy-top", top + "px");
+      });
+    }
+
+    function scheduleLayout() {
+      if (!layoutFrame) layoutFrame = window.requestAnimationFrame(alignTools);
+    }
+
+    function init() {
+      if (initialized) return;
+      initialized = true;
+      var nodes = Array.from(document.querySelectorAll(".lp-node"));
+      // Complete the capture pass before adding even the first control.
+      nodes.forEach(function (node) {
+        var clone = node.cloneNode(true);
+        snapshots.set(node, clone);
+        if (node.id) snapshotsById.set(node.id, clone);
+      });
+      nodes.forEach(function (node, index) {
+        var heading = Array.from(node.children).find(function (child) { return child.tagName === "H2"; });
+        if (!heading) return;
+        node.classList.add("lp-node-copy-enabled");
+        var tools = document.createElement("div");
+        tools.className = "lp-node-copy-tools";
+        var button = document.createElement("button");
+        button.type = "button";
+        button.className = "lp-node-copy lp-node-copy-button";
+        button.textContent = "复制为 Markdown";
+        button.setAttribute("aria-label", "复制“" + heading.textContent.trim() + "”为 Markdown");
+        var status = document.createElement("span");
+        status.className = "lp-node-copy-status";
+        status.id = "lp-node-copy-status-" + (index + 1);
+        status.setAttribute("role", "status");
+        status.setAttribute("aria-live", "polite");
+        status.setAttribute("aria-atomic", "true");
+        var resetTimer;
+        button.addEventListener("click", async function () {
+          if (button.getAttribute("aria-busy") === "true") return;
+          window.clearTimeout(resetTimer);
+          button.setAttribute("aria-busy", "true");
+          status.textContent = "";
+          var text = serialize(node);
+          var copied = false;
+          try {
+            if (navigator.clipboard && typeof navigator.clipboard.writeText === "function") {
+              await navigator.clipboard.writeText(text);
+              copied = true;
+            }
+          } catch (_) { /* File URLs and browser permissions may reject writes. */ }
+          if (!copied) copied = legacyCopy(text);
+          button.removeAttribute("aria-busy");
+          if (copied) {
+            button.textContent = "已复制";
+            status.textContent = "已复制本节点的完整 Markdown。";
+            resetTimer = window.setTimeout(function () { button.textContent = "复制为 Markdown"; }, 1800);
+          } else {
+            button.textContent = "复制为 Markdown";
+            status.textContent = "自动复制不可用，已打开手动复制窗口。";
+            showManualCopy(text);
+          }
+        });
+        tools.append(button, status);
+        heading.insertAdjacentElement("afterend", tools);
+        controls.push({ node: node, heading: heading, tools: tools });
+      });
+      if ("ResizeObserver" in window) {
+        var observer = new ResizeObserver(scheduleLayout);
+        controls.forEach(function (entry) { observer.observe(entry.node); observer.observe(entry.heading); });
+      }
+      window.addEventListener("resize", scheduleLayout);
+      document.addEventListener("lp:layout", scheduleLayout);
+      scheduleLayout();
+    }
+
+    return { init: init, serialize: serialize };
+  })();
+  LP.nodeMarkdown = nodeCopy.serialize;
+  function initNodeCopy() { nodeCopy.init(); }
+
+  function $all(selector, scope) { return Array.prototype.slice.call((scope || document).querySelectorAll(selector)); }
+  function store(key, value) {
+    try {
+      if (value === undefined) return window.localStorage.getItem(key);
+      window.localStorage.setItem(key, value);
+    } catch (error) { return null; }
+    return null;
+  }
+  function parseRanges(text) {
+    var set = {};
+    String(text || "").split(",").forEach(function (part) {
+      var bounds = part.trim().split("-");
+      if (!bounds[0]) return;
+      var start = parseInt(bounds[0], 10), end = bounds.length > 1 ? parseInt(bounds[1], 10) : start;
+      for (var n = start; n <= end; n += 1) set[n] = true;
+    });
+    return set;
+  }
+  function splitIds(text) { return String(text || "").split(/[\s,]+/).filter(Boolean); }
+  /* 锚点的 id：解不开的百分号编码按原文用，坏链接不在控制台报错。 */
+  function idOf(hash) {
+    var raw = String(hash || "").replace(/^#/, "");
+    try { return decodeURIComponent(raw); } catch (error) { return raw; }
+  }
+  function plainText(node) {
+    var clone = node.cloneNode(true);
+    $all(".lp-new, .lp-oral-time, .katex-mathml, rt, rp, .lp-soon, .lp-xfer, .lp-mist, .lp-seal, .lp-live-tag, .lp-node-copy-tools", clone).forEach(function (child) { child.remove(); });
+    var number = clone.querySelector(".lp-no");
+    if (number) number.textContent = number.textContent.trim() + " ";
+    var kind = clone.querySelector(".lp-kind");
+    if (kind) kind.textContent = " · " + kind.textContent.trim();
+    return clone.textContent.replace(/\s+/g, " ").trim();
+  }
+  function readable(node) {
+    var clone = node.cloneNode(true);
+    $all("script, style, template, .lp-where, .lp-toc-inline, .lp-controls, .katex-mathml, .lp-code-head, .lp-copy-tex, rt, rp, .lp-live-tag, .lp-live-reset, .lp-mist, .lp-soon, .lp-xfer, .lp-node-copy-tools", clone).forEach(function (child) { child.remove(); });
+    return clone.textContent || "";
+  }
+  function failed(widget, error) {
+    console.error("lesson-pages widget " + (widget.id || ""), error);
+    var note = widget.querySelector(".lp-widget-error");
+    if (!note) {
+      note = document.createElement("p");
+      note.className = "lp-widget-error";
+      note.setAttribute("role", "status");
+      widget.appendChild(note);
+    }
+    note.textContent = "这个交互部件没有正常运行，正文内容不受影响。" + (error && error.message ? "（" + error.message + "）" : "");
+  }
+  function recovered(widget) {
+    var note = widget.querySelector(".lp-widget-error");
+    if (note) note.remove();
+  }
+  function readingMinutes(nodes) {
+    var cjk = 0, words = 0;
+    nodes.forEach(function (node) {
+      var text = readable(node);
+      cjk += (text.match(/[㐀-鿿]/g) || []).length;
+      words += (text.replace(/[㐀-鿿]/g, " ").match(/[A-Za-z0-9_]+/g) || []).length;
+    });
+    return Math.max(1, Math.round(cjk / 320 + words / 180));
+  }
+  function copyText(text, button, done) {
+    if (!button.lpLabel) button.lpLabel = button.textContent;
+    var finish = function (ok) {
+      button.textContent = ok ? done : "复制失败";
+      button.classList.add("is-done");
+      window.clearTimeout(button.lpReset);
+      button.lpReset = window.setTimeout(function () { button.textContent = button.lpLabel; button.classList.remove("is-done"); }, 1400);
+    };
+    var fallback = function () {
+      var area = document.createElement("textarea");
+      area.value = text; area.setAttribute("readonly", ""); area.className = "lp-visually-hidden";
+      document.body.appendChild(area); area.select();
+      var ok = false;
+      try { ok = document.execCommand("copy"); } catch (error) { ok = false; }
+      area.remove();
+      button.focus({ preventScroll: true });
+      finish(ok);
+    };
+    if (navigator.clipboard && window.isSecureContext) navigator.clipboard.writeText(text).then(function () { finish(true); }, fallback);
+    else fallback();
+  }
+  /* 数字读数：数值变化时从旧值过渡到新值，位数按新值定，过程中不跳位。 */
+  function digitsFor(value) { return Math.abs(value) >= 100 ? 0 : Math.abs(value) >= 10 ? 1 : 2; }
+  function setNumber(node, value, digits) {
+    var before = node.lpValue;
+    node.lpValue = value;
+    var format = function (v) { return LP.fmt.num(v, digits == null && typeof value === "number" && isFinite(value) ? digitsFor(value) : digits); };
+    if (node.lpFrame) window.cancelAnimationFrame(node.lpFrame);
+    var changed = before !== undefined && !(before === value || (before !== before && value !== value));
+    if (changed && !reduceMotion) {
+      node.classList.remove("is-changed"); void node.offsetWidth; node.classList.add("is-changed");
+      window.clearTimeout(node.lpFlash);
+      node.lpFlash = window.setTimeout(function () { node.classList.remove("is-changed"); }, 60);
+    }
+    if (!changed || reduceMotion || typeof value !== "number" || typeof before !== "number" || !isFinite(value) || !isFinite(before)) {
+      node.textContent = typeof value === "number" ? format(value) : LP.fmt.num(value, digits);
+      return;
+    }
+    var start = 0;
+    var step = function (time) {
+      if (!start) start = time;
+      var t = Math.min(1, (time - start) / 380), eased = 1 - Math.pow(1 - t, 3);
+      node.textContent = format(t < 1 ? before + (value - before) * eased : value);
+      if (t < 1) node.lpFrame = window.requestAnimationFrame(step);
+    };
+    node.lpFrame = window.requestAnimationFrame(step);
+  }
+  LP.setNumber = setNumber;
+
+  /* 浮层：符号释义和拨盘的取值共用一个；kind 记下是谁打开的，各自只收起自己的。 */
+  var pop = null, popFor = null, popKind = "";
+  function hidePop(kind) {
+    if (pop && (!kind || popKind === kind)) { pop.remove(); pop = null; popFor = null; popKind = ""; }
+  }
+  function showPop(target, kind, fill) {
+    if (popFor !== target || popKind !== kind) {
+      hidePop();
+      pop = document.createElement("div");
+      pop.setAttribute("role", "tooltip");
+      document.body.appendChild(pop);
+      popFor = target; popKind = kind;
+    }
+    pop.className = "lp-pop";
+    pop.textContent = "";
+    fill(pop);
+    var box = target.getBoundingClientRect(), width = pop.offsetWidth, height = pop.offsetHeight;
+    var left = Math.max(12, Math.min(window.innerWidth - width - 12, box.left + box.width / 2 - width / 2));
+    var below = box.top - height - 10 < 8;
+    pop.classList.toggle("is-below", below);
+    pop.style.setProperty("--arrow", Math.max(14, Math.min(width - 14, box.left + box.width / 2 - left)) + "px");
+    pop.style.left = (left + window.scrollX) + "px";
+    pop.style.top = ((below ? box.bottom + 10 : box.top - height - 10) + window.scrollY) + "px";
+  }
+
+  function announce(text) {
+    var region = document.getElementById("lp-status");
+    if (!region) {
+      region = document.createElement("div");
+      region.id = "lp-status"; region.className = "lp-visually-hidden"; region.setAttribute("role", "status");
+      document.body.appendChild(region);
+    }
+    region.textContent = "";
+    window.setTimeout(function () { region.textContent = text; }, 30);
+  }
+
+  function initTheme() {
+    $all("[data-lp-theme]").forEach(function (button) {
+      function isDark() {
+        var chosen = root.getAttribute("data-theme");
+        return chosen ? chosen === "dark" : !!(window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches);
+      }
+      function sync() { button.textContent = "深色"; button.setAttribute("aria-pressed", isDark() ? "true" : "false"); }
+      sync();
+      button.addEventListener("click", function () {
+        var next = isDark() ? "light" : "dark";
+        root.setAttribute("data-theme", next);
+        store("lesson-pages-theme", next);
+        sync();
+      });
+    });
+  }
+
+  function initReview() {
+    var buttons = $all("[data-lp-review]");
+    if (!buttons.length) return;
+    var exit = document.createElement("button");
+    exit.type = "button"; exit.className = "lp-review-exit"; exit.textContent = "退出只看要点"; exit.hidden = true;
+    document.body.appendChild(exit);
+    var set = function (on) {
+      root.classList.toggle("lp-review", on);
+      buttons.forEach(function (button) { button.setAttribute("aria-pressed", on ? "true" : "false"); });
+      exit.hidden = !on;
+      document.dispatchEvent(new CustomEvent("lp:layout"));
+    };
+    buttons.forEach(function (button) {
+      button.textContent = "只看要点";
+      button.addEventListener("click", function () { set(!root.classList.contains("lp-review")); });
+    });
+    exit.addEventListener("click", function () { set(false); buttons[0].focus({ preventScroll: true }); });
+    document.addEventListener("keydown", function (event) {
+      if (event.key === "Escape" && root.classList.contains("lp-review") && !document.querySelector(".lp-pop")) set(false);
+    });
+    /* 要点模式下点到或跳到被隐藏的内容时，先退出要点模式再定位。 */
+    var hidden = function (id) {
+      var target = id && document.getElementById(id);
+      return target && !target.getClientRects().length ? target : null;
+    };
+    document.addEventListener("click", function (event) {
+      var link = event.target.closest && event.target.closest('a[href^="#"]');
+      if (link && root.classList.contains("lp-review") && hidden(idOf(link.getAttribute("href")))) set(false);
+    }, true);
+    window.addEventListener("hashchange", function () {
+      var target = root.classList.contains("lp-review") && hidden(idOf(window.location.hash));
+      if (target) { set(false); target.scrollIntoView(); }
+    });
+  }
+
+  /* 新内容：上次打开以来加进来的块，包括加进旧节点里的补充和参考要点。 */
+  function initFreshness() {
+    var revOf = function (el) { return parseInt(el.getAttribute("data-rev"), 10) || 0; };
+    var stamped = $all("main [data-rev]").filter(function (el) {
+      var outer = el.parentElement.closest("[data-rev]");
+      return !outer || revOf(outer) < revOf(el);
+    });
+    var key = "lesson-pages-seen:" + pageKey;
+    var seen = parseInt(store(key) || "0", 10);
+    var since = seen && seen < rev ? seen : rev - 1;
+    freshSince = since;
+    var fresh = rev > 1 ? stamped.filter(function (el) { return revOf(el) > since; }) : [];
+    fresh.forEach(function (el) {
+      el.classList.add("is-new");
+      if (el.closest("#glossary, #sources")) return;
+      var heading = el.querySelector("h2, h3, dt, summary, figcaption b");
+      if (heading && !heading.querySelector(".lp-new")) {
+        var badge = document.createElement("span");
+        badge.className = "lp-new"; badge.textContent = "新"; badge.setAttribute("data-rev", String(revOf(el)));
+        heading.appendChild(badge);
+      }
+    });
+    var line = document.querySelector('[data-lp-auto="updated"]');
+    if (line) {
+      var targets = [];
+      var add = function (target, label) {
+        if (!target || !target.id || targets.some(function (item) { return item.target === target; })) return;
+        targets.push({ target: target, label: label });
+      };
+      fresh.forEach(function (el) {
+        var block = el.closest(".lp-main > [id]");
+        if (el.id && (el.parentElement === main || el.querySelector("h2, h3"))) {
+          var heading = el.querySelector("h2, h3");
+          var answered = el.classList.contains("lp-check") && el.querySelector('.lp-answer[data-rev="' + revOf(el) + '"]');
+          add(el, (heading ? plainText(heading) : el.id) + (answered ? " 的参考要点" : ""));
+        } else if (block && block.id === "glossary") {
+          add(block, "符号与名词");
+        } else if (block && block.id === "sources") {
+          add(block, "来源");
+        } else if (block) {
+          var title = block.querySelector("h2, h3");
+          add(block, (title ? plainText(title) : block.id) + (el.classList.contains("lp-answer") ? "的参考要点" : "里的新内容"));
+        }
+      });
+      if (targets.length) {
+        line.textContent = "本次新增：";
+        targets.slice(0, 6).forEach(function (item, i) {
+          if (i) line.appendChild(document.createTextNode("、"));
+          var link = document.createElement("a");
+          link.href = "#" + item.target.id;
+          link.textContent = item.label;
+          line.appendChild(link);
+        });
+        var reading = fresh.filter(function (el) { return !el.closest("#glossary, #sources"); });
+        if (reading.length) {
+          var minutes = document.createElement("span");
+          minutes.className = "nb"; minutes.textContent = "（约 " + readingMinutes(reading) + " 分钟）";
+          line.appendChild(minutes);
+        }
+      } else {
+        line.remove();
+      }
+    }
+    var total = document.querySelector('[data-lp-auto="minutes"]');
+    if (total && main) total.textContent = "本页约 " + readingMinutes([main]) + " 分钟";
+    var updated = document.querySelector('[data-lp-auto="date"]');
+    if (updated && meta) updated.textContent = "更新于 " + (meta.getAttribute("data-updated") || "");
+    store(key, String(rev));
+  }
+
+  /* 目录：当前位置取视口上部 30% 处最后一个块；隐藏的块不列出。 */
+  function initToc() {
+    var navs = $all(".lp-toc nav, .lp-toc-inline nav");
+    if (!navs.length) return;
+    var headings = $all(".lp-main > section:not([hidden]) > h2, .lp-main > section.lp-check > h3, .lp-main > footer:not([hidden]) > h2, .lp-main > section > .lp-addendum > h3");
+    var entries = [];
+    headings.forEach(function (heading) {
+      var parent = heading.parentElement;
+      var target = parent.id ? parent : heading;
+      if (target.id) entries.push({ target: target, sub: heading.tagName === "H3", text: plainText(heading) });
+    });
+    if (!entries.length) { $all(".lp-toc-inline").forEach(function (box) { box.hidden = true; }); return; }
+    var lists = navs.map(function (nav) {
+      var list = document.createElement("ol");
+      var links = entries.map(function (entry) {
+        var item = document.createElement("li");
+        if (entry.sub) item.className = "lp-toc-sub";
+        var link = document.createElement("a");
+        link.href = "#" + entry.target.id;
+        link.textContent = entry.text;
+        item.appendChild(link);
+        list.appendChild(item);
+        return link;
+      });
+      nav.appendChild(list);
+      return links;
+    });
+    var markers = navs.map(function (nav) {
+      var marker = document.createElement("span");
+      marker.className = "lp-toc-marker"; marker.setAttribute("aria-hidden", "true");
+      nav.querySelector("ol").appendChild(marker);
+      return marker;
+    });
+    var frame = 0, lastNode = null;
+    var update = function () {
+      frame = 0;
+      var limit = window.innerHeight * 0.3, current = -1;
+      var visible = entries.map(function (entry) { return entry.target.getClientRects().length > 0; });
+      entries.forEach(function (entry, i) {
+        if (visible[i] && entry.target.getBoundingClientRect().top <= limit) current = i;
+      });
+      if (window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 2) {
+        for (var i = entries.length - 1; i >= 0; i -= 1) { if (visible[i]) { current = i; break; } }
+      }
+      lists.forEach(function (links, n) {
+        links.forEach(function (link, i) {
+          link.setAttribute("aria-current", i === current ? "true" : "false");
+          link.classList.toggle("is-past", i < current);
+          link.parentElement.hidden = !visible[i];
+        });
+        var active = links[current];
+        markers[n].style.height = active && active.offsetHeight ? active.offsetHeight + "px" : "0";
+        if (active) markers[n].style.transform = "translateY(" + active.offsetTop + "px)";
+      });
+      var node = current >= 0 ? entries[current].target.closest(".lp-node") : null;
+      if (node !== lastNode) {
+        if (lastNode) lastNode.classList.remove("is-current");
+        if (node) node.classList.add("is-current");
+        lastNode = node;
+        document.dispatchEvent(new CustomEvent("lp:node", { detail: node }));
+      }
+    };
+    var schedule = function () { if (!frame) frame = window.requestAnimationFrame(update); };
+    window.addEventListener("scroll", schedule, { passive: true });
+    window.addEventListener("resize", schedule);
+    document.addEventListener("lp:layout", schedule);
+    update();
+  }
+
+  /* 地铁线路：骨架的每个阶段是一站。讲过的站已通车，链接到第一次讲它的节点；被几个节点讲到的是换乘站；
+     没讲的站在建、蒙着雾，上次打开以来新通车的站当场散雾。每个节点开头挂一块站牌：上一站、本站、下一站。 */
+  function initWhere() {
+    var stages = $all(".lp-stages > li[id]");
+    if (!stages.length) return;
+    var nodes = $all(".lp-node[data-stages]");
+    var teachers = {}, order = [];
+    /* 分了页的课：页头分页目录里别的页列出的节点也讲过它们的站，按页序排进来，链到那一页 */
+    var pages = $all("#lp-pager .lp-pager-list > ol > li");
+    pages.forEach(function (li) { order = order.concat(li.hasAttribute("aria-current") ? nodes : $all("a[data-stages]", li)); });
+    (pages.length ? order : nodes).forEach(function (node) {
+      splitIds(node.getAttribute("data-stages")).forEach(function (id) { (teachers[id] = teachers[id] || []).push(node); });
+    });
+    var hrefOf = function (node) { return node.id ? "#" + node.id : node.getAttribute("href"); };
+    var revOf = function (el) { return parseInt(el.getAttribute("data-rev"), 10) || 0; };
+    var taughtBy = function (stage) { return stage ? teachers[stage.id] || [] : []; };
+    /* 本页也讲这一站时链本页的节点，免得点一下就去了别的页 */
+    var mainOf = function (taught) { return taught.filter(function (node) { return node.id; })[0] || taught[0]; };
+    var nameOf = function (stage) { return stage.getAttribute("data-label") || plainText(stage.querySelector("b") || stage); };
+    var numberOf = function (node) { var no = node.querySelector(node.id ? ":scope > h2 .lp-no" : "b"); return no ? no.textContent.trim() : node.id; };
+    var mist = function (stage) {
+      var cloud = document.createElement("span");
+      cloud.className = "lp-mist"; cloud.setAttribute("aria-hidden", "true");
+      stage.appendChild(cloud);
+      return cloud;
+    };
+    stages.forEach(function (stage, index) {
+      var taught = taughtBy(stage), open = taught.length > 0;
+      stage.classList.toggle("is-open", open);
+      stage.classList.toggle("is-fog", !open);
+      stage.classList.toggle("is-interchange", taught.length > 1);
+      if (stages[index + 1]) stage.classList.toggle("to-fog", !taughtBy(stages[index + 1]).length);
+      var label = stage.querySelector("b") || stage;
+      if (open && !label.querySelector("a")) {
+        var link = document.createElement("a");
+        link.href = hrefOf(mainOf(taught));
+        while (label.firstChild) link.appendChild(label.firstChild);
+        label.appendChild(link);
+      }
+      if (taught.length > 1) {
+        var xfer = document.createElement("span");
+        xfer.className = "lp-xfer";
+        xfer.appendChild(document.createTextNode("换乘"));
+        taught.forEach(function (node) {
+          var hop = document.createElement("a");
+          hop.href = hrefOf(node); hop.textContent = "第 " + numberOf(node) + " 节";
+          xfer.appendChild(hop);
+        });
+        stage.appendChild(xfer);
+      }
+      if (!open) {
+        var soon = document.createElement("span");
+        soon.className = "lp-soon"; soon.textContent = "未开通";
+        label.appendChild(soon);
+        mist(stage);
+      } else if (rev > 1 && revOf(taught[0]) > freshSince && !reduceMotion) {
+        var cloud = mist(stage);
+        stage.classList.add("is-clearing");
+        cloud.addEventListener("animationend", function () { cloud.remove(); stage.classList.remove("is-clearing"); });
+      }
+    });
+    nodes.forEach(function (node) {
+      var indices = splitIds(node.getAttribute("data-stages")).map(function (id) {
+        for (var i = 0; i < stages.length; i += 1) if (stages[i].id === id) return i;
+        return -1;
+      }).filter(function (i) { return i >= 0; }).sort(function (a, b) { return a - b; });
+      if (!indices.length) return;
+      var sign = document.createElement("nav");
+      sign.className = "lp-where lp-sign";
+      sign.setAttribute("aria-label", "本节在全流程中的位置");
+      var end = function (stage, role) {
+        if (!stage) {
+          var none = document.createElement("span");
+          none.className = "lp-sign-end" + (role === "next" ? " lp-sign-next" : "");
+          none.innerHTML = "<small></small>";
+          none.firstChild.textContent = role === "prev" ? "起点站" : "终点站";
+          return none;
+        }
+        var taught = taughtBy(stage), hop = document.createElement("a");
+        hop.className = "lp-sign-" + role + (taught.length ? "" : " is-fog");
+        hop.href = taught.length ? hrefOf(mainOf(taught)) : "#" + stage.id;
+        hop.innerHTML = "<small></small><span></span>";
+        hop.firstChild.textContent = (role === "prev" ? "上一站" : "下一站") + (taught.length ? "" : " · 未开通");
+        hop.lastChild.textContent = nameOf(stage);
+        return hop;
+      };
+      sign.appendChild(end(stages[indices[0] - 1], "prev"));
+      var here = document.createElement("div");
+      here.className = "lp-sign-here"; here.setAttribute("aria-current", "step");
+      here.innerHTML = "<small>本站</small>";
+      indices.forEach(function (i) {
+        var name = document.createElement("span");
+        name.textContent = nameOf(stages[i]);
+        here.appendChild(name);
+      });
+      sign.appendChild(here);
+      sign.appendChild(end(stages[indices[indices.length - 1] + 1], "next"));
+      var line = document.createElement("ol");
+      line.className = "lp-sign-line"; line.setAttribute("aria-hidden", "true");
+      stages.forEach(function (stage, i) {
+        var dot = document.createElement("li");
+        if (indices.indexOf(i) >= 0) dot.className = "is-here";
+        else if (!taughtBy(stage).length) dot.className = "is-fog";
+        line.appendChild(dot);
+      });
+      sign.appendChild(line);
+      var anchor = node.querySelector(":scope > .lp-spine") || node.querySelector(":scope > h2");
+      if (anchor) anchor.insertAdjacentElement("afterend", sign);
+    });
+    /* 小地铁：宽屏目录栏顶上一条竖线路，读到哪一节，它讲的站就亮起来，之前的站算已经过。 */
+    var nav = document.querySelector(".lp-toc nav");
+    if (!nav) return;
+    var mini = document.createElement("div");
+    mini.className = "lp-minimetro";
+    mini.innerHTML = '<p>线路</p><div class="lp-minimetro-line"><i aria-hidden="true"></i><ol></ol></div>';
+    var list = mini.querySelector("ol"), pill = mini.querySelector(".lp-minimetro-line > i"), current = null;
+    var dots = stages.map(function (stage, i) {
+      var taught = taughtBy(stage), item = document.createElement("li"), hop = document.createElement(taught.length ? "a" : "span");
+      if (taught.length) hop.href = hrefOf(mainOf(taught));
+      hop.textContent = nameOf(stage);
+      item.className = taught.length ? "is-open" : "is-fog";
+      if (stages[i + 1] && !taughtBy(stages[i + 1]).length) item.classList.add("to-fog");
+      item.appendChild(hop);
+      list.appendChild(item);
+      return item;
+    });
+    nav.insertBefore(mini, nav.firstChild);
+    var light = function (node) {
+      current = node;
+      var here = node ? splitIds(node.getAttribute("data-stages")) : [], first = -1, last = -1;
+      dots.forEach(function (dot, i) {
+        var on = here.indexOf(stages[i].id) >= 0;
+        if (on) { if (first < 0) first = i; last = i; }
+        dot.classList.toggle("is-here", on);
+        if (on) dot.firstChild.setAttribute("aria-current", "step"); else dot.firstChild.removeAttribute("aria-current");
+      });
+      dots.forEach(function (dot, i) { dot.classList.toggle("is-past", first > i); });
+      /* 本节讲的几站套进胶囊，换节时滑过去 */
+      pill.style.top = (first < 0 ? 0 : dots[first].offsetTop) + "px";
+      pill.style.height = (first < 0 ? 0 : dots[last].offsetTop + dots[last].offsetHeight - dots[first].offsetTop) + "px";
+    };
+    document.addEventListener("lp:node", function (event) { light(event.detail); });
+    light(document.querySelector(".lp-node.is-current"));
+    /* 窄屏时目录栏不显示，量出来是 0；变宽后重新量一次胶囊 */
+    if (window.ResizeObserver) new ResizeObserver(function () { light(current); }).observe(list);
+  }
+
+  /* 骨架阶段链按自身宽度均匀分行，行末不留悬空箭头；太窄时竖排。 */
+  function initFlows() {
+    $all(".lp-flow").forEach(function (flow) {
+      var items = $all(":scope > li", flow);
+      items.forEach(function (item, i) { item.style.setProperty("--i", String(i)); });
+      var layout = function () {
+        var width = flow.clientWidth;
+        if (!width || !items.length) return;
+        var n = items.length, columns = Math.min(n, Math.max(1, Math.floor((width + 12) / 140)));
+        if (columns < Math.min(n, 3)) columns = 1;
+        if (columns > 1 && columns < n) columns = Math.ceil(n / Math.ceil(n / columns));
+        flow.classList.add("is-laid-out");
+        flow.classList.toggle("is-vertical", columns === 1);
+        flow.style.gridTemplateColumns = columns > 1 ? "repeat(" + columns + ", minmax(0, 1fr))" : "";
+        items.forEach(function (item, i) { item.classList.toggle("is-row-end", columns > 1 && (i + 1) % columns === 0); });
+      };
+      layout();
+      if (window.ResizeObserver) new ResizeObserver(layout).observe(flow);
+      else window.addEventListener("resize", layout);
+    });
+  }
+
+  /* 代码行：保留行内标记（符号色、mark），去掉开头的空行。 */
+  function splitLines(code) {
+    var lines = [document.createElement("span")];
+    var append = function (ancestors, textNode) {
+      var parent = lines[lines.length - 1];
+      ancestors.forEach(function (ancestor) {
+        var last = parent.lastChild;
+        if (last && last.lpSource === ancestor) { parent = last; return; }
+        var clone = ancestor.cloneNode(false);
+        clone.lpSource = ancestor;
+        parent.appendChild(clone);
+        parent = clone;
+      });
+      parent.appendChild(textNode);
+    };
+    var walk = function (node, ancestors) {
+      Array.prototype.forEach.call(node.childNodes, function (child) {
+        if (child.nodeType === 3) {
+          child.nodeValue.split("\n").forEach(function (part, i) {
+            if (i) lines.push(document.createElement("span"));
+            if (part) append(ancestors, document.createTextNode(part));
+          });
+        } else if (child.nodeType === 1) {
+          walk(child, ancestors.concat([child]));
+        }
+      });
+    };
+    walk(code, []);
+    if (lines.length > 1 && !lines[0].textContent && /^\r?\n/.test(code.textContent)) lines.shift();
+    if (lines.length > 1 && !lines[lines.length - 1].textContent) lines.pop();
+    return lines;
+  }
+
+  function initCode() {
+    $all("pre.lp-code > code").forEach(function (code) {
+      var pre = code.parentElement;
+      var start = parseInt(pre.getAttribute("data-start") || "1", 10);
+      var on = parseRanges(pre.getAttribute("data-highlight"));
+      var source = code.textContent.replace(/^\r?\n/, "").replace(/\n$/, "");
+      var lines = splitLines(code);
+      code.textContent = "";
+      lines.forEach(function (span, index) {
+        var n = start + index;
+        span.className = "lp-line" + (on[n] ? " is-on" : "");
+        span.setAttribute("data-n", String(n));
+        if (!span.textContent) span.textContent = " ";
+        code.appendChild(span);
+      });
+      var head = document.createElement("div");
+      head.className = "lp-code-head";
+      var lang = pre.getAttribute("data-lang"), title = pre.getAttribute("data-title");
+      if (lang) { var tag = document.createElement("span"); tag.className = "lp-code-lang"; tag.textContent = lang; head.appendChild(tag); }
+      if (title) { var name = document.createElement("span"); name.className = "lp-code-title"; name.textContent = title; head.appendChild(name); }
+      var copy = document.createElement("button");
+      copy.type = "button"; copy.className = "lp-code-copy"; copy.textContent = "复制";
+      copy.setAttribute("aria-label", "复制这段代码");
+      copy.addEventListener("click", function () { copyText(source, copy, "已复制"); });
+      head.appendChild(copy);
+      pre.parentNode.insertBefore(head, pre);
+    });
+    $all("ol.lp-code-notes").forEach(function (list) {
+      var before = function (el) {
+        do { el = el.previousElementSibling; } while (el && el.matches("script, style, template"));
+        return el;
+      };
+      var pre = before(list);
+      if (pre && pre.classList.contains("lp-code-src")) pre = before(pre);
+      if (!pre || !pre.matches("pre.lp-code")) return;
+      pre.classList.add("has-notes");
+      var lines = $all(".lp-line", pre), pinned = null;
+      var notes = $all(":scope > li[data-lines]", list).map(function (item, index) {
+        var set = parseRanges(item.getAttribute("data-lines"));
+        var mine = lines.filter(function (line) { return set[parseInt(line.getAttribute("data-n"), 10)]; });
+        if (mine[0] && !mine[0].hasAttribute("data-note")) mine[0].setAttribute("data-note", String(index + 1));
+        item.setAttribute("tabindex", "0");
+        return { item: item, lines: mine };
+      });
+      var focus = function (note) {
+        pre.classList.toggle("is-focusing", !!note);
+        lines.forEach(function (line) { line.classList.toggle("is-focus", !!note && note.lines.indexOf(line) >= 0); });
+        notes.forEach(function (other) {
+          other.item.classList.toggle("is-focus", other === note);
+          other.item.classList.toggle("is-pinned", other === pinned);
+        });
+      };
+      /* 宽屏时说明放进批注栏，各自对齐到所讲的第一行；返回最后一条的底边，供页边批注避让。 */
+      list.lpLayout = function (floor) {
+        if (!pre.getClientRects().length) return -Infinity;
+        var wide = window.matchMedia && window.matchMedia("(min-width: 1100px)").matches;
+        var side = wide && list.offsetParent === main && pre.offsetParent === main;
+        list.classList.toggle("is-side", side);
+        pre.style.marginBottom = "";
+        notes.forEach(function (note) { note.item.style.top = ""; });
+        if (!side) return -Infinity;
+        list.style.top = pre.offsetTop + "px";
+        var origin = list.getBoundingClientRect().top, lowest = Math.max(0, floor - origin), next = lowest;
+        var placed = notes.map(function (note) {
+          var anchor = note.lines[0] ? note.lines[0].getBoundingClientRect().top - origin - 4 : next;
+          var top = Math.max(anchor, next);
+          next = top + note.item.offsetHeight + 10;
+          return { note: note, anchor: anchor, top: top };
+        });
+        /* 被前一条挤下去的说明会越积越低；整组上移一点，把偏差平分到所讲行的上下，但不越过上方的批注。 */
+        if (placed.length) {
+          var drifts = placed.map(function (entry) { return entry.top - entry.anchor; });
+          var shift = Math.max(0, Math.min((Math.max.apply(null, drifts) + Math.min.apply(null, drifts)) / 2, placed[0].top - lowest));
+          placed.forEach(function (entry) { entry.note.item.style.top = (entry.top - shift) + "px"; });
+          next -= shift;
+        }
+        /* 说明比代码长时伸进批注栏下方；只有后面的宽图会伸进批注栏，被压到时才把正文往下推。 */
+        var bottom = origin + next;
+        var blocker = $all(".lp-figure.is-wide", main).filter(function (figure) {
+          return list.compareDocumentPosition(figure) & Node.DOCUMENT_POSITION_FOLLOWING && figure.getBoundingClientRect().top < bottom;
+        })[0];
+        if (blocker) pre.style.marginBottom = (bottom - blocker.getBoundingClientRect().top + 24) + "px";
+        return bottom;
+      };
+      notes.forEach(function (note) {
+        note.item.addEventListener("mouseenter", function () { if (!pinned) focus(note); });
+        note.item.addEventListener("mouseleave", function () { focus(pinned); });
+        note.item.addEventListener("focus", function () { focus(note); });
+        note.item.addEventListener("blur", function () { focus(pinned); });
+        note.item.addEventListener("click", function () {
+          pinned = pinned === note ? null : note;
+          focus(pinned || note);
+          if (pinned && note.lines[0]) {
+            var box = pre.getBoundingClientRect(), row = note.lines[0].getBoundingClientRect();
+            if (row.top < box.top || row.bottom > box.bottom || row.top < 0 || row.bottom > window.innerHeight) note.lines[0].scrollIntoView({ block: "nearest", behavior: reduceMotion ? "auto" : "smooth" });
+          }
+        });
+      });
+    });
+  }
+
+  /* 行间公式：悬停时可以复制 TeX 原文。 */
+  function initMath() {
+    $all("div.tex[data-tex]").forEach(function (box) {
+      var button = document.createElement("button");
+      button.type = "button"; button.className = "lp-copy-tex"; button.textContent = "复制 TeX";
+      button.addEventListener("click", function () { copyText(box.getAttribute("data-tex"), button, "已复制"); });
+      box.appendChild(button);
+    });
+  }
+
+  function initSteppers() {
+    $all(".lp-stepper").forEach(function (figure) {
+      try {
+        var steps = $all(".lp-steps > li", figure);
+        if (!steps.length) return;
+        var index = 0;
+        var controls = document.createElement("div");
+        controls.className = "lp-controls";
+        controls.innerHTML =
+          '<button type="button" class="lp-btn" data-act="prev">上一步</button>' +
+          '<span class="lp-dots" role="group" aria-label="跳到某一步"></span>' +
+          '<span class="lp-step-count"></span>' +
+          '<button type="button" class="lp-btn is-primary" data-act="next">下一步</button>' +
+          '<button type="button" class="lp-btn" data-act="play" aria-pressed="false">播放</button>';
+        var dots = controls.querySelector(".lp-dots");
+        steps.forEach(function (step, i) {
+          var dot = document.createElement("button");
+          dot.type = "button"; dot.setAttribute("data-to", String(i)); dot.setAttribute("aria-label", "第 " + (i + 1) + " 步");
+          dots.appendChild(dot);
+        });
+        var play = controls.querySelector('[data-act="play"]'), timer = 0;
+        var syncButtons = function () {
+          var last = index === steps.length - 1;
+          if (!timer) play.textContent = last ? "重播" : "播放";
+          next.classList.toggle("is-primary", !last);
+          play.classList.toggle("is-primary", last && !timer);
+        };
+        var stopPlay = function () {
+          window.clearInterval(timer); timer = 0;
+          play.setAttribute("aria-pressed", "false");
+          syncButtons();
+        };
+        var list = figure.querySelector(".lp-steps");
+        list.setAttribute("aria-live", "polite");
+        list.parentNode.insertBefore(controls, list.nextSibling);
+        var prev = controls.querySelector('[data-act="prev"]');
+        var next = controls.querySelector('[data-act="next"]');
+        var count = controls.querySelector(".lp-step-count");
+        var shown = $all("[data-show]", figure).map(function (el) { return { el: el, on: parseRanges(el.getAttribute("data-show")) }; });
+        var lines = $all("pre.lp-code .lp-line", figure);
+        var baseOn = lines.map(function (line) { return line.classList.contains("is-on"); });
+        var render = function () {
+          var n = index + 1;
+          steps.forEach(function (step, i) { step.classList.toggle("is-current", i === index); });
+          shown.forEach(function (entry) { entry.el.classList.toggle("is-shown", !!entry.on[n]); });
+          var marked = steps[index].hasAttribute("data-lines") ? parseRanges(steps[index].getAttribute("data-lines")) : null;
+          lines.forEach(function (line, i) { line.classList.toggle("is-on", marked ? !!marked[parseInt(line.getAttribute("data-n"), 10)] : baseOn[i]); });
+          count.textContent = n + " / " + steps.length;
+          syncButtons();
+          $all("button", dots).forEach(function (dot, i) {
+            dot.classList.toggle("is-past", i < index);
+            if (i === index) dot.setAttribute("aria-current", "step"); else dot.removeAttribute("aria-current");
+          });
+          var focused = document.activeElement;
+          prev.disabled = index === 0;
+          next.disabled = index === steps.length - 1;
+          if ((focused === prev && prev.disabled) || (focused === next && next.disabled)) (prev.disabled ? next : prev).focus();
+          figure.setAttribute("data-step", String(n));
+          var hook = LP.onStep[figure.id];
+          if (typeof hook === "function") {
+            try { hook(n, figure); recovered(figure); } catch (error) { failed(figure, error); }
+          }
+        };
+        var go = function (delta) {
+          var target = Math.max(0, Math.min(steps.length - 1, index + delta));
+          if (target === index) {
+            if (!reduceMotion && controls.animate) {
+              controls.animate([{ transform: "translateX(0)" }, { transform: "translateX(" + (delta > 0 ? 8 : -8) + "px)" }, { transform: "translateX(0)" }], { duration: 200, easing: "ease-out" });
+            }
+            return;
+          }
+          index = target; render();
+        };
+        controls.addEventListener("click", function (event) {
+          var button = event.target.closest("button");
+          if (!button) return;
+          var act = button.getAttribute("data-act");
+          if (act === "play") {
+            if (timer) { stopPlay(); return; }
+            if (index === steps.length - 1) { index = 0; render(); }
+            play.textContent = "暂停"; play.setAttribute("aria-pressed", "true");
+            timer = window.setInterval(function () {
+              if (index >= steps.length - 1) { stopPlay(); return; }
+              index += 1; render();
+              if (index >= steps.length - 1) stopPlay();
+            }, 2200);
+            return;
+          }
+          if (timer) stopPlay();
+          if (button.hasAttribute("data-to")) { index = parseInt(button.getAttribute("data-to"), 10); render(); }
+          if (act === "prev") go(-1);
+          if (act === "next") go(1);
+        });
+        figure.addEventListener("keydown", function (event) {
+          if (event.altKey || event.ctrlKey || event.metaKey || event.shiftKey) return;
+          if (event.target.matches("input, select, textarea")) return;
+          if (event.key === "ArrowRight") { if (timer) stopPlay(); go(1); event.preventDefault(); }
+          if (event.key === "ArrowLeft") { if (timer) stopPlay(); go(-1); event.preventDefault(); }
+          if (event.key === "Home" || event.key === "End") { if (timer) stopPlay(); index = event.key === "Home" ? 0 : steps.length - 1; render(); event.preventDefault(); }
+        });
+        if (!figure.hasAttribute("tabindex")) figure.setAttribute("tabindex", "-1");
+        render();
+        figure.classList.add("is-ready");
+      } catch (error) { failed(figure, error); }
+    });
+  }
+
+  function readValues(figure) {
+    var values = {};
+    $all("input[name], select[name]", figure).forEach(function (input) {
+      if (input.type === "radio") { if (input.checked) values[input.name] = input.value; return; }
+      if (input.type === "checkbox") { values[input.name] = input.checked; return; }
+      var number = Number(input.value);
+      values[input.name] = input.value !== "" && isFinite(number) ? number : input.value;
+    });
+    return values;
+  }
+
+  function same(a, b) {
+    if (typeof a === "number" && typeof b === "number") return Math.abs(a - b) <= 1e-9 * Math.max(1, Math.abs(a), Math.abs(b));
+    return String(a) === String(b);
+  }
+
+  function selfTest(figure, compute) {
+    var raw = figure.getAttribute("data-cases");
+    if (!raw) return;
+    var cases = JSON.parse(raw);
+    for (var i = 0; i < cases.length; i += 1) {
+      var got = compute(cases[i]["in"]) || {};
+      var want = cases[i].out || {};
+      for (var key in want) {
+        if (Object.prototype.hasOwnProperty.call(want, key) && !same(got[key], want[key])) {
+          throw new Error("自检用例 " + (i + 1) + " 的 " + key + " 应为 " + want[key] + "，实际为 " + got[key]);
+        }
+      }
+    }
+  }
+
+  function setInput(figure, name, value) {
+    var inputs = $all('[name="' + name + '"]', figure);
+    if (!inputs.length) throw new Error("预设里的 " + name + " 没有对应的控件");
+    if (inputs[0].type === "radio") {
+      var match = inputs.filter(function (input) { return input.value === String(value); })[0];
+      if (!match) throw new Error("预设 " + name + "=" + value + " 不是可选项");
+      match.checked = true;
+      return;
+    }
+    if (inputs[0].type === "checkbox") { inputs[0].checked = !!value; return; }
+    var before = inputs[0].value;
+    inputs[0].value = value;
+    if (String(inputs[0].value) !== String(value)) {
+      inputs[0].value = before;
+      throw new Error("预设 " + name + "=" + value + " 超出控件范围");
+    }
+  }
+
+  function initExplorers() {
+    $all(".lp-explorer").forEach(function (figure) {
+      try {
+        var compute = LP.explorers[figure.id];
+        var outputs = $all("[data-out]", figure);
+        if (typeof compute !== "function") {
+          if (outputs.length) failed(figure, new Error("没有注册计算函数 " + figure.id));
+          return;
+        }
+        try { selfTest(figure, compute); } catch (error) { failed(figure, error); return; }
+        var presets = $all("[data-preset]", figure);
+        var meters = outputs.filter(function (node) { return node.hasAttribute("data-bar"); }).map(function (node) {
+          var meter = document.createElement("span");
+          meter.className = "lp-meter"; meter.setAttribute("aria-hidden", "true");
+          meter.appendChild(document.createElement("i"));
+          node.insertAdjacentElement("afterend", meter);
+          return { node: node, fill: meter.firstChild, max: Number(node.getAttribute("data-bar")) };
+        });
+        var update = function () {
+          var values = readValues(figure);
+          $all("[data-value-of]", figure).forEach(function (node) {
+            node.textContent = LP.fmt.num(values[node.getAttribute("data-value-of")]);
+          });
+          var result;
+          try { result = compute(values) || {}; } catch (error) {
+            outputs.forEach(function (node) { node.textContent = "—"; });
+            failed(figure, error);
+            return;
+          }
+          recovered(figure);
+          outputs.forEach(function (node) {
+            var key = node.getAttribute("data-out");
+            if (key in result) setNumber(node, result[key]); else { node.lpValue = undefined; node.textContent = "—"; }
+          });
+          meters.forEach(function (meter) {
+            var value = result[meter.node.getAttribute("data-out")];
+            var share = typeof value === "number" && isFinite(value) && meter.max > 0 ? Math.max(0, Math.min(1, value / meter.max)) : 0;
+            meter.fill.style.width = (100 * share).toFixed(1) + "%";
+          });
+        };
+        var manual = function () {
+          presets.forEach(function (button) { button.setAttribute("aria-pressed", "false"); });
+          update();
+        };
+        figure.addEventListener("input", manual);
+        figure.addEventListener("change", manual);
+        presets.forEach(function (button) {
+          button.setAttribute("aria-pressed", "false");
+          button.addEventListener("click", function () {
+            try {
+              var preset = JSON.parse(button.getAttribute("data-preset"));
+              Object.keys(preset).forEach(function (name) { setInput(figure, name, preset[name]); });
+            } catch (error) { failed(figure, error); return; }
+            presets.forEach(function (other) { other.setAttribute("aria-pressed", other === button ? "true" : "false"); });
+            update();
+          });
+        });
+        update();
+      } catch (error) { failed(figure, error); }
+    });
+  }
+
+  /* 对照切换：按下状态的按钮组，不冒充标签页。 */
+  function initToggles() {
+    $all(".lp-toggle").forEach(function (figure) {
+      try {
+        var seg = figure.querySelector(".lp-seg");
+        if (!seg) return;
+        var buttons = $all("button[data-view]", seg);
+        buttons.forEach(function (button) {
+          $all('[data-panel="' + button.getAttribute("data-view") + '"]', figure).forEach(function (panel) {
+            if (!panel.hasAttribute("data-label")) panel.setAttribute("data-label", button.textContent.trim());
+          });
+        });
+        var thumb = document.createElement("span");
+        thumb.className = "lp-seg-thumb"; thumb.setAttribute("aria-hidden", "true");
+        seg.insertBefore(thumb, seg.firstChild);
+        seg.setAttribute("role", "group");
+        var current = buttons.filter(function (b) { return b.getAttribute("aria-selected") === "true" || b.getAttribute("aria-pressed") === "true"; })[0] || buttons[0];
+        var place = function (animate) {
+          if (!current.offsetWidth) return;
+          if (!animate) thumb.style.transition = "none";
+          thumb.style.width = current.offsetWidth + "px";
+          thumb.style.height = current.offsetHeight + "px";
+          thumb.style.transform = "translate(" + current.offsetLeft + "px," + current.offsetTop + "px)";
+          if (!animate) { void thumb.offsetWidth; thumb.style.transition = ""; }
+        };
+        var show = function (button, animate) {
+          current = button;
+          var view = button.getAttribute("data-view");
+          buttons.forEach(function (b) { b.removeAttribute("aria-selected"); b.setAttribute("aria-pressed", b === button ? "true" : "false"); });
+          $all("[data-panel]", figure).forEach(function (panel) { panel.hidden = panel.getAttribute("data-panel") !== view; });
+          figure.setAttribute("data-view", view);
+          place(animate);
+          var hook = LP.onStep[figure.id];
+          if (typeof hook === "function") { try { hook(view, figure); recovered(figure); } catch (error) { failed(figure, error); } }
+        };
+        buttons.forEach(function (button) {
+          button.addEventListener("click", function () { if (button !== current) show(button, true); });
+        });
+        show(current, false);
+        if (window.ResizeObserver) new ResizeObserver(function () { place(false); }).observe(seg);
+        else window.addEventListener("resize", function () { place(false); });
+        if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { place(false); });
+      } catch (error) { failed(figure, error); }
+    });
+  }
+
+  function initTimers() {
+    $all(".lp-timer").forEach(function (box) {
+      var limit = parseInt(box.getAttribute("data-seconds") || "90", 10);
+      box.innerHTML = '<button type="button" class="lp-btn">开始计时</button><span class="lp-timer-bar" aria-hidden="true"><span></span></span><span class="lp-timer-time">0 秒</span>';
+      var button = box.querySelector("button"), fill = box.querySelector(".lp-timer-bar > span"), time = box.querySelector(".lp-timer-time");
+      var started = 0, frame = 0;
+      var stop = function (finished) {
+        window.cancelAnimationFrame(frame); started = 0; button.textContent = "再来一次"; box.classList.remove("is-running");
+        if (finished) announce("时间到，" + limit + " 秒");
+      };
+      var tick = function () {
+        var seconds = Math.min(limit, (Date.now() - started) / 1000);
+        fill.style.width = (100 * seconds / limit) + "%";
+        time.textContent = Math.floor(seconds) + " 秒";
+        box.classList.toggle("is-over", seconds >= limit);
+        if (seconds < limit) frame = window.requestAnimationFrame(tick); else stop(true);
+      };
+      button.addEventListener("click", function () {
+        if (started) { stop(false); return; }
+        started = Date.now(); button.textContent = "停止"; box.classList.add("is-running"); tick();
+      });
+    });
+  }
+
+  /* 本地服务下提示有新版本：出错时退避重试，提示出现后停止轮询。 */
+  function initLiveUpdates() {
+    if (!/^https?:$/.test(window.location.protocol) || !meta) return;
+    var delay = 4000, banner = null;
+    var schedule = function () { window.setTimeout(poll, delay); };
+    var showBanner = function () {
+      if (banner) return;
+      banner = document.createElement("div");
+      banner.className = "lp-banner"; banner.setAttribute("role", "status");
+      banner.innerHTML = '<span>页面有新内容</span><button type="button" class="lp-btn is-primary">刷新查看</button>';
+      banner.querySelector("button").addEventListener("click", function () { window.location.reload(); });
+      document.body.appendChild(banner);
+    };
+    var poll = function () {
+      if (document.hidden) { schedule(); return; }
+      var request = new XMLHttpRequest();
+      request.open("GET", window.location.pathname + "?lp-rev", true);
+      request.onload = function () {
+        if (request.status === 404) return;
+        var latest = null;
+        try { latest = JSON.parse(request.responseText).rev; } catch (error) { return; }
+        if (request.status !== 200 || typeof latest !== "number") { delay = Math.min(delay * 2, 60000); schedule(); return; }
+        delay = 4000;
+        if (latest > rev) { showBanner(); return; }
+        schedule();
+      };
+      request.onerror = function () { delay = Math.min(delay * 2, 60000); schedule(); };
+      request.send();
+    };
+    schedule();
+  }
+
+  function initScrollMemory() {
+    var key = "lesson-pages-scroll:" + pageKey;
+    if (!window.location.hash) {
+      var saved = parseInt(store(key) || "0", 10);
+      if (saved > 0) window.scrollTo({ top: saved, left: 0, behavior: "instant" });
+    }
+    var pending = 0;
+    window.addEventListener("scroll", function () {
+      window.clearTimeout(pending);
+      pending = window.setTimeout(function () { store(key, String(Math.round(window.scrollY))); }, 300);
+    }, { passive: true });
+    /* 对话里的链接指向新块而当前页面还是旧版本时，重新加载。 */
+    window.addEventListener("hashchange", function () {
+      var id = idOf(window.location.hash);
+      if (id && !document.getElementById(id)) {
+        try { window.sessionStorage.setItem("lesson-pages-spot", "1"); } catch (error) { /* 文件页可能禁用存储 */ }
+        window.location.reload();
+      }
+    });
+  }
+
+  /* 批注只锚定已布局的前文；脚本等零盒的 viewport top=0 不是内容坐标。 */
+  function noteAnchor(note) {
+    var usable = function (el) {
+      if (!el || el === note || el.contains(note) || el.matches("script, style, template, .lp-note, ol.lp-code-notes, .lp-node-copy-tools") || el.closest("[hidden]")) return false;
+      if (!(el.compareDocumentPosition(note) & 4)) return false;
+      var rect = el.getBoundingClientRect(), visibility = window.getComputedStyle(el).visibility;
+      return el.getClientRects().length && rect.width > 0 && rect.height > 0 && visibility !== "hidden" && visibility !== "collapse";
+    };
+    var id = note.getAttribute("data-note-for");
+    var anchor = id ? document.getElementById(id.replace(/^#/, "")) : null;
+    if (usable(anchor)) return anchor;
+    anchor = note.previousElementSibling;
+    while (anchor && !usable(anchor)) anchor = anchor.previousElementSibling;
+    return anchor;
+  }
+
+  /* 宽屏时与所属内容对齐，不压住宽图，也不互相重叠。 */
+  function alignNotes() {
+    var wide = window.matchMedia && window.matchMedia("(min-width: 1100px)").matches;
+    var lastBottom = -Infinity;
+    $all(".lp-note, ol.lp-code-notes").forEach(function (note) {
+      if (note.lpLayout) { lastBottom = Math.max(lastBottom, note.lpLayout(lastBottom + 12)); return; }
+      if (!note.getClientRects().length) return;
+      note.style.marginTop = "";
+      var anchor = noteAnchor(note);
+      if (!wide || !anchor) return;
+      var natural = note.getBoundingClientRect().top;
+      var floor = anchor.classList.contains("is-wide") ? anchor.getBoundingClientRect().bottom + 12 : anchor.getBoundingClientRect().top;
+      var target = Math.max(floor, lastBottom + 12);
+      var base = parseFloat(window.getComputedStyle(note).marginTop) || 0;
+      if (target !== natural) note.style.marginTop = (base + target - natural) + "px";
+      lastBottom = note.getBoundingClientRect().bottom;
+    });
+  }
+
+  function initNotes() {
+    alignNotes();
+    var pending = 0;
+    var later = function () { window.clearTimeout(pending); pending = window.setTimeout(alignNotes, 60); };
+    if (window.ResizeObserver && main) new ResizeObserver(later).observe(main);
+    window.addEventListener("resize", later);
+    document.addEventListener("toggle", later, true);
+    document.addEventListener("lp:layout", later);
+    if (document.fonts && document.fonts.ready) document.fonts.ready.then(alignNotes);
+    window.addEventListener("beforeprint", function () {
+      $all(".lp-note").forEach(function (note) { note.style.marginTop = ""; });
+      $all("pre.lp-code").forEach(function (pre) { pre.style.marginBottom = ""; });
+    });
+    window.addEventListener("afterprint", alignNotes);
+  }
+
+  /* 数字和单位、变量和取值不拆到两行。 */
+  function initNoBreak() {
+    if (!main) return;
+    /* 行内公式后紧跟的标点不单独落到下一行行首。 */
+    $all("span.tex", main).forEach(function (formula) {
+      var next = formula.nextSibling;
+      if (!next || next.nodeType !== 3 || !/^[，。、；：！？）」』”’,.;:!?)]/.test(next.nodeValue)) return;
+      var wrap = document.createElement("span");
+      wrap.className = "nb";
+      formula.parentNode.insertBefore(wrap, formula);
+      wrap.appendChild(formula);
+      wrap.appendChild(document.createTextNode(next.nodeValue.charAt(0)));
+      next.nodeValue = next.nodeValue.slice(1);
+    });
+    var pattern = /[A-Za-z_][A-Za-z0-9_]{0,15} ?= ?[−-]?\d[\d.,]*(?: ?(?:[KMGTP]i?B|ms|μs|ns|s|B|%))?|\d[\d.,]* (?:[KMGTP]i?B|ms|μs|ns|B|%|个|张|块|行|列|层|位|秒|分钟|字节)/g;
+    var walker = document.createTreeWalker(main, NodeFilter.SHOW_TEXT, {
+      acceptNode: function (node) {
+        if (!node.parentElement || node.parentElement.closest("pre, code, script, style, .nb, svg, math, .katex, .lp-controls, .lp-where, .lp-flow, a, button, var, ruby, .lp-knob, [data-out]")) return NodeFilter.FILTER_REJECT;
+        pattern.lastIndex = 0;
+        return pattern.test(node.nodeValue) ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_SKIP;
+      }
+    });
+    var nodes = [];
+    while (walker.nextNode()) nodes.push(walker.currentNode);
+    nodes.forEach(function (node) {
+      var text = node.nodeValue, fragment = document.createDocumentFragment(), last = 0;
+      pattern.lastIndex = 0;
+      var match;
+      while ((match = pattern.exec(text))) {
+        if (match.index > last) fragment.appendChild(document.createTextNode(text.slice(last, match.index)));
+        var span = document.createElement("span");
+        span.className = "nb"; span.textContent = match[0];
+        fragment.appendChild(span);
+        last = match.index + match[0].length;
+      }
+      if (last < text.length) fragment.appendChild(document.createTextNode(text.slice(last)));
+      node.parentNode.replaceChild(fragment, node);
+    });
+  }
+
+  /* 正文里的 var：单个字母显示成数学斜体，符号表里有的标上可查释义。部件包后来画出的内容经 ui.decorate 补上。 */
+  function decorateVars(scope) {
+    var names = {};
+    $all("#glossary-list > div[id] > dt").forEach(function (term) {
+      term.textContent.split(/[、,，]\s*/).forEach(function (name) { name = name.trim(); if (name) names[name] = true; });
+    });
+    $all("var", scope).forEach(function (term) {
+      if (term.closest("pre, code, svg")) return;
+      var text = term.textContent.trim();
+      if (/^[A-Za-zα-ωΑ-Ωℓ]$/.test(text)) term.classList.add("is-math");
+      if (!term.closest("#glossary") && names[text]) term.classList.add("has-gloss");
+    });
+  }
+
+  /* 符号互认：指向带符号色的符号时，全页同色的符号一起亮起；符号表里有的符号显示释义。 */
+  function initSymbols() {
+    if (!main) return;
+    var symbolOf = function (el) {
+      var match = el && el.closest && el.closest(".lp-s1, .lp-s2, .lp-s3, .lp-s4");
+      if (!match) return null;
+      var cls = (match.getAttribute("class") || "").match(/\blp-s([1-4])\b/);
+      return cls ? { el: match, n: cls[1] } : null;
+    };
+    var glossary = {}, byColor = {};
+    $all("#glossary-list > div[id]").forEach(function (entry) {
+      var term = entry.querySelector("dt"), meaning = entry.querySelector("dd");
+      if (!term || !meaning) return;
+      term.textContent.split(/[、,，]\s*/).forEach(function (name) { name = name.trim(); if (name && !glossary[name]) glossary[name] = entry; });
+      var colored = symbolOf(term.querySelector(".lp-s1, .lp-s2, .lp-s3, .lp-s4"));
+      if (colored && !byColor[colored.n]) byColor[colored.n] = entry;
+    });
+    var hide = function () { hidePop("symbol"); };
+    var show = function (target, entry) {
+      if (popFor === target && popKind === "symbol") return;
+      showPop(target, "symbol", function (box) {
+        var term = document.createElement("b"), text = document.createElement("span");
+        term.innerHTML = entry.querySelector("dt").innerHTML;
+        text.innerHTML = entry.querySelector("dd").innerHTML;
+        box.appendChild(term); box.appendChild(text);
+      });
+    };
+    var entryFor = function (el) {
+      if (!el || !el.closest || el.closest("#glossary, .lp-pop, .lp-controls")) return null;
+      var link = el.closest('a[href^="#"]');
+      if (link) {
+        var target = document.getElementById(idOf(link.getAttribute("href")));
+        var entry = target && target.closest("#glossary-list > div[id]");
+        return entry ? { target: link, entry: entry } : null;
+      }
+      var term = el.closest("var");
+      if (term && !term.closest("pre") && glossary[term.textContent.trim()]) return { target: term, entry: glossary[term.textContent.trim()] };
+      var symbol = el.closest("pre.lp-code, .katex") ? symbolOf(el) : null;
+      if (symbol && byColor[symbol.n]) return { target: symbol.el, entry: byColor[symbol.n] };
+      return null;
+    };
+    decorateVars(main);
+    document.addEventListener("mouseover", function (event) {
+      var symbol = symbolOf(event.target);
+      if (symbol) root.setAttribute("data-lp-sym", symbol.n); else root.removeAttribute("data-lp-sym");
+      var found = entryFor(event.target);
+      if (found) show(found.target, found.entry); else if (pop && !(event.target.closest && event.target.closest(".lp-pop"))) hide();
+    });
+    document.addEventListener("focusin", function (event) {
+      var found = entryFor(event.target);
+      if (found) show(found.target, found.entry); else hide();
+    });
+    document.addEventListener("click", function (event) {
+      var found = entryFor(event.target);
+      if (found) show(found.target, found.entry);
+      else if (!(event.target.closest && event.target.closest(".lp-pop"))) hide();
+    });
+    document.addEventListener("keydown", function (event) { if (event.key === "Escape") hidePop(); });
+    window.addEventListener("scroll", hide, { passive: true });
+  }
+
+  /* 滚动出现、导师划线和检查题提示：每样只做一次；减少动态效果或不支持时全部直接显示。 */
+  function initReveal() {
+    var pens = $all(".lp-pen, .lp-ring"), checks = $all(".lp-check");
+    if (reduceMotion || !("IntersectionObserver" in window)) {
+      checks.forEach(function (check) { check.classList.add("is-in"); });
+      return;
+    }
+    var targets = $all(".lp-main > section > :is(figure, .lp-table, blockquote, .lp-addendum, div.tex), .lp-main > .lp-check, .lp-main > section > .lp-check")
+      .filter(function (el) { return !el.querySelector("ol.lp-code-notes"); });
+    root.classList.add("lp-motion");
+    targets.forEach(function (el) { el.classList.add("lp-reveal"); });
+    var later = 0;
+    var observer = new IntersectionObserver(function (records) {
+      records.forEach(function (record) {
+        if (!record.isIntersecting) return;
+        record.target.classList.add(record.target.matches(".lp-pen, .lp-ring") ? "is-drawn" : "is-in");
+        observer.unobserve(record.target);
+        window.clearTimeout(later);
+        later = window.setTimeout(function () { document.dispatchEvent(new CustomEvent("lp:layout")); }, 750);
+      });
+    }, { rootMargin: "0px 0px -8% 0px", threshold: 0 });
+    targets.concat(pens).concat(checks.filter(function (check) { return targets.indexOf(check) < 0; })).forEach(function (el) { observer.observe(el); });
+    /* 焦点进了还没淡入的块（也包括链接带到的图）：立刻显出，不过渡 */
+    document.addEventListener("focusin", function (event) {
+      var block = event.target.closest && event.target.closest(".lp-reveal:not(.is-in)");
+      if (block) { block.style.transition = "none"; block.classList.add("is-in"); observer.unobserve(block); }
+    });
+    window.addEventListener("beforeprint", function () {
+      targets.concat(checks).forEach(function (el) { el.classList.add("is-in"); });
+      pens.forEach(function (pen) { pen.classList.add("is-drawn"); });
+    });
+  }
+
+  function initProgress() {
+    var bar = document.createElement("div");
+    bar.className = "lp-progress"; bar.setAttribute("aria-hidden", "true");
+    document.body.appendChild(bar);
+    var frame = 0;
+    var update = function () {
+      frame = 0;
+      var room = document.documentElement.scrollHeight - window.innerHeight;
+      bar.style.setProperty("--p", room > 0 ? Math.min(1, Math.max(0, window.scrollY / room)).toFixed(4) : "0");
+    };
+    window.addEventListener("scroll", function () { if (!frame) frame = window.requestAnimationFrame(update); }, { passive: true });
+    window.addEventListener("resize", update);
+    update();
+  }
+
+  /* 可拖动的数字：.lp-live 段落里的 [data-knob] 可以左右拖、点按或用方向键换值，[data-out] 按注册的计算函数跟着变。
+     段落挂一个“可调”标签；指向、聚焦或按住拨盘时浮出它的全部取值；第一次读到段落时，在第一个拨盘上提示一次。 */
+  function initLive() {
+    var boxes = $all(".lp-live");
+    if (!boxes.length) return;
+    document.addEventListener("pointerdown", function (event) {
+      if (popKind.indexOf("knob") === 0 && !(event.target.closest && event.target.closest(".lp-knob"))) hidePop();
+    }, true);
+    boxes.forEach(function (box) {
+      try {
+        var compute = LP.explorers[box.id];
+        if (typeof compute !== "function") { failed(box, new Error("没有注册计算函数 " + box.id)); return; }
+        selfTest(box, compute);
+        var knobs = $all("[data-knob]", box).map(function (el) {
+          var values = String(el.getAttribute("data-values") || "").split(",").map(function (v) { return v.trim(); }).filter(Boolean);
+          var labels = el.hasAttribute("data-labels") ? el.getAttribute("data-labels").split(",").map(function (v) { return v.trim(); }) : values;
+          if (!values.length || labels.length !== values.length) throw new Error("可调的数 " + el.getAttribute("data-knob") + " 的取值与标签不一致");
+          var shown = el.textContent.trim(), index = labels.indexOf(shown);
+          if (index < 0) throw new Error("可调的数 " + el.getAttribute("data-knob") + " 的初值 " + shown + " 不在取值里");
+          return { el: el, values: values, labels: labels, index: index, initial: index };
+        });
+        if (!knobs.length) return;
+        var outputs = $all("[data-out]", box), reset = null, active = null, touched = false;
+        var valueOf = function (knob) {
+          var raw = knob.values[knob.index], number = Number(raw);
+          return raw !== "" && isFinite(number) ? number : raw;
+        };
+        var card = function (knob, intro) {
+          active = knob;
+          showPop(knob.el, intro ? "knob-intro" : "knob", function (panel) {
+            panel.classList.add("is-knob");
+            if (intro) panel.classList.add("is-intro");
+            var head = document.createElement("b"), text = document.createElement("span"), list = document.createElement("span");
+            head.textContent = intro ? "试试拖动这个数" : knob.el.getAttribute("aria-label");
+            text.textContent = intro ? "带 ‹ › 的数可以左右拖动或点按，句子里的结果会跟着重算。" : "左右拖动、点按或用方向键换值。";
+            list.className = "lp-pop-vals";
+            knob.labels.forEach(function (label, i) {
+              var item = document.createElement("i");
+              item.textContent = label;
+              if (i === knob.index) item.className = "is-on";
+              list.appendChild(item);
+            });
+            panel.appendChild(head); panel.appendChild(text); panel.appendChild(list);
+          });
+        };
+        var hideCard = function (knob) { if (popFor === knob.el) hidePop(); };
+        var update = function (byReader) {
+          var values = {};
+          knobs.forEach(function (knob) {
+            values[knob.el.getAttribute("data-knob")] = valueOf(knob);
+            knob.el.textContent = knob.labels[knob.index];
+            knob.el.setAttribute("aria-valuenow", String(knob.index));
+            knob.el.setAttribute("aria-valuetext", knob.labels[knob.index]);
+          });
+          var result;
+          try { result = compute(values) || {}; } catch (error) { failed(box, error); return; }
+          recovered(box);
+          outputs.forEach(function (node) {
+            var key = node.getAttribute("data-out");
+            if (key in result) setNumber(node, result[key]);
+          });
+          var tweaked = knobs.some(function (knob) { return knob.index !== knob.initial; });
+          box.classList.toggle("is-tweaked", tweaked);
+          if (reset) reset.hidden = !tweaked;
+          if (byReader) {
+            touched = true;
+            if (active && popFor === active.el) card(active);
+          }
+        };
+        knobs.forEach(function (knob) {
+          var el = knob.el, last = knob.values.length - 1;
+          el.setAttribute("role", "slider"); el.setAttribute("tabindex", "0");
+          el.setAttribute("aria-valuemin", "0"); el.setAttribute("aria-valuemax", String(last));
+          el.setAttribute("aria-label", el.getAttribute("data-label") || "可调的数 " + el.getAttribute("data-knob"));
+          var set = function (i) {
+            i = Math.max(0, Math.min(last, i));
+            if (i !== knob.index) { knob.index = i; update(true); }
+          };
+          var startX = 0, startIndex = 0, moved = false, dragging = false;
+          el.addEventListener("pointerenter", function (event) { if (event.pointerType === "mouse") card(knob); });
+          el.addEventListener("pointerleave", function (event) { if (event.pointerType === "mouse" && !dragging) hideCard(knob); });
+          el.addEventListener("focus", function () { card(knob); });
+          el.addEventListener("blur", function () { if (!dragging) hideCard(knob); });
+          el.addEventListener("pointerdown", function (event) {
+            if (event.button !== 0) return;
+            dragging = true; moved = false; startX = event.clientX; startIndex = knob.index; touched = true;
+            el.classList.remove("is-peek");
+            el.setPointerCapture(event.pointerId); el.classList.add("is-dragging");
+            card(knob);
+            event.preventDefault();
+          });
+          el.addEventListener("pointermove", function (event) {
+            if (!dragging) return;
+            var steps = Math.round((event.clientX - startX) / 18);
+            if (steps) moved = true;
+            set(startIndex + steps);
+          });
+          el.addEventListener("pointerup", function (event) {
+            if (!dragging) return;
+            dragging = false; el.classList.remove("is-dragging");
+            if (!moved) set(knob.index === last ? 0 : knob.index + 1);
+            if (event.pointerType === "mouse" && !el.matches(":hover")) hideCard(knob);
+          });
+          el.addEventListener("pointercancel", function () { dragging = false; el.classList.remove("is-dragging"); });
+          el.addEventListener("keydown", function (event) {
+            var step = { ArrowRight: 1, ArrowUp: 1, ArrowLeft: -1, ArrowDown: -1 }[event.key];
+            if (step) set(knob.index + step);
+            else if (event.key === "Home") set(0);
+            else if (event.key === "End") set(last);
+            else if (event.key === "Enter" || event.key === " ") set(knob.index === last ? 0 : knob.index + 1);
+            else return;
+            event.preventDefault();
+          });
+        });
+        var tag = document.createElement("span");
+        tag.className = "lp-live-tag"; tag.setAttribute("aria-hidden", "true");
+        tag.innerHTML = "可调<small>拖动或点按带 ‹ › 的数</small>";
+        box.insertBefore(tag, box.firstChild);
+        reset = document.createElement("button");
+        reset.type = "button"; reset.className = "lp-live-reset"; reset.textContent = "还原"; reset.hidden = true;
+        reset.addEventListener("click", function () { knobs.forEach(function (knob) { knob.index = knob.initial; }); update(true); });
+        box.appendChild(reset);
+        /* 正文里写下的结果应当就是初值算出来的结果；不一致时在控制台指出，供作者核对。 */
+        var written = outputs.map(function (node) { return node.textContent.trim(); });
+        update(false);
+        outputs.forEach(function (node, i) {
+          var shown = node.textContent.trim();
+          if (shown !== written[i]) console.error("lesson-pages " + box.id + "：正文写的 " + written[i] + " 与初值算出的 " + shown + " 不一致");
+        });
+        if (!("IntersectionObserver" in window)) return;
+        var first = knobs[0], wait = 0;
+        var watch = new IntersectionObserver(function (records) {
+          window.clearTimeout(wait);
+          if (touched) { watch.disconnect(); return; }
+          if (!records[records.length - 1].isIntersecting) return;
+          wait = window.setTimeout(function () {
+            if (touched || pop) return;
+            watch.disconnect();
+            card(first, true);
+            if (!reduceMotion) first.el.classList.add("is-peek");
+            window.setTimeout(function () {
+              first.el.classList.remove("is-peek");
+              if (popFor === first.el && popKind === "knob-intro") hidePop();
+            }, 6000);
+          }, 700);
+        }, { rootMargin: "-56px 0px -22% 0px", threshold: 1 });
+        watch.observe(first.el);
+      } catch (error) { failed(box, error); }
+    });
+  }
+
+  /* 学习地层：按内容加入页面的版本分层。右侧一根地层柱对齐每一块，图例里点一层只看这一层。 */
+  function initStrata() {
+    var buttons = $all("[data-lp-strata]");
+    if (!buttons.length || !main) return;
+    var revOf = function (el) { return parseInt(el.getAttribute("data-rev"), 10) || 0; };
+    var blocks = $all("[data-rev]", main).filter(function (el) {
+      var outer = el.parentElement.closest("[data-rev]");
+      return !outer || revOf(outer) < revOf(el);
+    });
+    var revs = [];
+    blocks.forEach(function (el) { if (revs.indexOf(revOf(el)) < 0) revs.push(revOf(el)); });
+    revs.sort(function (a, b) { return a - b; });
+    if (revs.length < 2) { buttons.forEach(function (button) { button.hidden = true; }); return; }
+    var colorOf = function (r) { return "var(--st" + (revs.indexOf(r) % 6 + 1) + ")"; };
+    var labelOf = function (el) {
+      if (el.closest("#glossary")) return "符号表";
+      if (el.closest("#sources")) return "来源";
+      var check = el.closest(".lp-check");
+      if (el.classList.contains("lp-answer")) return (check ? plainText(check.querySelector("h3")) : "题目") + " 的参考要点";
+      var heading = el.querySelector(":scope > h2, :scope > h3") || el.querySelector("h2, h3, figcaption b");
+      var text = heading ? plainText(heading) : el.id;
+      var state = el.classList.contains("lp-check") ? el.getAttribute("data-state") : "";
+      return text + ({ answered: "（作答）", closed: "（关闭）", replaced: "（更换）" }[state] || "");
+    };
+    var layers = revs.map(function (r) {
+      var names = [];
+      blocks.forEach(function (el) {
+        if (revOf(el) !== r) return;
+        var name = labelOf(el);
+        if (name && names.indexOf(name) < 0) names.push(name);
+      });
+      return { rev: r, names: names };
+    });
+    blocks.forEach(function (el) { el.setAttribute("data-layer", String(revOf(el))); el.style.setProperty("--layer", colorOf(revOf(el))); });
+    var column = null, legend = null, focus = null, range = null, readout = null, until = null;
+    /* 时光机：拖到早先的一层，之后加进来或改过的块先藏起来，看页面当时的样子。 */
+    var travel = function (r) {
+      until = r === revs[revs.length - 1] ? null : r;
+      if (focus !== null && until !== null && focus > until) setFocus(focus);
+      blocks.forEach(function (el) { el.classList.toggle("is-future", until !== null && revOf(el) > until); });
+      $all("li button", legend).forEach(function (button) { button.classList.toggle("is-future", until !== null && +button.getAttribute("data-rev") > until); });
+      if (range) range.style.setProperty("--p", until === null ? "100%" : (revs.indexOf(r) + .5) * 100 / Math.max(1, revs.length - 1) + "%");
+      root.classList.toggle("lp-travel", until !== null);
+      if (readout) readout.textContent = until === null ? "最新" : "第 " + r + " 层";
+      document.dispatchEvent(new CustomEvent("lp:layout"));
+      draw();
+    };
+    var draw = function () {
+      if (!column) return;
+      column.textContent = "";
+      var base = main.getBoundingClientRect().top;
+      blocks.forEach(function (el) {
+        if (!el.getClientRects().length) return;
+        var box = el.getBoundingClientRect(), band = document.createElement("i");
+        band.style.top = (box.top - base) + "px";
+        band.style.height = Math.max(4, box.height - 6) + "px";
+        band.style.setProperty("--layer", colorOf(revOf(el)));
+        band.title = "第 " + revOf(el) + " 层 · " + labelOf(el);
+        column.appendChild(band);
+      });
+    };
+    var setFocus = function (r) {
+      focus = focus === r ? null : r;
+      blocks.forEach(function (el) {
+        var mine = revOf(el) === focus;
+        el.classList.toggle("is-layer-focus", mine);
+        el.classList.toggle("is-layer-dim", focus !== null && !mine && !el.querySelector('[data-layer="' + focus + '"]'));
+      });
+      $all("li button", legend).forEach(function (button) { button.setAttribute("aria-pressed", String(focus) === button.getAttribute("data-rev") ? "true" : "false"); });
+      var first = blocks.filter(function (el) { return revOf(el) === focus && el.getClientRects().length; })[0];
+      if (first) first.scrollIntoView({ block: "start", behavior: reduceMotion ? "auto" : "smooth" });
+    };
+    var set = function (on) {
+      root.classList.toggle("lp-strata", on);
+      buttons.forEach(function (button) { button.setAttribute("aria-pressed", on ? "true" : "false"); });
+      if (on && !legend) {
+        legend = document.createElement("aside");
+        legend.className = "lp-strata-legend"; legend.setAttribute("aria-label", "学习地层"); legend.tabIndex = -1;
+        legend.innerHTML = '<h2>学习地层<button type="button">关闭</button></h2><ol></ol>';
+        layers.slice().reverse().forEach(function (layer) {
+          var item = document.createElement("li"), button = document.createElement("button");
+          button.type = "button"; button.setAttribute("aria-pressed", "false"); button.setAttribute("data-rev", String(layer.rev));
+          button.style.setProperty("--layer", colorOf(layer.rev));
+          button.innerHTML = "<b></b><small></small>";
+          button.firstChild.textContent = "第 " + layer.rev + " 层" + (layer.rev === revs[revs.length - 1] ? " · 最新" : layer.rev === revs[0] ? " · 最早" : "");
+          button.lastChild.textContent = layer.names.slice(0, 4).join("、") + (layer.names.length > 4 ? " 等 " + layer.names.length + " 处" : "");
+          button.addEventListener("click", function () {
+            /* 回看时点了更晚的一层：先把滑块拖到那一层，再只看它 */
+            if (until !== null && layer.rev > until) { range.value = String(revs.indexOf(layer.rev) + 1); travel(layer.rev); }
+            setFocus(layer.rev);
+          });
+          item.appendChild(button);
+          legend.querySelector("ol").appendChild(item);
+        });
+        legend.querySelector("h2 button").addEventListener("click", function () { set(false); });
+        var time = document.createElement("div");
+        time.className = "lp-strata-time";
+        time.innerHTML = '<label><span>回看</span><input type="range" min="1" step="1" aria-label="回看到第几层"><output>最新</output></label><small>拖到早先的层，之后加进来或改过的块先藏起来。</small>';
+        range = time.querySelector("input"); readout = time.querySelector("output");
+        range.max = String(revs.length); range.value = range.max;
+        /* 轨道按层分段着色，滑块停在各段中点 */
+        var n = Math.max(1, revs.length - 1);
+        range.style.setProperty("--strata", "linear-gradient(90deg," + revs.map(function (r, i) { return colorOf(r) + " " + Math.max(0, i - .5) * 100 / n + "% " + Math.min(n, i + .5) * 100 / n + "%"; }) + ")");
+        range.addEventListener("input", function () { travel(revs[parseInt(range.value, 10) - 1]); });
+        legend.insertBefore(time, legend.querySelector("ol"));
+        /* 紧跟页眉，Tab 顺序接在页眉按钮后 */
+        var page = document.querySelector(".lp-page");
+        if (page) page.parentNode.insertBefore(legend, page); else document.body.appendChild(legend);
+        column = document.createElement("div");
+        column.className = "lp-strata-col"; column.setAttribute("aria-hidden", "true");
+        main.appendChild(column);
+      }
+      if (!on && legend && legend.contains(document.activeElement)) buttons[0].focus({ preventScroll: true });
+      if (legend) { legend.hidden = !on; column.hidden = !on; }
+      if (!on && focus !== null) setFocus(focus);
+      if (!on && range && range.value !== range.max) { range.value = range.max; travel(revs[revs.length - 1]); }
+      if (on) { draw(); legend.focus({ preventScroll: true }); }
+    };
+    buttons.forEach(function (button) {
+      button.addEventListener("click", function () { set(!root.classList.contains("lp-strata")); });
+    });
+    document.addEventListener("keydown", function (event) {
+      if (event.key === "Escape" && root.classList.contains("lp-strata") && !document.querySelector(".lp-pop")) set(false);
+    });
+    /* 回看时跳去一个还藏着的块（页内链接或对话里的链接），先回到最新一层再定位，和只看要点一样。 */
+    var arrive = function (hash, scroll) {
+      var id = idOf(hash), target = until !== null && id && document.getElementById(id);
+      if (!target || !target.closest(".is-future")) return;
+      range.value = range.max;
+      travel(revs[revs.length - 1]);
+      if (scroll) target.scrollIntoView();
+    };
+    document.addEventListener("click", function (event) {
+      var link = event.target.closest && event.target.closest('a[href^="#"]');
+      if (link) arrive(link.getAttribute("href"), false);
+    }, true);
+    window.addEventListener("hashchange", function () { arrive(window.location.hash, true); });
+    var later = 0;
+    var redraw = function () { window.clearTimeout(later); later = window.setTimeout(function () { if (root.classList.contains("lp-strata")) draw(); }, 80); };
+    window.addEventListener("resize", redraw);
+    document.addEventListener("lp:layout", redraw);
+    if (window.ResizeObserver) new ResizeObserver(redraw).observe(main);
+  }
+
+  /* 风格：朱批用汉字节号和题目后的印章，蓝图用标题栏里的图号与版次；讲义不加任何东西。 */
+  function initLook() {
+    var look = root.getAttribute("data-look");
+    if (look === "vermilion") {
+      var digits = "零一二三四五六七八九";
+      var cn = function (n) {
+        if (n < 10) return digits[n];
+        if (n < 20) return "十" + (n % 10 ? digits[n % 10] : "");
+        return digits[Math.floor(n / 10)] + "十" + (n % 10 ? digits[n % 10] : "");
+      };
+      $all(".lp-no").forEach(function (no) {
+        var n = parseInt(no.textContent, 10);
+        if (n > 0 && n < 100) no.setAttribute("data-cn", cn(n));
+      });
+      var title = document.querySelector(".lp-title"), crumb = document.querySelector(".lp-crumb");
+      if (title && !title.querySelector(".lp-seal")) {
+        var lesson = crumb && crumb.textContent.match(/第\s*(\d{1,2})\s*课/);
+        var seal = document.createElement("span");
+        seal.className = "lp-seal"; seal.setAttribute("aria-hidden", "true");
+        (lesson ? "第" + cn(parseInt(lesson[1], 10)) + "课" : "讲义").split("").forEach(function (ch) {
+          var cell = document.createElement("span");
+          cell.textContent = ch;
+          seal.appendChild(cell);
+        });
+        title.appendChild(seal);
+      }
+    }
+    var sheet = document.querySelector(".lp-meta");
+    if (look === "blueprint" && sheet && meta && !sheet.querySelector(".lp-meta-x")) {
+      [["图号", pageId.toUpperCase()], ["版次", "R" + rev]].forEach(function (pair) {
+        var cell = document.createElement("p");
+        cell.className = "lp-meta-x"; cell.setAttribute("data-k", pair[0]); cell.textContent = pair[1];
+        sheet.appendChild(cell);
+      });
+    }
+  }
+
+  /* 部件包：lesson_pages.py 只把页面用到的包写成 #lp-pack-* 样式与脚本；包把 { name, init } 放进
+     LessonPage.packs，这里依次调用 init(ui)，ui 是包能用的公共能力。 */
+  function inView(el, fn, margin) {
+    if (!("IntersectionObserver" in window)) { fn(); return; }
+    var watch = new IntersectionObserver(function (records) {
+      if (!records.some(function (record) { return record.isIntersecting; })) return;
+      watch.disconnect();
+      fn();
+    }, { rootMargin: margin || "0px 0px -15% 0px" });
+    watch.observe(el);
+  }
+  function initPacks() {
+    var ui = {
+      $all: $all, failed: failed, recovered: recovered, pop: showPop, unpop: hidePop, setNumber: setNumber, announce: announce,
+      copyText: copyText, plainText: plainText, parseRanges: parseRanges, inView: inView, reduceMotion: reduceMotion, decorate: decorateVars,
+      layout: function () { document.dispatchEvent(new CustomEvent("lp:layout")); }
+    };
+    (LP.packs || []).forEach(function (pack) {
+      try { pack.init(ui); } catch (error) { console.error("lesson-pages pack " + pack.name, error); }
+    });
+  }
+
+  /* 深链聚光：从对话里的链接打开页面（或已打开的页面被这样的链接带到别处）时，四周暗下来、目标亮起两秒多。
+     页内链接、前进后退和普通刷新都不触发，看过的历史记录记一笔。光圈画在浮层里，不改版面；按任意处提前收起。 */
+  function initSpot() {
+    var inPage = 0, ring = null, frame = 0, timer = 0;
+    var mark = function (key) {
+      try { var state = {}; state[key] = true; history.replaceState(Object.assign({}, history.state, state), ""); } catch (error) { /* 不能记就算了 */ }
+    };
+    var clear = function () {
+      window.cancelAnimationFrame(frame); window.clearTimeout(timer);
+      if (ring) { ring.remove(); ring = null; }
+    };
+    var fade = function () {
+      if (!ring) return;
+      ring.classList.add("is-out");
+      window.clearTimeout(timer);
+      timer = window.setTimeout(clear, reduceMotion ? 0 : 650);
+    };
+    var spot = function (restored) {
+      var id = idOf(window.location.hash), target = id && document.getElementById(id);
+      if (!target || !main || !main.contains(target) || !target.getClientRects().length) return;
+      /* 刷新后浏览器恢复的是旧的滚动位置：只有这时才把目标带进屏幕；平常的跳转由浏览器自己滚过去，不和它抢。 */
+      var box = target.getBoundingClientRect();
+      if (restored && (box.top < 20 || box.top > window.innerHeight - 48)) target.scrollIntoView({ block: "start", behavior: "instant" });
+      /* 高的节圈标题；标题不在屏幕里就圈整节 */
+      var head = target.matches("section") && box.height > window.innerHeight * 0.7 && target.querySelector(":scope > h2, :scope > h3");
+      var place = head && head.getBoundingClientRect();
+      if (place && place.top >= 0 && place.bottom <= window.innerHeight) target = head;
+      clear();
+      mark("lpSpotted");
+      ring = document.createElement("div");
+      ring.className = "lp-spot"; ring.setAttribute("aria-hidden", "true");
+      ring.innerHTML = "<span>链接指到这里</span>";
+      document.body.appendChild(ring);
+      var follow = function () {
+        var box = target.getBoundingClientRect();
+        ring.style.transform = "translate(" + (box.left - 10) + "px, " + (box.top - 8) + "px)";
+        ring.style.width = (box.width + 20) + "px";
+        ring.style.height = (box.height + 16) + "px";
+        ring.classList.toggle("is-tight", box.top < 20);
+        frame = window.requestAnimationFrame(follow);
+      };
+      follow();
+      timer = window.setTimeout(fade, 2600);
+    };
+    document.addEventListener("click", function (event) {
+      if (event.target.closest && event.target.closest('a[href^="#"]')) inPage = Date.now();
+    }, true);
+    document.addEventListener("pointerdown", fade, true);
+    /* 浏览器还在滚向锚点（或恢复刷新前的位置）：等滚动停稳再量，最多等两秒。 */
+    var settle = function (done) {
+      var last = -1, still = 0, began = Date.now();
+      var check = function () {
+        still = window.scrollY === last ? still + 1 : 0;
+        last = window.scrollY;
+        if (still >= 3 || Date.now() - began > 2000) done(); else window.setTimeout(check, 60);
+      };
+      check();
+    };
+    window.addEventListener("hashchange", function () {
+      if (Date.now() - inPage < 800) { mark("lpInPage"); return; }
+      if (history.state && (history.state.lpInPage || history.state.lpSpotted || history.state.lpSeen)) return;
+      settle(function () { spot(false); });
+    });
+    var arrival = window.performance && performance.getEntriesByType ? performance.getEntriesByType("navigation")[0] : null;
+    var wanted = false;
+    try { wanted = window.sessionStorage.getItem("lesson-pages-spot") === "1"; window.sessionStorage.removeItem("lesson-pages-spot"); } catch (error) { wanted = false; }
+    var fresh = !arrival || arrival.type === "navigate";
+    var seen = history.state && (history.state.lpSpotted || history.state.lpSeen);
+    if (window.location.hash && (wanted || (fresh && !seen))) window.setTimeout(function () { settle(function () { spot(wanted); }); }, 200);
+    else mark("lpSeen");
+  }
+
+  function init() {
+    $all(".lp-glossary").forEach(function (section) { if (!section.querySelector("dt")) section.hidden = true; });
+    $all(".lp-sources").forEach(function (section) { if (!section.querySelector("li")) section.hidden = true; });
+    var steps = [initNodeCopy, initTheme, initReview, initFreshness, initLook, initToc, initWhere, initFlows, initCode, initMath, initNoBreak, initSteppers, initExplorers, initLive, initPacks, initToggles, initTimers, initSymbols, initReveal, initProgress, initStrata, initNotes, initSpot, initLiveUpdates, initScrollMemory];
+    steps.forEach(function (step) {
+      try { step(); } catch (error) { console.error("lesson-pages " + step.name, error); }
+    });
+  }
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init);
+  else window.setTimeout(init, 0);
+})();
+</script>
+</body>
+</html>

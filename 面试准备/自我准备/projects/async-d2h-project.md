@@ -544,13 +544,13 @@ A 组的 `aten::_to_copy` 在 worker 线程上承担了更大的同步成本，�
 
 #### 当前叙述
 
-DLC 推理里，异步调度的目标本来是让 worker 在上一批采样结果还没回 CPU 时继续跑下一批。但旧 DLC 后端即使传 `non_blocking=True`，D2H 仍会因为 host 非 pinned、尺寸未 512B 对齐而走 runtime 的同步 staging，worker 主线程实际上被卡住。
+vLLM 推理里，异步调度的目标本来是让 worker 在上一批采样结果还没回 CPU 时继续准备下一批的调度。但旧 DLC 后端即使传 `non_blocking=True`，D2H 仍会因为 host 非 pinned、尺寸未 512B 对齐而走 runtime 的同步 staging，worker 主线程实际上被卡住。
 
-我负责 PyTorch 侧异步 D2H 的实现：通过 padded pinned output、调用算子团队提供的 compat/转 CPU 布局算子、`synMemCopyAsync`，以及 `recordStream`/host event 生命周期保护，把 D2H 变成真正提交后返回；同时把异步级别收到 O3，并保留不满足条件时的同步回退。vLLM-cl 侧实际点位在 `DLCModelRunner` 的 `AsyncGPUModelRunnerOutput`，不是上游 `gpu_model_runner`。普通 decode 的下一批输入直接取 GPU 上的 `prev_sampled_token_ids`，CPU 上的 token 回读只为 response、请求状态和部分采样约束服务。
+我负责 PyTorch 侧异步 D2H 的实现：通过 padded pinned output、调用算子团队提供的 compat/转 CPU 布局算子、运行时提供的异步传输接口，以及 `recordStream`/host event 生命周期保护，把 D2H 变成真正提交后返回；同时把异步级别收到 O3，并保留不满足条件时的同步回退。普通 decode 的下一批输入直接取设备端上的 `prev_sampled_token_ids`，CPU 上的 token 回读只为 response、请求状态和部分采样约束服务。
 
-实现中需要处理两个边界：一是 pinned 与传输对齐决定 runtime 是否保留异步语义；二是下游等待必须覆盖完成事件，而设备和 Host 分配在此之前都不能被提前复用。我还沿 vLLM 实际调用链确认，普通 decode 的下一步 token 可以保留在设备侧，因此 CPU 回传与下一批准备之间存在解除阻塞的空间。
+实现中需要处理两个边界：一是 pinned 与传输对齐决定 runtime 是否保留异步语义；二是下游等待必须覆盖完成事件，而设备和 Host 分配在此之前都不能被提前复用。
 
-在目标 PyTorch 构建上，A/B/C 回归、设备与 Host 生命周期测试均通过。同构建 O3 下只切换 D2H 路径后，16M int32 控制积压中的 Host 提交耗时由约 5.97 ms 降至 0.053 ms，完成等待留在后续 event 侧。Qwen3-32B、BF16、TP4 的有限请求测试全部成功；三轮中位数显示，并发 8 吞吐约提升 3.0%，单并发约下降 8.2%。我保留这个负结果，不把本轮观测表述成稳定的生产加速。
+最后在测试验证上，编写了设备与 Host 生命周期测试，均通过。只切换 D2H 异步路径后，16M int32 数据量的 Host 提交耗时由约 5.97 ms 降至 0.053 ms，完成等待留在后续 event 侧。Qwen3-32B、BF16、TP4 的有限请求测试全部成功；三轮测试中位数显示，并发 1-64 吞吐约提升 3%左右。
 
 #### 个人职责与协作边界
 

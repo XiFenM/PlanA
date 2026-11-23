@@ -1,9 +1,10 @@
 # 高级 AI 框架开发工程师 · 八周证据冲刺计划
 
 > - 创建日期：2026-08-08
-> - 最近调整：2026-11-10（开源从 W4 起小步推进，W6 接续 AMD 实操与补测；正式 Mock 统一为 W4 推理第一场、W7 训练场、W8 推理第二场及必要复测；总预算和既有技术目标不变）
+> - 最近调整：2026-11-23（W4a 确认五单元划分，第五单元以 GLM-5.3-Flash 的 MTP 衔接已有项目，见 §9A.2）
+> - 2026-11-10 调整：开源从 W4 起小步推进，W6 接续 AMD 实操与补测；正式 Mock 统一为 W4 推理第一场、W7 训练场、W8 推理第二场及必要复测；总预算和既有技术目标不变。
 > - 前次范围调整：2026-09-29（工时改为排期参考、推进只看能力门；按 Claim 复核补入 W3 分页 KV 读取与模型结构差异表、W4 调度补验、多模态链路与量化对照实验、W5 Autograd、W7 Ring／Tree 推导，并在 W4 后插入 W4a：SGLang 与 Speculative Decoding）
-> - 周进度：[W1](八周冲刺进度/W1.md) · [W2](八周冲刺进度/W2.md) · [W3](八周冲刺进度/W3.md) · [W4](八周冲刺进度/W4.md) · [W5](八周冲刺进度/W5.md) · [W6](八周冲刺进度/W6.md) · [W7](八周冲刺进度/W7.md) · [W8](八周冲刺进度/W8.md)
+> - 周进度：[W1](八周冲刺进度/W1.md) · [W2](八周冲刺进度/W2.md) · [W3](八周冲刺进度/W3.md) · [W4](八周冲刺进度/W4.md) · [W4a](八周冲刺进度/W4a.md) · [W5](八周冲刺进度/W5.md) · [W6](八周冲刺进度/W6.md) · [W7](八周冲刺进度/W7.md) · [W8](八周冲刺进度/W8.md)
 > - Program 状态：[见唯一状态区](#program-plana-jd-ai-framework-4w)；精确学习位置只由[唯一学习断点](学习断点.md)裁决
 > - 目标岗位：[本地复合 JD](<../Job Description/AI框架方向/高级AI框架开发工程师.md>) / [市场岗位需求索引](<../Job Description/AI框架方向/市场岗位需求/README.md>)
 > - 诊断依据：[AMD AI 框架开发工程师胜任力诊断](../面试准备/自我准备/AMD-AI框架开发工程师胜任力诊断-2026-08-29.md)
@@ -21,7 +22,7 @@
 - **Program ID**：`plana-jd-ai-framework-4w`。该 ID 为稳定历史标识，不因计划延长而更改。
 - **状态**：`active`。
 - **当前位置**：当前前台课程与下一步只见[唯一学习断点](学习断点.md)；本文件不记录当前课、题目或下一动作。
-- **课程划分**：W2 按 2026-09-26 确认的四课划分推进；W3 按 [2026-11-02 确认的四课安排](八周冲刺进度/W3-学习计划.md#w3-plan-confirmation-20261102)组织；W4 按 [2026-11-09 确认的六课安排](八周冲刺进度/W4-学习计划.md#w4-plan-confirmation-20261109)组织。每课开课前取得用户授权；各课阶段、证据与结课结论只见 [`八周冲刺进度/`](八周冲刺进度/) 下的周进度页与验收记录。
+- **课程划分**：W2 按 2026-09-26 确认的四课划分推进；W3 按 [2026-11-02 确认的四课安排](八周冲刺进度/W3-学习计划.md#w3-plan-confirmation-20261102)组织；W4 按 [2026-11-09 确认的六课安排](八周冲刺进度/W4-学习计划.md#w4-plan-confirmation-20261109)组织。W4a 按[2026-11-23 确认的五单元安排](八周冲刺进度/W4a.md#w4a-units-20261123)组织。每课开课前取得用户授权；各课阶段、证据与结课结论只见 [`八周冲刺进度/`](八周冲刺进度/) 下的周进度页与验收记录。
 - **父 Program**：[主计划](主计划.md#program-plana-ai-infra-interview-20w)。
 - **返回位置**：[启动前返回快照](#161-启动前返回快照)。
 - **连续推进**：未授予；每周验收后由用户决定继续、暂停、调整或返回主线。
@@ -49,7 +50,11 @@ Lesson 安排：
 |  4.4 | `plana-jd-w4-multimodal-position`       | W4 单元四：多模态链路与 RoPE／M-RoPE   | 计划内 |
 |  4.5 | `plana-jd-w4-case-evidence-audit`       | W4 单元五：三张 Case Card 的证据审计   | 计划内 |
 |  4.6 | `plana-jd-w4-mock-readiness`            | W4 单元六：综合 Mock 与投递门槛复核   | 计划内 |
-|   4a | `plana-jd-w4a-sglang-specdec`           | SGLang 与 Speculative Decoding        | 计划内 |
+|   4a | `plana-jd-w4a-sglang-specdec`           | W4a 单元一：RadixAttention 与前缀缓存 | 计划内 |
+| 4a.2 | `plana-jd-w4a-sglang-scheduling`        | W4a 单元二：SGLang 调度与组批 | 计划内 |
+| 4a.3 | `plana-jd-w4a-structured-output`        | W4a 单元三：结构化输出 | 计划内 |
+| 4a.4 | `plana-jd-w4a-specdec-theory`           | W4a 单元四：推测解码的正确性与收益 | 计划内 |
+| 4a.5 | `plana-jd-w4a-glm53-mtp`                | W4a 单元五：从权重加载到 GLM-5.3-Flash 的 MTP | 计划内 |
 |    5 | `plana-jd-w5-pytorch-cpp-runtime`       | PyTorch custom op、C++ 与异步 runtime | 计划内 |
 |    6 | `plana-jd-w6-amd-rocm-upstream`         | ROCm/HIP/RCCL 迁移与上游工件          | 计划内 |
 |    7 | `plana-jd-w7-training-systems-literacy` | 训练框架与分布式训练系统素养          | 计划内 |
@@ -492,7 +497,7 @@ W4 之后插入的有效周，承接 Claim 复核中 SGLang（`CL04`）、Specul
 2. 追结构化输出：语法约束如何在采样前生成 token mask，以及它对吞吐的影响。
 3. 追调度主线：批次如何形成、prefill 与 decode 如何调度，以及与 vLLM Scheduler 的差异；不追完整 scheduler 实现。
 4. 推导 Speculative Decoding 的加速比与接受率、草稿成本的关系，并说明拒绝采样为何保持目标分布。
-5. 在 vLLM 或 SGLang 的固定源码中追 draft、verify 与接受的执行路径；以 DeepSeek 的 MTP 作为草稿方法对照，说明 MTP 的训练目标与推理用法。
+5. 在固定源码中追 draft、verify 与接受结果的执行路径。以 [GLM-5.3-Flash 的 MTP](八周冲刺进度/W4a.md#w4a-unit-5-glm-mtp)衔接已交付的文本推理项目，比较 MTP 与独立草稿模型的推理用法。DeepSeek-V3 的 MTP 训练目标作为原理对照。
 
 ### 9A.3 验收门
 
