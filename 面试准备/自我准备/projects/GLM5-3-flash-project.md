@@ -10,12 +10,12 @@
 
 | 字段 | 当前信息 |
 |---|---|
-| 开发与交付时间 | 2026-09-01 至 2026-10-27；截至 2026-11-02 已确认生产上线，实际首次上线日期本人不掌握 |
+| 开发与交付时间 | 原项目 2026-09-01 至 2026-10-27；截至 2026-11-02 已确认生产上线；MTP／prefix-cache／长上下文扩展验证持续至 2026-11-23。实际首次上线日期本人不掌握 |
 | 角色 | AI 框架开发工程师；独立负责本模型在既有 vLLM 硬件插件中的适配开发、插件侧性能优化、排障与发布验证 |
 | 模型与部署 | GLM-5.3-Flash-Mix，AWQ 4-bit 权重、BF16 激活，单机 8 卡（自研 AI 加速芯片），TP=8，`block_size=256`。单机配置由本人于 2026-11-20 确认 |
 | 最终软件基线 | vLLM `0.30.1rc0`、PyTorch `2.5.0` 芯片后端、自研 vLLM 插件与 AOT 算子库；模型 revision、插件及后端发布标识待补充 |
-| 发布执行路径 | 文本推理、V1 runner、`FULL_DECODE_ONLY`；decode 使用 graph，prefill／chunked prefill 使用 eager |
-| 发布范围之外 | MTP、多模态、FP8、V2 runner、计算与通信重叠；MoE router 仍使用 BF16 logits |
+| 发布执行路径 | 原生产发布为文本推理、V1 runner、`FULL_DECODE_ONLY`，decode 使用 graph、prefill／chunked prefill 使用 eager；后续扩展已打通 MTP、prefix-cache、async scheduling 与多 group 缓存池 |
+| 发布范围之外 | 原云服务发布不含 MTP、多模态、FP8、V2 runner、计算与通信重叠；MTP／prefix-cache 作为后续扩展完成主要链路验证，但不改写原生产交付结论。MoE router 仍使用 BF16 logits |
 | 交付与精度结果 | 云服务团队正式生产上线；OpenCompass 单轮、每题一次生成的 AIME26 结果为 30/30，与团队在 8 卡 H100 上运行同一模型的准确率一致 |
 | 验收目标 | AIME 数据集准确率与 CUDA 机器测试一致；单请求输出 token 间隔低于 70 ms |
 | 工具 | Python、C++、`py-spy`、PyTorch／vLLM profiler、芯片 profiler、隔离微基准、`pytest` |
@@ -52,7 +52,7 @@
 
 我在插件中接入 KDA、KPool、mHC 和 512 维 NoPE 稀疏 MLA，处理模型与 inner model 的独立命名空间，补齐 `gate_up`、`fused_qkv_a`、`wk_weights`、`in_proj_qkvbfg_a` 等打包映射，避免继承旧模型映射后误量化 Dense 层。
 
-编写 safetensors header／index 静态审计脚本，核对 111,346 个权重 key 的映射与跳过规则；其中 889 个 MTP key 因本次不启用 MTP 被明确跳过。审计记录无 missing、unexpected 或重复目标，不能据此表述为所有 checkpoint 结构均已启用。
+编写 safetensors header／index 静态审计脚本，核对 111,346 个权重 key 的映射与跳过规则；原生产基线因不启用 MTP，明确跳过 889 个 MTP key；后续 MTP 扩展单独加载第 45 层并完成 target/drafter 权重共享验证。审计记录无 missing、unexpected 或重复目标，不能据此表述为所有 checkpoint 结构均已在原发布中启用。
 
 适配阶段先以 CPU FP32 参考和 native 实现检查语义，再逐项验收融合算子。旧档案已记录的 KPool“逐 head 点积 → ReLU → 按 head 加权”及稀疏 MLA 的 `1/sqrt(256)` scale 修正继续保留。
 
@@ -392,6 +392,163 @@ dummy run 改用 `PAD_SLOT_ID(-1)` 跳过写入、使用 scratch block、在 gat
 
 2026-10-26 至 2026-10-27 完成 replay cache 复测、block numel 校验修复、发布基线与部署文档。云服务团队完成正式生产上线并反馈端到端评测结果。总结记录累计形成 50 余份设计、验证、排障及交付文档，40 余个探针脚本；名称与用途见总结的证据索引，原始路径不在本档案展开。
 
+#### 9. 支持 MTP：第 45 层 MTP、spec verify 与 graph
+
+GLM-5.3-Flash 的 MTP 不是独立 draft 模型，而是 checkpoint 自带的第 45 层
+Multi-Token Predictor。它复用 target checkpoint，通过 EAGLE/MTP proposer 在每次
+target decode 后生成 draft token，再由 target 对 `1 + num_spec` 行做 verify。
+第 45 层不是 KDA 层，内部是 MLA/KPool indexer、288-expert MoE、`enorm`/`hnorm`/
+`eh_proj` 和 shared head，BF16 权重约 13.84 GiB；MTP 层必须保留 KPool indexer
+语义，不能退化成纯 dense MLA。
+
+支持路径分为四层：
+
+- **模型与配置**：注册 `Glm5NextMTPModel`，把 `glm5_next` 探测为
+  `glm5_next_mtp`，复用 target embedding 与 lm_head；MTP 层按
+  `spec_step_idx % num_mtp_layers` 复用模块。
+- **draft/verify 运行时**：target forward/sample → proposer 重排输入
+  （`[a1,b1,b2,...]` 到 `[b1,b2,...]`）→ MTP drafter forward → scheduler 写
+  `spec_token_ids` → target verify → rejection sampler 统计 accepted token。
+- **KDA spec 状态**：conv update 接收多 token、`query_start_loc`、
+  `num_accepted_tokens`，`state_len = 3 + num_spec`；recurrent decode 接收
+  `[B, next_n]` state indices 并按 accepted 数提交快照。
+- **KPool spec 事务**：verify 前记录 tail/pool touched rows，采样后按 accepted
+  prefix 回滚并重放 `#07 append+compress`；accepted=0、部分接受、全部接受走同一
+  transaction。snapshot/restore 必须在 graph replay 外执行，不能放进被捕获的 graph。
+
+当前验证主线是 `num_speculative_tokens=1/2`；`num_spec=2` 作为发布候选配置，
+1M/C1 容量验证也使用 2。`num_spec=3/5` 只做过探索性测试，尚未形成正式验收结论。
+
+##### 9.1 代表性问题一：MTP token 分叉与 MoE FP32 累加顺序
+
+早期 MTP 在 8/64-token 短 prompt 上与 no-MTP baseline 分叉。逐层对比后，首个稳定
+差异出现在 layer 11 的 sparse MLA attention 输出；继续向后定位到 MoE 的 expert
+分组和 FP32 reduction 顺序会随 batch/分区变化。即使改用 CPU collective，也不能
+修复，说明不是单一通信后端问题。
+
+最终处理是把每个 token 的 expert 累加顺序固定下来，避免分区变化改变 FP32 reduction
+顺序；通信侧另行推进确定性 allreduce（`DLCCL_ORDERED_BF16_ALLREDUCE=1`）。验证时
+以“no MTP + eager + ordered allreduce”为正确基线，比较
+`num_spec=2 + graph + ordered allreduce`，而不是拿不同 collective 实现直接对比。
+修复后 token 分叉关闭，MTP eager 固定请求 50/50、graph 20/20，并完成 1/8/16/32/64
+in-flight 并发和 17K/34K/64.6K 长上下文 marker 验证。
+
+这个案例的排查方法值得保留：先用固定 seed、greedy 和逐层输出找到首个差异层；
+再区分模型语义、MoE 路由、FP32 累加顺序和 allreduce 顺序；最后用确定性基线和
+A/B 分组验证，而不是只看最终文本是否相同。
+
+##### 9.2 代表性问题二：`num_spec > 1` + graph 的 qsl 错误
+
+`num_speculative_tokens=2` + `FULL_DECODE_ONLY` graph 在 capture 阶段报：
+
+```text
+kpool_slot_mapping: query_start_loc[0] must be 0, got 16
+```
+
+Python 侧原始 `query_start_loc` 和传给 KPool 的参数是正确的；问题出在
+`compute_kpool_slot_mappings_dlc()` 在 capture 内创建临时 `starts = qsl.clone()`，
+host check 立即做 D2H 时 clone 尚未 materialize，读到 graph pool 的旧数据
+`[8,24,...]`。在 KPool kernel 内临时加 qsl 断言/打印后，capture 和 replay 均未
+触发，进一步确认 kernel 实际输入正确，错误发生在 capture-time host check。
+
+修复方向不是关掉检查，而是把 target/verify 和每个 draft step 的 qsl、seq_lens、
+starts staging 预置为 per-graph-bucket 的持久 buffer，在 capture 前完成初始化和
+padding；capture 内只复用，不再 clone/copy 临时 buffer。host check 改为
+capture-safe，并默认关闭专用的 `DLC_KPOOL_SLOT_MAPPING_CHECK`。修复后在确定性
+通信基线下对比 `num_spec=2 + graph` 与 no-MTP eager，模型输出正常，后续再恢复
+prefix-cache 和 async scheduling 验证。
+
+##### 9.3 代表性问题三：异步 H2D + graph 的启动卡死与 `bad_vld_base`
+
+`DLC_SYN_COPY_ASYNC=O3` 时，MTP=1 + graph 会概率性启动卡死；芯片侧常见
+`bad_vld_base: Vld base out of range`。根因是 metadata H2D 被提交到独立 copy stream，
+而 consumer kernel 已经提交到 caller/capture stream，graph capture 没有建立可靠的
+跨 stream 依赖，kernel 读取了尚未完成传输的 buffer。
+
+尝试过 event wait 方案，但在当前 DLC graph capture 下外部 copy-stream event 没有
+形成可靠的 graph 内依赖；最终改为 caller-stream 方案：H2D 仍异步 DMA，但提交到
+caller/capture stream，并与 consumer kernel 在同一 stream 排队。这样既保留异步
+H2D，又不增加 host synchronize。O3 下启动卡死和 `bad_vld_base` 关闭；O0 仅作为
+保守回退，不作为最终方案。
+
+async scheduling 的 MTP 组合在 160K 配置中与 `num_spec=2 + graph + prefix-cache`
+同开验证；1M/C1 的容量与 32K 命中验证当前未加 `--async-scheduling`，两类结果
+不混算。
+
+#### 10. 支持 prefix-cache：KDA checkpoint、命中时序与容量解耦
+
+GLM-5.3-Flash 的 prefix cache 不是单一 token KV 前缀复用，而是三组异构缓存联合
+命中：34 层 KDA 的 conv/recurrent state、11 层 sparse MLA latent KV、11 层 indexer
+压缩 K cache；KPool tail 是每请求私有 scratch，`prefix_cacheable=False`，不参与
+命中。最终有效命中长度取所有可缓存 group 的最小值，因此 KDA state 是限制项。
+
+KDA state 只能按 256-token block 边界快照复用；MTP 还会因 EAGLE block drop 再退
+一个 block。例如 4096-token prompt 的原始可复用边界是 3840，MTP 下变成 3584，
+结构上限是 87.5%，不可能达到 100%。
+
+支持办法：
+
+- 启用 `mamba_cache_mode=align`；
+- KDA spec 分配 `num_prefill_checkpoint_blocks=1`、
+  `prefill_checkpoint_alignment=64`；
+- 原生 `dlc_kda_causal_conv_prefill` / `dlc_kda_chunk_prefill` 接收 checkpoint
+  offsets/state，在正常 chunked prefill 中直接导出 KDA conv/recurrent checkpoint；
+- 通过 `--prefix-cache-retention-interval` 控制周期 checkpoint；
+- 通过 `--mamba-prefix-checkpoint-max-per-request N` 限制每请求保留数量；
+- sparse MLA、KPool pool、KPool tail、KDA 使用独立 block pool 和独立 block 数。
+
+##### 10.1 代表性问题一：4K 精确 prompt 为什么 0 hit → 0 hit → 3584
+
+早期观察到 4K 完全相同 prompt 连续三次是 `0 / 0 / 3584`，容易被误判为 checkpoint
+没有生效。实际时序是：第一次请求只写出 3840 和 4096 两个位置；第二次请求通过 MLA
+组的 shared-prefix junction 停在 3584 并补写 KDA state；第三次请求才命中 3584。
+这是 checkpoint 边界、shared-prefix junction 和 MTP block drop 共同作用的结果，
+不是命中率统计 bug。
+
+把 chunk 改成 512 可以让 3584 落在 chunk 末端，第二次请求即命中；但 16K/32K/64K
+冷请求 TTFT 会升到约 44.6/93.9/202.5 秒，不能作为生产推荐。后续用 1536-token
+prompt 验证为 `0 / 1024 / 1024`，证明 checkpoint 路径确实生效。
+
+##### 10.2 代表性问题二：KDA checkpoint 冷热输出翻转
+
+没有原生 checkpoint 导出能力时，早期 fallback 会把 prefill 在 checkpoint 边界拆成
+两段：每层做 host `.cpu().tolist()`、逐 row Python 循环、conv/recurrent 各两次
+kernel、scatter 和 `torch.cat`。冷请求走“两段 prefill + 拼接”，热请求走“cached
+state + 单段 prefill”，两条路径的数值路径和布局不完全等价，3584/4096 prompt 上
+出现 cold/hot greedy 输出翻转；no-MTP 也能复现，说明不是 MTP 特有。
+
+排查时用固定 seed、greedy、确定性 MoE/CPU collective 做冷热对照，确认不是 MoE
+分核或 DLCCL 累加顺序；随后把原生 KDA checkpoint 接入模型路径，第一次请求直接
+导出 conv/recurrent checkpoint，fallback 退出主路径。修复后仍需把 3584/4096 冷热
+一致性作为长期回归，因为不同 KDA checkpoint 实现、布局和 graph 组合可能重新引入
+微小数值差异。
+
+##### 10.3 代表性问题三：容量被全局 block 数放大，以及 1M 上下文
+
+更早的容量根因是 KDA state pool 跟着全局 `num_blocks` 分配；第一阶段把 KDA 独立后，
+sparse MLA、KPool pool、KPool tail 仍共享同一个 `BlockPool` 和同一个 `num_blocks`。
+sparse MLA kernel 的 `kv_cache.size(0) <= 1,048,576` 被错误地映射成全局 token block
+上限；1M 请求下 sparse MLA 约 4096 blocks、KPool 约 4096 blocks、tail 1、KDA 约
+896，旧记账需要约 9000 个全局 block，容量估算被推到 43+ GiB。
+
+最终把 token group 也解耦：每个 group 独立 `BlockPool`、独立 block 数、逐 group
+admission 和 worker 分配；同时修复 KPool tail 池的 null-block bug（tail 池至少
+`max_num_seqs + 1`，否则 null block 占掉唯一 slot，请求永久 waiting）。
+
+`N=820`（覆盖 1M 最近 20% 的 256-token checkpoint）下实际启动结果：
+
+```text
+group_blocks=[4096, 4096, 2, 896, 896, ...]
+total KV = 29.25 GiB
+GPU KV cache size = 1,048,576 tokens
+Maximum concurrency = 1.00x
+```
+
+短请求 1.09 s；32K cold/hot TTFT 约 79.77 s / 1.109 s；random 1K TPOT 51.12 ms、
+acceptance 74.04%。按 target step 折算，1M/N=820 的每步成本仅比 160K 慢约 3%；
+输出吞吐差异主要来自 acceptance length 从 3.0 降到 2.0–2.5，而不是 decode kernel
+变慢。
+
 ### 验证与量化结果
 
 #### 功能、数值与交付
@@ -464,7 +621,7 @@ replay cache 的另一组三档单并发对照中，`gap_p50` 由 63.78／74.42�
 | 早期修复后容量 | 显存利用率 0.85 时，启动日志 148,762 tokens | 早期分配与核算修复结果，不直接与后续 block 表比较 |
 | 后续生产配置容量推导 | 0.80 下报告 1,411 blocks；按 `B(L)` 推得单请求 171,776 tokens | 理论容量且没有余量，不等同该长度已满足生产时延要求 |
 | 更高显存预算外推 | 0.95 下约 1,883–1,891 blocks、约 232K tokens | 线性外推，未作为生产配置验证 |
-| 已验证长序列 | 131,072，eager、显存利用率 0.85 | 不扩张到 graph、相同长度多并发或 1M；常规验证配置为 4096 |
+| 已验证长序列（原发布口径） | 131,072，eager、显存利用率 0.85 | 原发布不扩张到 graph、相同长度多并发或 1M；后续解耦版本另做 1M 容量启动，完整生成未跑 |
 
 总结 §6.3 还提供了 KPool 优化后的单请求整模长上下文数字。先保留为报告结果，测量来源、配置及统计方法需要补齐：
 
@@ -475,10 +632,32 @@ replay cache 的另一组三档单并发对照中，`gap_p50` 由 63.78／74.42�
 | 32K | 194.7 s → 134.3 s | 115–121 ms/token；8.3–8.7 tok/s |
 | 131K | 约 797 s → 589.7 s | 总结未提供该行 decode 数据 |
 
+#### MTP 与 prefix-cache 增量验证
+
+以下结果属于原生产发布之后的扩展验证，不与原发布 AIME 口径或“无 MTP 生产基线”混算。
+
+| 验证项 | 结果 | 边界 |
+|---|---|---|
+| MTP eager 固定请求 | 50/50 greedy 通过 | 8/64-token 短 prompt 分叉修复后；固定 seed |
+| MTP + `FULL_DECODE_ONLY` graph | 20/20 通过 | 单请求固定 prompt |
+| MTP graph 并发 | in-flight 1/8/16/32/64 通过 | 排队/in-flight，不等价于同时 decode |
+| MTP graph 长上下文 | 17,025 / 34,025 / 64,625 token marker 命中 | marker 检索，不等价完整 1M |
+| KDA checkpoint | 原生 conv/recurrent checkpoint 接入；1536-token 重复请求 `0 / 1024 / 1024` | 4K 精确 prompt 结构上限 3584，`0/0/3584` 不是故障 |
+| MTP=2 + graph + prefix 32K（1M 配置） | cold TTFT 79.77 s；hot 1.109 s；acceptance 68.5%/48.4% | 单请求；hot 命中约 31.7K token；async scheduling 的 MTP 组合另在 160K 配置验证 |
+| 1M 容量服务 | `29.25 GiB`、`1,048,576 tokens`、`1.00x` | `max_num_seqs=1`；完整 1M 生成未跑 |
+
+吞吐判读补充：`target_step ≈ TPOT × acceptance_length`。160K/32K hot 的 100%
+acceptance、length 3.0 对应约 123.2 ms/step；1M random 1K 的 74.0%、length 2.48
+对应约 126.8 ms/step；1M/32K hot 的 48.4%、length 1.97 对应约 126.9 ms/step。
+因此 1M/N=820 的 step 成本只增加约 3%，输出吞吐变化主要来自 acceptance length，
+不能用 `prefix_repetition` 的 100% acceptance 作为真实吞吐基线。
+
 ### 已完成项与后续边界
 
-- **已完成**：本次文本发布范围内的模型接入、混合缓存、融合链、decode graph、两个 NaN 根因处理、发布验证及云服务交付；AIME26 已有任务评测结果。
-- **发布范围之外**：MTP、多模态、FP8、V2 runner、计算与通信重叠；不继续列为本次项目未完成项。
+- **已完成（原发布范围）**：文本发布范围内的模型接入、混合缓存、融合链、decode graph、两个 NaN 根因处理、发布验证及云服务交付；AIME26 已有任务评测结果。
+- **已完成（后续扩展）**：MTP eager/graph/并发/长上下文主要链路；KDA checkpoint 与 prefix-cache 接入；`num_spec=2 + graph + prefix-cache + async scheduling` 基本打通；sparse MLA/KPool/tail/KDA 独立 block pool 与 1M/C1 容量启动；32K cold/hot 命中验证。
+- **仍未完成**：完整 1M 生成、C8 长上下文、AIME26 的 MTP 口径、MTP acceptance 正式基线、KDA BF16、512K/768K 在最终解耦版本下的独立复测，以及 MTP 长上下文/高并发的正式发布验收。
+- **原发布范围之外**：多模态、FP8、V2 runner、计算与通信重叠；不继续列为原项目未完成项。
 - **保留的技术取舍**：MoE router 使用 BF16 logits，可能影响临界专家选择；Graph 仅覆盖 uniform decode；更高并发可能因 bucket Padding 无收益；屏障等待仍有优化空间。
 - **信息补录**：评测方法、H100 准确率对照、三处关键修改分工、验收目标及最终单请求的三项性能指标与测量条件已由本人确认；具体业务场景与首次上线日期按本人不掌握记录。后续按需补充可获得的历史对照配置、评测记录和发布标识。
 
@@ -491,6 +670,14 @@ replay cache 的另一组三档单并发对照中，`gap_p50` 由 63.78／74.42�
 5. NaN 的第一个出现位置如何帮助区分两个根因？怎样用 sentinel、地址阈值实验和目标 ABI 将 gather 未写输出收敛到 16 GiB 回绕，为什么只改最终变量类型不够？warmup 为什么能污染正式请求会读取的 null block，为什么必须在最后一次 warmup 写入后由所有 rank 清零？低地址单测和 HTTP 200 为什么不足以证明模型正确？
 6. 怎样结合 Host 采样、profiler 事件、Device trace 和受控布局对照区分 Host 开销与等待慢 Kernel？怎样解释 Host 单步、带 Profile 的步骤、token gap、TTFT 和端到端吞吐之间的差别？哪些收益属于本人插件改动，哪些属于算子协作？
 
+7. MTP 的 token 分叉为什么不能用“最终文本一样”来判断？怎样用逐层输出、固定 seed、确定性 MoE 和 ordered allreduce 找到首个差异点？
+
+8. `num_spec > 1` + graph 的 qsl 错误为什么在 kernel 内断言不触发？capture-time clone、host D2H 和 per-graph-bucket persistent buffer 之间是什么关系？
+
+9. prefix-cache 的 4K 精确 prompt 为什么会出现 `0/0/3584`？KDA 256-token checkpoint、MTP block drop 和 shared-prefix junction 分别贡献了什么？
+
+10. 为什么一个全局 `num_blocks` 会同时放大 sparse MLA、KPool 和 tail？per-group BlockPool 改完后，1M 容量为什么从 43+ GiB 降到 29.25 GiB？
+
 ### 口述基线（文稿已更新，待本人复述）
 
 我负责将 GLM-5.3-Flash 接入 8 卡自研 AI 加速芯片的 vLLM 插件。它混合了线性注意力、稀疏 MLA、mHC 和 MoE，上游执行路径依赖目标平台无法直接使用的 Triton、TileLang 等能力。我负责插件内的模型、权重、缓存与执行接入，并提出融合算子需求，验收后接入；算子 Kernel 由算子团队实现。
@@ -501,10 +688,14 @@ replay cache 的另一组三档单并发对照中，`gap_p50` 由 63.78／74.42�
 
 项目开发与交付在 2026-10-27 完成，截至 2026-11-02 已由云服务团队正式生产上线。AIME26 使用 OpenCompass，每题生成一次、运行一轮、`temperature=0`，由 `gpt-6-astra` 检查答案的数学等价性，结果为 30/30，与团队在 8 卡 H100 上运行同一模型的准确率一致。当前交付范围为文本、AWQ 权重、BF16 激活、V1 runner 和 decode graph，MTP、多模态等扩展不包含在这次发布中。
 
+发布后我继续完成了 MTP 扩展的主要链路：第 45 层 MTP、KDA spec verify、KPool speculative transaction、MTP graph、prefix-cache 与 async scheduling。MTP=2 下已验证 32K cold/hot 命中、1M 容量服务启动和短/长上下文输出；当前剩余的是完整 1M 生成、C8、AIME26 MTP 口径和正式 acceptance/性能验收。
+
 ### 待补充与待核验字段
 
 | 优先项 | 仍需补充的信息 | 用途 |
 |---|---|---|
 | AIME26 评测记录 | 模型及量化 revision、OpenCompass 版本、输出长度上限、judge 配置与结果记录位置；本次问答已确认的生成次数、temperature、判分方式和 H100 对照不再列为缺项 | 固化单轮 30/30 的任务评测配置，不替代 logits 或逐 Token 数值对齐 |
+| MTP 正式验收 | 1M 完整生成、C8 长上下文、MTP AIME26、正式 acceptance/TTFT/TPOT 基线 | 区分“链路打通”与“可发布性能/精度结论” |
+| prefix-cache 冷热回归 | 3584/4096、64K/128K、不同 KDA checkpoint 实现和 graph 组合下的 cold/hot 一致性 | 不能以 1536-token 或单 prompt 结果替代完整回归 |
 | 发布记录 | 可获得的发布版本脱敏标识及实际生产配置；业务场景与首次上线日期本人不掌握，不再列为待补答项 | 固化发布基线；验收目标已明确 |
 | 证据定位与表达 | 总结证据索引中的评测、Graph、NaN 和发布报告的可引用编号；本人复述后的事实与措辞修订 | 将当前材料用于后续简历和面试，不要求披露内部代码或路径 |

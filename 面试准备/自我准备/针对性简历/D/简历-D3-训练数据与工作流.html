@@ -77,8 +77,10 @@ code { font-family:"DejaVu Sans Mono","Noto Sans Mono CJK SC",monospace; font-si
 </ul></article>
 <article class="entry"><h3>GLM-5.3-Flash 模型加载与发布验证</h3><ul>
 <li>独立负责模型在既有 vLLM 硬件插件中的接入，处理模型注册、权重映射、混合 KV cache 与状态池；编写权重文件头与索引的静态审计脚本，检查映射遗漏、异常项和重复目标。</li>
-<li>按本次启用的文本推理范围区分应加载与应跳过的权重，结合参考路径进行语义核对；验收融合实现时加入调用计数检查，避免仅凭数值比较就误判实际执行路径。</li>
-<li>修复缓存分配和 warmup 状态问题，完成插件发布定向回归 <strong>161 项通过</strong>；交付 <strong>8 卡 TP8、AWQ 4-bit 权重／BF16 激活</strong>的文本版本，由云服务团队生产上线。</li>
+<li>原文本发布版本按映射规则检查 111,346 个权重 key，明确跳过 889 个 MTP key，并以参考路径核对模型语义；验收融合实现时加入调用计数检查，避免仅凭数值比较就误判实际执行路径。</li>
+<li>修复缓存分配和预热状态问题，交付 <strong>单机 8 卡 TP8、AWQ 4-bit 权重／BF16 激活</strong>的文本版本，由云服务团队生产上线。</li>
+<li>发布后单独加载第 45 层 MTP，复用目标模型的词嵌入和输出头，为候选生成重排输入，接入调度器的候选 token 传递与目标模型校验。</li>
+<li>在分块 prefill 中保存 KDA 状态快照，前缀命中时恢复对应的卷积和递推状态。将可共享的前缀缓存与请求私有的 KPool 尾部缓冲区分池分配。</li>
 </ul></article>
 <article class="entry"><h3>vLLM V1 请求重放与异常回归</h3><ul>
 <li>针对 Qwen3-32B 的低概率输出异常，统一请求重放、异常分类与异步／阻塞对照，从首个分叉 Token、logits 和中间 Tensor 检查执行差异，避免将后续传播误差当作初始原因。</li>
