@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; script-src 'unsafe-inline'; img-src 'self' data:; font-src data:; connect-src 'self'; base-uri 'none'; form-action 'none'">
-<meta name="lesson-pages" content="v1" data-id="plana-jd-w4a-sglang-specdec" data-key="c9c6bb0029c0" data-rev="2" data-updated="2026-11-23">
+<meta name="lesson-pages" content="v1" data-id="plana-jd-w4a-sglang-specdec" data-key="c9c6bb0029c0" data-rev="17" data-updated="2026-11-23">
 <title>RadixAttention 与前缀缓存 · 八周证据冲刺 · W4a 单元一</title>
 <script id="lp-boot">
 document.documentElement.classList.add("js");
@@ -802,31 +802,88 @@ html:not(.js) .lp-knob::before, html:not(.js) .lp-knob::after { content: none; }
   <aside class="lp-toc" aria-label="本页目录"><nav></nav></aside>
   <main class="lp-main" id="top">
     <details class="lp-toc-inline"><summary>本页目录</summary><nav></nav></details>
+<style data-lp-style>
+.lp-review #intro > .rd-principle { display:block; }
+.lp-review #spine { display:block; }
+.lp-review #spine > :not(h2):not(#fig-0) { display:none; }
+#fig-0 .lp-flow > li::before, #fig-0 .lp-flow > li::after { pointer-events:none; }
+#radix-example-inputs > summary { cursor:pointer; padding:.5rem 0; }
+@media (pointer:coarse) {
+  #radix-example-inputs > summary { min-height:44px; box-sizing:border-box; }
+  #fig-0 .lp-flow > li > b a, #fig-0 .lp-flow > li > span:not(.lp-xfer) a { display:inline-flex; align-items:center; min-height:44px; min-width:44px; }
+}
+</style>
+<section id="w4a-overview" data-rev="6">
+  <h2>W4a 的两个学习项目与五个单元</h2>
+  <p>W4 里，你已经用首 token 延迟和相邻输出间隔描述过用户怎么等。这一周沿两条线追原因。先看 SGLang 怎样为多条请求复用计算、分配执行机会和约束输出，再看推测解码怎样用一轮目标模型前向确认一段草稿。</p>
+  <h3>项目一 · 追两条复习请求怎样得到回答</h3>
+  <p>两个人使用同一个复习助手，系统指令相同，一个问吞吐，一个问延迟。我们先让它正常生成文本，再给它加上“按指定 JSON 格式回答”的要求。把下面三个单元连起来，就能画出从输入到采样的执行路径。</p>
+  <ol>
+    <li><strong>RadixAttention 与前缀缓存。</strong>第二个请求来了，哪些输入位置可以沿用第一个请求算好的结果？用同一对请求和 vLLM 的前缀块缓存作对照。</li>
+    <li><strong>SGLang 调度与组批。</strong>当已有请求正在出词，调度器怎样在 token 预算和 KV 空间允许的范围内，把新来的提示词排进批次？比较它与 vLLM 在同一负载下的选择。</li>
+    <li><strong>结构化输出。</strong>回答中有个字段只允许几个枚举值。观察语法状态怎样决定下一步哪些 token 合法，再区分首次编译规则的耗时和生成过程中每步应用约束的开销。</li>
+  </ol>
+  <h3>项目二 · 追一轮推测解码，接回 GLM 的模型适配</h3>
+  <p>接下来选一条普通文本请求。先用成本较低的草稿步骤提议几个 token，再跟着目标模型看哪些能留下。</p>
+  <ol start="4">
+    <li><strong>推测解码的正确性与收益。</strong>走完一次接受或拒绝，解释随机采样为什么还能保持目标模型的分布。把一轮草稿和验证耗时与实际交付的 token 数放到一起，找出会加速和会变慢的条件。</li>
+    <li><strong>GLM-5.3-Flash 的多 token 预测（MTP）。</strong>你之前交付的文本推理路径跳过了 MTP 权重。我们从那次权重映射出发，理解训练时多预测哪个未来位置，再沿公开实现追一枚候选 token 怎样产生、怎样验证，并与独立草稿模型比较。</li>
+  </ol>
+</section>
+
 <section class="lp-narrative" id="intro" data-rev="1">
-  <h2>同一句“请简答。”，第二遍还要算吗？</h2>
-  <p>一个复习助手收到请求 A。系统指令是“请简答。”，用户问“吞吐是什么？”。一会儿，请求 B 带着同一句系统指令来问“延迟是什么？”。A 处理输入时，已经把各层注意力要用的键和值（K 和 V）写进显存。轮到 B 时，这些数据里哪些还能用？</p>
-  <figure class="lp-figure is-wide" id="fig-0">
-    <ol class="lp-stages lp-flow">
-      <li id="st-input" data-label="对齐输入"><b>对齐输入</b><span>聊天模板和分词器给出两串 token ID</span></li>
-      <li id="st-match" data-label="查前缀"><b>查找前缀</b><span>从树根匹配，取回已有 KV 的槽位索引</span></li>
-      <li id="st-extend" data-label="计算后缀"><b>接着计算</b><span>后缀做前向，注意力读已缓存的前缀</span></li>
-      <li id="st-life" data-label="管理引用"><b>管理引用</b><span>追踪谁还在用这些槽位，决定何时可以回收</span></li>
-      <li id="st-compare" data-label="对照 vLLM"><b>对照 vLLM</b><span>看同一段输入按块匹配时能复用到哪里</span></li>
-    </ol>
-    <figcaption><b>图 0</b> 沿请求 B 从输入走到下一次前向，再看这段 KV 能在显存里留多久。</figcaption>
-  </figure>
-  <p>你在 vLLM 主链里已经见过一个请求在自己的下一步 decode 读取历史 KV。这次换成两个不同的请求。学完这个单元，你可以拿一对新提示词，指出它们在哪里分叉，解释模型能省下哪段计算，以及缓存紧张时哪部分还得留着。</p>
+  <h2>单元一 · RadixAttention 想省下哪段计算？</h2>
+  <p>先回到复习助手。请求 A 的系统指令是“请简答。”，用户问“吞吐是什么？”。随后 B 带着相同的指令来问“延迟是什么？”。模型先读入提示词，为输入位置计算各层注意力用的键和值（K 和 V），然后才开始生成答案。你熟悉的 KV 缓存让 A 在生成下一个 token 时能读回这些结果。A 答完以后，B 能否接着用其中的一段？</p>
+  <p>在同一个模型和允许共享的缓存范围内，如果两串输入从头开始的 token 和位置都相同，那么这一段在因果注意力中看到的上文也相同。即使 A、B 后面问的是不同问题，共同开头的各层 KV 仍可以复用。长系统指令或整段参考资料被反复提交时，这能省下相应位置重复做 prefill 的工作。</p>
+  <p class="rd-principle"><strong>RadixAttention 的想法是保留已经算好的 KV，并为它们建一个能按前缀查找的索引。</strong>显存里的 KV 池保存实际的键和值。索引用一棵压缩前缀树组织 token ID，一串连续 ID 可以存在同一个节点里。两条请求从根沿同一路径走到分叉处，就能找到共同开头对应的槽位。这样即使整条提示词不同，B 也可以取回已经算过的开头。代价是这些结果要占用显存，系统还得知道哪些槽位有人在用。<a href="https://arxiv.org/html/2312.07104v2">SGLang 论文中的 RadixAttention</a></p>
+  <h3 id="radix-lifecycle">从 A 留下 KV，到 B 复用，再到槽位回收</h3>
+  <ol>
+    <li><strong>A 计算并留下记录。</strong>假设起初缓存为空。聊天消息先变成整串 token ID，A 做 prefill 时把各层 KV 写入设备槽位。这次开启完成时缓存插入，A 正常结束后，树里还保留着输入 ID 与这些槽位的对应关系。</li>
+    <li><strong>B 查找并取得引用。</strong>同一服务实例收到 B，沿 B 的输入从树根往下匹配，找到本次允许复用的最长已缓存前缀。调度器接纳 B 执行时，给它要读取的路径加上保护引用。</li>
+    <li><strong>B 从命中的前缀之后接着算。</strong>B 为自己的后缀做前向。后缀的注意力既能读共享前缀的 KV，也能读后缀中到当前位置为止的 KV。B 把新算出的 KV 写入自己的槽位，模型从最后一个输入位置的输出得到下一个 token 的分数。</li>
+    <li><strong>B 结束，缓存继续管理这段空间。</strong>新算的后缀登记进树以后，后来者也能找到 B 的分支。B 完成时放下自己的引用，留在设备上的 KV 可以再命中。空闲槽位不足时，缓存树选择可安全淘汰的部分，把槽位交还给分配器。</li>
+  </ol>
 </section>
 <section id="spine" data-rev="1">
-  <h2>跟着例子读哪几处源码</h2>
-  <div class="lp-table" tabindex="0" role="region" aria-label="资料和建议阅读位置">
-    <table><thead><tr><th scope="col">资料</th><th scope="col">看什么</th><th scope="col">什么时候读</th></tr></thead>
-    <tbody>
-      <tr><td><a href="https://huggingface.co/Qwen/Qwen2.5-1.5B-Instruct/blob/989aa7980e4cf806f80c7fef2b1adb7bc71aa306/tokenizer_config.json">Qwen2.5-1.5B-Instruct 聊天模板</a></td><td>系统指令和用户问题如何排成一串模型输入</td><td>读图 1.1 时对照</td></tr>
-      <tr><td><a href="https://github.com/sgl-project/sglang/blob/29481685462732237d80d86076d6563e1f658102/python/sglang/srt/mem_cache/radix_cache.py#L352-L409">SGLang v0.5.17 的 RadixCache</a></td><td>查找时给树什么、取回什么</td><td>跟着 B 读到节点 2 时</td></tr>
-      <tr><td><a href="https://github.com/sgl-project/sglang/blob/29481685462732237d80d86076d6563e1f658102/python/sglang/srt/mem_cache/radix_cache.py#L562-L625">SGLang 的引用与淘汰</a> · <a href="https://github.com/vllm-project/vllm/blob/568afb3a13806beb53bb2e6bd518269357b237c0/vllm/v1/core/block_pool.py#L198-L243">vLLM v0.26.0 的块缓存</a></td><td>缓存何时可以回收，两种索引怎样查找前缀</td><td>后续讲到回收和框架对照时</td></tr>
-    </tbody></table>
-  </div>
+  <h2>带着 A 和 B 做一次源码走读</h2>
+  <p>B 到来时，缓存查询到底给它什么，组批代码又怎样使用这个结果？从 SGLang v0.5.17 的<a href="https://github.com/sgl-project/sglang/blob/29481685462732237d80d86076d6563e1f658102/test/registered/unit/mem_cache/test_radix_cache_unit.py#L324-L355">插入与匹配测试</a>入手。测试先登记一串 ID 及其对应的槽位，再检查查回来的槽号。下面沿用这套接口，把测试对象换成 A、B。</p>
+  <p><code>a_ids</code>、<code>b_ids</code> 是两条消息经模板和分词器处理后的完整 ID 序列，<code>a_slots</code> 是与 A 的输入位置一一对应的整数槽号。例子使用同一缓存命名空间、每页一个 token，并给 B 足够的预算一次处理后缀。模拟缓存用这些索引来演示查找，设备上的注意力计算在真实模型的前向中完成。</p>
+  <div id="radix-lookup-example">
+<pre class="lp-code" data-lang="python" data-title="用 A 的槽号查询 B 的前缀（按固定版本接口改写）" data-rev="6"><code>cache = RadixCache.create_simulated(page_size=<span class="hljs-number">1</span>)
+cache.insert(InsertParams(key=RadixKey(a_ids), value=a_slots))
+b_key = RadixKey(b_ids, limit=<span class="hljs-built_in">len</span>(b_ids) - <span class="hljs-number">1</span>)
+hit = cache.match_prefix(MatchPrefixParams(key=b_key))
+slots_b = hit.device_indices
+suffix_b = b_ids[<span class="hljs-built_in">len</span>(slots_b):]</code></pre>
+<p class="lp-code-src" data-rev="6">查询上限来自<a href="https://github.com/sgl-project/sglang/blob/29481685462732237d80d86076d6563e1f658102/python/sglang/srt/managers/schedule_batch.py#L1367-L1372">普通生成请求的查找键</a>，取后缀的写法来自<a href="https://github.com/sgl-project/sglang/blob/29481685462732237d80d86076d6563e1f658102/python/sglang/srt/managers/schedule_batch.py#L2281-L2296">组批时准备前向输入</a>。</p>
+<details id="radix-example-inputs" data-rev="6"><summary>用本课的 A、B 复现这段查询</summary>
+  <p>在已能运行该版本 SGLang 单元测试的 Python 环境中，先执行下面的输入准备，再执行上面的查询片段。ID 来自本课使用的 Qwen 分词器，槽号从 70 开始，是示例分配。</p>
+  <pre class="lp-code" data-lang="python" data-title="准备两条输入和 A 的示例槽位"><code><span class="hljs-keyword">from</span> array <span class="hljs-keyword">import</span> array
+<span class="hljs-keyword">import</span> torch
+<span class="hljs-keyword">from</span> sglang.srt.mem_cache.base_prefix_cache <span class="hljs-keyword">import</span> InsertParams, MatchPrefixParams
+<span class="hljs-keyword">from</span> sglang.srt.mem_cache.radix_cache <span class="hljs-keyword">import</span> RadixCache, RadixKey
+
+shared = array(<span class="hljs-string">&quot;q&quot;</span>, [<span class="hljs-number">151644</span>, <span class="hljs-number">8948</span>, <span class="hljs-number">198</span>, <span class="hljs-number">14880</span>, <span class="hljs-number">98237</span>, <span class="hljs-number">99590</span>,
+                     <span class="hljs-number">1773</span>, <span class="hljs-number">151645</span>, <span class="hljs-number">198</span>, <span class="hljs-number">151644</span>, <span class="hljs-number">872</span>, <span class="hljs-number">198</span>])
+ending = array(<span class="hljs-string">&quot;q&quot;</span>, [<span class="hljs-number">102021</span>, <span class="hljs-number">11319</span>, <span class="hljs-number">151645</span>, <span class="hljs-number">198</span>, <span class="hljs-number">151644</span>, <span class="hljs-number">77091</span>, <span class="hljs-number">198</span>])
+a_ids = shared + array(<span class="hljs-string">&quot;q&quot;</span>, [<span class="hljs-number">102840</span>, <span class="hljs-number">101377</span>]) + ending
+b_ids = shared + array(<span class="hljs-string">&quot;q&quot;</span>, [<span class="hljs-number">112881</span>]) + ending
+a_slots = torch.arange(<span class="hljs-number">70</span>, <span class="hljs-number">70</span> + <span class="hljs-built_in">len</span>(a_ids), dtype=torch.int64)</code></pre>
+  <p>预期 <code>slots_b.tolist()</code> 是 70 到 81 的 12 个槽号，<code>suffix_b</code> 有 8 个 ID，以表示「延迟」的 112881 开头。对照图 1.1 找到首次不同的 ID，再去图 2.1 看 B 省下了哪些位置的前向。</p>
+</details>
+</div>
+  <p>顺着代码读时，把 <code>slots_b</code> 和 <code>suffix_b</code> 分开看。前者告诉注意力到哪里读现成的 KV，后者是模型本次要继续处理的 token ID。查询键上的长度上限、命中边界、引用与回收，分别引出下面的细节问题。</p>
+  <figure class="lp-figure is-wide" id="fig-0">
+    <ol class="lp-stages lp-flow">
+      <li id="st-input" data-label="对齐输入"><b>输入在哪里分叉？</b><span><a href="#node-1">节点 1</a> · 对齐 A 和 B 的完整 token 序列。</span></li>
+      <li id="st-match" data-label="查前缀"><b>树里存的是什么？</b><span><a href="#node-2">节点 2</a> · 分清词表 ID、树节点和设备槽位。</span></li>
+      <li id="st-extend" data-label="计算后缀"><b>B 从哪一位接着算？</b><span><a href="#node-2">节点 2</a> · 为什么少查最后一位，实际又命中了多长的前缀？</span></li>
+      <li id="st-life" data-label="管理引用"><b>谁还在用这段 KV？</b><span><a href="#node-3">节点 3</a> · 看请求结束、缓存驻留与显存回收。</span></li>
+      <li id="st-compare" data-label="对照 vLLM"><b>两边怎样查找和回收 KV？</b><span><a href="#node-4">节点 4</a> · <a href="#add-4-1">同粒度下的查找</a> · <a href="#add-4-2">回收与再利用</a></span></li>
+    </ol>
+    <figcaption><b>图 0</b> 从代码里拆出来的阅读问题。前四站追 SGLang 的实现，最后一站用 vLLM 做同条件对照。</figcaption>
+  </figure>
+  <p>需要核对时，先看 <a href="https://huggingface.co/Qwen/Qwen2.5-1.5B-Instruct/blob/989aa7980e4cf806f80c7fef2b1adb7bc71aa306/tokenizer_config.json">Qwen 的聊天模板</a>和 <a href="https://github.com/sgl-project/sglang/blob/29481685462732237d80d86076d6563e1f658102/python/sglang/srt/mem_cache/radix_cache.py#L352-L409">RadixCache 的匹配结果</a>。读到回收与框架对照时，再看 <a href="https://github.com/sgl-project/sglang/blob/29481685462732237d80d86076d6563e1f658102/python/sglang/srt/mem_cache/radix_cache.py#L562-L625">SGLang 的引用与淘汰</a>和 <a href="https://github.com/vllm-project/vllm/blob/568afb3a13806beb53bb2e6bd518269357b237c0/vllm/v1/core/block_pool.py#L198-L243">vLLM v0.26.0 的块缓存</a>。</p>
 </section>
 <style data-lp-style>
 .rd-prefix,.rd-branch { border:1px solid var(--rule); border-radius:9px; padding:.72rem .9rem; }
@@ -897,9 +954,164 @@ html:not(.js) .lp-knob::before, html:not(.js) .lp-knob::after { content: none; }
   <aside class="lp-note" role="note" data-note-for="fig-2-1"><a href="https://github.com/sgl-project/sglang/blob/29481685462732237d80d86076d6563e1f658102/python/sglang/srt/managers/schedule_batch.py#L1310-L1347">请求接收匹配结果</a> · <a href="https://github.com/sgl-project/sglang/blob/29481685462732237d80d86076d6563e1f658102/python/sglang/srt/managers/schedule_batch.py#L1367-L1372">请求侧的查询上限</a> · <a href="https://github.com/sgl-project/sglang/blob/29481685462732237d80d86076d6563e1f658102/python/sglang/srt/mem_cache/radix_cache.py#L452-L467">token 与槽位索引如何一起登记</a>。73 是用来说明索引含义的假设槽号。</aside>
   <p class="lp-lead"><b>省下的计算</b> B 跳过前 12 个位置的重复前向，从「延迟」开始算自己的后缀。注意力通过槽位索引，依然可以读到完整的共享历史。</p>
 </section>
-<section class="lp-check" id="q-1" data-state="open" data-rev="2">
+<section class="lp-check" id="q-1" data-state="closed" data-rev="4">
   <h3>检查 1<span class="lp-kind">迁移</span></h3>
   <p class="lp-ask">沿用图中的设置，缓存里只有 A 的路径。请求 C 与 A 等长，只有第 5 个位置的 token ID 不同。有人建议只重算第 5 个位置，后面继续用 A 的 KV。你会怎样划定 C 的复用边界？为什么？</p>
+<details class="lp-answer" data-rev="4"><summary>参考要点</summary>
+  <p>C 可以直接复用 A 第 1–4 个位置的 KV。第 5 个位置的 ID 首次不同，树上的共同前缀到第 4 个位置结束。后面的 token 即便取到相同的输入 embedding，在因果注意力里能看到的历史也变了，更深层的 K、V 可能随之改变。因此 C 从第 5 个位置起要做自己的前向。</p>
+</details>
+</section>
+<section class="lp-node" id="node-3" data-stages="st-life" data-rev="5">
+  <h2><span class="lp-no">3</span>A 已经结束了，为什么 B 还能读到它的 KV？</h2>
+  <p class="lp-spine">沿 SGLang v0.5.17 的设备端 RadixCache，看请求结束、引用保护和叶节点淘汰。</p>
+  <p>回到 A 问吞吐、B 问延迟的例子。沿用每个 KV 页只存一个 token 位置的配置。这次让 A 刚生成第一个 token 就结束，并启用正常的完成时缓存插入。此时前向已经算过 A 的 21 个输入位置，刚采出的输出 token 还没有作为输入跑下一步。A 结束时，树可以把这 21 个位置对应的槽位索引留下。只要槽位还在缓存里，随后到来的 B 就有机会命中它们。</p>
+  <p>B 查到前 12 个位置相同，树在分叉处拆成两段。一段是两条输入共有的开头，另一段是 A 独有的后 9 个位置。查树得到槽号以后，调度器还要保护 B 即将读取的那一段。接纳 B 做 prefill 时，调度器从最后命中的节点开始，沿父节点向上增加保护引用，直到根节点之前。下面看准入完成后的状态，假设没有其他请求持有引用。</p>
+  <figure class="lp-figure" id="fig-3-1">
+    <div class="lp-table" tabindex="0" role="region" aria-label="A 结束、B 准入和显存吃紧时各段 KV 的状态">
+      <table>
+        <thead><tr><th scope="col">时刻</th><th scope="col">共同开头 · 位置 1–12</th><th scope="col">A 的后缀 · 位置 13–21</th></tr></thead>
+        <tbody>
+          <tr><th scope="row">A 结束，B 还没到</th><td colspan="2">假设 A 的 21 个输入位置在树里压成一个节点。它的保护引用数为 0，KV 仍驻留在设备上。</td></tr>
+          <tr><th scope="row">B 已获准做 prefill</th><td>引用数为 1。B 后续的注意力还要读这 12 个槽位。</td><td>引用数为 0。这 9 个槽位单独构成一个叶节点，可以被选中淘汰。</td></tr>
+          <tr><th scope="row">分配器还缺 3 个槽位</th><td>B 持有的 12 个槽位继续保留。</td><td>此时只有这个叶节点可选，淘汰整个节点，一次归还 9 个槽位。</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <figcaption><b>图 3.1</b> 按源码推演的三个时刻。第三行里 B 的新后缀尚未登记进树。一份引用就能保护对应节点覆盖的所有槽位。</figcaption>
+  </figure>
+  <p><code>lock_ref</code> 就是节点的保护引用数。请求释放自己持有的路径时，<code>dec_lock_ref</code> 沿路径逐个减一。最后一份引用释放后，下一条请求仍可能命中这段 KV。分配新槽位时，如果空闲槽位不够，缓存树会选出可淘汰的叶节点，把槽位归还给分配器。<a href="https://github.com/sgl-project/sglang/blob/29481685462732237d80d86076d6563e1f658102/python/sglang/srt/mem_cache/common.py#L125-L129">空闲槽位与所需槽位的比较</a></p>
+  <p>为什么从叶节点收起？如果共享前缀下面还挂着一个驻留的后缀节点，后续请求需要沿父节点和子节点才能找到整段连续的 KV。先挖掉中间那段，后缀就失去了完整的前缀路径。这个版本把仍在设备上、引用数为 0 且没有驻留子节点的节点放入候选集合，再按配置的淘汰策略挑选。删除一个叶节点后，才有机会轮到它的父节点。</p>
+  <pre class="lp-code" data-lang="python" data-title="RadixCache.evict" data-start="579"><code><span class="hljs-variable language_">self</span>.token_to_kv_pool_allocator.free_segment(x.value, start_pos=<span class="hljs-number">0</span>)
+num_evicted += <span class="hljs-built_in">len</span>(x.value)
+<span class="hljs-variable language_">self</span>._delete_leaf(x)</code></pre>
+  <p class="lp-code-src"><a href="https://github.com/sgl-project/sglang/blob/29481685462732237d80d86076d6563e1f658102/python/sglang/srt/mem_cache/radix_cache.py#L566-L585">radix_cache.py · 294816854627</a></p>
+  <p>这里的 <code>x.value</code> 保存被选中节点的整段槽位索引，所以缺 3 个槽位时可以一次收回 9 个。收回的槽位可供 KV 分配器再次分配。B 下一次做注意力时，仍能沿原来的索引读到共享前缀。</p>
+  <aside class="lp-note" role="note" data-note-for="fig-3-1"><a href="https://github.com/sgl-project/sglang/blob/29481685462732237d80d86076d6563e1f658102/python/sglang/srt/mem_cache/radix_cache.py#L452-L486">请求结束时登记 KV 并释放引用</a> · <a href="https://github.com/sgl-project/sglang/blob/29481685462732237d80d86076d6563e1f658102/python/sglang/srt/managers/schedule_policy.py#L1195-L1203">接纳 prefill 时保护路径</a> · <a href="https://github.com/sgl-project/sglang/blob/29481685462732237d80d86076d6563e1f658102/python/sglang/srt/mem_cache/radix_cache.py#L592-L625">保护引用的增减</a> · <a href="https://github.com/sgl-project/sglang/blob/29481685462732237d80d86076d6563e1f658102/python/sglang/srt/mem_cache/radix_cache.py#L777-L800">叶节点候选条件</a>。</aside>
+  <p class="lp-lead"><b>回收时机</b> 请求结束时放下自己的引用，缓存树仍可保留 KV 供后来者复用。显存吃紧时，先从无人持有的驻留叶节点开始，把整段槽位归还给分配器。</p>
+</section>
+<section class="lp-check" id="q-2" data-state="closed" data-rev="8">
+  <h3>检查 2<span class="lp-kind">判断</span></h3>
+  <p class="lp-ask">B 和 D 各持有一份共享前缀的引用。如果要腾出 KV 槽位，B 结束而 D 仍在生成时，能回收共享前缀吗？两者都结束后，若前缀下面还挂着一个驻留的后缀叶节点，又该先回收哪一段？为什么？</p>
+<details class="lp-answer" data-rev="8">
+  <summary>参考要点</summary>
+  <p>B 结束时，共享前缀的保护引用数从 2 降到 1。D 做注意力计算还要读这段 KV，缓存必须保留它。D 也结束后，引用数降到 0，但后缀叶节点仍靠这段前缀连到树根。需要腾出槽位时，先淘汰无人使用的后缀叶节点。共享前缀失去最后一个驻留子节点后，自己才成为可淘汰的叶节点。如果槽位已经够用，它还可以留给下一条请求。</p>
+</details>
+</section>
+<section class="lp-node" id="node-4" data-stages="st-compare" data-rev="9">
+  <h2><span class="lp-no">4</span>同一段前缀，SGLang 和 vLLM 怎样查找和回收 KV？</h2>
+  <p class="lp-spine">回到 B 刚到来的时刻。A 问“吞吐是什么？”，B 问“延迟是什么？”。两条输入的前 12 个位置相同，第 13 个位置开始分叉。</p>
+  <p>让每种配置都先跑完 A，再处理 B。缓存里只有 A 留下的 KV。两条请求使用同一个模型、同一套聊天模板，都允许共享缓存。这里看单卡上的全因果注意力，vLLM 只有一组 KV 缓存，物理块大小和哈希粒度都设为 16 个 token，按整块查找。</p>
+  <p>SGLang 沿压缩前缀树查 token ID，再取出沿途匹配的 KV 槽号。每页只有 1 个 token 时，树可以在第 12 个位置之后分叉，把前 12 个槽号交给 B。把每页改为 16 个 token 后，树只能按整页返回匹配的槽号。两条输入的第一页在第 13 个位置就不同，B 找不到能复用的整页，就得从头算。</p>
+  <p>vLLM 从提示词开头逐块查。它给每个完整块算一个哈希值，用来查已经算好的物理块。下面这行里，第一项是前一块的哈希，第二项是本块的 token ID，第三项是附加信息，例如使用的 LoRA 适配器。本例两条请求的附加信息相同。</p>
+  <pre class="lp-code" data-lang="python" data-title="hash_block_tokens" data-start="622"><code>hash_function((parent_block_hash, curr_block_token_ids_tuple, extra_keys))</code></pre>
+  <p class="lp-code-src"><a href="https://github.com/vllm-project/vllm/blob/568afb3a13806beb53bb2e6bd518269357b237c0/vllm/v1/core/kv_cache_utils.py#L596-L623">vLLM v0.26.0 · 块哈希的三个输入</a></p>
+  <p>第一块覆盖第 1–16 个位置。B 在这一块里已经换了一个词，算出的块哈希和 A 不同。vLLM 查不到这一块就停止，从第 1 个位置为 B 做 prefill。后续块的哈希包含前一块的哈希，所以查到任意一个块时，连同它之前的上文也一起核对了。</p>
+  <figure class="lp-figure" id="fig-4-1">
+    <div class="lp-table" tabindex="0" role="region" aria-label="三种配置下 B 能复用和需要计算的输入位置">
+      <table>
+        <thead><tr><th scope="col">查找配置</th><th scope="col">B 从 A 复用的 KV</th><th scope="col">B 还要做 prefill 的位置</th></tr></thead>
+        <tbody>
+          <tr><th scope="row">SGLang，每页 1 个 token</th><td>第 1–12 位，共 12 个</td><td>第 13–20 位，共 8 个</td></tr>
+          <tr><th scope="row">SGLang，每页 16 个 token</th><td>0 个</td><td>第 1–20 位，共 20 个</td></tr>
+          <tr><th scope="row">vLLM，每块 16 个 token，按整块查找</th><td>0 个</td><td>第 1–20 位，共 20 个</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <figcaption><b>图 4.1</b> B 一共有 20 个输入 token。表里按两个固定版本的源码计算可复用的位置数。</figcaption>
+  </figure>
+  <aside class="lp-note" role="note" data-note-for="fig-4-1"><a href="https://github.com/sgl-project/sglang/blob/29481685462732237d80d86076d6563e1f658102/python/sglang/srt/mem_cache/radix_cache.py#L188-L206">SGLang v0.5.17 · 匹配长度与页边界</a> · <a href="https://github.com/vllm-project/vllm/blob/568afb3a13806beb53bb2e6bd518269357b237c0/vllm/v1/core/single_type_kv_cache_manager.py#L689-L716">vLLM v0.26.0 · 从第一块开始查，遇到未命中就停</a>。</aside>
+  <p>这一例里，SGLang 把页大小从 1 改成 16，能省下的 12 个位置就变成了 0 个。在后端支持的范围内，缩小 vLLM 的块和哈希粒度也有机会少算几个位置，代价是同一条长提示词需要登记和查找更多块。要知道用户实际能早多久看到第一个 token，还得在同一批请求上测客户端 TTFT。</p>
+  <p class="lp-lead"><b>当匹配粒度相同、共同前缀仍驻留时，两边可以复用同样多的位置。</b> SGLang 沿树查槽号，回收时选无人引用的叶节点。vLLM 用块哈希查物理块，需要新块时从空闲队列头部取。</p>
+  <p>可以先在<a href="#q-3">检查 3</a>里独立判断一次，再看下方图 4.2 怎样核对答案。</p>
+<div class="lp-addendum" id="add-4-1" data-rev="12">
+  <h3>如果两边都按 16 个 token 查，区别还在哪？</h3>
+  <p>沿用两条各有 49 个输入 token 的请求。第一条叫 A，第二条叫 B，只有第 20 个位置的 ID 不同。让 SGLang 每页放 16 个 token，vLLM 也每 16 个 token 按整块查找。两边都允许共享，A 的 KV 还在设备上。此时<strong>两边都能复用前 16 个位置，也都要从第 17 个位置接着算</strong>。前 19 个位置的上文相同，但第 19 位落在第二块中间，两边都只能用到上一个完整边界。</p>
+  <p>现在看缓存内部怎样找到这 16 个位置。把第一块记作 P，第二块记作 A₂ 或 B₂。第三块记作 T，这个字母只表示两条请求在第 33–48 个位置的 token ID 相同。假设 A 和 B 都在生成首个 token 后结束。49 个输入位置中，前 48 个正好组成图里的三个完整块。</p>
+  <figure class="lp-figure" id="fig-4-2">
+    <div class="rd-branches">
+      <div class="rd-branch">
+        <h3>SGLang 的压缩前缀树</h3>
+        <pre class="lp-output" aria-label="共同块 P 下面有两条分支，A 和 B 的后缀各占一个节点">根
+└─ P
+   ├─ A₂ · T
+   └─ B₂ · T</pre>
+        <p>假设中间没有其他分叉，每条分支上的两页可以合在一个节点里。节点记着这段 ID 和对应的 KV 槽号。</p>
+      </div>
+      <div class="rd-branch">
+        <h3>vLLM 的块哈希索引</h3>
+        <pre class="lp-output" aria-label="A 和 B 共用首块哈希，第二块起生成各自的哈希">p = H(起点, P)
+a = H(p, A₂)
+b = H(p, B₂)
+A 的第三块  H(a, T)
+B 的第三块  H(b, T)</pre>
+        <p>H 表示计算块哈希。两条请求共用 p，从第二块起哈希各不相同。每个已缓存的块都可以用相应的哈希查到物理块号。</p>
+      </div>
+    </div>
+    <figcaption><b>图 4.2</b> SGLang 把共同上文保存在从树根到分叉点的路径上。vLLM 让每个块的哈希都带上前一块的哈希。图中省略了两条请求相同的附加信息，并沿用单组 KV 缓存。</figcaption>
+  </figure>
+  <p><strong>SGLang 沿树查。</strong> B 从根出发，用下一页的 token ID 在当前节点的子节点字典里选分支，再把 B 从当前位置开始的 ID 和子节点保存的整段 ID 对齐比较。树里原来可以用一个节点存下 A 的三页。B 只匹配了第一页，树就在页末拆开节点，把共享段 P 对应的 16 个槽号交给 B。显存里的 KV 留在原槽位。</p>
+  <p><strong>vLLM 从第一块开始查哈希表。</strong> B 用第一块的哈希 p 查到物理块号。算第二块的哈希时，只需传入 p、B₂ 的 token ID 和相应的附加信息，先前的上文已经体现在 p 里。此时表里只有 A 的记录，第二块查不到 b 就停。即使两条请求第三块的 ID 都是 T，算出的查找键也分别是 H(a, T) 和 H(b, T)。</p>
+  <p>调度器也能用这棵树辨认哪些等待请求共享同一段上文。比如 SGLang 可选的 <code>dfs-weight</code> 调度策略，会把等待请求挂到各自最后命中的节点，统计每棵子树里有多少请求，再优先访问请求较多的分支。vLLM 的块哈希表则直接回答“给定这段上文和这组 token，KV 在哪个物理块里”。<a href="https://github.com/sgl-project/sglang/blob/29481685462732237d80d86076d6563e1f658102/python/sglang/srt/managers/schedule_policy.py#L327-L347">等待请求与树节点的对应关系</a> · <a href="https://github.com/sgl-project/sglang/blob/29481685462732237d80d86076d6563e1f658102/python/sglang/srt/managers/schedule_policy.py#L417-L435">按子树的请求数排序</a>。</p>
+  <aside class="lp-note" role="note" data-note-for="fig-4-2"><a href="https://github.com/sgl-project/sglang/blob/29481685462732237d80d86076d6563e1f658102/python/sglang/srt/mem_cache/radix_cache.py#L648-L687">SGLang v0.5.17 · 查子节点、比对 ID 与拆分节点</a> · <a href="https://github.com/vllm-project/vllm/blob/568afb3a13806beb53bb2e6bd518269357b237c0/vllm/v1/core/block_pool.py#L198-L224">vLLM v0.26.0 · 用块哈希和缓存组定位物理块</a>。</aside>
+  <p>在这版 vLLM 里，物理块大小和实际命中粒度还可以不同。如果配置支持在物理块内部按更小的哈希边界查找，命中就可能停在块内。比较两套配置时，先确认它们实际允许命中到哪一位。<a href="https://github.com/vllm-project/vllm/blob/568afb3a13806beb53bb2e6bd518269357b237c0/vllm/v1/core/single_type_kv_cache_manager.py#L689-L735">块内查找的条件和实现</a></p>
+</div>
+<div class="lp-addendum" id="add-4-2" data-rev="14">
+  <h3>从前缀命中到显存回收，两种实现分别怎么做？</h3>
+  <p>A 结束以后，新请求可能还想读 A 算好的 KV，也可能只需要一些槽位来写自己的 KV。沿用单卡、每页或每块 16 个 token 的设定，顺着这两种用途看一次。</p>
+  <figure class="lp-figure" id="fig-4-3">
+    <div class="lp-table" tabindex="0" role="region" aria-label="SGLang 与 vLLM 的前缀查找、引用和回收对照">
+      <table>
+        <thead><tr><th scope="col">请求走到哪一步</th><th scope="col">SGLang 的设备端前缀树</th><th scope="col">vLLM V1 的物理块池</th></tr></thead>
+        <tbody>
+          <tr><th scope="row">新请求查找前缀</th><td>沿树比对 token ID，返回共同路径上各段 KV 的槽号。</td><td>从头逐块查哈希表，返回连续命中的物理块。每个块哈希都带有前一块的哈希。</td></tr>
+          <tr><th scope="row">请求结束，后来又有人命中</th><td>请求放下对路径的保护引用。只要 KV 仍驻留，后来者就能取得槽号，获准运行时重新保护这段路径。</td><td>物理块的引用数降到 0 时进入空闲队列。保留哈希的块仍可命中，被新请求用到时移出队列并增加引用。</td></tr>
+          <tr><th scope="row">缺空间，先回收谁</th><td>只在保护引用为 0、没有驻留子节点的叶节点中选择。默认按最近最少使用（LRU）挑最后访问时间最早的叶节点。</td><td>从空闲队列头部取。无缓存哈希的块优先。已缓存块中，更早闲下来、期间没有再被使用的块排在前面。</td></tr>
+          <tr><th scope="row">一次能腾出多少</th><td>摘掉选中的整个叶节点，把节点记录的全部槽位还给分配器。一个节点可以跨多页。</td><td>按需要的物理块数取块。取到已缓存块时，先移除它原来的哈希映射，再把块分给新请求。</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <figcaption><b>图 4.3</b> 从别的请求读回旧 KV 和接手一块显存写入新 KV，是这张表里两个不同的时刻。</figcaption>
+  </figure>
+  <h4 id="radix-leaf-example">SGLang · 一条请求的尾页可以落在内部节点</h4>
+  <p>这次让 A 恰好留下两页，B 完整复用 A 的输入，再接上两页。假设缓存树把这四页记在两个节点里，形状是 <code>根 → [第 1、2 页] → [第 3、4 页]</code>。第 2 页是 A 的尾页，但还有 B 的后缀挂在它下面。两条请求都结束、没有其他引用后，只有右侧节点能先回收。即使只缺一页，选中它也会一次归还两页，也就是 32 个槽位。左侧节点这时才成为候选，空间够用就继续留着。</p>
+  <p>如果有多条空闲分支，默认 LRU 比较的是各个候选叶节点的最后访问时间。假设短分支只有一页，长分支的叶节点有两页，短分支更久没有被访问，就先收短分支。<a href="https://github.com/sgl-project/sglang/blob/29481685462732237d80d86076d6563e1f658102/python/sglang/srt/mem_cache/radix_cache.py#L787-L800">叶节点的候选条件</a> · <a href="https://github.com/sgl-project/sglang/blob/29481685462732237d80d86076d6563e1f658102/python/sglang/srt/mem_cache/evict_policy.py#L16-L18">LRU 比较的字段</a> · <a href="https://github.com/sgl-project/sglang/blob/29481685462732237d80d86076d6563e1f658102/python/sglang/srt/mem_cache/radix_cache.py#L566-L585">整段回收与父节点入选</a></p>
+  <h4 id="vllm-queue-example">vLLM · 同一请求的尾块先入队，跨请求按队头取块</h4>
+  <p>回到 49 个输入位置的例子，这次让 A 和 B 短暂并行。A 结束时，B 还在用第 1–16 位的共享块。A 的第二、第三块都有缓存哈希，第四块只写了第 49 位，还没有哈希。这三块都只有 A 在用。假设此时队列里只有一个更早闲下来的已缓存块 X。A 放下引用后，分配器就按下面的顺序取块。</p>
+  <p><strong>第 49 位的尾块 → X → 第 33–48 位的块 → 第 17–32 位的块</strong></p>
+  <p>尾块没有可供命中的哈希，放到队头就能先用它。A 的两个完整后缀块按逻辑位置从后往前排到队尾，排在 X 之后。靠后的块要命中，就得连更长的上文也相同，把靠前的块多留一会儿，其他请求更有机会复用它。第 1–16 位仍由 B 持有，留在队列外。如果另一条请求在 X 被分走前命中并使用它，X 也会移出队列，原来的 KV 可以继续读。<a href="https://github.com/vllm-project/vllm/blob/568afb3a13806beb53bb2e6bd518269357b237c0/vllm/v1/core/single_type_kv_cache_manager.py#L495-L503">请求释放时的逆序</a> · <a href="https://github.com/vllm-project/vllm/blob/568afb3a13806beb53bb2e6bd518269357b237c0/vllm/v1/core/block_pool.py#L647-L740">从队头取块、命中后移出、归零后入队</a></p>
+</div>
+</section>
+<section class="lp-check" id="q-3" data-state="closed" data-rev="11">
+  <h3>检查 3<span class="lp-kind">迁移</span></h3>
+  <p class="lp-ask">两条新请求各有 49 个输入 token，只有第 20 个位置的 ID 不同。缓存里只有第一条请求留下的 KV。SGLang 每页 1 个 token，vLLM 每块 16 个 token，按整块查找。第二条请求在两边各能复用前多少个位置？第 33–48 个位置的 ID 都相同，vLLM 能单独复用这块 KV 吗？请用块哈希说明理由。</p>
+<details class="lp-answer" data-rev="11">
+  <summary>参考要点</summary>
+  <p>第 20 个位置首次不同，共同前缀有 19 个位置。SGLang 每页 1 个 token 时可以复用这 19 个位置。vLLM 按 16 个 token 整块查找时，第一块命中，第二块在第 20 个位置分叉，能复用的只有前 16 个位置。第三块的 token ID 虽然相同，计算它的哈希时传入的第二块哈希已经不同。模型在这 16 个位置看到的上文也不同，因此 B 要为自己的后缀重新计算 KV。</p>
+</details>
+</section>
+<section id="synthesis" data-rev="13">
+  <h2>导师串讲 · A 问完吞吐，B 怎样接着问延迟？</h2>
+  <p>回到开头的复习助手。它给两条请求都加了“请简答。”。套用同一聊天模板后，A 的输入有 21 个 token，B 有 20 个，前 12 个 ID 相同。A 做 prefill，把每一层算出的 K 和 V 写进设备上的槽位。A 生成一个 token 后结束，缓存树登记这批输入的 ID 和槽号。只要设备上还留着这些 KV，后来的请求就有机会用到它们。</p>
+  <p>在 SGLang 每页 1 个 token 的配置里，B 从树根查到前 12 个槽号。调度器接纳 B 时保护这段路径，把剩下 8 个输入位置交给模型做前向。这 8 个位置仍按因果注意力读取前 12 个位置的 KV，最后一个输入位置的输出用于选出 B 的第一个回答 token。B 还在读共享前缀时，缓存已经可以淘汰 A 无人使用的后缀。B 结束后释放自己的引用。如果共享前缀下面还有驻留的子节点，回收仍要从无人使用的叶节点开始。换成 vLLM 按 16 个 token 整块查找，A 和 B 在第一块就已分叉，B 的 20 个位置都要做前向。</p>
+  <p>把“请简答。”换成一份反复使用的长讲义，省下的重复计算就可能多得多。假设同一实例上已经缓存了讲义开头的 2,048 个输入位置，这段前缀恰好占满 128 个 16-token 块。随后到来的不同问题只要共享这段开头，就可以从同一份 KV 继续算自己的问题。保留这 128 块需要显存，复用它们能省多少工作，取决于下一条请求到来时缓存还留着多少，以及两条输入实际在哪里分叉。</p>
+</section>
+<section id="acceptance" data-rev="15">
+  <h2>单元一综合验收</h2>
+  <p>按面试时的口吻回答，讲一分钟左右，也可以直接写下来。</p>
+</section>
+<section class="lp-check" id="q-a1" data-state="closed" data-rev="17">
+  <h3>综合题 1<span class="lp-kind">请求发给哪台实例？</span></h3>
+  <p class="lp-ask">复习助手有甲、乙两台配置相同的单卡实例，模型都已预热，KV 缓存各自独立。一条流式请求的前 2,048 个 token 是讲义，末尾是用户的新问题。发给甲要排队，但轮到这条请求时，整段讲义的 KV 仍可复用。乙可以立刻处理，前缀缓存为空。</p>
+  <p class="lp-ask">为了让用户尽早收到第一个生成 token，你在什么条件下选甲，什么条件下选乙？请从两边各要算哪段输入讲起，再说说你会怎样验证自己的判断。</p>
+<details class="lp-answer" data-rev="17">
+  <summary>参考要点与口述</summary>
+  <blockquote class="lp-oral">
+    <p class="lp-oral-label">参考口述</p>
+    <p>甲要先排队。轮到它时，只需为新问题做前向，新问题里的 token 仍要通过注意力读取讲义的 KV。乙能立刻开始，但讲义和新问题都要做前向。我会估计在甲要多等多久，再看命中前缀能省下多久。如果省下的时间更多，就选甲。如果排队花的时间更多，就选乙。验证时我会在每轮恢复两边各自的缓存和排队条件，再发送同一条流式请求，分别从发出请求计到客户端收到首个生成 token，比较两次 TTFT。</p>
+  </blockquote>
+  <p>在采样和网络等其他耗时相近的条件下，<strong>命中节省的 prefill 时间 = 乙处理完整输入的耗时 − 甲命中后处理新问题的耗时</strong>。新问题在两边都要读取讲义的 KV，两种输入长度下的批次和算子效率也可能不同。因此估算分界点时，直接测这两条执行路径更可靠。甲的排队时间与差值接近时，两边的首 token 延迟也会接近。</p>
+  <p>验证时，向两台实例分别发送同一条流式请求。客户端从各自发出请求计时，到收到第一个实际生成的 token 停表，以毫秒比较 TTFT。每轮让甲只缓存讲义，重放相同的排队负载，让乙保持模型已预热、队列和前缀缓存为空。这样重复测量时，乙上一轮算过的讲义就不会变成下一轮的缓存命中。服务端分别核对实际命中的 token 数、排队时间和 prefill 耗时，就能解释两条 TTFT 为什么有差别。</p>
+</details>
 </section>
 <!-- lp:append -->
     <section class="lp-glossary" id="glossary" aria-labelledby="glossary-title">
