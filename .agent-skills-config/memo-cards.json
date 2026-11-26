@@ -88,6 +88,13 @@
         "面试准备/面试问题经验/复盘回答/安霸半导体-日期未确认.md",
         "面试准备/面试问题经验/复盘回答/进迭时空-日期未确认.md"
       ]
+    },
+    {
+      "id": "review-maps",
+      "kind": "verified-learning-note",
+      "patterns": [
+        "计划/复习地图/*.md"
+      ]
     }
   ],
   "output_collections": [
@@ -114,7 +121,7 @@
       ],
       "soft_target": {
         "minimum": 4,
-        "maximum": 15
+        "maximum": 8
       }
     },
     {
@@ -127,7 +134,7 @@
       ],
       "soft_target": {
         "minimum": 4,
-        "maximum": 15
+        "maximum": 8
       }
     },
     {
@@ -140,7 +147,7 @@
       ],
       "soft_target": {
         "minimum": 4,
-        "maximum": 15
+        "maximum": 8
       }
     }
   ]

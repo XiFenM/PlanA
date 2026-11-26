@@ -59,6 +59,10 @@
     "resource-legacy-reports": {
       "path": "计划/周报",
       "description": "W18、W26、W32 等只读 legacy 资源报告，仅作 bootstrap 证据"
+    },
+    "review-maps": {
+      "path": "计划/复习地图",
+      "description": "PlanA 一页回忆地图与跨周微口述回捞总表（纯复习辅助，不承载学习状态或验收证据）"
     }
   }
 }
