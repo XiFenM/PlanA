@@ -36,66 +36,68 @@
       "priority": 5,
       "template_id": "technical-qa",
       "fields": {
-        "问题": "固定模型、请求负载和总 GPU 数，把服务从混部改为 Prefill（P）／Decode（D）分离，客户端只从 D 接收输出。P 计算变快，尾部 ITL（相邻输出 token 的间隔）改善，TTFT（等待首个 token 的时间）却变差。应沿哪条路径解释和定位这种变化？",
+        "问题": "【PD 搬家 1/5】线上把大模型推理从混部拆成 Prefill（P）和 Decode（D），总卡数不变。结果输出间隔（ITL）变稳了，首字延迟（TTFT）却变慢了。怎么解释这种反差，排查时盯哪条链？",
         "答案": {
           "blocks": [
             {
               "type": "lead",
+              "label": "结论",
               "parts": [
                 {
                   "type": "text",
-                  "text": "Decode 少受长输入计算的干扰，后续输出间隔可能改善；但首个 token 还要经过 KV 交接和两侧排队，这些等待可能吃掉 P 计算节省的时间。"
+                  "text": "Decode 少了长输入计算抢资源，所以出词更稳；但首字延迟多出了“跨机搬 KV + 两侧排队”，吃掉了 P 算得快省下的时间。"
                 }
               ]
             },
             {
               "type": "point",
-              "label": "机制",
+              "label": "首字账本",
               "parts": [
                 {
                   "type": "text",
-                  "text": "P/D 分开后可以分别调度；正在生成的请求减少了同实例 prefill 计算的直接干扰。"
+                  "text": "沿着“P 排队与计算 → KV 交接等待与搬运 → D 拿到 KV 后排队 → 首字出词”逐段量耗时，看整条首字关键路径的净变化。"
                 }
               ]
             },
             {
               "type": "point",
-              "label": "关键路径",
+              "label": "配比制约",
               "parts": [
                 {
                   "type": "text",
-                  "text": "分别观察 P 排队与计算、KV 交接等待和搬运、D 的 KV 就绪后排队以及首个输出所需工作。只比较首 Token 路径的净变化，不把后续 ITL 的累计收益抵扣 TTFT。"
+                  "text": "总卡数固定时分池，P 先忙满的话，D 的空闲卡帮不上忙；反之亦然。"
                 }
               ]
             },
             {
               "type": "point",
-              "label": "归因",
+              "label": "下集衔接",
               "parts": [
                 {
                   "type": "text",
-                  "text": "传输耗时大只是线索，还要看队列、处理速率和资源占用；D 排队长不自动证明增加 D GPU 就一定有效。"
+                  "text": "KV 算好留在 P 上，D 查到有货、空间也划好了，就能立刻进 attention 算吗？"
                 }
               ]
             },
             {
               "type": "boundary",
+              "label": "踩坑点",
               "parts": [
                 {
                   "type": "text",
-                  "text": "此处假定首次交接后，同一请求不再跨 P/D 搬运已有上下文；其他请求的传输仍可能争用资源。"
+                  "text": "看到 D 排队长别直接拍板“加 D 卡”——先看是不是 KV 搬运堵了，或者 P/D 配比本身失衡。"
                 }
               ]
             }
           ]
         },
-        "锚点": "首 token 算整条路径；后续输出看阶段干扰",
-        "来源": "W3 单元一结构化日志 §1"
+        "锚点": "出词稳看隔离；首字慢算整条搬家关键路径",
+        "来源": "W3-U1 回忆地图 · 学习记录 §1"
       },
       "source_ids": [
         "w3-u1-log"
       ],
-      "content_summary": "A理由：回答PD收益与性能归因的常见面试题，避免仅凭局部加速宣称端到端改善。",
+      "content_summary": "A理由：面试常考 PD 拆机后 TTFT 与 ITL 反向变化的排查与归因。",
       "depends_on": []
     },
     {
@@ -110,148 +112,89 @@
         "product": "vllm",
         "commit": "d7ada3aace051fecec553c185225db2259c2ac6a"
       },
-      "quality": "B",
+      "quality": "A",
       "fact_status": "verified",
       "lifecycle": "active",
-      "priority": 3,
+      "priority": 5,
       "template_id": "technical-qa",
       "fields": {
-        "问题": "在 vLLM d7ada3a 的异步 KV 交接中，Decode 端 D 已确认远端有可复用的 KV，也分配了目标 blocks。为什么请求此时还不能立即参加 attention 计算？",
+        "问题": "【PD 搬家 2/5】vLLM V1 异步交接里，请求 R 的 KV 留在 P 机上。D 机查到“对面有货”，也给自己划好了存放 blocks。D 现在能直接把 R 塞进本轮 attention 算吗？为什么？",
         "答案": {
           "blocks": [
             {
               "type": "lead",
+              "label": "结论",
               "parts": [
                 {
                   "type": "text",
-                  "text": "远端找到了 KV、D 端腾出了空间，还不等于数据已经到位。Attention 要等加载成功，并满足本地读取条件。"
+                  "text": "不能——屋子刚腾出来，家具还在路上。"
                 }
               ]
             },
             {
               "type": "point",
-              "label": "位置",
+              "label": "先定落点",
               "parts": [
                 {
                   "type": "text",
-                  "text": "远端命中说明可以从别处获得数据；分配 blocks 只确定 D 端的落点，不能证明落点已包含有效 KV。"
+                  "text": "查到远端命中 + 分好本地 blocks，只确定了去哪拉、拉回来放哪，此时显存里还是空的。"
                 }
               ]
             },
             {
               "type": "point",
-              "label": "依赖",
+              "label": "异步搬运",
               "parts": [
                 {
                   "type": "text",
-                  "text": "Metadata 安排交接任务，Worker 执行传输。该请求先留在等待状态，Scheduler 仍可安排其他已就绪请求计算。"
+                  "text": "Scheduler 把搬运清单（metadata）交给 Worker 去异步拉；拉完之前 R 先挂起等待，D 照常先算别的就绪请求。"
                 }
               ]
             },
             {
               "type": "point",
-              "label": "可用",
+              "label": "真正可读",
               "parts": [
                 {
                   "type": "text",
-                  "text": "成功接收并满足实际布局、设备位置和可见性要求后，Scheduler 才能安排其消费。"
+                  "text": "等数据落进 D 显存、布局对得上、GPU 可见，Scheduler 才会把 R 放进计算批次。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "label": "下集衔接",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "这趟 KV 搬家，是由 D 主动去拉（PULL），还是 P 主动推过来（PUSH）？"
                 }
               ]
             },
             {
               "type": "boundary",
+              "label": "踩坑点",
               "parts": [
                 {
                   "type": "text",
-                  "text": "本卡讨论正常异步接收；不能仅凭一个计数或分配动作替代完成条件。"
+                  "text": "别把“分好 block”或“发起了传输”当成“数据可读”，不然 attention 会直接算出一堆脏数。"
                 }
               ]
             }
           ]
         },
-        "锚点": "远端可得 → 本地落点 → 输入可读",
-        "来源": "W3 单元一结构化日志 §2–3；vLLM d7ada3a"
+        "锚点": "查到有货 → 划好房间 → 货落地可见才开算",
+        "来源": "W3-U1 回忆地图 · vLLM V1 NIXL"
       },
       "source_ids": [
         "w3-u1-log"
       ],
-      "content_summary": "B：补齐跨实例KV交接中的就绪状态区别，不重复旧卡对一般调度计数的记忆。",
-      "depends_on": []
-    },
-    {
-      "key": "load-forward-dependency",
-      "rank": 3,
-      "domain": "llm-inference-pd",
-      "recall_target": "按请求的数据依赖判断异步KV加载与forward提交顺序是否合法",
-      "assessment": "mechanism",
-      "layer": "mechanism",
-      "fact_scope": {
-        "kind": "snapshot",
-        "product": "vllm",
-        "commit": "d7ada3aace051fecec553c185225db2259c2ac6a"
-      },
-      "quality": "B",
-      "fact_status": "verified",
-      "lifecycle": "active",
-      "priority": 3,
-      "template_id": "technical-qa",
-      "fields": {
-        "问题": "阅读 vLLM d7ada3a 的 NIXL 异步路径时，看到 start_load_kv 位于本步 forward 提交之后。应怎样判断它是否违反输入依赖，而不只比较两个函数的先后？",
-        "答案": {
-          "blocks": [
-            {
-              "type": "lead",
-              "parts": [
-                {
-                  "type": "text",
-                  "text": "先确定本步 forward 与这次加载分别属于哪些请求，再判断是否共享同一份输入依赖。"
-                }
-              ]
-            },
-            {
-              "type": "point",
-              "label": "异步例子",
-              "parts": [
-                {
-                  "type": "text",
-                  "text": "forward 可以处理 KV 已就绪的 B，而加载为仍在等待的 A 准备数据；B 不必等待 A 的 KV。"
-                }
-              ]
-            },
-            {
-              "type": "point",
-              "label": "调度边界",
-              "parts": [
-                {
-                  "type": "text",
-                  "text": "关键是 A 没有被安排消费尚未就绪的输入，而不是所有加载都必须排在所有计算之前。"
-                }
-              ]
-            },
-            {
-              "type": "point",
-              "label": "同一请求",
-              "parts": [
-                {
-                  "type": "text",
-                  "text": "若本步要计算 A，就必须在其 attention 读取前满足加载完成和可见性；只有 host 调用顺序在前仍不够。"
-                }
-              ]
-            }
-          ]
-        },
-        "锚点": "先问哪个请求，再问哪份输入",
-        "来源": "W3 单元一结构化日志 §3；vLLM d7ada3a"
-      },
-      "source_ids": [
-        "w3-u1-log"
-      ],
-      "content_summary": "B：训练按请求与数据依赖阅读控制流，避免机械套用调用顺序。",
+      "content_summary": "A理由：防止把远端命中或本地分块当成 KV 已可读，直接引发脏数据或调度误判。",
       "depends_on": []
     },
     {
       "key": "pull-push-contract",
-      "rank": 4,
+      "rank": 3,
       "domain": "llm-inference-pd",
       "recall_target": "比较NIXL PULL与PUSH的发起者位置准备及正常完成证据",
       "assessment": "mechanism",
@@ -267,223 +210,163 @@
       "priority": 5,
       "template_id": "technical-qa",
       "fields": {
-        "问题": "在 vLLM d7ada3a 的正常 NIXL PULL/PUSH 中，P 是 Prefill 端，D 是 Decode 端，两端模型和 KV 布局相同。沿“准备位置 → 发起搬运 → 两端收尾”，解释两种方式的责任差别。",
+        "问题": "【PD 搬家 3/5】同模型同布局下，请求 R 的 KV 要从 P 搬到 D。在 vLLM V1 的 NIXL 路径里，PULL 和 PUSH 沿“准备位置 → 发起搬运 → 两端收尾”各由谁干什么？",
         "答案": {
           "blocks": [
             {
               "type": "lead",
+              "label": "结论",
               "parts": [
                 {
                   "type": "text",
-                  "text": "KV 都由 P 流向 D；PULL 由 D 发起 READ，PUSH 由 P 发起 WRITE，位置准备和完成证据随发起方改变。"
+                  "text": "字节永远从 P 流向 D；PULL 是 D 发 READ 主动拉，PUSH 是 P 发 WRITE 主动推，两边各自按自己的凭据收尾。"
                 }
               ]
             },
             {
               "type": "point",
-              "label": "PULL",
+              "label": "PULL（D 拉）",
               "parts": [
                 {
                   "type": "text",
-                  "text": "D 准备本地目的空间并取得 P 的源位置，发起 READ；D 跟踪自身读取，P 依据相关读取方完成的通知结束传输保留。"
+                  "text": "D 划好目标块、拿到 P 源位置后发 READ；D 盯自己的读取句柄，P 等读完通知才解绑源块。"
                 }
               ]
             },
             {
               "type": "point",
-              "label": "PUSH",
+              "label": "PUSH（P 推）",
               "parts": [
                 {
                   "type": "text",
-                  "text": "D 登记目标块和请求／实例信息，P 将它与保留的源块配对后提交 WRITE；P 依据自身相关 WRITE 句柄全部成功收尾，D 依据完成通知推进接收。"
+                  "text": "D 先发 PUSH_REG 报备目标块，P 配对好源块后发 WRITE；P 看自己的 WRITE 句柄收尾，D 看附带的完成通知收尾。"
                 }
               ]
             },
             {
               "type": "point",
-              "label": "不变量",
+              "label": "独立收尾",
               "parts": [
                 {
                   "type": "text",
-                  "text": "源数据在最后访问前保持有效，目的 KV 可用前不能被 attention 消费；传输责任结束后还要经过各自的状态更新和回收条件。"
+                  "text": "P 和 D 拿的是两份副本，收尾没有固定先后，P 回收源块比 D 报告接收完成更早完全正常。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "label": "下集衔接",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "WRITE 和通知都报成功了，就能保证 D 拿到的 KV 没写串请求吗？"
                 }
               ]
             },
             {
               "type": "boundary",
+              "label": "踩坑点",
               "parts": [
                 {
                   "type": "text",
-                  "text": "只比较该固定版本的正常路径；操作名称不能证明实际使用了 RDMA 或某种 GPU kernel。"
+                  "text": "别凭 READ/WRITE 的名字猜底层一定走了硬件 RDMA——后端也可能退回 TCP，且操作可由 CPU 提交、网卡搬运。"
                 }
               ]
             }
           ]
         },
-        "锚点": "数据都 P→D；READ 在 D；WRITE 在 P",
-        "来源": "W3 单元一结构化日志 §4–5、§10；vLLM d7ada3a"
+        "锚点": "数据都 P→D；PULL 是 D 拉，PUSH 是 P 推，两端独立收尾",
+        "来源": "W3-U1 回忆地图 · vLLM V1 NIXL"
       },
       "source_ids": [
         "w3-u1-log"
       ],
-      "content_summary": "A理由：支撑PULL/PUSH系统设计面试，防止把一个协议的通知责任生搬到另一个协议。",
+      "content_summary": "A理由：覆盖系统设计高频面试题——PULL 与 PUSH 各自谁准备、谁发起、怎么收尾。",
       "depends_on": []
     },
     {
-      "key": "push-notification-correction",
-      "rank": 5,
+      "key": "transfer-success-vs-identity",
+      "rank": 4,
       "domain": "llm-inference-pd",
-      "recall_target": "纠正P的finished_sending上报触发D的WRITE完成通知这一错误因果",
+      "recall_target": "用实际分配与数据归属验证区分成功搬运和正确请求目标映射",
       "assessment": "mechanism",
       "layer": "mechanism",
       "fact_scope": {
-        "kind": "snapshot",
-        "product": "vllm",
-        "commit": "d7ada3aace051fecec553c185225db2259c2ac6a"
+        "kind": "evergreen"
       },
       "quality": "A",
       "fact_status": "verified",
       "lifecycle": "active",
       "priority": 5,
-      "template_id": "correction",
+      "template_id": "technical-qa",
       "fields": {
-        "意图": "vLLM d7ada3a 的正常 PUSH 中，只把 Prefill 端 P 的完成上报改成等待 Decode 端 D 不会额外发送的 ACK。WRITE 仍成功，不考虑超时。已知 P 会继续保留源块，D 还能怎样推进，依据是什么？",
-        "场景": "对象是D的接收收尾与生成；仅P的完成上报规则被改变，其余代码保持原样。",
-        "正确": "P 的源块回收会停滞；D 仍可收到原有 WRITE 完成通知，满足本地就绪条件后继续生成。",
-        "错误": "P节点无法完成finished_sending，可能也就无法发送完成通知。",
-        "说明": {
+        "问题": "【PD 搬家 4/5】PD 服务里请求 A、B 的源 KV 都没错，所有 WRITE 和完成通知也报了成功，但 D 开算前发现两人的 KV 写互换了。怎么查，最小断言怎么写？",
+        "答案": {
           "blocks": [
             {
               "type": "lead",
+              "label": "结论",
               "parts": [
                 {
                   "type": "text",
-                  "text": "错在把 P 的软件状态上报当成了 D 通知的触发条件。"
+                  "text": "搬运成功只说明字节落到了某个地址，不代表落到了对的请求头上。查请求身份和实际提交的块映射。"
                 }
               ]
             },
             {
               "type": "point",
-              "label": "通知路径",
+              "label": "排查链",
               "parts": [
                 {
                   "type": "text",
-                  "text": "提交 WRITE 时就已配置完成通知。人为延后 P 的 finished_sending 上报，不会取消这条既有通知路径；提交时配置通知，也不等于通知已经到达 D。"
+                  "text": "依次核对逻辑请求归属、两边实际分配的池 blocks、页/地址展开，以及真正喂给 WRITE 的源/目的配对。"
                 }
               ]
             },
             {
               "type": "point",
-              "label": "P的后果",
+              "label": "最小断言",
               "parts": [
                 {
                   "type": "text",
-                  "text": "P 等不到新增 ACK，Scheduler 不能正常解除源块保留；积累后会挤占 P 的可用缓存容量。"
+                  "text": "从两边独立的实际分配记录取值，断言每对实际搬运的源块和目的块都属于同一条逻辑请求（两端本地 request ID 不必同名）。"
                 }
               ]
             },
             {
               "type": "point",
-              "label": "正常依据",
+              "label": "下集衔接",
               "parts": [
                 {
                   "type": "text",
-                  "text": "P 依据相关 WRITE 句柄全部成功收尾回报发送完成；D 的接收和后续消费有自己的条件。"
+                  "text": "D 这边老请求算完了，CPU 立刻把它的旧 KV 块回池分给新请求，会出什么事？"
                 }
               ]
             },
             {
               "type": "boundary",
+              "label": "踩坑点",
               "parts": [
                 {
                   "type": "text",
-                  "text": "条件限定为仅修改P的上报判定；不能推及传输本身失败的情况。"
+                  "text": "绝不能拿同一份可能出错的 metadata 消息自己比自己——要跟独立分配记录或 KV 内容摘要对账。"
                 }
               ]
             }
           ]
-        }
+        },
+        "锚点": "搬完了，还得用独立分配账本对清“搬给了谁”",
+        "来源": "W3-U1 回忆地图 · 学习记录 §13"
       },
       "source_ids": [
         "w3-u1-log"
       ],
-      "content_summary": "A理由：修复真实出现的错误因果，防止增加不存在的ACK依赖并误判D也被阻塞。",
-      "depends_on": []
-    },
-    {
-      "key": "report-vs-fence-correction",
-      "rank": 6,
-      "domain": "llm-inference-pd",
-      "recall_target": "区分结果上报延迟与本地GPU在途访问造成的两类回收等待",
-      "assessment": "discrimination",
-      "layer": "atomic",
-      "fact_scope": {
-        "kind": "snapshot",
-        "product": "vllm",
-        "commit": "d7ada3aace051fecec553c185225db2259c2ac6a"
-      },
-      "quality": "B",
-      "fact_status": "verified",
-      "lifecycle": "active",
-      "priority": 3,
-      "template_id": "correction",
-      "fields": {
-        "意图": "vLLM d7ada3a 的正常 PUSH 中，已确认 P Worker 的 finished_sending 结果消息延迟。诊断源块未回收时，如何区分直接阻塞与本地在途访问保护？",
-        "场景": "P Worker已完成WRITE；D通知路径正常。本地访问是否仍在途是需要单独判断的条件。",
-        "正确": "直接卡住的是 P Scheduler 还没收到完成结果；本地 GPU 是否仍在访问这批块，是另一项需要单独核对的回收条件。",
-        "错误": "因为可能还会有本地在途访问，需要等相关step完成才能归还引用计数。",
-        "说明": {
-          "blocks": [
-            {
-              "type": "lead",
-              "parts": [
-                {
-                  "type": "text",
-                  "text": "错误仅在于用另一项保护替代了题设已明确的直接原因，并不是否定本地在途保护。"
-                }
-              ]
-            },
-            {
-              "type": "point",
-              "label": "上报条件",
-              "parts": [
-                {
-                  "type": "text",
-                  "text": "Worker 已知道 WRITE 完成，Scheduler 却还没收到这个事实。对 Scheduler 来说，解除传输保留的依据仍然缺失，源块因此继续保留。"
-                }
-              ]
-            },
-            {
-              "type": "point",
-              "label": "访问条件",
-              "parts": [
-                {
-                  "type": "text",
-                  "text": "Scheduler 收到结果后，若相关本地 GPU step 仍在途且保护启用，还要等待该 step 完成，再归还引用。"
-                }
-              ]
-            },
-            {
-              "type": "boundary",
-              "parts": [
-                {
-                  "type": "text",
-                  "text": "即使本地GPU已结束，上报延迟这一门槛仍然存在。"
-                }
-              ]
-            }
-          ]
-        }
-      },
-      "source_ids": [
-        "w3-u1-log"
-      ],
-      "content_summary": "B：保留真实归因纠错，帮助区分管理者获知完成与设备实际结束，不重复通用异步定义。",
+      "content_summary": "A理由：区分传输成功与请求归属正确，提供可落地的故障排查与断言思路。",
       "depends_on": []
     },
     {
       "key": "inflight-reuse",
-      "rank": 7,
+      "rank": 5,
       "domain": "llm-inference-pd",
       "recall_target": "解释vLLM消费者提前回收旧请求KV块为何会与新connector写入竞争",
       "assessment": "mechanism",
@@ -499,437 +382,209 @@
       "priority": 5,
       "template_id": "technical-qa",
       "fields": {
-        "问题": "vLLM d7ada3a 消费端启用重叠批次和本地延迟释放保护。旧请求 X 的 S1 返回停止 token，但 S2 已提前提交。为什么 CPU 标记 X 结束后，不能立即把它的 KV blocks 分配给新请求 A？",
+        "问题": "【PD 搬家 5/5】vLLM V1 消费端开了重叠批次：旧请求 X 在第 1 步返回了停止 token，但第 2 步（S2）已经提前提交到 GPU。CPU 标记 X 结束后，为啥不能立刻把它的 KV 块分给新请求 A？",
         "答案": {
           "blocks": [
             {
               "type": "lead",
+              "label": "结论",
               "parts": [
                 {
                   "type": "text",
-                  "text": "CPU 请求结束不会撤回已提交的 S2；旧 GPU 写入可能污染新请求刚收到的 KV。"
+                  "text": "CPU 宣布请求结束，撤不回已经发给 GPU 的 S2；提前回池会让旧 S2 写脏新请求刚搬来的 KV。"
                 }
               ]
             },
             {
               "type": "point",
-              "label": "危险顺序",
+              "label": "脏写现场",
               "parts": [
                 {
                   "type": "text",
-                  "text": "若旧块立即回池，A 可能拿到同一块，并由 connector 写入远端 KV；X 的 S2 随后仍按旧 metadata 写同一地址。"
+                  "text": "旧块马上回池后，新请求 A 拿走同一块并让 connector 写入远端 KV，接着 X 的旧 S2 仍按老地址往上写，直接把 A 覆盖掉。"
                 }
               ]
             },
             {
               "type": "point",
-              "label": "保护",
+              "label": "安全删块",
               "parts": [
                 {
                   "type": "text",
-                  "text": "相关 GPU 执行步尚未完成时，把块留在延迟释放路径。等完成进度表明 S2 已不再访问这些块，再归还引用；引用计数本身不会查询 GPU/NIC。"
+                  "text": "开启延迟释放保护：等 GPU 进度确认 S2 彻底跑完、不再碰这些块，才把引用还给块池。"
                 }
               ]
             },
             {
               "type": "boundary",
+              "label": "踩坑点",
               "parts": [
                 {
                   "type": "text",
-                  "text": "这是固定源码所防止的可能时序，不是本轮实测污染；也不要求GPU全局空闲后才能回收。"
+                  "text": "引用计数只管 CPU 侧逻辑持有，不会替你查 GPU 或网卡还在不在写这块显存。"
                 }
               ]
             }
           ]
         },
-        "锚点": "请求结束 ≠ 访问结束；旧写入未停，块不能换主",
-        "来源": "W3 单元一结构化日志 §12；vLLM d7ada3a"
+        "锚点": "CPU 结束 ≠ GPU 停手；旧在途写入没完，块不能换主",
+        "来源": "W3-U1 回忆地图 · 学习记录 §12"
       },
       "source_ids": [
         "w3-u1-log"
       ],
-      "content_summary": "A理由：防止过早复用KV块造成静默数据污染，连接框架调度与设备异步访问。",
+      "content_summary": "A理由：解释异步重叠执行下引用计数为何挡不住 GPU 在途写入，防生产级静默脏数据。",
       "depends_on": []
     },
     {
-      "key": "producer-consumer-lifetimes",
-      "rank": 8,
+      "key": "push-notification-correction",
+      "rank": 6,
       "domain": "llm-inference-pd",
-      "recall_target": "解释正常PULL中P源块释放许可与D可消费完成没有固定全局先后",
-      "assessment": "discrimination",
-      "layer": "atomic",
-      "fact_scope": {
-        "kind": "snapshot",
-        "product": "vllm",
-        "commit": "d7ada3aace051fecec553c185225db2259c2ac6a"
-      },
-      "quality": "B",
-      "fact_status": "verified",
-      "lifecycle": "active",
-      "priority": 3,
-      "template_id": "technical-qa",
-      "fields": {
-        "问题": "在 vLLM d7ada3a 的正常成功 NIXL PULL 中，监控先看到 P 的 finished_sending，稍后才看到 D 的 finished_recving。应怎样判断这是不是提前释放，而不只比较时间戳？",
-        "答案": {
-          "blocks": [
-            {
-              "type": "lead",
-              "parts": [
-                {
-                  "type": "text",
-                  "text": "P 的源副本何时可回收，与 D 的目的副本何时可供计算读取，是两件事。应分别核对两端的访问责任，不能只凭两个完成字段的先后判错。"
-                }
-              ]
-            },
-            {
-              "type": "point",
-              "label": "P源块",
-              "parts": [
-                {
-                  "type": "text",
-                  "text": "确认相关远端读取不再访问源数据，完成结果被处理，并满足本地在途访问和引用条件，才允许复用。"
-                }
-              ]
-            },
-            {
-              "type": "point",
-              "label": "D目的块",
-              "parts": [
-                {
-                  "type": "text",
-                  "text": "D 可能还要完成实际路径所需的数据位置、布局和可见性准备，再被调度消费自己的副本。"
-                }
-              ]
-            },
-            {
-              "type": "boundary",
-              "parts": [
-                {
-                  "type": "text",
-                  "text": "本卡只讨论成功且无超时的路径；完成字段的先后本身不是正确性证据。"
-                }
-              ]
-            }
-          ]
-        },
-        "锚点": "P 查源块回收条件；D 查目的 KV 就绪条件",
-        "来源": "W3 单元一结构化日志 §4；vLLM d7ada3a"
-      },
-      "source_ids": [
-        "w3-u1-log"
-      ],
-      "content_summary": "B：将已有通用生命周期原则落到NIXL双端完成字段，保留固定实现的观察边界。",
-      "depends_on": []
-    },
-    {
-      "key": "block-address-mapping",
-      "rank": 9,
-      "domain": "llm-inference-pd",
-      "recall_target": "解释NIXL PUSH从请求逻辑位置到两端传输地址的分层映射",
+      "recall_target": "纠正P的finished_sending上报触发D的WRITE完成通知这一错误因果",
       "assessment": "mechanism",
       "layer": "mechanism",
       "fact_scope": {
         "kind": "snapshot",
         "product": "vllm",
         "commit": "d7ada3aace051fecec553c185225db2259c2ac6a"
-      },
-      "quality": "B",
-      "fact_status": "verified",
-      "lifecycle": "active",
-      "priority": 3,
-      "template_id": "technical-qa",
-      "fields": {
-        "问题": "在 vLLM d7ada3a 的 NIXL PUSH 中，Prefill 端 P 与 Decode 端 D 的 KV 都位于各自 GPU 显存。请求逻辑块位置、池 block ID、backend 页编号、传输地址分别表示什么？D 把目的块信息交给 P 后，谁为 WRITE 组织映射？",
-        "答案": {
-          "blocks": [
-            {
-              "type": "lead",
-              "parts": [
-                {
-                  "type": "text",
-                  "text": "先确定请求中的哪一段数据，再找到池里的哪个槽位，随后按 backend 页粒度展开，最终得到实际传输地址。每层编号都有自己的含义，不能把 block ID 直接当地址。"
-                }
-              ]
-            },
-            {
-              "type": "point",
-              "label": "请求到槽位",
-              "parts": [
-                {
-                  "type": "text",
-                  "text": "D Scheduler 侧的 KVCacheManager 为请求选择池 block IDs；请求中的第几个块，不等于池中的编号。"
-                }
-              ]
-            },
-            {
-              "type": "point",
-              "label": "槽位到页",
-              "parts": [
-                {
-                  "type": "text",
-                  "text": "PUSH 中 P Worker 的 host 侧使用双方相应的页粒度信息，展开 P 源与 D 目的的 backend 页编号。"
-                }
-              ]
-            },
-            {
-              "type": "point",
-              "label": "页到地址",
-              "parts": [
-                {
-                  "type": "text",
-                  "text": "Worker/NIXL 结合 region 描述选择传输范围；D 的地址仍指向 D 显存，出现在 P 的描述中不代表它属于 P 本地内存。"
-                }
-              ]
-            },
-            {
-              "type": "boundary",
-              "parts": [
-                {
-                  "type": "text",
-                  "text": "源码中的 kernel physical block ID 仍是缓存页编号，不是裸硬件物理地址。"
-                }
-              ]
-            }
-          ]
-        },
-        "锚点": "请求位置 → 池槽位 → backend页 → 地址范围",
-        "来源": "W3 单元一结构化日志 §8；vLLM d7ada3a"
-      },
-      "source_ids": [
-        "w3-u1-log"
-      ],
-      "content_summary": "B：避免logical/physical多义造成跨端地址映射误读，不记算例中的固定数字。",
-      "depends_on": []
-    },
-    {
-      "key": "request-registration-vs-mr",
-      "rank": 10,
-      "domain": "llm-inference-pd",
-      "recall_target": "辨析PUSH请求级目的登记与RDMA内存区域注册的职责",
-      "assessment": "discrimination",
-      "layer": "atomic",
-      "fact_scope": {
-        "kind": "snapshot",
-        "product": "vllm",
-        "commit": "d7ada3aace051fecec553c185225db2259c2ac6a"
-      },
-      "quality": "B",
-      "fact_status": "verified",
-      "lifecycle": "active",
-      "priority": 3,
-      "template_id": "technical-qa",
-      "fields": {
-        "问题": "在 vLLM d7ada3a 的 NIXL PUSH 交接中，PUSH_REG 的目的块登记与 RDMA 的 MR（Memory Region，注册内存区域）分别描述什么？为什么二者都不只是“发送一个设备地址”？",
-        "答案": {
-          "blocks": [
-            {
-              "type": "lead",
-              "parts": [
-                {
-                  "type": "text",
-                  "text": "PUSH_REG 描述这次请求使用哪些目的缓存槽位；MR 描述可被RDMA访问的实际内存范围与权限。"
-                }
-              ]
-            },
-            {
-              "type": "point",
-              "label": "请求级",
-              "parts": [
-                {
-                  "type": "text",
-                  "text": "PUSH_REG 包含请求／实例信息与池 block IDs，这些编号还需映射到 backend 页和传输地址。"
-                }
-              ]
-            },
-            {
-              "type": "point",
-              "label": "内存级",
-              "parts": [
-                {
-                  "type": "text",
-                  "text": "MR 登记实际内存范围、长度和访问权限，并提供访问 key；它不只是通报一个地址。"
-                }
-              ]
-            },
-            {
-              "type": "boundary",
-              "parts": [
-                {
-                  "type": "text",
-                  "text": "本卡只辨析层级，不声称已核验或运行某个NIXL后端的具体MR策略。"
-                }
-              ]
-            }
-          ]
-        },
-        "锚点": "PUSH_REG 选本次槽位；MR 约定可访问的内存与权限",
-        "来源": "W3 单元一结构化日志 §9；vLLM d7ada3a 与所引verbs接口"
-      },
-      "source_ids": [
-        "w3-u1-log"
-      ],
-      "content_summary": "B：区分请求控制信息与底层内存访问描述，为后续RDMA学习建立术语边界。",
-      "depends_on": []
-    },
-    {
-      "key": "cpu-data-mover-kernel",
-      "rank": 11,
-      "domain": "llm-inference-pd",
-      "recall_target": "按提交搬运消费三层判断GPU通信是否必须有配对通信kernel",
-      "assessment": "mechanism",
-      "layer": "mechanism",
-      "fact_scope": {
-        "kind": "evergreen"
-      },
-      "quality": "B",
-      "fact_status": "verified",
-      "lifecycle": "active",
-      "priority": 3,
-      "template_id": "technical-qa",
-      "fields": {
-        "问题": "GPU 之间发生了一次数据搬运，但没有看到成对的 send/recv GPU kernel。应如何沿提交、搬运、消费三个环节解释这种可能性？",
-        "答案": {
-          "blocks": [
-            {
-              "type": "lead",
-              "parts": [
-                {
-                  "type": "text",
-                  "text": "提交者、实际搬运硬件与后续消费者可以不同，纯搬运不一定通过两端配对的GPU通信kernel完成。"
-                }
-              ]
-            },
-            {
-              "type": "point",
-              "label": "提交",
-              "parts": [
-                {
-                  "type": "text",
-                  "text": "CPU 可以提交拷贝或传输操作；Worker 中的 host 控制代码并不等于 GPU kernel。"
-                }
-              ]
-            },
-            {
-              "type": "point",
-              "label": "搬运",
-              "parts": [
-                {
-                  "type": "text",
-                  "text": "在具备相应访问能力的路径中，拷贝引擎（Copy Engine）或网卡／支持 RDMA 的网卡（NIC/RNIC）可以移动字节。实际由谁搬运，取决于所选后端和设备条件。"
-                }
-              ]
-            },
-            {
-              "type": "point",
-              "label": "消费",
-              "parts": [
-                {
-                  "type": "text",
-                  "text": "目标 GPU 后续计算仍需满足完成、可见性和调度条件；没有通信 kernel 不等于无需同步。"
-                }
-              ]
-            },
-            {
-              "type": "boundary",
-              "parts": [
-                {
-                  "type": "text",
-                  "text": "具体搬运者取决于API、后端和设备能力；本卡描述支持路径的可能性，不构成本机运行证据。"
-                }
-              ]
-            }
-          ]
-        },
-        "锚点": "谁下令 → 谁搬字节 → 谁等结果来计算",
-        "来源": "W3 单元一结构化日志 §11"
-      },
-      "source_ids": [
-        "w3-u1-log"
-      ],
-      "content_summary": "B：纠正从kernel列表推断全部通信行为的习惯，区分控制路径与数据路径。",
-      "depends_on": []
-    },
-    {
-      "key": "transfer-success-vs-identity",
-      "rank": 12,
-      "domain": "llm-inference-pd",
-      "recall_target": "用实际分配与数据归属验证区分成功搬运和正确请求目标映射",
-      "assessment": "mechanism",
-      "layer": "mechanism",
-      "fact_scope": {
-        "kind": "evergreen"
       },
       "quality": "A",
       "fact_status": "verified",
       "lifecycle": "active",
       "priority": 5,
-      "template_id": "technical-qa",
+      "template_id": "correction",
       "fields": {
-        "问题": "PD 服务中，A、B 的源 KV 已分别核对正确且内容可区分。所有 WRITE 与完成通知成功，但在 D 模型消费前发现两请求的目标 KV 互换。怎样定位问题，并提出能暴露错写目标的最小断言？",
-        "答案": {
+        "意图": "vLLM V1 正常 PUSH 中，如果把 P 向调度器上报 finished_sending 改成等一个 D 不会发的 ACK（WRITE 本身正常成功），D 还能继续生成吗？",
+        "场景": "只改了 P 的上报判定规则，WRITE 和其余路径保持不变。",
+        "正确": "D 照常推进生成，卡住的只是 P 自己回收源块。",
+        "错误": "P节点无法完成finished_sending，可能也就无法发送完成通知。",
+        "说明": {
           "blocks": [
             {
               "type": "lead",
+              "label": "结论",
               "parts": [
                 {
                   "type": "text",
-                  "text": "字节搬到了某个地址，不代表搬到了正确请求的地址。先核对请求身份，再检查真正提交的源／目的映射。"
+                  "text": "P 确实完不成 finished_sending，错在把 P 内部的软件上报当成了给 D 发通知的开关。"
                 }
               ]
             },
             {
               "type": "point",
-              "label": "定位",
+              "label": "通知走哪条路",
               "parts": [
                 {
                   "type": "text",
-                  "text": "核对逻辑请求关联、实际分配的池 blocks、页或地址展开，以及真正传给 WRITE 的源／目的配对。"
+                  "text": "发给 D 的完成通知在提交 WRITE 时就绑好了，不靠 P 的 finished_sending 触发，所以 D 收到通知、就绪后照常出词。"
                 }
               ]
             },
             {
               "type": "point",
-              "label": "最小断言",
+              "label": "谁真受影响",
               "parts": [
                 {
                   "type": "text",
-                  "text": "从独立实际分配记录取得源和目的块的归属，要求每个实际搬运块对属于同一逻辑请求；两端本地ID不必字符串相同。"
-                }
-              ]
-            },
-            {
-              "type": "point",
-              "label": "补强",
-              "parts": [
-                {
-                  "type": "text",
-                  "text": "在D按请求真正拥有的目标块读取内容，与该请求预期KV标记或源摘要比较，可覆盖标签正确但地址展开错误的情形。"
+                  "text": "P 一直等不到那个多余的 ACK，调度器就不敢释放源块，久了会把 P 的显存占满。"
                 }
               ]
             },
             {
               "type": "boundary",
+              "label": "踩坑点",
               "parts": [
                 {
                   "type": "text",
-                  "text": "不能只比较同一份可能错误的消息里的标签，让metadata自证正确。"
+                  "text": "两件事分开看：D 的进度看 WRITE 通知，P 的块回收看 P 自己的 finished_sending。"
                 }
               ]
             }
           ]
-        },
-        "锚点": "搬完了，还要确认搬给了谁",
-        "来源": "W3 单元一结构化日志 §13"
+        }
       },
       "source_ids": [
         "w3-u1-log"
       ],
-      "content_summary": "A理由：防止静默错写目标后把问题误归为attention数值错误，支撑可验证的接入审查。",
+      "content_summary": "A理由：纠正真实犯过的因果混淆，避免把 P 的软件上报误当成触发 D 通知的前提。",
+      "depends_on": []
+    },
+    {
+      "key": "report-vs-fence-correction",
+      "rank": 7,
+      "domain": "llm-inference-pd",
+      "recall_target": "区分结果上报延迟与本地GPU在途访问造成的两类回收等待",
+      "assessment": "discrimination",
+      "layer": "atomic",
+      "fact_scope": {
+        "kind": "snapshot",
+        "product": "vllm",
+        "commit": "d7ada3aace051fecec553c185225db2259c2ac6a"
+      },
+      "quality": "B",
+      "fact_status": "verified",
+      "lifecycle": "active",
+      "priority": 3,
+      "template_id": "correction",
+      "fields": {
+        "意图": "vLLM V1 正常 PUSH 中，P Worker 已经做完 WRITE，但 finished_sending 上报消息延迟了。诊断源块迟迟不回收时，直接原因是什么？和本地 GPU 在途保护什么关系？",
+        "场景": "已知 WRITE 完成、D 通知正常、只是 P 的上报消息慢了。",
+        "正确": "直接卡点是 P Scheduler 还没拿到完成上报；本地 GPU 是否还在访问这批块，是另一道独立的回收门槛。",
+        "错误": "因为可能还会有本地在途访问，需要等相关step完成才能归还引用计数。",
+        "说明": {
+          "blocks": [
+            {
+              "type": "lead",
+              "label": "结论",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "错在拿另一道本身正确的门，顶掉了题目里已经明说的直接原因。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "label": "第一道门（上报）",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "Worker 完事了，但消息没送到 Scheduler，调度器不知情，当然不敢解除传输保留。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "label": "第二道门（在途）",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "就算上报送到了，若本地 GPU step 还在碰这批块，才再等该 step 结束归还引用。"
+                }
+              ]
+            },
+            {
+              "type": "boundary",
+              "label": "踩坑点",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "就算本地 GPU 早就空闲了，上报消息没到，源块一样不会回收。"
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "source_ids": [
+        "w3-u1-log"
+      ],
+      "content_summary": "B：保留真实诊断纠错，分清“调度器还没收到上报”与“本地 GPU 还在用”两道独立门。",
       "depends_on": []
     },
     {
       "key": "push-interview-synthesis",
-      "rank": 13,
+      "rank": 8,
       "domain": "llm-inference-pd",
       "recall_target": "向面试官串联正常PUSH的目标登记传输与双端回收契约",
       "assessment": "oral",
@@ -945,278 +600,29 @@
       "priority": 3,
       "template_id": "oral",
       "fields": {
-        "问题": "向面试官用一段话解释 vLLM d7ada3a 的正常 NIXL PUSH：从 D 准备目标空间，到 P 发起 WRITE，再到两端可以消费或回收，各由什么事实推进？假定同模型、同布局、单 Worker、无失败。",
-        "参考回答": "D 的 Scheduler 为请求分配目标 blocks，connector 将请求、实例和目标块信息交给 Worker 登记。P 保留已完成 prefill 的源块，把源块与 D 的登记按逻辑请求配对，再提交 WRITE。P 根据自身相关 WRITE 句柄全部成功收尾回报 finished_sending；D 根据所需完成通知和本地就绪条件回报接收结果，之后才被调度消费。两条收尾链不要求 D 先消费完、P 才能回收。P 的块还要等完成事实被 Scheduler 处理，并满足本地访问保护与引用条件，才允许复用；D 继续使用自己的副本。",
+        "问题": "向面试官用 60–90 秒讲清 vLLM V1 的 NIXL PUSH：从 D 准备目标块，到 P 推数据，再到两端各自消费和删块，分别靠什么信号推进？",
+        "参考回答": "在同模型同布局的正常 PUSH 路径里，D 的 Scheduler 先给请求分好目标 blocks，但这时候显存还是空的，请求先挂着等。接着 D 通过 PUSH_REG 把请求、实例和目标块信息报备给 P。P 保留着算完 prefill 的源块，按逻辑请求配对后提交 WRITE 把 KV 推过去。收尾是两端各自独立的：P 盯自己那批 WRITE 句柄全部成功，再由 Worker 上报 finished_sending 给调度器；D 则看附在 WRITE 上的完成通知，数据落地、满足本地布局和 GPU 可见性后就能进 attention。因为通知不靠 P 的软件上报触发，两边收尾没有固定先后。最后 P 要把源块安全回池，得过两道门：调度器收到完成上报，且本地 GPU 在途访问都结束、引用归零，才允许复用。",
         "评分锚点": [
-          "D 登记目的块",
-          "P 配对源块并提交 WRITE",
-          "两端分别确认完成",
-          "满足本地访问与引用条件后复用源块"
+          "D 划块挂起并 PUSH_REG 报备，分清落点与可读",
+          "P 配对源块提交 WRITE 推送 KV",
+          "两端按各自凭据独立收尾，无固定先后",
+          "P 回收源块过“收到上报 + 本地访问结束”两道门"
         ],
-        "来源": "W3 单元一结构化日志 §4–7、§14；vLLM d7ada3a"
+        "来源": "W3-U1 回忆地图 · vLLM V1 NIXL"
       },
       "source_ids": [
         "w3-u1-log"
       ],
-      "content_summary": "B：组合本批子卡形成面试表达，可自行书面练习，不构成新增课程口试。",
+      "content_summary": "B：把 W3-U1 追剧主线与两张纠错卡串成 60–90 秒面试口述稿。",
       "depends_on": [
         "remote-match-vs-ready",
         "pull-push-contract",
         "push-notification-correction",
-        "producer-consumer-lifetimes",
         "report-vs-fence-correction"
       ],
       "review_resolution": {
-        "summary": "2026-11-16 已按语言改写后的依赖卡逐项复核本卡的结论、适用条件与评分锚点；独立语言审查通过，仍覆盖原考查目标，不改变固定版本与实证边界。"
+        "summary": "2026-11-26 已按重构后的 W3-U1 追剧卡与纠错卡逐项复核本口述卡的结论、流程与评分锚点；只读子 Agent 语言审查 PASS，确认恢复 active。"
       }
-    },
-    {
-      "key": "pd-throughput-capacity",
-      "rank": 14,
-      "domain": "llm-inference-pd",
-      "recall_target": "解释固定总GPU预算下PD阶段隔离与吞吐收益之间的容量和交接约束",
-      "assessment": "mechanism",
-      "layer": "mechanism",
-      "fact_scope": {
-        "kind": "evergreen"
-      },
-      "quality": "A",
-      "fact_status": "verified",
-      "lifecycle": "active",
-      "priority": 5,
-      "template_id": "technical-qa",
-      "fields": {
-        "问题": "固定模型、请求组成与总 GPU 数，将混部服务拆成独立 P/D 池后，已观察到尾部 ITL 改善。应怎样评估吞吐是否也改善？请沿阶段容量和交接成本解释取舍，并说明还要观测什么。",
-        "答案": {
-          "blocks": [
-            {
-              "type": "lead",
-              "parts": [
-                {
-                  "type": "text",
-                  "text": "ITL 改善只能说明连续生成的延迟表现变好；吞吐还受两侧容量配比、KV 交接及实际调度效率约束。"
-                }
-              ]
-            },
-            {
-              "type": "point",
-              "label": "分池",
-              "parts": [
-                {
-                  "type": "text",
-                  "text": "P/D 可以分别安排批次和计算，减少 prefill 对 decode 的直接干扰，但固定总资源需要在两池间分配。"
-                }
-              ]
-            },
-            {
-              "type": "point",
-              "label": "瓶颈",
-              "parts": [
-                {
-                  "type": "text",
-                  "text": "若 P 先忙满，D 的空闲 GPU 不会自动替 P 处理输入；反过来也一样。新增 KV 交接还会占用网络和设备资源，因此总 GPU 数相同不保证总处理能力相同。"
-                }
-              ]
-            },
-            {
-              "type": "point",
-              "label": "核验",
-              "parts": [
-                {
-                  "type": "text",
-                  "text": "比较同一负载与延迟约束下的实际吞吐，同时看两侧队列、到达与处理速率、计算及 KV 容量占用，再判断是否需要调整配比。"
-                }
-              ]
-            },
-            {
-              "type": "boundary",
-              "parts": [
-                {
-                  "type": "text",
-                  "text": "这里是系统取舍与验证方法，未给出必然提速或必然降速结论；相同总GPU数也不等于相同有效服务能力。"
-                }
-              ]
-            }
-          ]
-        },
-        "锚点": "输出更稳 ≠ 总量更多；先看哪一池忙满",
-        "来源": "W3 单元一课程页·节点1、检查2"
-      },
-      "source_ids": [
-        "w3-u1-page"
-      ],
-      "content_summary": "A理由：回答PD为什么改善延迟却不保证吞吐提升的系统设计题，避免用单一指标外推整体收益。",
-      "depends_on": []
-    },
-    {
-      "key": "scheduler-worker-result-loop",
-      "rank": 15,
-      "domain": "llm-inference-pd",
-      "recall_target": "解释NIXL异步接收中调度metadata到Worker执行再到完成结果回报的职责闭环",
-      "assessment": "mechanism",
-      "layer": "mechanism",
-      "fact_scope": {
-        "kind": "snapshot",
-        "product": "vllm",
-        "commit": "d7ada3aace051fecec553c185225db2259c2ac6a"
-      },
-      "quality": "B",
-      "fact_status": "verified",
-      "lifecycle": "active",
-      "priority": 3,
-      "template_id": "technical-qa",
-      "fields": {
-        "问题": "在 vLLM d7ada3a 的正常 NIXL PULL 异步接收中，D 的 Scheduler 已为请求 A 安排目标 blocks。交接计划怎样送到 Worker，完成事实怎样返回，A 又凭什么恢复计算资格？请按消息方向串联各层责任。",
-        "答案": {
-          "blocks": [
-            {
-              "type": "lead",
-              "parts": [
-                {
-                  "type": "text",
-                  "text": "Scheduler 下发交接计划，Worker 执行传输并收集结果；Scheduler 处理完成结果后，再更新请求的调度资格。"
-                }
-              ]
-            },
-            {
-              "type": "point",
-              "label": "计划下发",
-              "parts": [
-                {
-                  "type": "text",
-                  "text": "connector 把分配后的接收任务打包成 metadata，放入 SchedulerOutput.kv_connector_metadata；A 留在 WAITING_FOR_REMOTE_KVS。"
-                }
-              ]
-            },
-            {
-              "type": "point",
-              "label": "执行",
-              "parts": [
-                {
-                  "type": "text",
-                  "text": "Worker 绑定 metadata，通过 connector 发起并跟踪 READ；它持有传输对象与设备侧执行环境，不能把收到计划当成加载成功。"
-                }
-              ]
-            },
-            {
-              "type": "point",
-              "label": "结果回传",
-              "parts": [
-                {
-                  "type": "text",
-                  "text": "get_transfer_results 收集发送完成、接收收尾及接收失败集合，形成 KVConnectorOutput，随 ModelRunnerOutput 经过 Engine 返回 Scheduler。"
-                }
-              ]
-            },
-            {
-              "type": "point",
-              "label": "恢复调度",
-              "parts": [
-                {
-                  "type": "text",
-                  "text": "本卡的成功分支中，接收收尾满足适用的本地准备与可见性要求，Scheduler 处理结果解除远端等待；真正获得计算机会还取决于后续调度。"
-                }
-              ]
-            },
-            {
-              "type": "boundary",
-              "parts": [
-                {
-                  "type": "text",
-                  "text": "只讨论固定版本的正常异步接收；同步加载、PUSH和异常恢复应回到各自实现，不能从接口名称推定相同控制流。"
-                }
-              ]
-            }
-          ]
-        },
-        "锚点": "下发计划 → 执行搬运 → 回报结果 → 重新调度",
-        "来源": "W3 单元一课程页·节点3–4"
-      },
-      "source_ids": [
-        "w3-u1-page"
-      ],
-      "content_summary": "B理由：把已有就绪状态判断连接到真实消息与职责，支持源码定位和控制流程解释。",
-      "depends_on": []
-    },
-    {
-      "key": "transfer-handle-vs-kv-resources",
-      "rank": 16,
-      "domain": "llm-inference-pd",
-      "recall_target": "区分正常NIXL PULL传输句柄的清理与P源块D目的块的释放责任",
-      "assessment": "mechanism",
-      "layer": "mechanism",
-      "fact_scope": {
-        "kind": "snapshot",
-        "product": "vllm",
-        "commit": "d7ada3aace051fecec553c185225db2259c2ac6a"
-      },
-      "quality": "B",
-      "fact_status": "verified",
-      "lifecycle": "active",
-      "priority": 3,
-      "template_id": "technical-qa",
-      "fields": {
-        "问题": "在 vLLM d7ada3a 的正常成功 NIXL PULL 中，D 为一次 READ 保存的传输 handle 已完成并被清理。如何分别判断这个 handle、P 源 KV blocks 和 D 目的 KV blocks 的生命周期？假定同模型、同布局，不讨论超时或失败。",
-        "答案": {
-          "blocks": [
-            {
-              "type": "lead",
-              "parts": [
-                {
-                  "type": "text",
-                  "text": "Handle 跟踪的是一次搬运，KV blocks 存的是之后还可能使用的数据。清理搬运句柄，不等于两端缓存都能回收；每类资源要分别找到自己的最后访问者。"
-                }
-              ]
-            },
-            {
-              "type": "point",
-              "label": "handle",
-              "parts": [
-                {
-                  "type": "text",
-                  "text": "D Worker 用 handle 查询 READ 进度并清理该操作的传输资源；完成和清理句柄并不等于释放请求使用的所有 KV。"
-                }
-              ]
-            },
-            {
-              "type": "point",
-              "label": "P源块",
-              "parts": [
-                {
-                  "type": "text",
-                  "text": "相关读取方不再访问源数据并完成通知后，P 才能解除传输保留；实际复用还取决于 Scheduler 处理结果、本地访问保护和块引用。"
-                }
-              ]
-            },
-            {
-              "type": "point",
-              "label": "D目的块",
-              "parts": [
-                {
-                  "type": "text",
-                  "text": "D 完成本地就绪处理后仍要用自己的 KV 继续生成；其释放跟随本地请求和共享引用，不能在清理 READ 句柄时一并归还。"
-                }
-              ]
-            },
-            {
-              "type": "boundary",
-              "parts": [
-                {
-                  "type": "text",
-                  "text": "这三类资源没有一个通用的同刻释放动作；源码控制流程不构成本轮GPU/RDMA实测。"
-                }
-              ]
-            }
-          ]
-        },
-        "锚点": "搬运结束，句柄可清；数据是否回收，另查使用者",
-        "来源": "W3 单元一课程页·节点4–6、单元一贯通"
-      },
-      "source_ids": [
-        "w3-u1-page"
-      ],
-      "content_summary": "B理由：防止把传输句柄清理误当成KV数据生命周期结束，补齐资源对象的区别。",
-      "depends_on": []
     }
   ]
 }

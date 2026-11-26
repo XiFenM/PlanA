@@ -15,7 +15,7 @@
   "cards": [
     {
       "key": "rdma-observation-layers",
-      "rank": 11,
+      "rank": 1,
       "domain": "ai-infra-rdma",
       "recall_target": "按控制工作、网络封装和实际访问内存诊断RDMA数据路径",
       "assessment": "mechanism",
@@ -27,52 +27,73 @@
       "fact_status": "verified",
       "template_id": "technical-qa",
       "fields": {
-        "问题": "某 PD 进程的 CPU 持续忙碌，报文带 UDP/IP 封装，源业务张量位于 GPU。怎样沿控制工作、网络封装与实际访问内存三层，核验它是否使用 RDMA、是否经过 Host 中转？",
+        "问题": "【RDMA 走线 1/5】线上 PD 进程 CPU 飙高、抓包看到 UDP/IP、业务张量在 GPU 显存里。能直接断定“没走 RDMA”或“走显存直传了”吗？怎么三层核实？",
         "答案": {
           "blocks": [
             {
               "type": "lead",
+              "label": "结论",
               "parts": [
                 {
                   "type": "text",
-                  "text": "这三项表面现象不足以定性；应分别核对 CPU 的控制职责、实际 RDMA transport，以及 RNIC 真正读写的区域。"
+                  "text": "三个表面现象都定不了性——拆开查 CPU 在干嘛、网络跑啥 transport、网卡真正在碰哪块内存。"
                 }
               ]
             },
             {
               "type": "point",
+              "label": "CPU 忙",
               "parts": [
                 {
                   "type": "text",
-                  "text": "CPU 可能在提交、推进或轮询完成，这些活动可以与 RNIC 执行 RDMA 同时存在。"
+                  "text": "CPU 可能在提交任务或忙轮询完成队列，这和网卡跑 RDMA 完全不冲突。"
                 }
-              ],
-              "label": "控制"
+              ]
             },
             {
               "type": "point",
+              "label": "看到 UDP/IP",
               "parts": [
                 {
                   "type": "text",
-                  "text": "RoCEv2 可使用 UDP/IP 承载，看到 UDP/IP 不能据此排除 RDMA；仍需确认实际 transport。"
+                  "text": "RoCEv2 本身就是套在 UDP/IP 里的 RDMA，看到 UDP/IP 排除不了 RDMA。"
                 }
-              ],
-              "label": "封装"
+              ]
             },
             {
               "type": "point",
+              "label": "显存直传",
               "parts": [
                 {
                   "type": "text",
-                  "text": "业务张量在 GPU，不代表网卡直接读写显存。应核对注册与访问描述指向哪里，以及发送前是否先经设备→Host 拷贝（D2H）得到 Host 副本。"
+                  "text": "业务张量在 GPU，不代表网卡直接读显存——要查 MR（注册内存区）落在显存还是 Host，以及有没有偷偷先做 D2H 拷贝。"
                 }
-              ],
-              "label": "内存"
+              ]
+            },
+            {
+              "type": "point",
+              "label": "下集衔接",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "走 RDMA verbs 提交一笔 WRITE 返回成功了，源数据能马上改写吗？"
+                }
+              ]
+            },
+            {
+              "type": "boundary",
+              "label": "踩坑点",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "三层必须分开核实，别凭单一表面指标就给传输路径下结论。"
+                }
+              ]
             }
           ]
         },
-        "锚点": "CPU 在忙什么？网络跑什么？RNIC 真正读写哪里？",
-        "来源": "W3 U3 学习记录 · u3-p01"
+        "锚点": "查 CPU 职责 → 查实际 transport → 查 MR 落点与 D2H",
+        "来源": "W3-U3 学习记录 · u3-p01"
       },
       "lifecycle": "active",
       "priority": 3,
@@ -80,65 +101,464 @@
         "w3-u3-log"
       ],
       "depends_on": [],
-      "content_summary": "按控制工作、网络封装和实际访问内存诊断RDMA数据路径"
+      "content_summary": "B：面试排查线上 RDMA/GPUDirect 是否真生效的三层抓手，避开表面假象。"
     },
     {
-      "key": "gpu-api-initiation-vs-nic-submission",
-      "rank": 7,
+      "key": "wr-sge-vs-noninline-payload-lifetime",
+      "rank": 2,
       "domain": "ai-infra-rdma",
-      "recall_target": "区分GPU发起API通信请求与CPU提交NIC工作的层次",
+      "recall_target": "解释非inline RDMA WRITE中描述结构与payload的复用条件不同",
+      "assessment": "mechanism",
+      "layer": "mechanism",
+      "fact_scope": {
+        "kind": "snapshot",
+        "product": "rdma-core / mlx5",
+        "version": "v65.0",
+        "commit": "58e40801bfed5a8befc0881594820fa0a0baa4a1"
+      },
+      "quality": "A",
+      "fact_status": "verified",
+      "template_id": "technical-qa",
+      "fields": {
+        "问题": "【RDMA 走线 2/5】用 rdma-core（v65）提交一笔非 inline 的 RC WRITE，ibv_post_send 返回成功了。为什么应用可以立刻复用 WR/SGE 结构体，却不能马上覆盖源 payload？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "label": "结论",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "WR/SGE 只是“发货单”，已经抄进网卡队列（WQE）了；真正的货（源 payload）网卡可能还没搬完。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "label": "发货单可复用",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "驱动在 ibv_post_send 返回前，已经把 WR/SGE 里的描述转写成了网卡队列里的 WQE，所以栈上或池里的 WR/SGE 立刻可重用。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "label": "源数据要等回执",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "WQE 只记着指向源显存/内存的地址，提交成功不等于读完；必须等这笔 WRITE 对应的完成记录（WC）回来，才解除本次读取依赖。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "label": "下集衔接",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "要是两个 QP 共用同一个完成队列 CQ，刚捞出 B 的完成记录，A 的源数据能放了吗？"
+                }
+              ]
+            },
+            {
+              "type": "boundary",
+              "label": "踩坑点",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "就算本次 RDMA 的 WC 回来了，如果还有别的计算流在读这块源区，照样不能释放。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "发货单已抄进队列；货要等 WC 回来才算搬完",
+        "来源": "W3-U3 学习记录 · u3-p03 · rdma-core v65"
+      },
+      "lifecycle": "active",
+      "priority": 5,
+      "source_ids": [
+        "w3-u3-log"
+      ],
+      "depends_on": [],
+      "content_summary": "A理由：RDMA 异步内存生命周期最容易写崩线上的一条——提交返回不等于 payload 读完。"
+    },
+    {
+      "key": "shared-cq-completion-attribution",
+      "rank": 3,
+      "domain": "ai-infra-rdma",
+      "recall_target": "按操作身份解释共享CQ中的完成证据和源缓冲保护",
+      "assessment": "discrimination",
+      "layer": "atomic",
+      "fact_scope": {
+        "kind": "snapshot",
+        "product": "rdma-core",
+        "version": "v65.0",
+        "commit": "58e40801bfed5a8befc0881594820fa0a0baa4a1"
+      },
+      "quality": "A",
+      "fact_status": "verified",
+      "template_id": "technical-qa",
+      "fields": {
+        "问题": "【RDMA 走线 3/5】rdma-core（v65）里两个 QP 分别发了 A、B 两笔 RC WRITE（wr_id 不同），共用一个完成队列 CQ。软件只取到 B 的成功 WC，还没取到 A。能断定 A 没搬完吗？A 的源数据能释放吗？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "label": "结论",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "都不能：只能确认 B 完了；A 可能其实已经搬完只是还没捞到，也可能还在路上，拿到 A 自己的 WC 前绝不放源数据。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "label": "各认各的账",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "共用 CQ 只是共一个信箱，不代表两笔操作绑成同一个完成事件，必须按 wr_id 认领回执。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "label": "未观察 ≠ 未发生",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "软件还没 poll 到 A 的 WC，意思是“还没拿到 A 的完成依据”，不等于网卡一定没搬完。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "label": "下集衔接",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "如果网卡碰不到显存，只能走双端 Host 中转，网络传完那一刻哪几块内存能释放？"
+                }
+              ]
+            },
+            {
+              "type": "boundary",
+              "label": "踩坑点",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "不同 QP 之间没有完成先后保证：就算 A 比 B 先提交，共享 CQ 里也可能先捞到 B 的 WC，绝不能据此推断 A 已完。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "共享 CQ 按 wr_id 认领；没捞到 ≠ 没发生",
+        "来源": "W3-U3 学习记录 · u3-p04 · rdma-core v65"
+      },
+      "lifecycle": "active",
+      "priority": 5,
+      "source_ids": [
+        "w3-u3-log"
+      ],
+      "depends_on": [],
+      "content_summary": "A理由：共享 CQ 下按操作身份认领完成记录，区分“未观察”与“未完成”。"
+    },
+    {
+      "key": "host-staging-four-region-dependencies",
+      "rank": 4,
+      "domain": "ai-infra-rdma",
+      "recall_target": "沿双端Host staging解释四个区域的独立访存结束条件与消费接续",
+      "assessment": "mechanism",
+      "layer": "mechanism",
+      "fact_scope": {
+        "kind": "evergreen"
+      },
+      "quality": "A",
+      "fact_status": "verified",
+      "template_id": "technical-qa",
+      "fields": {
+        "问题": "【RDMA 走线 4/5】双端 Host 中转路径是：P 显存 → D2H → P Host → RDMA → D Host → H2D → D 显存（各步异步）。这 4 块内存分别要等谁不再碰它才能复用？D 的计算流怎么接？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "label": "结论",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "每块内存只认自己的“最后读者”：一次 RDMA 完成只放行 P Host 和触发 H2D，管不到 D 显存何时能算。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "label": "源端两块",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "P 显存等到 D2H 读完；P Host 等到 RDMA 读完。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "label": "收端两块",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "D Host 等到 H2D 读完才可复用；D 显存先等 H2D 写完，再等计算消费完才释放。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "label": "跨流衔接",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "RDMA 收完才能发起 H2D；如果计算在另一条 stream，必须用 event（或等价依赖）等 H2D 结束再开算。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "label": "下集衔接",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "如果连 RDMA 都没有、只能退回 Host TCP/socket，就绪条件会变松吗？"
+                }
+              ]
+            },
+            {
+              "type": "boundary",
+              "label": "踩坑点",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "Host 中转槽位紧时要背压等待，绝不能直接覆盖还在被 H2D 读取的槽位。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "四块内存各问一句：谁还会读它、谁还会写它？",
+        "来源": "W3-U3 学习记录 · u3-p06、p07"
+      },
+      "lifecycle": "active",
+      "priority": 5,
+      "source_ids": [
+        "w3-u3-log"
+      ],
+      "depends_on": [],
+      "content_summary": "A理由：非 NV 芯片常见 Host 中转路径的完整内存生命周期与跨流同步考点。"
+    },
+    {
+      "key": "tcp-fallback-device-kv-readiness",
+      "rank": 5,
+      "domain": "ai-infra-rdma",
+      "recall_target": "在RDMA不可用时用Host socket重建设备KV交接而保持接收消费含义",
+      "assessment": "mechanism",
+      "layer": "mechanism",
+      "fact_scope": {
+        "kind": "evergreen"
+      },
+      "quality": "A",
+      "fact_status": "verified",
+      "template_id": "technical-qa",
+      "fields": {
+        "问题": "【RDMA 走线 5/5】P 和 D 的 KV 都在显存，现在两端 RDMA 彻底不可用，只剩 Host TCP/socket 和 D2H/H2D。怎么搭退路？发送端 socket 发完返回后，D 还差哪几步才能开算？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "label": "结论",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "退回 P 显存 → D2H → P Host → socket → D Host → H2D → D 显存；发送端返回只说明进了本地发送链路，不等于 D 能算。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "label": "D 端收尾三步",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "① 完整收齐对应字节并核对请求/块映射；② 发起 H2D 拷进 D 显存目标块；③ 建立设备可见性与计算 stream 等待依赖，之后才放行 attention。"
+                }
+              ]
+            },
+            {
+              "type": "boundary",
+              "label": "踩坑点",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "换了低配传输层，只是数据路径多绕了 Host，绝不能顺手省掉块映射核对或 Host 缓冲区保护。"
+                }
+              ]
+            }
+          ]
+        },
+        "锚点": "Host 收齐 → 对归属 → H2D 上卡 → 等消费依赖",
+        "来源": "W3-U3 学习记录 · u3-p11"
+      },
+      "lifecycle": "active",
+      "priority": 5,
+      "source_ids": [
+        "w3-u3-log"
+      ],
+      "depends_on": [],
+      "content_summary": "A理由：RDMA 不可用时的 TCP 降级方案与完整接收/消费契约。"
+    },
+    {
+      "key": "mr-covers-actual-rdma-regions",
+      "rank": 6,
+      "domain": "ai-infra-rdma",
+      "recall_target": "按本次RNIC实际访问区域确定RDMA MR而非把本地拷贝目标全部注册",
       "assessment": "discrimination",
       "layer": "atomic",
       "fact_scope": {
         "kind": "evergreen"
       },
-      "quality": "B",
+      "quality": "A",
       "fact_status": "verified",
-      "template_id": "technical-qa",
+      "template_id": "correction",
       "fields": {
-        "问题": "路径 A 由 GPU kernel 提出通信请求，再交给 CPU proxy；路径 B 中 GPU 只生产数据，CPU 程序随后主动调用通信接口。两者最终都由 CPU 构造并提交 NIC 工作，应怎样分别标注请求发起方与 NIC 提交方，避免混用 GPU initiated？",
-        "答案": {
+        "意图": "P 显存经 RDMA WRITE 写到 D Host，再经本地 H2D 拷进 D 显存：这笔 RDMA 的 MR 需要注册哪几块内存？",
+        "场景": "针对这笔 KV payload 搬运（控制消息缓冲区另算）。",
+        "正确": "只注册 P 显存源区和 D Host 接收区；D 显存目标只参与本地 H2D，不需要注册成这次 RDMA 的 MR。",
+        "错误": "先要将P端显存对应位置、D端host中转区和D端设备上显存位置进行注册，形成MR",
+        "说明": {
           "blocks": [
             {
               "type": "lead",
+              "label": "结论",
               "parts": [
                 {
                   "type": "text",
-                  "text": "A 是 GPU 发起 API 请求、CPU 提交 NIC 工作；B 的请求发起和 NIC 提交都由 CPU 负责。"
+                  "text": "错在把只参加本地拷贝的 D 显存也塞进了 RDMA 注册名单；P 显存和 D Host 两处答对了。"
                 }
               ]
             },
             {
               "type": "point",
+              "label": "判断原则",
               "parts": [
                 {
                   "type": "text",
-                  "text": "GPU 提供数据或产生数据就绪事件，不等于 GPU 提出了通信请求；CPU proxy 承接请求，也不抹去 API 层的 GPU 发起。"
+                  "text": "MR 是给网卡（RNIC）发的门禁卡——这笔 RDMA 网卡真读写哪两头，就只注册哪两头。"
                 }
-              ],
-              "label": "区别"
+              ]
+            },
+            {
+              "type": "point",
+              "label": "反向变式",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "如果换成 P 显存 → D2H → P Host → RDMA → D 显存，那这次 MR 改成覆盖 P Host（lkey）和 D 显存（rkey）。"
+                }
+              ]
             },
             {
               "type": "boundary",
+              "label": "踩坑点",
               "parts": [
                 {
                   "type": "text",
-                  "text": "GPU initiated 的使用层次并不总一致，描述实现时应明确是在说 API 请求发起，还是 GPU 直接驱动 NIC。"
+                  "text": "别顺着整条业务数据流一路全注册，先画圈标出 RDMA 的起点和终点。"
+                }
+              ]
+            }
+          ]
+        }
+      },
+      "lifecycle": "active",
+      "priority": 5,
+      "source_ids": [
+        "w3-u3-log"
+      ],
+      "depends_on": [],
+      "content_summary": "A理由：纠正真实踩过的 MR 注册范围扩大误区，盯死“网卡实际碰哪就注册哪”。"
+    },
+    {
+      "key": "fixed-group-broadcast-fallback",
+      "rank": 7,
+      "domain": "ai-infra-rdma",
+      "recall_target": "在固定collective组约束下设计P到D交接并解释额外代价",
+      "assessment": "mechanism",
+      "layer": "mechanism",
+      "fact_scope": {
+        "kind": "evergreen"
+      },
+      "quality": "A",
+      "fact_status": "verified",
+      "template_id": "technical-qa",
+      "fields": {
+        "问题": "底层通信库只有固定 4-rank 组的 Broadcast，既不能拆子组也没有点对点接口。怎么硬扛 P（rank 0）给 D（rank 1）传一条请求的 KV？多付了哪些代价？",
+        "答案": {
+          "blocks": [
+            {
+              "type": "lead",
+              "label": "结论",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "必须由 CPU 控制通道协调全组 4 个 rank 按一致参数一起调 Broadcast，代价是无关的 rank 2/3 要白陪跑流量、显存和同步。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "label": "调用合同",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "4 个 rank 按一致的顺序、root、count 和 dtype 同步调用；无关的 rank 2/3 也得准备合法的接收缓冲区，收到后丢弃。"
+                }
+              ]
+            },
+            {
+              "type": "point",
+              "label": "系统代价",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "无关的 rank 2/3 白吃流量、占显存、陪着同步等，且任意一张无关卡卡顿都会拖慢这条 P→D 交接。"
+                }
+              ]
+            },
+            {
+              "type": "boundary",
+              "label": "踩坑点",
+              "parts": [
+                {
+                  "type": "text",
+                  "text": "只暴露 collective 是通信库接口限制，不代表底层一定没走 RDMA。"
                 }
               ]
             }
           ]
         },
-        "锚点": "谁提出请求 ≠ 谁提交 NIC 工作",
-        "来源": "W3 U3 学习记录 · u3-p09"
+        "锚点": "固定组 collective：两张卡要传，全组四张都得陪跑",
+        "来源": "W3-U3 学习记录 · u3-p08"
       },
       "lifecycle": "active",
-      "priority": 3,
+      "priority": 5,
       "source_ids": [
         "w3-u3-log"
       ],
       "depends_on": [],
-      "content_summary": "区分GPU发起API通信请求与CPU提交NIC工作的层次"
+      "content_summary": "A理由：受限通信库（仅有固定组 collective、无 P2P）的工程兜底思路与代价分析。"
     },
     {
       "key": "nvshmem-ibrc-ibgda-control-split",
@@ -156,61 +576,63 @@
       "fact_status": "verified",
       "template_id": "technical-qa",
       "fields": {
-        "问题": "在 NVSHMEM 3.0.6 的讨论范围内，通信请求已由 GPU kernel 提出。对 IBRC、典型 IBGDA、CPU-assisted IBGDA，分别说明谁生成 NIC 工作队列项 WQE，谁敲 doorbell 通知网卡。CPU-assisted 与 IBRC 的分工差在哪里？",
+        "问题": "在 NVSHMEM 3.0 里，通信请求都由 GPU kernel 提出。IBRC、典型 IBGDA 和 CPU-assisted IBGDA 在“谁写网卡工作单（WQE）/ 谁敲 doorbell 通知网卡”上各怎么分工？",
         "答案": {
           "blocks": [
             {
               "type": "lead",
+              "label": "结论",
               "parts": [
                 {
                   "type": "text",
-                  "text": "IBRC 把构造与通知都交给 CPU proxy；典型 IBGDA 两项都由 GPU 做；CPU-assisted IBGDA 保留 GPU 构造、改由 CPU 通知。"
+                  "text": "口诀按“写 WQE / 敲 doorbell”记：IBRC 是 CPU/CPU，典型 IBGDA 是 GPU/GPU，CPU-assisted 是 GPU/CPU。"
                 }
               ]
             },
             {
               "type": "point",
+              "label": "IBRC",
               "parts": [
                 {
                   "type": "text",
-                  "text": "GPU 把地址、长度等请求交给 CPU proxy，proxy 将它转换为 NIC 工作并提交。"
+                  "text": "GPU 只把地址、长度等请求扔给 CPU proxy，写 WQE 和敲 doorbell 全归 CPU。"
                 }
-              ],
-              "label": "IBRC"
+              ]
             },
             {
               "type": "point",
+              "label": "典型 IBGDA",
               "parts": [
                 {
                   "type": "text",
-                  "text": "GPU 生成 WQE 并通知 RNIC，减少运行时经过 CPU proxy 的提交环节。"
+                  "text": "GPU 自己写 WQE 并直接敲网卡 doorbell，绕开运行时 CPU proxy 往返。"
                 }
-              ],
-              "label": "典型 IBGDA"
+              ]
             },
             {
               "type": "point",
+              "label": "CPU-assisted",
               "parts": [
                 {
                   "type": "text",
-                  "text": "CPU 主要承接 doorbell 通知，工作请求已由 GPU 生成，因此不能仅因两者都有 CPU 线程就认为分工相同。"
+                  "text": "WQE 已经由 GPU 写好，只是把敲 doorbell 交给 CPU——所以不能因为都有 CPU 线程就把它当成 IBRC。"
                 }
-              ],
-              "label": "CPU-assisted"
+              ]
             },
             {
               "type": "boundary",
+              "label": "踩坑点",
               "parts": [
                 {
                   "type": "text",
-                  "text": "控制请求经过 CPU 不等于 payload 经 Host 中转；具体路径仍须有相应设备、驱动与 backend 支持。"
+                  "text": "控制请求经过 CPU，不等于 payload 绕了 Host 内存——IBRC 照样可以配合 GPUDirect RDMA 直传显存。"
                 }
               ]
             }
           ]
         },
-        "锚点": "按“写工作单／敲铃”记：CPU/CPU；GPU/GPU；GPU/CPU",
-        "来源": "W3 U3 学习记录 · u3-p02、u3-p09"
+        "锚点": "写 WQE / 敲铃：IBRC(CPU/CPU) · IBGDA(GPU/GPU) · Assisted(GPU/CPU)",
+        "来源": "W3-U3 学习记录 · u3-p02、p09 · NVSHMEM 3.0"
       },
       "lifecycle": "active",
       "priority": 3,
@@ -218,633 +640,7 @@
         "w3-u3-log"
       ],
       "depends_on": [],
-      "content_summary": "比较NVSHMEM的IBRC、典型IBGDA与CPU-assisted IBGDA控制职责"
-    },
-    {
-      "key": "gpu-initiation-capability-constraints",
-      "rank": 9,
-      "domain": "ai-infra-rdma",
-      "recall_target": "解释GPU通信发起方式受平台能力约束而非只由调用位置决定",
-      "assessment": "mechanism",
-      "layer": "mechanism",
-      "fact_scope": {
-        "kind": "evergreen"
-      },
-      "quality": "B",
-      "fact_status": "verified",
-      "template_id": "technical-qa",
-      "fields": {
-        "问题": "某新加速器已经支持 CPU 发起网络通信，现在希望改由 GPU kernel 发起。采用 CPU proxy 与 GPU 直接通知 RNIC 两条路径时，分别要具备哪些能力，为什么不能只把调用移进 kernel？",
-        "答案": {
-          "blocks": [
-            {
-              "type": "lead",
-              "parts": [
-                {
-                  "type": "text",
-                  "text": "先让 GPU 能发布通信请求，再确认谁填写工作队列、谁通知网卡。把调用移进 kernel，不会自动补出这些接口、映射和同步能力。"
-                }
-              ]
-            },
-            {
-              "type": "point",
-              "parts": [
-                {
-                  "type": "text",
-                  "text": "需要 GPU 可用的通信 API 或 GPU→CPU 请求通道、发布与观察的同步规则，以及持续推进请求的 CPU 代理。"
-                }
-              ],
-              "label": "经过 proxy"
-            },
-            {
-              "type": "point",
-              "parts": [
-                {
-                  "type": "text",
-                  "text": "还需要 GPU 能访问或发布相应工作队列、使用受支持的 NIC 通知机制，并满足驱动映射和内存排序要求。"
-                }
-              ],
-              "label": "直接驱动"
-            },
-            {
-              "type": "boundary",
-              "parts": [
-                {
-                  "type": "text",
-                  "text": "只有平台同时支持多条路径后，才比较控制往返、消息规模与 GPU 执行资源等性能取舍；不能预先按发起者判断快慢。"
-                }
-              ]
-            }
-          ]
-        },
-        "锚点": "可调用请求通路 → 队列与通知能力 → 性能取舍",
-        "来源": "W3 U3 学习记录 · u3-p10"
-      },
-      "lifecycle": "active",
-      "priority": 3,
-      "source_ids": [
-        "w3-u3-log"
-      ],
-      "depends_on": [],
-      "content_summary": "解释GPU通信发起方式受平台能力约束而非只由调用位置决定"
-    },
-    {
-      "key": "wr-sge-vs-noninline-payload-lifetime",
-      "rank": 3,
-      "domain": "ai-infra-rdma",
-      "recall_target": "解释非inline RDMA WRITE中描述结构与payload的复用条件不同",
-      "assessment": "mechanism",
-      "layer": "mechanism",
-      "fact_scope": {
-        "kind": "snapshot",
-        "product": "rdma-core / mlx5",
-        "version": "v65.0",
-        "commit": "58e40801bfed5a8befc0881594820fa0a0baa4a1"
-      },
-      "quality": "A",
-      "fact_status": "verified",
-      "template_id": "technical-qa",
-      "fields": {
-        "问题": "沿 rdma-core v65.0 的 mlx5 路径，应用提交一项普通 RC WRITE：payload 非 inline，且要求生成本地完成记录（signaled）。ibv_post_send 返回成功后，为什么可重用应用侧的 WR（工作请求）／SGE（数据片段描述）结构，却不能仅凭这个返回值覆盖源 payload？",
-        "答案": {
-          "blocks": [
-            {
-              "type": "lead",
-              "parts": [
-                {
-                  "type": "text",
-                  "text": "provider 已使用描述信息构造队列工作项，但非 inline payload 仍可能稍后被 RNIC 读取；两者不共享同一个复用时点。"
-                }
-              ]
-            },
-            {
-              "type": "point",
-              "parts": [
-                {
-                  "type": "text",
-                  "text": "WR 描述一次工作请求，SGE 描述数据片段；provider 据此构造 NIC 工作队列项 WQE。成功返回后，不必继续保留同一批应用侧 WR／SGE 结构。"
-                }
-              ],
-              "label": "描述"
-            },
-            {
-              "type": "point",
-              "parts": [
-                {
-                  "type": "text",
-                  "text": "WQE 仍指向源区域，提交成功不是搬运完成。必须取得本操作相应的完成依据，才能解除它对源 payload 的读取依赖。"
-                }
-              ],
-              "label": "数据"
-            },
-            {
-              "type": "boundary",
-              "parts": [
-                {
-                  "type": "text",
-                  "text": "这里只讨论该非 inline 成功提交路径；即使本次传输引用结束，其他使用者仍可能要求保留同一源区域。"
-                }
-              ]
-            }
-          ]
-        },
-        "锚点": "工作描述已抄进队列；源数据可能还没读完",
-        "来源": "W3 U3 学习记录 · u3-p03"
-      },
-      "lifecycle": "active",
-      "priority": 5,
-      "source_ids": [
-        "w3-u3-log"
-      ],
-      "depends_on": [],
-      "content_summary": "A理由：防止把提交成功后的 WR／SGE 可复用错误推广为源 payload 可立即覆盖。 解释非inline RDMA WRITE中描述结构与payload的复用条件不同"
-    },
-    {
-      "key": "shared-cq-completion-attribution",
-      "rank": 6,
-      "domain": "ai-infra-rdma",
-      "recall_target": "按操作身份解释共享CQ中的完成证据和源缓冲保护",
-      "assessment": "discrimination",
-      "layer": "atomic",
-      "fact_scope": {
-        "kind": "snapshot",
-        "product": "rdma-core",
-        "version": "v65.0",
-        "commit": "58e40801bfed5a8befc0881594820fa0a0baa4a1"
-      },
-      "quality": "A",
-      "fact_status": "verified",
-      "template_id": "technical-qa",
-      "fields": {
-        "问题": "在 rdma-core v65.0 的普通 RC WRITE 中，两个队列对 QP 分别发送 A、B，使用不同 wr_id，共享一个完成队列 CQ；两项都要求生成本地完成记录（signaled），追踪记录仍有效。软件只取到 B 的成功完成记录 WC，还没取到 A 的。对 A 的实际进度和源区域复用，分别能作出什么判断？",
-        "答案": {
-          "blocks": [
-            {
-              "type": "lead",
-              "parts": [
-                {
-                  "type": "text",
-                  "text": "只能确认 B 的对应操作成功；A 可能已经完成但尚未被软件观察，也可能仍在途，因此不能据此解除 A 的源区域保护。"
-                }
-              ]
-            },
-            {
-              "type": "point",
-              "parts": [
-                {
-                  "type": "text",
-                  "text": "完成结果须按 wr_id 及有效追踪关系对应到具体操作；共享 CQ 不把不同 QP 的操作变成同一个完成事件。"
-                }
-              ],
-              "label": "归属"
-            },
-            {
-              "type": "boundary",
-              "parts": [
-                {
-                  "type": "text",
-                  "text": "“尚无 A 的完成依据”不同于“A 必定尚未完成”；是否允许复用仍须取得 A 自己的完成及其他引用条件。"
-                }
-              ]
-            }
-          ]
-        },
-        "锚点": "按操作认领；未观察 ≠ 未发生",
-        "来源": "W3 U3 学习记录 · u3-p04"
-      },
-      "lifecycle": "active",
-      "priority": 5,
-      "source_ids": [
-        "w3-u3-log"
-      ],
-      "depends_on": [],
-      "content_summary": "A理由：防止把共享 CQ 上 B 的成功完成错用为 A 的完成依据，导致提前覆盖 A。 按操作身份解释共享CQ中的完成证据和源缓冲保护"
-    },
-    {
-      "key": "rping-write-send-receive-buffer",
-      "rank": 10,
-      "domain": "ai-infra-rdma",
-      "recall_target": "解释普通RDMA WRITE后SEND控制消息的独立接收缓冲区",
-      "assessment": "mechanism",
-      "layer": "mechanism",
-      "fact_scope": {
-        "kind": "snapshot",
-        "product": "rdma-core",
-        "version": "v65.0",
-        "commit": "58e40801bfed5a8befc0881594820fa0a0baa4a1"
-      },
-      "quality": "B",
-      "fact_status": "verified",
-      "template_id": "technical-qa",
-      "fields": {
-        "问题": "rdma-core v65.0 的 rping 用普通 RC WRITE 搬主体数据，再用 SEND 通知。既然主体数据已进入远端目标区，接收方为什么仍要为 SEND 调用 ibv_post_recv？说明两种数据的落点和 CQ 的作用。",
-        "答案": {
-          "blocks": [
-            {
-              "type": "lead",
-              "parts": [
-                {
-                  "type": "text",
-                  "text": "ibv_post_recv 为 SEND 消息本身提供接收区域；它不是为已经写入的 WRITE payload 再准备一份目标。"
-                }
-              ]
-            },
-            {
-              "type": "point",
-              "parts": [
-                {
-                  "type": "text",
-                  "text": "普通 WRITE 按远端地址与权限写入 rdma_buf，不靠接收方预先投递 SEND 类型的接收缓冲区来定位目标。"
-                }
-              ],
-              "label": "主体数据"
-            },
-            {
-              "type": "point",
-              "parts": [
-                {
-                  "type": "text",
-                  "text": "后续 SEND 的内容落入预先投递的接收缓冲区 recv_buf；接收方从 CQ 取得对应完成结果后，再读取并处理这条通知。"
-                }
-              ],
-              "label": "控制消息"
-            },
-            {
-              "type": "boundary",
-              "parts": [
-                {
-                  "type": "text",
-                  "text": "CQ 保存完成记录，不能存放并替代 SEND 消息；WRITE 后发 SEND 是该示例的通知方案，不是所有后端的唯一选择。"
-                }
-              ]
-            }
-          ]
-        },
-        "锚点": "WRITE→rdma_buf；SEND→recv_buf；CQ→完成记录",
-        "来源": "W3 U3 学习记录 · u3-p05"
-      },
-      "lifecycle": "active",
-      "priority": 3,
-      "source_ids": [
-        "w3-u3-log"
-      ],
-      "depends_on": [],
-      "content_summary": "解释普通RDMA WRITE后SEND控制消息的独立接收缓冲区"
-    },
-    {
-      "key": "host-staging-four-region-dependencies",
-      "rank": 2,
-      "domain": "ai-infra-rdma",
-      "recall_target": "沿双端Host staging解释四个区域的独立访存结束条件与消费接续",
-      "assessment": "mechanism",
-      "layer": "mechanism",
-      "fact_scope": {
-        "kind": "evergreen"
-      },
-      "quality": "A",
-      "fact_status": "verified",
-      "template_id": "technical-qa",
-      "fields": {
-        "问题": "一个 PD 后端采用双端 Host staging：P 设备→D2H→P Host→RDMA→D Host→H2D→D 设备，各阶段可异步执行。沿这条数据流说明四个区域分别要等哪一阶段不再访问，才能解除本次使用；D 的消费在另一条 stream 时怎样接续？",
-        "答案": {
-          "blocks": [
-            {
-              "type": "lead",
-              "parts": [
-                {
-                  "type": "text",
-                  "text": "四个区域分别受 D2H、网络读取、H2D 和计算消费约束；一次网络完成只能解除其中对应的依赖。"
-                }
-              ]
-            },
-            {
-              "type": "point",
-              "parts": [
-                {
-                  "type": "text",
-                  "text": "P 设备源要保留到 D2H 不再读取；P Host 源要保留到对应网络操作不再读取。"
-                }
-              ],
-              "label": "源端"
-            },
-            {
-              "type": "point",
-              "parts": [
-                {
-                  "type": "text",
-                  "text": "D Host 接收槽要保留到 H2D 不再读取；D 设备目标要先完成相应 H2D 写入，再等计算消费者结束，才能解除这条路径的使用。"
-                }
-              ],
-              "label": "接收端"
-            },
-            {
-              "type": "point",
-              "parts": [
-                {
-                  "type": "text",
-                  "text": "网络接收完成后才能发起相应 H2D；消费 stream 应通过 event 或平台等价依赖等待 H2D，不能仅因网络完成就开始读取。"
-                }
-              ],
-              "label": "跨 stream"
-            },
-            {
-              "type": "boundary",
-              "parts": [
-                {
-                  "type": "text",
-                  "text": "这里映射的是本次路径的使用条件；实际回池还须满足框架其他引用和保留策略。槽位不足时应背压，不能覆盖仍在使用的槽。"
-                }
-              ]
-            }
-          ]
-        },
-        "锚点": "每块内存都问：谁还会读它，谁还会写它？",
-        "来源": "W3 U3 学习记录 · u3-p06、u3-p07"
-      },
-      "lifecycle": "active",
-      "priority": 5,
-      "source_ids": [
-        "w3-u3-log"
-      ],
-      "depends_on": [],
-      "content_summary": "A理由：防止用网络完成同时归还 P／D 中转区或提前消费尚未完成 H2D 的设备 KV。 沿双端Host staging解释四个区域的独立访存结束条件与消费接续"
-    },
-    {
-      "key": "fixed-group-broadcast-fallback",
-      "rank": 4,
-      "domain": "ai-infra-rdma",
-      "recall_target": "在固定collective组约束下设计P到D交接并解释额外代价",
-      "assessment": "mechanism",
-      "layer": "mechanism",
-      "fact_scope": {
-        "kind": "evergreen"
-      },
-      "quality": "A",
-      "fact_status": "verified",
-      "template_id": "technical-qa",
-      "fields": {
-        "问题": "设备通信库只提供固定四 rank 组的 Broadcast，不能建子组、没有点对点接口；CPU 控制通道可协调所有 rank。P 在 rank 0、D 在 rank 1，rank 2／3 没有该请求。怎样用现有接口完成交接，额外成本来自哪里？",
-        "答案": {
-          "blocks": [
-            {
-              "type": "lead",
-              "parts": [
-                {
-                  "type": "text",
-                  "text": "必须按固定组合同协调四个 rank 参与同一次 Broadcast，不能只让 P 和 D 调用。"
-                }
-              ]
-            },
-            {
-              "type": "point",
-              "parts": [
-                {
-                  "type": "text",
-                  "text": "各 rank 按一致的调用顺序、root、count 和 dtype 参与；rank 2／3 也需要合法接收缓冲区，即使收到后不用于这个请求。"
-                }
-              ],
-              "label": "匹配"
-            },
-            {
-              "type": "point",
-              "parts": [
-                {
-                  "type": "text",
-                  "text": "原本无关的 rank 也承担数据接收、内存占用与调度协调，单请求交接会受组内其他成员的可用性影响。"
-                }
-              ],
-              "label": "代价"
-            },
-            {
-              "type": "boundary",
-              "parts": [
-                {
-                  "type": "text",
-                  "text": "只暴露 collective 描述的是接口限制，不足以判断底层是否使用 RDMA。"
-                }
-              ]
-            }
-          ]
-        },
-        "锚点": "固定四 rank 组：两端要传，全组仍要参与",
-        "来源": "W3 U3 学习记录 · u3-p08"
-      },
-      "lifecycle": "active",
-      "priority": 5,
-      "source_ids": [
-        "w3-u3-log"
-      ],
-      "depends_on": [],
-      "content_summary": "A理由：防止仅让 P／D 两个 rank 调用固定四 rank collective，破坏匹配的参与和调用顺序。 在固定collective组约束下设计P到D交接并解释额外代价"
-    },
-    {
-      "key": "mr-covers-actual-rdma-regions",
-      "rank": 1,
-      "domain": "ai-infra-rdma",
-      "recall_target": "按本次RNIC实际访问区域确定RDMA MR而非把本地拷贝目标全部注册",
-      "assessment": "discrimination",
-      "layer": "atomic",
-      "fact_scope": {
-        "kind": "evergreen"
-      },
-      "quality": "A",
-      "fact_status": "verified",
-      "template_id": "correction",
-      "fields": {
-        "意图": "P 显存经 RC WRITE 写入 D Host，再 H2D 到 D 显存：这次 RDMA 的 MR 应覆盖哪些区域？",
-        "场景": "所需访问和拷贝能力已验证；只讨论这次 KV payload 的 RDMA，不讨论控制消息缓冲区。",
-        "正确": "应覆盖 P 设备源区与 D Host 接收区；D 设备目标只由本地 H2D 写入，不因本次 Host RDMA 而需要成为 RDMA MR。",
-        "错误": "先要将P端显存对应位置、D端host中转区和D端设备上显存位置进行注册，形成MR",
-        "说明": {
-          "blocks": [
-            {
-              "type": "lead",
-              "parts": [
-                {
-                  "type": "text",
-                  "text": "错误仅在把 D 的设备目标也列为本次 RDMA MR；原答对 P 显存源区和 D Host 接收区的判断保留。"
-                }
-              ]
-            },
-            {
-              "type": "point",
-              "parts": [
-                {
-                  "type": "text",
-                  "text": "MR 对应本次 RNIC 实际读写的区域，不能把整条应用数据流里仅参加本地 copy 的区域一并算入。"
-                }
-              ],
-              "label": "原因"
-            },
-            {
-              "type": "point",
-              "parts": [
-                {
-                  "type": "text",
-                  "text": "若改为 P 设备→D2H→P Host→RC WRITE→D 设备，本次 MR 应覆盖 P Host 与 D 设备；源地址／lkey 指向 P Host，远端地址／rkey 指向 D 设备。"
-                }
-              ],
-              "label": "变式"
-            },
-            {
-              "type": "point",
-              "parts": [
-                {
-                  "type": "text",
-                  "text": "W3 U3 学习记录 · u3-p12，保留原答与注册范围复查。"
-                }
-              ],
-              "label": "来源"
-            }
-          ]
-        }
-      },
-      "lifecycle": "active",
-      "priority": 5,
-      "source_ids": [
-        "w3-u3-log"
-      ],
-      "depends_on": [],
-      "content_summary": "A理由：纠正已发生的注册范围误判，防止把仅由 H2D 使用的设备目标错误归入本次 RDMA MR。 只纠正 D 设备目标被误算为本次 MR 的部分；保留正确的源区和 Host 注册判断。"
-    },
-    {
-      "key": "tcp-fallback-device-kv-readiness",
-      "rank": 5,
-      "domain": "ai-infra-rdma",
-      "recall_target": "在RDMA不可用时用Host socket重建设备KV交接而保持接收消费含义",
-      "assessment": "mechanism",
-      "layer": "mechanism",
-      "fact_scope": {
-        "kind": "evergreen"
-      },
-      "quality": "A",
-      "fact_status": "verified",
-      "template_id": "technical-qa",
-      "fields": {
-        "问题": "一个 PD 系统的 P／D KV 都在设备显存，模型、布局和块映射已相容。现在两端 RDMA 不可用，但 Host TCP/socket、设备↔Host 拷贝和控制通道可用。怎样重建交接路径，本地发送成功后 D 还需完成哪些步骤才能消费设备 KV？",
-        "答案": {
-          "blocks": [
-            {
-              "type": "lead",
-              "parts": [
-                {
-                  "type": "text",
-                  "text": "使用 P 设备→D2H→P Host→socket→D Host→H2D→D 设备，并把远端完整接收与设备消费依赖纳入就绪条件。"
-                }
-              ]
-            },
-            {
-              "type": "point",
-              "parts": [
-                {
-                  "type": "text",
-                  "text": "先得到可读的 P Host 副本，再经 socket 发送；本地发送调用的成功不能替代接收方已获得完整 KV 的事实。"
-                }
-              ],
-              "label": "发送端"
-            },
-            {
-              "type": "point",
-              "parts": [
-                {
-                  "type": "text",
-                  "text": "D 完整接收对应数据并核对请求／块映射，再执行 H2D，满足设备可见性与消费 stream 的依赖后才可读取。"
-                }
-              ],
-              "label": "接收端"
-            },
-            {
-              "type": "boundary",
-              "parts": [
-                {
-                  "type": "text",
-                  "text": "换 transport 不改变“消费正确请求的完整设备 KV”这一含义，也不允许省略新增 Host 缓冲区的保护。"
-                }
-              ]
-            }
-          ]
-        },
-        "锚点": "Host 收齐 → 核对归属 → 拷回设备 → 等消费依赖",
-        "来源": "W3 U3 学习记录 · u3-p11"
-      },
-      "lifecycle": "active",
-      "priority": 5,
-      "source_ids": [
-        "w3-u3-log"
-      ],
-      "depends_on": [],
-      "content_summary": "A理由：防止把 Host socket 本地发送成功当成远端已获得可消费的设备 KV。 在RDMA不可用时用Host socket重建设备KV交接而保持接收消费含义"
-    },
-    {
-      "key": "verbs-pd-mr-qp-cq-relationships",
-      "rank": 12,
-      "domain": "ai-infra-rdma",
-      "recall_target": "区分verbs保护域的资源关联与完成队列的关联方式",
-      "assessment": "discrimination",
-      "layer": "atomic",
-      "fact_scope": {
-        "kind": "snapshot",
-        "product": "rdma-core",
-        "version": "v65.0",
-        "commit": "58e40801bfed5a8befc0881594820fa0a0baa4a1"
-      },
-      "quality": "B",
-      "fact_status": "verified",
-      "template_id": "technical-qa",
-      "fields": {
-        "问题": "在 rdma-core v65.0 的 verbs 初始化中，注册内存区域 MR 和队列对 QP 为什么都要关联保护域 PD（Protection Domain）？创建 QP 时指定发送／接收完成队列 CQ，又解决什么问题？请分别说明“访问保护”和“完成结果去向”。",
-        "答案": {
-          "blocks": [
-            {
-              "type": "lead",
-              "parts": [
-                {
-                  "type": "text",
-                  "text": "PD 关联 MR 与 QP 的保护范围；CQ 则独立建立，再被 QP 指定为完成结果的去处，两种关联解决不同问题。"
-                }
-              ]
-            },
-            {
-              "type": "point",
-              "parts": [
-                {
-                  "type": "text",
-                  "text": "MR 将实际地址范围和访问条件关联到 PD，QP 也属于相应 PD，参与传输时须满足资源和访问权限合同。"
-                }
-              ],
-              "label": "保护关系"
-            },
-            {
-              "type": "point",
-              "parts": [
-                {
-                  "type": "text",
-                  "text": "QP 的发送／接收完成可关联到 CQ，多个 QP 可以共享 CQ；应用取回 WC 后仍需按操作追踪关系认领结果。"
-                }
-              ],
-              "label": "完成关系"
-            },
-            {
-              "type": "boundary",
-              "parts": [
-                {
-                  "type": "text",
-                  "text": "CQ 不是由 PD 注册的数据区域，也不保存 payload；不要把资源保护关系与完成记录流向画成同一种归属。"
-                }
-              ]
-            }
-          ]
-        },
-        "锚点": "PD 管资源保护；CQ 收完成记录",
-        "来源": "W3 U3 学习记录 · u3-p14"
-      },
-      "lifecycle": "active",
-      "priority": 3,
-      "source_ids": [
-        "w3-u3-log"
-      ],
-      "depends_on": [],
-      "content_summary": "区分verbs保护域的资源关联与完成队列的关联方式"
+      "content_summary": "B：高频前沿术语辨析——IBRC、典型 IBGDA 与 CPU-assisted IBGDA 的控制面分工。"
     }
   ]
 }
